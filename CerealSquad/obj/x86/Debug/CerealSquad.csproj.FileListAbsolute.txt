@@ -18,3 +18,4 @@ F:\CerealSquad\CerealSquad\obj\x86\Debug\CerealSquad.Properties.Resources.resour
 F:\CerealSquad\CerealSquad\obj\x86\Debug\CerealSquad.csproj.GenerateResource.Cache
 F:\CerealSquad\CerealSquad\obj\x86\Debug\CerealSquad.exe
 F:\CerealSquad\CerealSquad\obj\x86\Debug\CerealSquad.pdb
+F:\CerealSquad\CerealSquad\obj\x86\Debug\CerealSquad.csprojResolveAssemblyReference.cache

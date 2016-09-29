@@ -15,14 +15,19 @@ namespace CerealSquad
 #if DEBUG
             RenderWindow win = new RenderWindow(new VideoMode(800, 600), "[DEV] Cereal Squad");
 #else
-            RenderWindow win = new RenderWindow(new VideoMode(800, 600), "[PROD] Cereal Squad");
+            RenderWindow win;
+            if (VideoMode.FullscreenModes.Length > 0)
+                win = new RenderWindow(VideoMode.FullscreenModes[0], "[PROD] Cereal Squad");
+            else
+                win = new RenderWindow(new VideoMode(800, 600), "[PROD] Cereal Squad");
 #endif
             win.Closed += Win_Closed;
+
 
             while (win.IsOpen)
             {
                 win.DispatchEvents();
-                win.Clear();
+                win.Clear(Color.Magenta);
                 win.Display();
             }
         }
