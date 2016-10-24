@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFML.Window;
 
 namespace CerealSquad
 {
@@ -149,6 +150,9 @@ namespace CerealSquad
         public delegate void ButtonEventHandler(object source, ButtonEventArgs e);
         public delegate void MoveEventHandler(object source, MoveEventArgs e);
 
+        public delegate void ConnectEventHandler(object source, ConnectionEventArgs e);
+        public delegate void DisconnectEventHandler(object source, ConnectionEventArgs e);
+
         public enum Axis
         {
             X = SFML.Window.Joystick.Axis.X,
@@ -196,39 +200,78 @@ namespace CerealSquad
                 Axis = axis;
             }
         }
+        public class ConnectionEventArgs
+        {
+            uint JoystickId { get; }
+
+            public ConnectionEventArgs(SFML.Window.JoystickConnectEventArgs e)
+            {
+                JoystickId = e.JoystickId;
+            }
+            public ConnectionEventArgs(uint joystickId)
+            {
+                JoystickId = joystickId;
+            }
+        }
     }
 
     public class InputManager
     {
         private SFML.Window.Window Win;
 
-        public event Keyboard.KeyEventHandler KeyPressed;
-        public event Keyboard.KeyEventHandler KeyReleased;
+        public event Keyboard.KeyEventHandler KeyboardKeyPressed;
+        public event Keyboard.KeyEventHandler KeyboardKeyReleased;
 
-        public event Joystick.ButtonEventHandler ButtonPressed;
+        public event Joystick.ButtonEventHandler JoystickButtonPressed;
+        public event Joystick.ButtonEventHandler JoystickButtonReleased;
         public event Joystick.MoveEventHandler JoystickMoved;
+
+        public event Joystick.ConnectEventHandler JoystickConnected;
+        public event Joystick.ConnectEventHandler JoystickDisconnected;
 
         public InputManager(SFML.Window.Window win)
         {
             Win = win;
-            Win.KeyPressed += SFML_KeyPressed;
-            Win.KeyReleased += SFML_KeyReleased;
+            Win.KeyPressed += SFML_KeyboardKeyPressed;
+            Win.KeyReleased += SFML_KeyboardKeyReleased;
+
+            Win.JoystickButtonPressed += SFML_JoystickButtonPressed;
+            Win.JoystickButtonReleased += SFML_JoystickButtonReleased;
+            Win.JoystickMoved += SFML_JoystickMoved;
+
+            Win.JoystickConnected += SFML_JoystickConnected;
+            Win.JoystickDisconnected += SFML_JoystickDisconnected;
         }
 
-        private void SFML_KeyReleased(object sender, SFML.Window.KeyEventArgs e)
+        private void SFML_JoystickConnected(object sender, JoystickConnectEventArgs e)
         {
-            if (KeyReleased != null)
-            {
-                KeyReleased(sender, new Keyboard.KeyEventArgs(e));
-            }
+            JoystickConnected?.Invoke(sender, new Joystick.ConnectionEventArgs(e));
+        }
+        private void SFML_JoystickDisconnected(object sender, JoystickConnectEventArgs e)
+        {
+            JoystickDisconnected?.Invoke(sender, new Joystick.ConnectionEventArgs(e));
         }
 
-        private void SFML_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
+        private void SFML_JoystickMoved(object sender, JoystickMoveEventArgs e)
         {
-            if (KeyPressed != null)
-            {
-                KeyPressed(sender, new Keyboard.KeyEventArgs(e));
-            }
+            JoystickMoved?.Invoke(sender, new Joystick.MoveEventArgs(e));
+        }
+        private void SFML_JoystickButtonPressed(object sender, JoystickButtonEventArgs e)
+        {
+            JoystickButtonPressed?.Invoke(sender, new Joystick.ButtonEventArgs(e));
+        }
+        private void SFML_JoystickButtonReleased(object sender, JoystickButtonEventArgs e)
+        {
+            JoystickButtonReleased?.Invoke(sender, new Joystick.ButtonEventArgs(e));
+        }
+
+        private void SFML_KeyboardKeyPressed(object sender, SFML.Window.KeyEventArgs e)
+        {
+            KeyboardKeyPressed?.Invoke(sender, new Keyboard.KeyEventArgs(e));
+        }
+        private void SFML_KeyboardKeyReleased(object sender, SFML.Window.KeyEventArgs e)
+        {
+            KeyboardKeyReleased?.Invoke(sender, new Keyboard.KeyEventArgs(e));
         }
     }
 }

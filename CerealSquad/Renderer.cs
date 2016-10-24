@@ -39,7 +39,7 @@ namespace CerealSquad
             events = new WindowsEventHandler(win);
 
             InputManager manager = new InputManager(win);
-            manager.KeyPressed += Manager_KeyPressed;
+            manager.KeyboardKeyPressed += Manager_KeyPressed;
 
             return true;
         }
