@@ -12,8 +12,6 @@ namespace CerealSquad
     {
         private RenderWindow renderWindow;
 
-
-
         public WindowsManager(RenderWindow _renderWindow)
         {
             renderWindow = _renderWindow;
