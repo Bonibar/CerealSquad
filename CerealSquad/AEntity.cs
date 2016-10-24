@@ -25,19 +25,25 @@ namespace CerealSquad
         {
             public int _x;
             public int _y;
+            public int _trueX;
+            public int _trueY;
             public int _layer;
 
             s_position(int x = -1, int y = -1, int layer = -1)
             {
                 _x = x;
+                _trueX = x;
                 _y = y;
+                _trueY = y;
                 _layer = layer;
             }
 
             public static s_position operator +(s_position pos, s_position other)
             {
-                pos._x += other._x;
-                pos._y += other._y;
+                pos._trueX += other._trueX;
+                pos._trueY += other._trueY;
+                pos._x = (int)pos._trueX;
+                pos._y = (int)pos._trueY;
                 pos._layer += other._layer;
 
                 return (pos);
@@ -51,9 +57,10 @@ namespace CerealSquad
         protected e_DamageType _damageType;
         protected s_position _pos;
         protected s_size _size;
+        protected double _speed;
         private bool _die;
 
-        private s_position Pos
+        public s_position Pos
         {
             get
             {
@@ -66,6 +73,19 @@ namespace CerealSquad
             }
         }
 
+        public double Speed
+        {
+            get
+            {
+                return _speed;
+            }
+
+            set
+            {
+                _speed = value;
+            }
+        }
+
         public AEntity(IEntity owner, s_size size = new s_size())
         {
             _owner = owner;
@@ -73,6 +93,7 @@ namespace CerealSquad
             _type = e_EntityType.World;
             _damageType = e_DamageType.NONE;
             _size = size;
+            _speed = 0;
         }
 
         public void addChild(IEntity child)
