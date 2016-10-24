@@ -144,12 +144,69 @@ namespace CerealSquad
         }
     }
 
+    namespace Joystick
+    {
+        public delegate void ButtonEventHandler(object source, ButtonEventArgs e);
+        public delegate void MoveEventHandler(object source, MoveEventArgs e);
+
+        public enum Axis
+        {
+            X = SFML.Window.Joystick.Axis.X,
+            Y = SFML.Window.Joystick.Axis.Y,
+            Z = SFML.Window.Joystick.Axis.Z,
+            R = SFML.Window.Joystick.Axis.R,
+            U = SFML.Window.Joystick.Axis.U,
+            V = SFML.Window.Joystick.Axis.V,
+            PovX = SFML.Window.Joystick.Axis.PovX,
+            PovY = SFML.Window.Joystick.Axis.PovY
+        }
+
+        public class ButtonEventArgs
+        {
+            uint JoystickId { get; }
+            uint Button { get; }
+
+            public ButtonEventArgs(SFML.Window.JoystickButtonEventArgs e)
+            {
+                Button = e.Button;
+                JoystickId = e.JoystickId;
+            }
+            public ButtonEventArgs(uint button, uint joystickId)
+            {
+                Button = button;
+                JoystickId = joystickId;
+            }
+        }
+        public class MoveEventArgs
+        {
+            uint JoystickId { get; }
+            float Position { get; }
+            Axis Axis { get; }
+
+            public MoveEventArgs(SFML.Window.JoystickMoveEventArgs e)
+            {
+                JoystickId = e.JoystickId;
+                Position = e.Position;
+                Axis = (Axis)e.Axis;
+            }
+            public MoveEventArgs(uint joystickId, float position, Axis axis)
+            {
+                JoystickId = joystickId;
+                Position = position;
+                Axis = axis;
+            }
+        }
+    }
+
     public class InputManager
     {
         private SFML.Window.Window Win;
 
         public event Keyboard.KeyEventHandler KeyPressed;
         public event Keyboard.KeyEventHandler KeyReleased;
+
+        public event Joystick.ButtonEventHandler ButtonPressed;
+        public event Joystick.MoveEventHandler JoystickMoved;
 
         public InputManager(SFML.Window.Window win)
         {
