@@ -19,7 +19,7 @@ namespace CerealSquad
             renderer.loop();
             */
             RenderWindow win = new RenderWindow(new VideoMode(800, 800), "Cereal Menu");
-            InputManager manager = new InputManager(win);
+            InputManager.InputManager manager = new InputManager.InputManager(win);
             AMenu mainMenu = new AMenu(win, manager);
 
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
@@ -40,9 +40,9 @@ namespace CerealSquad
             }
         }
 
-        private static void Manager_KeyboardKeyPressed(object source, Keyboard.KeyEventArgs e)
+        private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
-            if (e.KeyCode.Equals(Keyboard.Key.Escape))
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
                 ((RenderWindow)source).Close();
         }
     }
