@@ -98,23 +98,35 @@ namespace CerealSquad.SFMLImplementation
         /// <returns>FloatRect</returns>
         public FloatRect getGlobalBounds()
         {
-            return Transform.TransformRect(animatedSprite. getLocalBounds());
+            return Transform.TransformRect(animatedSprite.getLocalBounds());
         }
 
+        /// <summary>
+        /// Play the animation wanted from the begining (will stop current animation)
+        /// </summary>
+        /// <param name="state">EState</param>
+        public void playAnimation(EState state)
+        {
+            animatedSprite.Play(_animations[state]);
+        }
+
+        /// <summary>
+        /// Update the entityResources
+        /// </summary>
+        /// <param name="deltaTime"></param>
         public void update(Time deltaTime)
         {
             animatedSprite.update(deltaTime);
         }
 
-        public void playAnimation(EntityResources.EState state)
-        {
-            animatedSprite.Play(_animations[state]);
-        }
-
+        /// <summary>
+        /// Draw the entityResources
+        /// </summary>
+        /// <param name="target">RenderTarget</param>
+        /// <param name="states">RenderStates</param>
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-
             animatedSprite.Draw(target, states);
         }
     }

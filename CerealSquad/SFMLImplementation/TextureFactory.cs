@@ -9,6 +9,7 @@ namespace CerealSquad.SFMLImplementation
 {
     public sealed class TextureFactory
     {
+        #region Singleton
         private TextureFactory()
         {
         }
@@ -17,48 +18,66 @@ namespace CerealSquad.SFMLImplementation
 
         private class Nested
         {
-            // Explicit static constructor to tell C# compiler
-            // not to mark type as beforefieldinit
-            static Nested()
-            {
-            }
+            static Nested() {}
 
             internal static readonly TextureFactory instance = new TextureFactory();
         }
+        #endregion
 
-        private Dictionary<String, Texture> content = new Dictionary<String, Texture>();
+        private Dictionary<String, Texture> _Textures;
 
-        public bool exists(String name)
+        /// <summary>
+        /// Init all textures needed
+        /// </summary>
+        public void initTextures()
         {
-            return content.ContainsKey(name);
+            _Textures = new Dictionary<String, Texture>();
+            if (_Textures == null)
+                throw new OutOfMemoryException("Failed to load textures");
+             
+            // use load(name, filename) ...
         }
 
+        /// <summary>
+        /// Check if a texture already exists.
+        /// </summary>
+        /// <param name="name">String</param>
+        /// <returns>bool</returns>
+        public bool exists(String name)
+        {
+            return _Textures.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// Load a texture with the given filname and store it with name.
+        /// </summary>
+        /// <param name="name">String</param>
+        /// <param name="filename">String</param>
+        /// <returns>bool</returns>
         public bool load(String name, String filename)
         {
             if (exists(name)) {
                 return true;
             }
 
-            try
-            {
-                Texture texture = new Texture(filename);
-                content[name] = texture;
-            } catch (SFML.LoadingFailedException e)
-            {
-                //TODO inform user
-                return false;
-            }
+            Texture texture = new Texture(filename);
+            _Textures[name] = texture;
 
             return true;
         }
 
+        /// <summary>
+        /// Get the texture with associed name
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <returns>Texture</returns>
         public Texture getTexture(String name)
         {
             if (!exists(name)) {
-                return null;
+                throw new Exception("Unable to find texture " + name);
             }
 
-            return content[name];
+            return _Textures[name];
         }
     }
 

@@ -32,22 +32,21 @@ namespace CerealSquad
             }
         };
 
-
+        #region Ref
         private RenderWindow win = null;
         private WindowsManager events = null;
         InputManager im = null;
+        #endregion
 
-
-
-
+        #region Windows Parameters
         private Dictionary<EResolution, Resolution> resolutionContext = new Dictionary<EResolution, Resolution>();
+
         EResolution resolutionType = EResolution.R800x600;
         bool windowed = true;
-
         string name = "[DEV] Cereal Squad";
 
         View mainView;
-
+        #endregion
 
         public Renderer()
         {
@@ -71,8 +70,7 @@ namespace CerealSquad
         /// <returns>EResolution</returns>
         private EResolution findAppropriateResolution(uint width, uint height)
         {
-            foreach (KeyValuePair<EResolution, Resolution> entry in resolutionContext)
-            {
+            foreach (KeyValuePair<EResolution, Resolution> entry in resolutionContext) {
                 if (width <= entry.Value.width && height <= entry.Value.height) {
                     return entry.Key;
                 }
@@ -102,14 +100,11 @@ namespace CerealSquad
         /// <summary>
         /// Initialisation
         /// </summary>
-        /// <returns></returns>
-        public bool initialization()
+        public void initialization()
         {
             win = new RenderWindow(new VideoMode(getWidth(), getHeight()), name, (windowed ? Styles.Close : Styles.Fullscreen));
             im = new InputManager(win);
             events = new WindowsManager(win);
-
-            return true;
         }
 
         /// <summary>
@@ -163,7 +158,7 @@ namespace CerealSquad
         /// <summary>
         /// Change the current resolution of renderer or option windowed. Close the previous windows and reload it.
         /// </summary>
-        /// <param name="new_resolution"></param>
+        /// <param name="new_resolution">EResolution</param>
         public void ChangeConfigWindows(EResolution new_resolution, bool windowed)
         {
             resolutionType = new_resolution;

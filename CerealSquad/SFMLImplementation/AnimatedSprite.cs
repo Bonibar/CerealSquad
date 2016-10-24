@@ -56,9 +56,9 @@ namespace CerealSquad.SFMLImplementation
                     m_currentTime = Time.FromMicroseconds(m_currentTime.AsMicroseconds() % m_frameTime.AsMicroseconds());
 
                     // get next Frame index
-                    if (m_currentFrame + 1 < m_animation.getSize())
+                    if (m_currentFrame + 1 < m_animation.getSize()) {
                         m_currentFrame++;
-                    else {
+                    } else {
                         // animation has ended
                         m_currentFrame = 0; // reset to start
                         if (!m_isLooped) {
@@ -174,6 +174,11 @@ namespace CerealSquad.SFMLImplementation
             return new FloatRect(0f, 0f, width, height);
         }
 
+        /// <summary>
+        /// Set the current frame of the animation
+        /// </summary>
+        /// <param name="newFrame">int</param>
+        /// <param name="resetTime">bool</param>
         public void setFrame(int newFrame, bool resetTime = true)
         {
             if (m_animation != null)
@@ -206,7 +211,6 @@ namespace CerealSquad.SFMLImplementation
             if (m_animation != null && m_texture != null)
             {
                 states.Texture = m_texture;
-                
                 target.Draw(m_vertices.ToArray(), 0, 4, PrimitiveType.Quads, states);
             }
         }
