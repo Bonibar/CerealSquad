@@ -51,6 +51,7 @@ namespace CerealSquad
         protected e_DamageType _damageType;
         protected s_position _pos;
         protected s_size _size;
+        private bool _die;
 
         private s_position Pos
         {
@@ -118,5 +119,18 @@ namespace CerealSquad
         }
 
         public abstract void update();
+
+        public void die()
+        {
+            _die = true;
+            //Launch dying animation
+        }
+
+        // destroy the object
+        // Should be call after the end of death animation
+        public void destroy()
+        {
+            _owner.removeChild(this);
+        }
     }
 }
