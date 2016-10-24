@@ -247,7 +247,7 @@ namespace CerealSquad
     /// </summary>
     public class InputManager
     {
-        private SFML.Window.Window Win;
+        private SFML.Window.Window _Win;
 
         /// <summary>
         /// Event fired when a Keyboard key has been pressed
@@ -286,16 +286,16 @@ namespace CerealSquad
         /// <param name="win">Window that will be listened for input events</param>
         public InputManager(SFML.Window.Window win)
         {
-            Win = win;
-            Win.KeyPressed += SFML_KeyboardKeyPressed;
-            Win.KeyReleased += SFML_KeyboardKeyReleased;
+            _Win = win;
+            _Win.KeyPressed += SFML_KeyboardKeyPressed;
+            _Win.KeyReleased += SFML_KeyboardKeyReleased;
 
-            Win.JoystickButtonPressed += SFML_JoystickButtonPressed;
-            Win.JoystickButtonReleased += SFML_JoystickButtonReleased;
-            Win.JoystickMoved += SFML_JoystickMoved;
+            _Win.JoystickButtonPressed += SFML_JoystickButtonPressed;
+            _Win.JoystickButtonReleased += SFML_JoystickButtonReleased;
+            _Win.JoystickMoved += SFML_JoystickMoved;
 
-            Win.JoystickConnected += SFML_JoystickConnected;
-            Win.JoystickDisconnected += SFML_JoystickDisconnected;
+            _Win.JoystickConnected += SFML_JoystickConnected;
+            _Win.JoystickDisconnected += SFML_JoystickDisconnected;
         }
 
         private void SFML_JoystickConnected(object sender, JoystickConnectEventArgs e)

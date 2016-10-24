@@ -38,15 +38,7 @@ namespace CerealSquad
             win = new RenderWindow(new VideoMode(width, height), name);
             events = new WindowsEventHandler(win);
 
-            InputManager manager = new InputManager(win);
-            manager.KeyboardKeyPressed += Manager_KeyPressed;
-
             return true;
-        }
-
-        private void Manager_KeyPressed(object source, Keyboard.KeyEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("KEYPRESSED - " + e.KeyCode.ToString());
         }
 
         public void loop()
@@ -63,7 +55,7 @@ namespace CerealSquad
 
         public static void CallToChildThread()
         {
-            Console.WriteLine("Child thread starts");
+            System.Diagnostics.Debug.WriteLine("Child thread starts");
         }
     }
 }
