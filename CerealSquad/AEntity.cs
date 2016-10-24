@@ -25,8 +25,8 @@ namespace CerealSquad
         {
             public int _x;
             public int _y;
-            public int _trueX;
-            public int _trueY;
+            public double _trueX;
+            public double _trueY;
             public int _layer;
 
             s_position(int x = -1, int y = -1, int layer = -1)
@@ -35,6 +35,7 @@ namespace CerealSquad
                 _trueX = x;
                 _y = y;
                 _trueY = y;
+                _y = y;
                 _layer = layer;
             }
 
@@ -44,6 +45,8 @@ namespace CerealSquad
                 pos._trueY += other._trueY;
                 pos._x = (int)pos._trueX;
                 pos._y = (int)pos._trueY;
+                pos._x += other._x;
+                pos._y += other._y;
                 pos._layer += other._layer;
 
                 return (pos);
@@ -72,7 +75,7 @@ namespace CerealSquad
                 _pos = value;
             }
         }
-
+        
         public double Speed
         {
             get
@@ -85,7 +88,6 @@ namespace CerealSquad
                 _speed = value;
             }
         }
-
         public AEntity(IEntity owner, s_size size = new s_size())
         {
             _owner = owner;

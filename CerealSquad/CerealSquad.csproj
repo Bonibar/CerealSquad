@@ -78,6 +78,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AEnemy.cs" />
+    <Compile Include="ATrap.cs" />
+    <Compile Include="IEntity.cs" />
+    <Compile Include="Jack.cs" />
+    <Compile Include="Mike.cs" />
+    <Compile Include="Orangina.cs" />
+    <Compile Include="Tchong.cs" />
+    <Compile Include="WorldEntity.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="AEntity.cs" />
     <Compile Include="APlayer.cs" />
