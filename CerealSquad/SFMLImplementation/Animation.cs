@@ -35,7 +35,7 @@ namespace CerealSquad.SFMLImplementation
             return m_frames[n];
         }
 
-        private List<IntRect> m_frames;
+        private List<IntRect> m_frames = new List<IntRect>();
         private Texture m_texture = null;
     }
 }

@@ -13,7 +13,9 @@ namespace CerealSquad
     public class Renderer
     {
         private RenderWindow win = null;
-        private WindowsEventHandler events = null;
+        private WindowsManager events = null;
+
+        public SFMLImplementation.EntityResources entityResource;
 
         uint width = 800;
         uint height = 600;
@@ -36,26 +38,47 @@ namespace CerealSquad
         public bool initialization()
         {
             win = new RenderWindow(new VideoMode(width, height), name);
-            events = new WindowsEventHandler(win);
+            events = new WindowsManager(win);
+
+            SFMLImplementation.TextureFactory.Instance.load("CharacterTest", "Assets/test.png");
 
             return true;
         }
 
         public void loop()
         {
+            
+            entityResource = new SFMLImplementation.EntityResources("CharacterTest");
+            entityResource.Position = new SFML.System.Vector2f(20, 20);
+            entityResource.Rotation = 45;
+            entityResource.playAnimation(SFMLImplementation.EntityResources.EState.WALKING_RIGHT);
+
+            SFML.System.Clock frameClock = new SFML.System.Clock();
+
+            InputManager im = new InputManager(win);
+            im.KeyboardKeyPressed += Im_KeyboardKeyPressed;
+
             while (win.IsOpen)
             {
                 win.DispatchEvents();
-                win.Clear(Color.Magenta);
+
+                SFML.System.Time frameTime = frameClock.Restart();
+                entityResource.update(frameTime);
+
+
+
+                win.Clear(Color.Blue);
+                win.Draw(entityResource);
                 win.Display();
             }
         }
 
-
-
-        public static void CallToChildThread()
+        private void Im_KeyboardKeyPressed(object source, Keyboard.KeyEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("Child thread starts");
+            if (e.KeyCode.Equals(Keyboard.Key.B))
+            {
+                entityResource.playAnimation(SFMLImplementation.EntityResources.EState.WALKING_LEFT);
+            }
         }
     }
 }

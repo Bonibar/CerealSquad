@@ -9,7 +9,7 @@ using SFML.System;
 
 namespace CerealSquad.SFMLImplementation
 {
-    public class AnimatedSprite : Transformable, Drawable
+    public class AnimatedSprite : Drawable
     {
         private Animation m_animation;
 
@@ -21,7 +21,7 @@ namespace CerealSquad.SFMLImplementation
         private Time m_currentTime;
         private int m_currentFrame;
         private Texture m_texture;
-        private Vertex[] m_vertices;
+        private List<Vertex> m_vertices = new List<Vertex>();
 
 
         public AnimatedSprite()
@@ -30,6 +30,11 @@ namespace CerealSquad.SFMLImplementation
             m_isLooped = true;
             m_isPaused = false;
             m_animation = null;
+
+            m_vertices.Add(new Vertex());
+            m_vertices.Add(new Vertex());
+            m_vertices.Add(new Vertex());
+            m_vertices.Add(new Vertex());
         }
 
         /// <summary>
@@ -71,7 +76,7 @@ namespace CerealSquad.SFMLImplementation
         /// Change the current animation of the sprite (Reset to 0 the frame)
         /// </summary>
         /// <param name="animation">Animation</param>
-        void setAnimation(Animation animation)
+        public void setAnimation(Animation animation)
         {
             m_animation = animation;
             m_texture = m_animation.getSpriteSheet();
@@ -83,7 +88,7 @@ namespace CerealSquad.SFMLImplementation
         /// Set the frame of the animation
         /// </summary>
         /// <param name="time">Time</param>
-        void setFrameTime(Time time)
+        public void setFrameTime(Time time)
         {
             m_frameTime = time;
         }
@@ -91,7 +96,7 @@ namespace CerealSquad.SFMLImplementation
         /// <summary>
         /// Play the animation
         /// </summary>
-        void Play()
+        public void Play()
         {
             m_isPaused = false;
         }
@@ -100,7 +105,7 @@ namespace CerealSquad.SFMLImplementation
         /// Play a new animation, same behabior as setAnimation(). If animation is the same, same as Play()
         /// </summary>
         /// <param name="animation">Animation</param>
-        void Play(Animation animation)
+        public void Play(Animation animation)
         {
             if (getAnimation() != animation)
                 setAnimation(animation);
@@ -110,7 +115,7 @@ namespace CerealSquad.SFMLImplementation
         /// <summary>
         /// Pause the animation
         /// </summary>
-        void Pause()
+        public void Pause()
         {
             m_isPaused = true;
         }
@@ -118,7 +123,7 @@ namespace CerealSquad.SFMLImplementation
         /// <summary>
         /// Stop the animation and reset to the frame 0
         /// </summary>
-        void Stop()
+        public void Stop()
         {
             m_isPaused = true;
             m_currentFrame = 0;
@@ -129,7 +134,7 @@ namespace CerealSquad.SFMLImplementation
         ///  Set if the animation is looped or played only one
         /// </summary>
         /// <param name="looped"></param>
-        void setLooped(bool looped)
+        public void setLooped(bool looped)
         {
             m_isLooped = looped;
         }
@@ -138,19 +143,19 @@ namespace CerealSquad.SFMLImplementation
         /// Set the color
         /// </summary>
         /// <param name="color"></param>
-        void setColor(Color color)
+        public void setColor(Color color)
         {
-            m_vertices[0].Color = color;
-            m_vertices[1].Color = color;
-            m_vertices[2].Color = color;
-            m_vertices[3].Color = color;
+            m_vertices[0] = new Vertex(m_vertices[0].Position, color);
+            m_vertices[1] = new Vertex(m_vertices[1].Position, color);
+            m_vertices[2] = new Vertex(m_vertices[2].Position, color);
+            m_vertices[3] = new Vertex(m_vertices[3].Position, color);
         }
 
         /// <summary>
         /// Get the current animation
         /// </summary>
         /// <returns>Animation</returns>
-        Animation getAnimation()
+        public Animation getAnimation()
         {
             return m_animation;
         }
@@ -159,7 +164,7 @@ namespace CerealSquad.SFMLImplementation
         /// Get the local bounds (The bounds of the current frame)
         /// </summary>
         /// <returns>FloatRect</returns>
-        FloatRect getLocalBounds()
+        public FloatRect getLocalBounds()
         {
             IntRect rect = m_animation.getFrame(m_currentFrame);
 
@@ -169,36 +174,22 @@ namespace CerealSquad.SFMLImplementation
             return new FloatRect(0f, 0f, width, height);
         }
 
-        /// <summary>
-        /// Get the global bounds (the bounds of default sprite)
-        /// </summary>
-        /// <returns>FloatRect</returns>
-        FloatRect getGlobalBounds()
-        {
-            return Transform.TransformRect(getLocalBounds());
-        }
-
-        void setFrame(int newFrame, bool resetTime = true)
+        public void setFrame(int newFrame, bool resetTime = true)
         {
             if (m_animation != null)
             {
                 //calculate new vertex positions and texture coordiantes
                 IntRect rect = m_animation.getFrame(newFrame);
 
-                m_vertices[0].Position = new Vector2f(0f, 0f);
-                m_vertices[1].Position = new Vector2f(0f, (float)(rect.Height));
-                m_vertices[2].Position = new Vector2f((float)(rect.Width), (float)(rect.Height));
-                m_vertices[3].Position = new Vector2f((float)(rect.Width), 0f);
-
                 float left = (float)(rect.Left) + 0.0001f;
                 float right = left + (float)(rect.Width);
                 float top = (float)(rect.Top);
                 float bottom = top + (float)(rect.Height);
 
-                m_vertices[0].TexCoords = new Vector2f(left, top);
-                m_vertices[1].TexCoords = new Vector2f(left, bottom);
-                m_vertices[2].TexCoords = new Vector2f(right, bottom);
-                m_vertices[3].TexCoords = new Vector2f(right, top);
+                m_vertices[0] = new Vertex(new Vector2f(0f, 0f), new Vector2f(left, top));
+                m_vertices[1] = new Vertex(new Vector2f(0f, (float)(rect.Height)), new Vector2f(left, bottom));
+                m_vertices[2] = new Vertex(new Vector2f((float)(rect.Width), (float)(rect.Height)), new Vector2f(right, bottom));
+                m_vertices[3] = new Vertex(new Vector2f((float)(rect.Width), 0f), new Vector2f(right, top));
             }
 
             if (resetTime)
@@ -214,9 +205,9 @@ namespace CerealSquad.SFMLImplementation
         {
             if (m_animation != null && m_texture != null)
             {
-                states.Transform *= Transform;
                 states.Texture = m_texture;
-                target.Draw(m_vertices, 0, 4, PrimitiveType.Quads, states);
+                
+                target.Draw(m_vertices.ToArray(), 0, 4, PrimitiveType.Quads, states);
             }
         }
     }

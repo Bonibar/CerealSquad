@@ -8,11 +8,13 @@ using SFML.Graphics;
 
 namespace CerealSquad
 {
-    class WindowsEventHandler
+    class WindowsManager
     {
         private RenderWindow renderWindow;
 
-        public WindowsEventHandler(RenderWindow _renderWindow)
+
+
+        public WindowsManager(RenderWindow _renderWindow)
         {
             renderWindow = _renderWindow;
 

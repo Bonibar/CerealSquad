@@ -26,7 +26,7 @@ namespace CerealSquad.SFMLImplementation
             internal static readonly TextureFactory instance = new TextureFactory();
         }
 
-        private Dictionary<String, Texture> content;
+        private Dictionary<String, Texture> content = new Dictionary<String, Texture>();
 
         public bool exists(String name)
         {
