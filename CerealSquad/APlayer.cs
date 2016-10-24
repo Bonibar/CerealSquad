@@ -26,10 +26,12 @@ namespace CerealSquad
             _type = e_EntityType.Player;
             input.KeyboardKeyPressed += thinkMove;
             input.KeyboardKeyReleased += thinkAction;
+            _inputPress = new Dictionary<Key, functionMove>();
             _inputPress[Keyboard.Key.Z] = move_up;
             _inputPress[Keyboard.Key.Q] = move_left;
             _inputPress[Keyboard.Key.S] = move_down;
             _inputPress[Keyboard.Key.D] = move_right;
+            _inputRelease = new Dictionary<Key, functionMove>();
             _inputRelease[Keyboard.Key.Z] = move_up_release;
             _inputRelease[Keyboard.Key.Q] = move_left_release;
             _inputRelease[Keyboard.Key.S] = move_down_release;
@@ -82,14 +84,12 @@ namespace CerealSquad
 
         private void thinkMove(object source, KeyEventArgs e)
         {
-            InputManager input = (InputManager)source;
             if (_inputPress.ContainsKey(e.KeyCode))
                 _inputPress[e.KeyCode]();
         }
 
         private void thinkAction(object source, KeyEventArgs e)
         {
-            InputManager input = (InputManager)source;
             if (_inputRelease.ContainsKey(e.KeyCode))
                 _inputRelease[e.KeyCode]();
         }
