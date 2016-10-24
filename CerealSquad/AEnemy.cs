@@ -14,14 +14,6 @@ namespace CerealSquad
             _type = e_EntityType.Ennemy;
         }
 
-        // TODO function move
-        // Animation must be implemented by the child
-        public void move(/* Map map*/)
-        {
-            // Check the validity of the movement with the map
-            throw new NotImplementedException();
-        }
-
         public virtual void attack()
         {
             throw new NotImplementedException();

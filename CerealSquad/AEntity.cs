@@ -9,6 +9,15 @@ namespace CerealSquad
 
     abstract class AEntity : IEntity
     {
+        protected enum EMovement
+        {
+            Up,
+            Down,
+            Right,
+            Left,
+            None
+        }
+
         public struct s_size
         {
             public int _width;
@@ -29,13 +38,12 @@ namespace CerealSquad
             public double _trueY;
             public int _layer;
 
-            s_position(int x = -1, int y = -1, int layer = -1)
+            public s_position(double x = -1, double y = -1, int layer = -1)
             {
-                _x = x;
+                _x = (int)x;
                 _trueX = x;
-                _y = y;
+                _y = (int)y;
                 _trueY = y;
-                _y = y;
                 _layer = layer;
             }
 
@@ -62,6 +70,7 @@ namespace CerealSquad
         protected s_size _size;
         protected double _speed;
         protected bool _die;
+        protected EMovement _move;
 
         public s_position Pos
         {
@@ -97,6 +106,7 @@ namespace CerealSquad
             _size = size;
             _speed = 0;
             _die = false;
+            _move = EMovement.None;
         }
 
         public void addChild(IEntity child)
@@ -136,10 +146,23 @@ namespace CerealSquad
 
         // Use this function for moving the entity whitout his action(ex: knockback)
         // Move the entity relative to his actual position
-        public void move(s_position pos/* , Map map*/)
+        public void move(/* , Map map*/)
         {
-            // TODO add the check of the map
-            _pos += pos;
+            switch (_move)
+            {
+                case EMovement.Up:
+                    _pos += new s_position(0, _speed, 0);
+                    break;
+                case EMovement.Down:
+                    _pos += new s_position(0, -_speed, 0);
+                    break;
+                case EMovement.Right:
+                    _pos += new s_position(_speed, 0, 0);
+                    break;
+                case EMovement.Left:
+                    _pos += new s_position(-_speed, 0, 0);
+                    break;
+            }
         }
 
         public abstract void update();

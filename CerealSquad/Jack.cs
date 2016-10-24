@@ -8,7 +8,7 @@ namespace CerealSquad
 {
     class Jack : APlayer
     {
-        public Jack(IEntity owner, s_position position) : base(owner, position)
+        public Jack(IEntity owner, s_position position, InputManager input) : base(owner, position, input)
         {
         }
 

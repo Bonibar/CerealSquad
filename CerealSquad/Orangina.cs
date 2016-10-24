@@ -8,7 +8,7 @@ namespace CerealSquad
 {
     class Orangina : APlayer
     {
-        public Orangina(IEntity owner, s_position position) : base(owner, position)
+        public Orangina(IEntity owner, s_position position, InputManager input) : base(owner, position, input)
         {
         }
 

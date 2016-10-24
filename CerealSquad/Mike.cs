@@ -8,7 +8,7 @@ namespace CerealSquad
 {
     class Mike : APlayer
     {
-        public Mike(IEntity owner, s_position position) : base(owner, position)
+        public Mike(IEntity owner, s_position position, InputManager input) : base(owner, position, input)
         {
         }
 
