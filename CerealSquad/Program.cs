@@ -20,7 +20,7 @@ namespace CerealSquad
             */
             RenderWindow win = new RenderWindow(new VideoMode(800, 800), "Cereal Menu");
             InputManager.InputManager manager = new InputManager.InputManager(win);
-            AMenu mainMenu = new AMenu(win, manager);
+            Menus.AMenu mainMenu = new Menus.AMenu(win, ref manager);
 
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
