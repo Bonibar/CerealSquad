@@ -9,18 +9,20 @@ namespace CerealSquad
     public class AMenu
     {
         protected SFML.Graphics.RenderWindow _Win;
-        protected InputManager _InputManager;
+        protected InputManager.InputManager _InputManager;
 
-        public AMenu(SFML.Graphics.RenderWindow win, InputManager inputManager)
+        public AMenu(SFML.Graphics.RenderWindow win, InputManager.InputManager inputManager)
         {
             _InputManager = inputManager;
             _Win = win;
+            back = new SFML.Graphics.Text("Back", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
         }
 
         private bool _displayed = false;
         public bool Displayed { get { return _displayed; } }
+        private Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
 
-        SFML.Graphics.Text back = new SFML.Graphics.Text("Back", new SFML.Graphics.Font("Fonts/xirod.regular.ttf"));
+        SFML.Graphics.Text back;
 
         public void Show()
         {

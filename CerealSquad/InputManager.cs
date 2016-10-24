@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Window;
 
-namespace CerealSquad
+namespace CerealSquad.InputManager
 {
     namespace Keyboard
     {
