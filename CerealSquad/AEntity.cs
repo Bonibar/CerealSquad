@@ -58,7 +58,7 @@ namespace CerealSquad
         protected s_position _pos;
         protected s_size _size;
         protected double _speed;
-        private bool _die;
+        protected bool _die;
 
         public s_position Pos
         {
@@ -94,6 +94,7 @@ namespace CerealSquad
             _damageType = e_DamageType.NONE;
             _size = size;
             _speed = 0;
+            _die = false;
         }
 
         public void addChild(IEntity child)
