@@ -121,9 +121,21 @@ namespace CerealSquad
         public class KeyEventArgs : EventArgs
         {
             public Key KeyCode { get; }
+            /// <summary>
+            /// Is the Shift key pressed?
+            /// </summary>
             public bool Shift { get; }
+            /// <summary>
+            /// Is the Ctrl key pressed?
+            /// </summary>
             public bool Ctrl { get; }
+            /// <summary>
+            /// Is the Alt key pressed?
+            /// </summary>
             public bool Alt { get; }
+            /// <summary>
+            /// Is the System key pressed?
+            /// </summary>
             public bool System { get; }
 
             public KeyEventArgs(SFML.Window.KeyEventArgs keyboardEvent)
@@ -167,7 +179,13 @@ namespace CerealSquad
 
         public class ButtonEventArgs
         {
+            /// <summary>
+            /// Index of the joystick
+            /// </summary>
             uint JoystickId { get; }
+            /// <summary>
+            /// Index of the button
+            /// </summary>
             uint Button { get; }
 
             public ButtonEventArgs(SFML.Window.JoystickButtonEventArgs e)
@@ -183,7 +201,13 @@ namespace CerealSquad
         }
         public class MoveEventArgs
         {
+            /// <summary>
+            /// Index of the joystick
+            /// </summary>
             uint JoystickId { get; }
+            /// <summary>
+            /// Current position of the axis, in range [-100 .. 100]
+            /// </summary>
             float Position { get; }
             Axis Axis { get; }
 
@@ -202,6 +226,9 @@ namespace CerealSquad
         }
         public class ConnectionEventArgs
         {
+            /// <summary>
+            /// Index of the joystick
+            /// </summary>
             uint JoystickId { get; }
 
             public ConnectionEventArgs(SFML.Window.JoystickConnectEventArgs e)
@@ -215,20 +242,48 @@ namespace CerealSquad
         }
     }
 
+    /// <summary>
+    /// Class managing all input events (Keyboard, Joystick, etc)
+    /// </summary>
     public class InputManager
     {
         private SFML.Window.Window Win;
 
+        /// <summary>
+        /// Event fired when a Keyboard key has been pressed
+        /// </summary>
         public event Keyboard.KeyEventHandler KeyboardKeyPressed;
+        /// <summary>
+        /// Event fired when a Keyboard key has been released
+        /// </summary>
         public event Keyboard.KeyEventHandler KeyboardKeyReleased;
 
+        /// <summary>
+        /// Event fired when a Controller button has been pressed
+        /// </summary>
         public event Joystick.ButtonEventHandler JoystickButtonPressed;
+        /// <summary>
+        /// Event fired when a Controller button has been released
+        /// </summary>
         public event Joystick.ButtonEventHandler JoystickButtonReleased;
+        /// <summary>
+        /// Event fired when a Controller movement has been detected
+        /// </summary>
         public event Joystick.MoveEventHandler JoystickMoved;
 
+        /// <summary>
+        /// Event fired when a Controller is connected
+        /// </summary>
         public event Joystick.ConnectEventHandler JoystickConnected;
+        /// <summary>
+        /// Event fired when a Controller is disconnected
+        /// </summary>
         public event Joystick.ConnectEventHandler JoystickDisconnected;
 
+        /// <summary>
+        /// Manage all input events based on a SFML Window
+        /// </summary>
+        /// <param name="win">Window that will be listened for input events</param>
         public InputManager(SFML.Window.Window win)
         {
             Win = win;
