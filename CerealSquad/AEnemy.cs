@@ -19,16 +19,13 @@ namespace CerealSquad
         public void move(/* Map map*/)
         {
             // Check the validity of the movement with the map
+            throw new NotImplementedException();
         }
 
-        // TODO function move
-        // Animation must be implemented by the child
-        public void die()
+        public virtual void attack()
         {
-            _owner.removeChild(this);
+            throw new NotImplementedException();
         }
-
-        public abstract void attack();
 
         public abstract void think();
     }
