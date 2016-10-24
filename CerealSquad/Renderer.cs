@@ -55,7 +55,7 @@ namespace CerealSquad
 
         public static void CallToChildThread()
         {
-            Console.WriteLine("Child thread starts");
+            System.Diagnostics.Debug.WriteLine("Child thread starts");
         }
     }
 }
