@@ -92,7 +92,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer.cs" />
-    <Compile Include="WindowsEventHandler.cs" />
+    <Compile Include="SFMLImplementation\AnimatedSprite.cs" />
+    <Compile Include="SFMLImplementation\Animation.cs" />
+    <Compile Include="SFMLImplementation\EntityResources.cs" />
+    <Compile Include="SFMLImplementation\TextureFactory.cs" />
+    <Compile Include="WindowsManager.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -143,6 +147,9 @@
     <Content Include="OpenTK.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
