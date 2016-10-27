@@ -87,7 +87,6 @@
     <Compile Include="SFMLImplementation\EntityResources.cs" />
     <Compile Include="SFMLImplementation\TextureFactory.cs" />
     <Compile Include="FrameClock.cs" />
-    <Compile Include="WindowsManager.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
