@@ -13,7 +13,7 @@ namespace CerealSquad.SFMLImplementation
      *   USAGE : 
        
         SFML.System.Clock frameClock = new SFML.System.Clock();
-        entityResource = new EntityResources("CharacterTest", 32);
+        entityResource = new EntityResources("CharacterTest", 32, 32);
         entityResource.Position = new Vector2f(20, 20);
         entityResource.Rotation = 45
         entityResource.playAnimation(EntityResources.EState.WALKING_RIGHT);
@@ -57,6 +57,7 @@ namespace CerealSquad.SFMLImplementation
         public EntityResources(String textureName, int width, int height)
         {
             Texture texture = TextureFactory.Instance.getTexture(textureName);
+            Position = new Vector2f(20, 20);
 
             Animation walkingAnimationDown = new Animation();
             walkingAnimationDown.setSpriteSheet(texture);

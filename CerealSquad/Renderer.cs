@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using SFML;
 using SFML.Window;
 using SFML.Graphics;
 using SFML.System;
@@ -25,7 +24,7 @@ namespace CerealSquad
             public uint width { get; set; }
             public uint height { get; set; }
 
-            public Resolution(uint _width = 1920, uint _height = 1080)
+            public Resolution(uint _width = 800, uint _height = 600)
             {
                 width = _width;
                 height = _height;
@@ -33,23 +32,36 @@ namespace CerealSquad
         };
 
         #region Ref
-        private RenderWindow win = null;
-        private WindowsManager events = null;
-        InputManager im = null;
+        public RenderWindow Win { get; private set; }
         #endregion
 
         #region Windows Parameters
         private Dictionary<EResolution, Resolution> resolutionContext = new Dictionary<EResolution, Resolution>();
-
         EResolution resolutionType = EResolution.R800x600;
         bool windowed = true;
-        string name = "[DEV] Cereal Squad";
+        string title = "Cereal Squad";
+        #endregion
 
-        View mainView;
+        #region Event
+        public delegate void WindowsEventHandler(object source, WindowsEventArgs e);
+
+        public class WindowsEventArgs : EventArgs
+        {
+            public RenderWindow Windows { get; }
+
+            public WindowsEventArgs(RenderWindow windows)
+            {
+                Windows = windows;
+            }
+        }
+
+        public event WindowsEventHandler WindowsClosed;
+        public event WindowsEventHandler WindowsCreated;
         #endregion
 
         public Renderer()
         {
+            Win = null;
             // Set all predefine resolutions. Order Bigger to smaller
             resolutionContext[EResolution.R2880x1800] = new Resolution(2880, 1800);
             resolutionContext[EResolution.R1920x1080] = new Resolution(1920, 1080);
@@ -57,9 +69,7 @@ namespace CerealSquad
 #if !DEBUG
             resolutionType = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
             windowed = false;
-            name = "[PROD] Cereal Squad";
 #endif
-            mainView = new View(new FloatRect(0f, 0f, getWidth(), getHeight()));
         }
 
         /// <summary>
@@ -102,9 +112,8 @@ namespace CerealSquad
         /// </summary>
         public void initialization()
         {
-            win = new RenderWindow(new VideoMode(getWidth(), getHeight()), name, (windowed ? Styles.Close : Styles.Fullscreen));
-            im = new InputManager(win);
-            events = new WindowsManager(win);
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), title, (windowed ? Styles.Close : Styles.Fullscreen));
+            Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
         }
 
         /// <summary>
@@ -127,7 +136,7 @@ namespace CerealSquad
         /// <returns>boolean</returns>
         public bool isOpen()
         {
-            return win.IsOpen;
+            return Win.IsOpen;
         }
 
         /// <summary>
@@ -135,7 +144,7 @@ namespace CerealSquad
         /// </summary>
         public void DispatchEvents()
         {
-            win.DispatchEvents();
+            Win.DispatchEvents();
         }
 
         /// <summary>
@@ -144,7 +153,7 @@ namespace CerealSquad
         /// <param name="color">Color</param>
         public void Clear(Color color)
         {
-            win.Clear(color);
+            Win.Clear(color);
         }
 
         /// <summary>
@@ -152,21 +161,67 @@ namespace CerealSquad
         /// </summary>
         public void Display()
         {
-            win.Display();
+            Win.Display();
         }
 
         /// <summary>
-        /// Change the current resolution of renderer or option windowed. Close the previous windows and reload it.
+        /// Change the current resolution of renderer.
         /// </summary>
         /// <param name="new_resolution">EResolution</param>
-        public void ChangeConfigWindows(EResolution new_resolution, bool windowed)
+        public void ChangeResolution(EResolution new_resolution)
         {
             resolutionType = new_resolution;
-            win.Close();
-            win = new RenderWindow(new VideoMode(getWidth(), getHeight()), name, (windowed ? Styles.Close : Styles.Fullscreen));
-            mainView = new View(new FloatRect(0f, 0f, getWidth(), getHeight()));
-            im = new InputManager(win);
-            events = new WindowsManager(win);
+            Win.Size = new Vector2u(getWidth(), getHeight());
+            Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
+        }
+
+        /// <summary>
+        /// Change the option windowed of the windows. (Delete and recrete the window)
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void SetFullScreenEnabled(bool enabled)
+        {
+            windowed = enabled;
+            WindowsClosed?.Invoke(this, new WindowsEventArgs(Win));
+            Win.Close();
+            initialization();
+            WindowsCreated?.Invoke(this, new WindowsEventArgs(Win));
+        }
+
+        /// <summary>
+        /// Set the framerate (ms)
+        /// </summary>
+        /// <param name="limit"></param>
+        public void SetFrameRate(uint limit)
+        {
+            Win.SetFramerateLimit(limit);
+        }
+
+        /// <summary>
+        /// Set the synchronisation Vertical
+        /// </summary>
+        /// <param name="SyncVertical"></param>
+        public void SetSyncVertical(bool SyncVertical)
+        {
+            Win.SetVerticalSyncEnabled(SyncVertical);
+        }
+
+        /// <summary>
+        /// Set the mouse cursor visible or hidden
+        /// </summary>
+        /// <param name="visible">bool</param>
+        public void SetMouseCursorVisible(bool visible)
+        {
+            Win.SetMouseCursorVisible(visible);
+        }
+
+        /// <summary>
+        /// Set the key repeated enabled
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void SetKeyRepeatedEnabled(bool enabled)
+        {
+            Win.SetKeyRepeatEnabled(enabled);
         }
     }
 }
