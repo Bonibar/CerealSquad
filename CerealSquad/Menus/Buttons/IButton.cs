@@ -20,6 +20,9 @@ namespace CerealSquad.Menus.Buttons
 
     public interface IButton
     {
+        bool Selected { get; set; }
+
         SFML.Graphics.Drawable getDrawable();
+        void Trigger();
     }
 }
