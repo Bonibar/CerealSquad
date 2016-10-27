@@ -57,6 +57,11 @@ namespace CerealSquad.SFMLImplementation
         public EntityResources(String textureName, int width, int height)
         {
             Texture texture = TextureFactory.Instance.getTexture(textureName);
+            Position = new Vector2f(20, 20);
+
+            Animation walkingAnimationIdle = new Animation();
+            walkingAnimationIdle.setSpriteSheet(texture);
+            walkingAnimationIdle.addFrame(new IntRect(width, 0, width, height));
 
             Animation walkingAnimationDown = new Animation();
             walkingAnimationDown.setSpriteSheet(texture);
@@ -86,6 +91,7 @@ namespace CerealSquad.SFMLImplementation
             walkingAnimationUp.addFrame(new IntRect(width, height * 3, width, height));
             walkingAnimationUp.addFrame(new IntRect(0, height * 3, width, height));
 
+            _animations.Add(EState.IDLE, walkingAnimationIdle);
             _animations.Add(EState.WALKING_UP, walkingAnimationUp);
             _animations.Add(EState.WALKING_DOWN, walkingAnimationDown);
             _animations.Add(EState.WALKING_LEFT, walkingAnimationLeft);

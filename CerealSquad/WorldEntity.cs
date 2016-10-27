@@ -12,9 +12,9 @@ namespace CerealSquad
         {
         }
 
-        public override void update()
+        public override void update(SFML.System.Time deltaTime)
         {
-            _children.ToList<IEntity>().ForEach(i => i.update());
+            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime));
         }
     }
 }

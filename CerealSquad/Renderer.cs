@@ -105,6 +105,7 @@ namespace CerealSquad
             win = new RenderWindow(new VideoMode(getWidth(), getHeight()), name, (windowed ? Styles.Close : Styles.Fullscreen));
             im = new InputManager(win);
             events = new WindowsManager(win);
+            SFMLImplementation.TextureFactory.Instance.initTextures();
         }
 
         /// <summary>
@@ -112,11 +113,16 @@ namespace CerealSquad
         /// </summary>
         public void loop()
         {
+            IEntity first = new Orangina(null, new s_position(0, 0, 1), im);
+            SFML.System.Clock frameClock = new SFML.System.Clock();
+
             while (isOpen())
             {
                 DispatchEvents();
-
+                SFML.System.Time frameTime = frameClock.Restart();
+                first.update(frameTime);
                 Clear(Color.White);
+                win.Draw(first.ressourcesEntity);
                 Display();
             }
         }

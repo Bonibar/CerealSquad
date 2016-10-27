@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CerealSquad.SFMLImplementation;
 
 namespace CerealSquad
 {
@@ -18,50 +19,6 @@ namespace CerealSquad
             None
         }
 
-        public struct s_size
-        {
-            public int _width;
-            public int _length;
-
-            s_size(int width = 1, int length = 1)
-            {
-                _width = width;
-                _length = length;
-            }
-        }
-
-        public struct s_position
-        {
-            public int _x;
-            public int _y;
-            public double _trueX;
-            public double _trueY;
-            public int _layer;
-
-            public s_position(double x = -1, double y = -1, int layer = -1)
-            {
-                _x = (int)x;
-                _trueX = x;
-                _y = (int)y;
-                _trueY = y;
-                _layer = layer;
-            }
-
-            public static s_position operator +(s_position pos, s_position other)
-            {
-                pos._trueX += other._trueX;
-                pos._trueY += other._trueY;
-                pos._x = (int)pos._trueX;
-                pos._y = (int)pos._trueY;
-                pos._x += other._x;
-                pos._y += other._y;
-                pos._layer += other._layer;
-
-                return (pos);
-            }
-          
-        }
-
         protected IEntity _owner;
         protected ICollection<IEntity> _children;
         protected e_EntityType _type;
@@ -71,6 +28,7 @@ namespace CerealSquad
         protected double _speed;
         protected bool _die;
         protected EMovement _move;
+        protected EntityResources _ressources;
 
         public s_position Pos
         {
@@ -97,6 +55,33 @@ namespace CerealSquad
                 _speed = value;
             }
         }
+
+        public EntityResources ressourcesEntity
+        {
+            get
+            {
+                return _ressources;
+            }
+
+            set
+            {
+                _ressources = value;
+            }
+        }
+
+        public s_size Size
+        {
+            get
+            {
+                return _size;
+            }
+            set
+            {
+                _size = value;
+            }
+        }
+
+
         public AEntity(IEntity owner, s_size size = new s_size())
         {
             _owner = owner;
@@ -146,26 +131,39 @@ namespace CerealSquad
 
         // Use this function for moving the entity whitout his action(ex: knockback)
         // Move the entity relative to his actual position
-        public void move(/* , Map map*/)
+        public virtual void move(/* , Map map*/)
         {
+            var pos = _ressources.Position;
             switch (_move)
             {
                 case EMovement.Up:
                     _pos += new s_position(0, _speed, 0);
+                    _ressources.playAnimation(EntityResources.EState.WALKING_UP);
+                    pos.Y -= 0.1f;
                     break;
                 case EMovement.Down:
                     _pos += new s_position(0, -_speed, 0);
+                    _ressources.playAnimation(EntityResources.EState.WALKING_DOWN);
+                    pos.Y += 0.1f;
                     break;
                 case EMovement.Right:
                     _pos += new s_position(_speed, 0, 0);
+                    _ressources.playAnimation(EntityResources.EState.WALKING_RIGHT);
+                    pos.X += 0.1f;
                     break;
                 case EMovement.Left:
                     _pos += new s_position(-_speed, 0, 0);
+                    _ressources.playAnimation(EntityResources.EState.WALKING_LEFT);
+                    pos.X -= 0.1f;
+                    break;
+                case EMovement.None:
+                    _ressources.playAnimation(EntityResources.EState.IDLE);
                     break;
             }
+            _ressources.Position = pos;
         }
 
-        public abstract void update();
+        public abstract void update(SFML.System.Time deltaTime);
 
         public void die()
         {

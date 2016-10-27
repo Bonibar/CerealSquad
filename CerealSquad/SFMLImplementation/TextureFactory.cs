@@ -34,7 +34,6 @@ namespace CerealSquad.SFMLImplementation
             _Textures = new Dictionary<String, Texture>();
             if (_Textures == null)
                 throw new OutOfMemoryException("Failed to load textures");
-             
             // use load(name, filename) ...
         }
 

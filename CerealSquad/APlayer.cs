@@ -13,13 +13,17 @@ namespace CerealSquad
 
         protected Dictionary<Key, functionMove> _inputPress;
         protected Dictionary<Key, functionMove> _inputRelease;
+        
+        protected struct s_input
+        {
+            public bool _isRightPressed;
+            public bool _isLeftPressed;
+            public bool _isUpPressed;
+            public bool _isDownPressed;
+        }
 
+        protected s_input _playerInput;
 
-        // TODO Add save of the input
-
-        // TODO add the sprite dictionnary
-
-        // TODO Add InputManager
         public APlayer(IEntity owner, s_position position, InputManager input) : base(owner)
         {
             _pos = position;
@@ -36,50 +40,50 @@ namespace CerealSquad
             _inputRelease[Keyboard.Key.Q] = move_left_release;
             _inputRelease[Keyboard.Key.S] = move_down_release;
             _inputRelease[Keyboard.Key.D] = move_right_release;
+            _playerInput._isRightPressed = false;
+            _playerInput._isLeftPressed = false;
+            _playerInput._isUpPressed = false;
+            _playerInput._isDownPressed = false;
         }
 
         public void move_up_release()
         {
-            if (_move == EMovement.Up)
-                _move = EMovement.None;
+            _playerInput._isUpPressed = false;
         }
 
         public void move_down_release()
         {
-            if (_move == EMovement.Down)
-                _move = EMovement.None;
+            _playerInput._isDownPressed = false;
         }
 
         public void move_right_release()
         {
-            if (_move == EMovement.Right)
-                _move = EMovement.None;
+            _playerInput._isRightPressed = false;
         }
 
         public void move_left_release()
         {
-            if (_move == EMovement.Left)
-                _move = EMovement.None;
+            _playerInput._isLeftPressed = false;
         }
 
         public void move_up()
         {
-            _move = EMovement.Up;
+            _playerInput._isUpPressed = true;
         }
 
         public void move_down()
         {
-            _move = EMovement.Down;
+            _playerInput._isDownPressed = true;
         }
 
         public void move_left()
         {
-            _move = EMovement.Left;
+            _playerInput._isLeftPressed = true;
         }
 
         public void move_right()
         {
-            _move = EMovement.Right;
+            _playerInput._isRightPressed = true;
         }
 
         private void thinkMove(object source, KeyEventArgs e)
@@ -94,9 +98,25 @@ namespace CerealSquad
                 _inputRelease[e.KeyCode]();
         }
 
-        public override void update()
+        public override void move()
+        {
+            if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
+                _move = EMovement.Right;
+            else if (!_playerInput._isRightPressed && _playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
+                _move = EMovement.Left;
+            else if (!_playerInput._isRightPressed && !_playerInput._isLeftPressed && _playerInput._isDownPressed && !_playerInput._isUpPressed)
+                _move = EMovement.Down;
+            else if (!_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && _playerInput._isUpPressed)
+                _move = EMovement.Up;
+            else
+                _move = EMovement.None;
+            base.move();
+        }
+
+        public override void update(SFML.System.Time deltaTime)
         {
             move();
+            _ressources.update(deltaTime);
         }
 
         public abstract void AttaqueSpe();

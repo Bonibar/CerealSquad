@@ -16,10 +16,5 @@ namespace CerealSquad
         {
             throw new NotImplementedException();
         }
-
-        public override void update()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
