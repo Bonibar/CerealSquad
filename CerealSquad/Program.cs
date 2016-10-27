@@ -20,7 +20,9 @@ namespace CerealSquad
             */
             RenderWindow win = new RenderWindow(new VideoMode(800, 800), "Cereal Menu");
             InputManager.InputManager manager = new InputManager.InputManager(win);
-            Menus.AMenu mainMenu = new Menus.AMenu(win, ref manager);
+
+            Menus.Menu mainMenu = Menus.Prefabs.MainMenu(win, manager);
+            Menus.MenuManager.Instance.AddMenu(mainMenu);
 
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
@@ -30,11 +32,15 @@ namespace CerealSquad
             {
                 win.DispatchEvents();
                 win.Clear(Color.Magenta);
-                if (mainMenu.Displayed)
-                    mainMenu.update();
+                if (Menus.MenuManager.Instance.isDisplayed())
+                {
+                    // Menus prior on game
+                    Menus.MenuManager.Instance.CurrentMenu.Draw();
+                }
                 else
                 {
                     // GameLogic
+                    // game.update();
                 }
                 win.Display();
             }

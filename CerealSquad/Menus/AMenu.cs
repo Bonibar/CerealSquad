@@ -30,35 +30,20 @@ namespace CerealSquad.Menus
         public Buttons.IButton Button { get; private set; }
     }
 
-    public class AMenu
+    public class Menu
     {
         protected SFML.Graphics.RenderWindow _Win;
         protected InputManager.InputManager _InputManager;
-
-        protected Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
 
         private bool _displayed = false;
         public bool Displayed { get { return _displayed; } }
 
         protected List<MenuItem> _menuList = new List<MenuItem>();
 
-        public AMenu(SFML.Graphics.RenderWindow win, ref InputManager.InputManager inputManager)
+        public Menu(SFML.Graphics.RenderWindow win, InputManager.InputManager inputManager)
         {
             _InputManager = inputManager;
             _Win = win;
-
-            MenuItem item = new MenuItem(new Buttons.TextButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), -70));
-            _menuList.Add(item);
-            item = new MenuItem(new Buttons.TextButton("Exit", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 0));
-            _menuList.Add(item);
-            item = new MenuItem(new Buttons.TextButton("Désactivé", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 70));
-            _menuList.Add(item);
-            item = new MenuItem(new Buttons.TextButton("Options", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 140));
-            _menuList.Add(item);
-
-            MenuItem firstValid = _menuList.First<MenuItem>(x => x.Type != MenuItem.ItemType.Disabled && x.Type != MenuItem.ItemType.KeyBinded);
-            if (firstValid != null)
-                firstValid.Button.Selected = true;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
         }
@@ -67,12 +52,12 @@ namespace CerealSquad.Menus
         {
             List<MenuItem> validItems = _menuList.FindAll(x => x.Type == MenuItem.ItemType.Normal);
 
-            MenuItem _current = validItems.First<MenuItem>(x => x.Button.Selected == true);
+            MenuItem _current = validItems.FirstOrDefault<MenuItem>(x => x.Button.Selected == true);
             if (_current == null && validItems.Count > 0)
             {
                 validItems[0].Button.Selected = true;
             }
-            else
+            else if (validItems.Count > 0)
             {
                 int index = validItems.IndexOf(_current) + 1;
                 MenuItem _next = validItems.ElementAt(index > validItems.Count - 1 ? 0 : index);
@@ -86,12 +71,12 @@ namespace CerealSquad.Menus
         {
             List<MenuItem> validItems = _menuList.FindAll(x => x.Type == MenuItem.ItemType.Normal);
 
-            MenuItem _current = validItems.First<MenuItem>(x => x.Button.Selected == true);
+            MenuItem _current = validItems.FirstOrDefault<MenuItem>(x => x.Button.Selected == true);
             if (_current == null && validItems.Count > 0)
             {
                 validItems[0].Button.Selected = true;
             }
-            else
+            else if (validItems.Count > 0)
             {
                 int index = validItems.IndexOf(_current) - 1;
                 MenuItem _prev = validItems.ElementAt(index < 0 ? validItems.Count - 1 : index);
@@ -99,13 +84,6 @@ namespace CerealSquad.Menus
                 _current.Button.Selected = false;
                 _prev.Button.Selected = true;
             }
-        }
-
-        private void selectMenu()
-        {
-            MenuItem _current = _menuList.Find(x => x.Button.Selected == true);
-            if (_current != null)
-                _current.Button.Trigger();
         }
 
         /// <summary>
@@ -122,8 +100,12 @@ namespace CerealSquad.Menus
                     nextMenu();
                 else if (e.KeyCode.Equals(InputManager.Keyboard.Key.Up))
                     previousMenu();
-                else if (e.KeyCode.Equals(InputManager.Keyboard.Key.Return))
-                    selectMenu();
+                else
+                {
+                    MenuItem _current = _menuList.Find(x => x.Button.Selected == true);
+                    if (_current != null)
+                        _current.Button.Trigger(source, e);
+                }
             }
         }
 
@@ -151,7 +133,7 @@ namespace CerealSquad.Menus
                 Show();
         }
 
-        public void update()
+        public void Draw()
         {
             if (Displayed)
             {
@@ -164,6 +146,23 @@ namespace CerealSquad.Menus
         public void Exit()
         {
             MenuManager.Instance.RemoveMenu(this);
+        }
+
+        public void AddItem(MenuItem item)
+        {
+            _menuList.Add(item);
+        }
+
+        public void ClearItems()
+        {
+            _menuList.Clear();
+        }
+
+        public void Initialize()
+        {
+            MenuItem firstValid = _menuList.FirstOrDefault<MenuItem>(x => x.Type != MenuItem.ItemType.Disabled && x.Type != MenuItem.ItemType.KeyBinded);
+            if (firstValid != null)
+                firstValid.Button.Selected = true;
         }
     }
 }

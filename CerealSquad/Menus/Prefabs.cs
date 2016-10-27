@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CerealSquad.Menus
+{
+    public static class Prefabs
+    {
+        public static Menu MainMenu(SFML.Graphics.RenderWindow win, InputManager.InputManager manager)
+        {
+            Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
+            Menu mainMenu = new Menu(win, manager);
+
+            Buttons.IButton btn_continue = new Buttons.ExitButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 0, win);
+            MenuItem item_continue = new MenuItem(btn_continue);
+            Buttons.IButton btn_newgame = new Buttons.ExitButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 70, win);
+            MenuItem item_newgame = new MenuItem(btn_newgame);
+            Buttons.IButton btn_settings = new Buttons.ExitButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 140, win);
+            MenuItem item_settings = new MenuItem(btn_settings);
+            Buttons.IButton btn_credits = new Buttons.ExitButton("Credits", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 210, win);
+            MenuItem item_credits = new MenuItem(btn_credits);
+            Buttons.IButton btn_exit = new Buttons.ExitButton("Exit", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 280, win);
+            MenuItem item_exit = new MenuItem(btn_exit);
+
+            mainMenu.AddItem(item_continue);
+            mainMenu.AddItem(item_newgame);
+            mainMenu.AddItem(item_settings);
+            mainMenu.AddItem(item_credits);
+            mainMenu.AddItem(item_exit);
+
+            mainMenu.Initialize();
+
+            return mainMenu;
+        }
+    }
+}

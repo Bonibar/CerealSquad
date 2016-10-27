@@ -21,13 +21,13 @@ namespace CerealSquad.Menus
         }
         #endregion
 
-        private List<AMenu> Menus = new List<AMenu>();
+        private List<Menu> Menus = new List<Menu>();
 
-        public void AddMenu(AMenu menu)
+        public void AddMenu(Menu menu)
         {
             Menus.Add(menu);
         }
-        public void RemoveMenu(AMenu menu)
+        public void RemoveMenu(Menu menu)
         {
             Menus.Remove(menu);
         }
@@ -40,7 +40,7 @@ namespace CerealSquad.Menus
         /// Returns the current displayed menu or null
         /// </summary>
         /// <returns>Current displayed menu or null</returns>
-        public AMenu CurrentMenu { get { return Menus.Count > 0 ? Menus[Menus.Count - 1] : null; } }
+        public Menu CurrentMenu { get { return Menus.Count > 0 ? Menus[Menus.Count - 1] : null; } }
 
         /// <summary>
         /// Is a menu currently displayed?

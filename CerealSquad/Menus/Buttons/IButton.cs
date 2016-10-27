@@ -24,5 +24,8 @@ namespace CerealSquad.Menus.Buttons
 
         SFML.Graphics.Drawable getDrawable();
         void Trigger();
+        void Trigger(object source, InputManager.Keyboard.KeyEventArgs e);
+        void Trigger(object source, InputManager.Joystick.ButtonEventArgs e);
+        void Trigger(object source, InputManager.Joystick.MoveEventArgs e);
     }
 }

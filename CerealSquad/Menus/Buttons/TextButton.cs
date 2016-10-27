@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace CerealSquad.Menus.Buttons
 {
-    public class TextButton : IButton
+    public abstract class TextButton : IButton
     {
         t_pos _pos = new t_pos(300, 300);
         private bool selected;
         public bool Selected { get { return selected; } set { selected = value; selectionChanged(); } }
-        private void selectionChanged()
+
+        protected void selectionChanged()
         {
             if (Selected)
                 Text.Color = SFML.Graphics.Color.Green;
@@ -19,7 +20,7 @@ namespace CerealSquad.Menus.Buttons
                 Text.Color = SFML.Graphics.Color.White;
         }
 
-        SFML.Graphics.Text Text;
+        protected SFML.Graphics.Text Text;
 
         private TextButton() { }
         public TextButton(string text, SFML.Graphics.Font font, int offsety)
@@ -33,10 +34,9 @@ namespace CerealSquad.Menus.Buttons
             return Text;
         }
 
-        // TO REMOVE WHEN GOING BACK TO ABSTRACT CLASS
-        public void Trigger()
-        {
-            Text.Color = SFML.Graphics.Color.Red;
-        }
+        public abstract void Trigger();
+        public abstract void Trigger(object source, InputManager.Keyboard.KeyEventArgs e);
+        public abstract void Trigger(object source, InputManager.Joystick.ButtonEventArgs e);
+        public abstract void Trigger(object source, InputManager.Joystick.MoveEventArgs e);
     }
 }
