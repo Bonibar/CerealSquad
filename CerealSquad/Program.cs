@@ -12,10 +12,14 @@ namespace CerealSquad
         /// </summary>
         static void Main()
         {
-            Renderer renderer = new Renderer();
+            //Renderer renderer = new Renderer();
 
-            renderer.initialization();
-            renderer.loop();
+            //renderer.initialization();
+            //renderer.loop();
+
+            Game game = new Game();
+
+            game.GameLoop();
         }
     }
 }
