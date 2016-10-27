@@ -8,11 +8,11 @@ using SFML.Graphics;
 
 namespace CerealSquad
 {
-    class WindowsEventHandler
+    class WindowsManager
     {
         private RenderWindow renderWindow;
 
-        public WindowsEventHandler(RenderWindow _renderWindow)
+        public WindowsManager(RenderWindow _renderWindow)
         {
             renderWindow = _renderWindow;
 
@@ -44,7 +44,7 @@ namespace CerealSquad
         {
             RenderWindow window = (RenderWindow)sender;
             
-            if (e.Code == Keyboard.Key.Escape) {
+            if (e.Code == SFML.Window.Keyboard.Key.Escape) {
                 window.Close();
             }
         }
