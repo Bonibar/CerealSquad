@@ -7,9 +7,9 @@ using SFML;
 using SFML.Graphics;
 using SFML.System;
 
-namespace CerealSquad.SFMLImplementation
+namespace CerealSquad.Graphics
 {
-    public class AnimatedSprite : Drawable
+    public class SpriteAnimator : Drawable
     {
         private Animation m_animation;
 
@@ -24,7 +24,7 @@ namespace CerealSquad.SFMLImplementation
         private List<Vertex> m_vertices = new List<Vertex>();
 
 
-        public AnimatedSprite()
+        public SpriteAnimator()
         {
             m_frameTime = Time.FromSeconds(0.2f);
             m_isLooped = true;

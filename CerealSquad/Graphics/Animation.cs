@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
 
-namespace CerealSquad.SFMLImplementation
+namespace CerealSquad.Graphics
 {
     public class Animation
     {
