@@ -23,9 +23,9 @@ namespace CerealSquad.Menus.Buttons
         bool Selected { get; set; }
 
         SFML.Graphics.Drawable getDrawable();
-        void Trigger();
-        void Trigger(object source, InputManager.Keyboard.KeyEventArgs e);
-        void Trigger(object source, InputManager.Joystick.ButtonEventArgs e);
+
+        void Trigger(object source, InputManager.Keyboard.KeyEventArgs e, bool up = true);
+        void Trigger(object source, InputManager.Joystick.ButtonEventArgs e, bool up = true);
         void Trigger(object source, InputManager.Joystick.MoveEventArgs e);
     }
 }

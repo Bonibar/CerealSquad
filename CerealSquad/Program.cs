@@ -26,15 +26,12 @@ namespace CerealSquad
 
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
-            mainMenu.Show();
-
             while (win.IsOpen)
             {
                 win.DispatchEvents();
                 win.Clear(Color.Magenta);
                 if (Menus.MenuManager.Instance.isDisplayed())
                 {
-                    // Menus prior on game
                     Menus.MenuManager.Instance.CurrentMenu.Draw();
                 }
                 else

@@ -25,15 +25,17 @@ namespace CerealSquad.Menus
 
         public void AddMenu(Menu menu)
         {
+            if (Menus.Count > 0)
+                Menus[Menus.Count - 1].Hide();
             Menus.Add(menu);
+            menu.Initialize();
+            menu.Show();
         }
         public void RemoveMenu(Menu menu)
         {
             Menus.Remove(menu);
-        }
-        public void removeMenu()
-        {
-            Menus.Clear();
+            if (Menus.Count > 0)
+                Menus[Menus.Count - 1].Show();
         }
 
         /// <summary>

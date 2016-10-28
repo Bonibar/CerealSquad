@@ -78,12 +78,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Menus\AMenu.cs" />
+    <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="InputManager.cs" />
+    <Compile Include="Menus\Buttons\BackButton.cs" />
     <Compile Include="Menus\Buttons\ExitButton.cs" />
     <Compile Include="Menus\Buttons\IButton.cs" />
-    <Compile Include="Menus\Buttons\TextButton.cs" />
+    <Compile Include="Menus\Buttons\OpenMenuButton.cs" />
     <Compile Include="Menus\MenuManager.cs" />
     <Compile Include="Menus\Prefabs.cs" />
     <Compile Include="Program.cs" />

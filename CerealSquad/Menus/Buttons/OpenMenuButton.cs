@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CerealSquad.Menus.Buttons
 {
-    public class ExitButton : IButton
+    public class OpenMenuButton : IButton
     {
-        private SFML.Window.Window _Win;
+        private Menu _Menu;
         t_pos _pos = new t_pos(300, 300);
         private bool selected;
         public bool Selected { get { return selected; } set { selected = value; selectionChanged(); } }
@@ -23,10 +23,10 @@ namespace CerealSquad.Menus.Buttons
 
         protected SFML.Graphics.Text Text;
 
-        private ExitButton() { }
-        public ExitButton(string text, SFML.Graphics.Font font, int offsety, SFML.Window.Window win)
+        private OpenMenuButton() { }
+        public OpenMenuButton(string text, SFML.Graphics.Font font, int offsety, Menu menu)
         {
-            _Win = win;
+            _Menu = menu;
             Text = new SFML.Graphics.Text(text, font);
             Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + offsety);
         }
@@ -41,7 +41,9 @@ namespace CerealSquad.Menus.Buttons
             if (e.KeyCode == InputManager.Keyboard.Key.Return && up == true)
             {
                 selectionChanged();
-                _Win.Close();
+                if (_Menu == null)
+                    System.Diagnostics.Debug.WriteLine("DEFERFZEF");
+                MenuManager.Instance.AddMenu(_Menu);
             }
             else if (e.KeyCode == InputManager.Keyboard.Key.Return && up == false)
             {

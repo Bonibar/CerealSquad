@@ -13,13 +13,13 @@ namespace CerealSquad.Menus
             Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
             Menu mainMenu = new Menu(win, manager);
 
-            Buttons.IButton btn_continue = new Buttons.ExitButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 0, win);
+            Buttons.IButton btn_continue = new Buttons.OpenMenuButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 0, SettingsMenu(win, manager));
             MenuItem item_continue = new MenuItem(btn_continue);
-            Buttons.IButton btn_newgame = new Buttons.ExitButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 70, win);
+            Buttons.IButton btn_newgame = new Buttons.OpenMenuButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 70, SettingsMenu(win, manager));
             MenuItem item_newgame = new MenuItem(btn_newgame);
-            Buttons.IButton btn_settings = new Buttons.ExitButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 140, win);
+            Buttons.IButton btn_settings = new Buttons.OpenMenuButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 140, SettingsMenu(win, manager));
             MenuItem item_settings = new MenuItem(btn_settings);
-            Buttons.IButton btn_credits = new Buttons.ExitButton("Credits", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 210, win);
+            Buttons.IButton btn_credits = new Buttons.OpenMenuButton("Credits", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 210, SettingsMenu(win, manager));
             MenuItem item_credits = new MenuItem(btn_credits);
             Buttons.IButton btn_exit = new Buttons.ExitButton("Exit", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 280, win);
             MenuItem item_exit = new MenuItem(btn_exit);
@@ -33,6 +33,21 @@ namespace CerealSquad.Menus
             mainMenu.Initialize();
 
             return mainMenu;
+        }
+
+        public static Menu SettingsMenu(SFML.Graphics.RenderWindow win, InputManager.InputManager manager)
+        {
+            Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
+            Menu settingsMenu = new Menu(win, manager);
+
+            Buttons.IButton btn_back = new Buttons.BackButton("Back", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 0, settingsMenu);
+            MenuItem item_back = new MenuItem(btn_back);
+
+            settingsMenu.AddItem(item_back);
+
+            settingsMenu.Initialize();
+
+            return settingsMenu;
         }
     }
 }

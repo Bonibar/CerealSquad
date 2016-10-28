@@ -46,6 +46,7 @@ namespace CerealSquad.Menus
             _Win = win;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
+            _InputManager.KeyboardKeyReleased += _InputManager_KeyboardKeyReleased;
         }
 
         private void nextMenu()
@@ -86,16 +87,20 @@ namespace CerealSquad.Menus
             }
         }
 
+        #region Menus_KeyBinding
+
+        private MenuItem _lastItemPressed = null;
         /// <summary>
         /// Manage key bindings for menus
         /// </summary>
         private void _InputManager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
+            _lastItemPressed = null;
             if (Displayed)
             {
                 MenuItem _keyBinded = _menuList.Find(x => x.Type == MenuItem.ItemType.KeyBinded && x.KeyboardKey == e.KeyCode);
                 if (_keyBinded != null)
-                    _keyBinded.Button.Trigger();
+                    _keyBinded.Button.Trigger(source, e, false);
                 else if (e.KeyCode.Equals(InputManager.Keyboard.Key.Down))
                     nextMenu();
                 else if (e.KeyCode.Equals(InputManager.Keyboard.Key.Up))
@@ -104,10 +109,30 @@ namespace CerealSquad.Menus
                 {
                     MenuItem _current = _menuList.Find(x => x.Button.Selected == true);
                     if (_current != null)
+                    {
+                        _current.Button.Trigger(source, e, false);
+                        _lastItemPressed = _current;
+                    }
+                }
+            }
+        }
+
+        private void _InputManager_KeyboardKeyReleased(object source, InputManager.Keyboard.KeyEventArgs e)
+        {
+            if (Displayed)
+            {
+                MenuItem _keyBinded = _menuList.Find(x => x.Type == MenuItem.ItemType.KeyBinded && x.KeyboardKey == e.KeyCode);
+                if (_keyBinded != null)
+                    _keyBinded.Button.Trigger(source, e);
+                else if (_lastItemPressed != null)
+                {
+                    MenuItem _current = _menuList.Find(x => x.Button.Selected == true);
+                    if (_current != null && _lastItemPressed == _current)
                         _current.Button.Trigger(source, e);
                 }
             }
         }
+        #endregion
 
         public void Show()
         {
@@ -160,6 +185,7 @@ namespace CerealSquad.Menus
 
         public void Initialize()
         {
+            _lastItemPressed = null;
             MenuItem firstValid = _menuList.FirstOrDefault<MenuItem>(x => x.Type != MenuItem.ItemType.Disabled && x.Type != MenuItem.ItemType.KeyBinded);
             if (firstValid != null)
                 firstValid.Button.Selected = true;
