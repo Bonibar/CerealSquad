@@ -16,19 +16,34 @@ namespace CerealSquad.Menus.Buttons
         protected void selectionChanged()
         {
             if (Selected)
+            {
+                Text = new SFML.Graphics.Text(">" + _Text, CerealSquad.Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 64);
                 Text.Color = SFML.Graphics.Color.Green;
+                Text.Style = SFML.Graphics.Text.Styles.Bold;
+                Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + _Offsety);
+            }
             else
+            {
+                Text = new SFML.Graphics.Text(" " + _Text, CerealSquad.Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 64);
                 Text.Color = SFML.Graphics.Color.White;
+                Text.Style = SFML.Graphics.Text.Styles.Bold;
+                Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + _Offsety);
+            }
         }
 
         protected SFML.Graphics.Text Text;
+        protected string _Text;
+        protected int _Offsety;
 
         private ExitButton() { }
         public ExitButton(string text, SFML.Graphics.Font font, int offsety, SFML.Window.Window win)
         {
             _Win = win;
-            Text = new SFML.Graphics.Text(text, font);
+            _Text = text;
+            Text = new SFML.Graphics.Text(" " + text, font, 64);
+            Text.Style = SFML.Graphics.Text.Styles.Bold;
             Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + offsety);
+            _Offsety = offsety;
         }
 
         public SFML.Graphics.Drawable getDrawable()

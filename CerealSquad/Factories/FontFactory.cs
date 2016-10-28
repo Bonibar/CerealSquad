@@ -26,7 +26,8 @@ namespace CerealSquad.Factories.FontFactory
 
         public enum Font
         {
-            XirodRegular
+            XirodRegular,
+            ReenieBeanie
         }
 
         private Object _Locker = new Object();
@@ -42,6 +43,7 @@ namespace CerealSquad.Factories.FontFactory
             if (_Fonts == null)
                 throw new OutOfMemoryException("Impossible de charger les polices");
             _Fonts.Add(Font.XirodRegular, new SFML.Graphics.Font("Fonts/xirod.regular.ttf"));
+            _Fonts.Add(Font.ReenieBeanie, new SFML.Graphics.Font("Fonts/ReenieBeanie.ttf"));
         }
 
         /// <summary>
