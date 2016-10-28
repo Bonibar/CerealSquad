@@ -12,6 +12,18 @@ namespace CerealSquad.Graphics
     {
         private ASprite sprite;
 
+        public JukeBox JukeBox { get; set; }
+        
+        public void InitializationSprite(String Texture, Vector2i size, bool animated = false)
+        {
+            if (animated)
+                sprite = new AnimatedSprite(Texture, size);
+            else
+                sprite = new RegularSprite(Texture, size);
+        }
+
+
+
         /// <summary>
         /// Update the current frame of animation in function of time
         /// Do nothing if it's not an animation
