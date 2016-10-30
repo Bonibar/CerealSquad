@@ -13,19 +13,23 @@ namespace CerealSquad.Graphics
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
 
-        public AnimatedSprite(String Texture, Vector2i Size) : base(Texture, Size)
+        protected Vector2i size = new Vector2i(0, 0);
+
+        public AnimatedSprite(String Texture, Vector2i Size) : base(Texture)
         {
+            size = Size;
             initialization();
         }
 
-        public AnimatedSprite(String Texture, int Width, int Height) : base(Texture, new Vector2i(Width, Height))
+        public AnimatedSprite(String Texture, int Width, int Height) : base(Texture)
         {
+            size = new Vector2i(Width, Height);
             initialization();
         }
 
         private void initialization()
         {
-            type = ETypeSprite.ANIMATED;
+            Type = ETypeSprite.ANIMATED;
             Position = new Vector2f(0, 0);
 
             Animation walkingAnimationDown = new Animation();
@@ -72,6 +76,14 @@ namespace CerealSquad.Graphics
         public void PlayAnimation(EStateEntity animation)
         {
             animator.Play(animations[(uint)animation]);
+        }
+
+        /// <summary>
+        /// Reset animation
+        /// </summary>
+        public void ResetAnimation()
+        {
+            animator.setFrame(0);
         }
 
 

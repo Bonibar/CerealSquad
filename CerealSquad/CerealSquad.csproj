@@ -82,6 +82,7 @@
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
     <Compile Include="Graphics\EntityResource.cs" />
+    <Compile Include="Graphics\EnvironmentResource.cs" />
     <Compile Include="Graphics\IResource.cs" />
     <Compile Include="Graphics\JukeBox.cs" />
     <Compile Include="Graphics\RegularSprite.cs" />

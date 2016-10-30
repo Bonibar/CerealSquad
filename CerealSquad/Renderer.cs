@@ -16,7 +16,7 @@ namespace CerealSquad
         {
             R1920x1080,
             R2880x1800,
-            R800x600,
+            R800x450,
         };
 
         struct Resolution
@@ -37,9 +37,10 @@ namespace CerealSquad
 
         #region Windows Parameters
         private Dictionary<EResolution, Resolution> resolutionContext = new Dictionary<EResolution, Resolution>();
-        EResolution resolutionType = EResolution.R800x600;
+        EResolution resolutionType = EResolution.R800x450;
         bool windowed = true;
         string title = "Cereal Squad";
+        View currentView;
         #endregion
 
         #region Event
@@ -65,11 +66,12 @@ namespace CerealSquad
             // Set all predefine resolutions. Order Bigger to smaller
             resolutionContext[EResolution.R2880x1800] = new Resolution(2880, 1800);
             resolutionContext[EResolution.R1920x1080] = new Resolution(1920, 1080);
-            resolutionContext[EResolution.R800x600] = new Resolution(800, 600);
+            resolutionContext[EResolution.R800x450] = new Resolution(800, 450);
 #if !DEBUG
             resolutionType = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
             windowed = false;
 #endif
+            currentView = new View(new FloatRect(0, 0, 800, 450));
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace CerealSquad
                 }
             }
 
-            return EResolution.R800x600;
+            return EResolution.R800x450;
         }
 
         /// <summary>
@@ -113,7 +115,33 @@ namespace CerealSquad
         public void Initialization()
         {
             Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), title, (windowed ? Styles.Close : Styles.Fullscreen));
-            Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
+            Win.SetView(currentView);
+        }
+
+        public void ResetWindow()
+        {
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), title, (windowed ? Styles.Close : Styles.Fullscreen));
+            Win.SetView(currentView);
+            Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
+        }
+
+        public static Vector2f scaleToFit(Vector2f inh, Vector2f clip )
+        {
+            Vector2f ret = new Vector2f(inh.X, inh.Y);
+
+            if ( ( clip.Y* inh.X ) / inh.Y >= clip.X )
+            {
+                ret.Y = ( clip.X * inh.Y ) / inh.X;
+                ret.X = clip.X;
+            }
+            else if ( ( clip.X * inh.Y ) / inh.X >= clip.Y )
+            {
+                ret.X = ( clip.Y * inh.X ) / inh.Y;
+                ret.Y = clip.Y;
+            }
+            else
+                ret = clip;
+            return ret;
         }
 
         /// <summary>
@@ -172,7 +200,8 @@ namespace CerealSquad
         {
             resolutionType = new_resolution;
             Win.Size = new Vector2u(getWidth(), getHeight());
-            Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
+            Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
+            //Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
         }
 
         /// <summary>
@@ -184,7 +213,7 @@ namespace CerealSquad
             windowed = !enabled;
             WindowsClosed?.Invoke(this, new WindowsEventArgs(Win));
             Win.Close();
-            Initialization();
+            ResetWindow();
             WindowsCreated?.Invoke(this, new WindowsEventArgs(Win));
         }
 

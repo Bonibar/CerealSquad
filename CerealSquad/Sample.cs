@@ -10,8 +10,11 @@ namespace CerealSquad
     {
         private Renderer renderer;
         private InputManager im;
+        
         Graphics.EntityResource entity = new Graphics.EntityResource();
         Graphics.EntityResource entityAnimated = new Graphics.EntityResource();
+
+        Graphics.EnvironmentResource environment = new Graphics.EnvironmentResource();
 
         public Sample()
         {
@@ -19,8 +22,8 @@ namespace CerealSquad
             renderer.Initialization();
 
             renderer.SetFrameRate(1);
-            renderer.ChangeResolution(Renderer.EResolution.R1920x1080);
-            renderer.SetFullScreenEnabled(true);
+            renderer.ChangeResolution(Renderer.EResolution.R800x450);
+            renderer.SetFullScreenEnabled(false);
             renderer.SetMouseCursorVisible(false);
             renderer.SetSyncVertical(true);
 
@@ -39,11 +42,10 @@ namespace CerealSquad
             world.loadSound(0, "shotgun");
 
             
-            entity.InitializationRegularSprite("DefaultCharacter", new SFML.System.Vector2i(32, 32), new SFML.Graphics.IntRect(32, 0, 32, 32));
+            entity.InitializationRegularSprite("DefaultCharacter", new SFML.Graphics.IntRect(32, 0, 32, 32));
             entity.Position = new SFML.System.Vector2f(200, 200);
             entity.Rotation = 15;
 
-           
             entityAnimated.InitializationAnimatedSprite("DefaultCharacter", new SFML.System.Vector2i(32, 32));
             entityAnimated.JukeBox = world;
             entityAnimated.Position = new SFML.System.Vector2f(20, 20);
@@ -89,7 +91,7 @@ namespace CerealSquad
                 renderer.ChangeResolution(Renderer.EResolution.R1920x1080);
                 renderer.SetFullScreenEnabled(true);
             } else if (e.KeyCode.Equals(Keyboard.Key.M)) {
-                renderer.ChangeResolution(Renderer.EResolution.R800x600);
+                renderer.ChangeResolution(Renderer.EResolution.R800x450);
                 renderer.SetFullScreenEnabled(false);
             } else if (e.KeyCode.Equals(Keyboard.Key.A)) {
                 entityAnimated.JukeBox.PauseMusic(0);

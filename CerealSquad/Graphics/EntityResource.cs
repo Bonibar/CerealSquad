@@ -10,7 +10,7 @@ namespace CerealSquad.Graphics
 {
     class EntityResource : Transformable, IResource
     {
-        private ASprite sprite;
+        public ASprite sprite;
 
         public JukeBox JukeBox { get; set; }
 
@@ -28,11 +28,10 @@ namespace CerealSquad.Graphics
         /// Initialize a regular sprite
         /// </summary>
         /// <param name="Texture"></param>
-        /// <param name="size"></param>
         /// <param name="textureRect"></param>
-        public void InitializationRegularSprite(String Texture, Vector2i size, IntRect textureRect)
+        public void InitializationRegularSprite(String Texture, IntRect textureRect)
         {
-            sprite = new RegularSprite(Texture, size, textureRect);
+            sprite = new RegularSprite(Texture, textureRect);
         }
 
         /// <summary>
@@ -41,9 +40,20 @@ namespace CerealSquad.Graphics
         /// <param name="animation">EStateEntity</param>
         public void PlayAnimation(EStateEntity animation)
         {
-            if (sprite.type == ETypeSprite.ANIMATED)
+            if (sprite.Type == ETypeSprite.ANIMATED)
             {
                 ((AnimatedSprite)sprite).PlayAnimation(animation);
+            }
+        }
+
+        /// <summary>
+        /// Reset the animation to 0
+        /// </summary>
+        public void ResetAnimation()
+        {
+            if (sprite.Type == ETypeSprite.ANIMATED)
+            {
+                ((AnimatedSprite)sprite).ResetAnimation();
             }
         }
 
@@ -54,7 +64,7 @@ namespace CerealSquad.Graphics
         /// <param name="DeltaTime">Time</param>
         public void Update(Time DeltaTime)
         {
-            if (sprite.type == ETypeSprite.ANIMATED)
+            if (sprite.Type == ETypeSprite.ANIMATED)
             {
                 ((AnimatedSprite)sprite).Update(DeltaTime);
             }
