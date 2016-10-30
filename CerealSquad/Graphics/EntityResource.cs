@@ -8,21 +8,44 @@ using SFML.System;
 
 namespace CerealSquad.Graphics
 {
-    class EntityResource : IResource
+    class EntityResource : Transformable, IResource
     {
         private ASprite sprite;
 
         public JukeBox JukeBox { get; set; }
-        
-        public void InitializationSprite(String Texture, Vector2i size, bool animated = false)
+
+        /// <summary>
+        /// Initialize a animated sprite
+        /// </summary>
+        /// <param name="Texture">String</param>
+        /// <param name="size">Vector2i</param>
+        public void InitializationAnimatedSprite(String Texture, Vector2i size)
         {
-            if (animated)
-                sprite = new AnimatedSprite(Texture, size);
-            else
-                sprite = new RegularSprite(Texture, size);
+            sprite = new AnimatedSprite(Texture, size);  
         }
 
+        /// <summary>
+        /// Initialize a regular sprite
+        /// </summary>
+        /// <param name="Texture"></param>
+        /// <param name="size"></param>
+        /// <param name="textureRect"></param>
+        public void InitializationRegularSprite(String Texture, Vector2i size, IntRect textureRect)
+        {
+            sprite = new RegularSprite(Texture, size, textureRect);
+        }
 
+        /// <summary>
+        /// Play animation
+        /// </summary>
+        /// <param name="animation">EStateEntity</param>
+        public void PlayAnimation(EStateEntity animation)
+        {
+            if (sprite.type == ETypeSprite.ANIMATED)
+            {
+                ((AnimatedSprite)sprite).PlayAnimation(animation);
+            }
+        }
 
         /// <summary>
         /// Update the current frame of animation in function of time
@@ -44,6 +67,7 @@ namespace CerealSquad.Graphics
         /// <param name="states">RenderStates</param>
         public void Draw(RenderTarget target, RenderStates states)
         {
+            states.Transform *= Transform;
             sprite.Draw(target, states);
         }
     }
