@@ -56,10 +56,22 @@ namespace CerealSquad.Graphics
             walkingAnimationUp.addFrame(new IntRect(size.X, size.Y * 3, size.X, size.Y));
             walkingAnimationUp.addFrame(new IntRect(0, size.Y * 3, size.X, size.Y));
 
-            /*animator.Add(EState.WALKING_UP, walkingAnimationUp);
-            animator.Add(EState.WALKING_DOWN, walkingAnimationDown);
-            animator.Add(EState.WALKING_LEFT, walkingAnimationLeft);
-            animator.Add(EState.WALKING_RIGHT, walkingAnimationRight);*/
+            animations.Add((uint)EStateEntity.IDLE, walkingAnimationDown);
+            animations.Add((uint)EStateEntity.WALKING_UP, walkingAnimationUp);
+            animations.Add((uint)EStateEntity.WALKING_DOWN, walkingAnimationDown);
+            animations.Add((uint)EStateEntity.WALKING_LEFT, walkingAnimationLeft);
+            animations.Add((uint)EStateEntity.WALKING_RIGHT, walkingAnimationRight);
+
+            animator.setAnimation(walkingAnimationDown);
+        }
+
+        /// <summary>
+        /// Play animation
+        /// </summary>
+        /// <param name="animation">EStateEntity</param>
+        public void PlayAnimation(EStateEntity animation)
+        {
+            animator.Play(animations[(uint)animation]);
         }
 
 

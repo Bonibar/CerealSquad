@@ -110,7 +110,7 @@ namespace CerealSquad
         /// <summary>
         /// Initialisation
         /// </summary>
-        public void initialization()
+        public void Initialization()
         {
             Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), title, (windowed ? Styles.Close : Styles.Fullscreen));
             Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
@@ -119,7 +119,7 @@ namespace CerealSquad
         /// <summary>
         /// Exemple of simple loop
         /// </summary>
-        public void loop()
+        public void Loop()
         {
             while (isOpen())
             {
@@ -181,10 +181,10 @@ namespace CerealSquad
         /// <param name="enabled"></param>
         public void SetFullScreenEnabled(bool enabled)
         {
-            windowed = enabled;
+            windowed = !enabled;
             WindowsClosed?.Invoke(this, new WindowsEventArgs(Win));
             Win.Close();
-            initialization();
+            Initialization();
             WindowsCreated?.Invoke(this, new WindowsEventArgs(Win));
         }
 
@@ -222,6 +222,15 @@ namespace CerealSquad
         public void SetKeyRepeatedEnabled(bool enabled)
         {
             Win.SetKeyRepeatEnabled(enabled);
+        }
+
+        /// <summary>
+        /// Draw drawable
+        /// </summary>
+        /// <param name="obj"></param>
+        public void Draw (Drawable obj)
+        {
+            Win.Draw(obj);
         }
     }
 }

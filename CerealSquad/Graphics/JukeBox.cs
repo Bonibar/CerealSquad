@@ -127,7 +127,7 @@ namespace CerealSquad.Graphics
         /// </summary>
         /// <param name="id">int</param>
         /// <param name="loop">bool</param>
-        public void PlayMusic(int id, bool loop)
+        public void PlayMusic(int id, bool loop = true)
         {
             if (!musicExist(id))
                 throw new Exception("Music " + id + " not know");

@@ -10,18 +10,32 @@ namespace CerealSquad.Graphics
 {
     class RegularSprite : ASprite
     {
-        private Sprite sprite;
+        private Sprite sprite = new Sprite();
 
         public RegularSprite(string Texture, Vector2i Size) : base(Texture, Size)
         {
-            sprite.Scale = new Vector2f(Size.X, Size.Y);
             type = ETypeSprite.REGULAR;
+            sprite.Texture = texture;
+        }
+
+        public RegularSprite(string Texture, Vector2i Size, IntRect textureRect) : base(Texture, Size)
+        {
+            type = ETypeSprite.REGULAR;
+            sprite.Texture = texture;
+            sprite.TextureRect = textureRect;
         }
 
         public RegularSprite(string Texture, int Width, int Height) : base(Texture, new Vector2i(Width, Height))
         {
-            sprite.Scale = new Vector2f(Width, Height);
             type = ETypeSprite.REGULAR;
+            sprite.Texture = texture;
+        }
+
+        public RegularSprite(string Texture, int Width, int Height, IntRect textureRect) : base(Texture, new Vector2i(Width, Height))
+        {
+            type = ETypeSprite.REGULAR;
+            sprite.Texture = texture;
+            sprite.TextureRect = textureRect;
         }
 
         /// <summary>

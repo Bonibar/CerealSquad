@@ -83,7 +83,9 @@
     <Compile Include="Graphics\AnimatedSprite.cs" />
     <Compile Include="Graphics\EntityResource.cs" />
     <Compile Include="Graphics\IResource.cs" />
+    <Compile Include="Graphics\JukeBox.cs" />
     <Compile Include="Graphics\RegularSprite.cs" />
+    <Compile Include="Graphics\SoundBufferFactory.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Menus\Buttons\BackButton.cs" />
     <Compile Include="Menus\Buttons\ExitButton.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Graphics\ASprite.cs" />
     <Compile Include="Graphics\TextureFactory.cs" />
     <Compile Include="FrameClock.cs" />
+    <Compile Include="Sample.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -128,6 +131,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\CharacterDefault.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PokemonMysteryDonjon.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Shotgunsound.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="csfml-audio-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -156,9 +168,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Assets\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
