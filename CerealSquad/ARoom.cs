@@ -40,21 +40,26 @@ namespace CerealSquad
         protected e_RoomType RoomType = 0;
         //protected List<IEntity> Ennemies;
         protected s_MapRect MapRect;
-        
+        protected Graphics.EnvironmentResources er = new Graphics.EnvironmentResources();
+
         public ARoom(e_RoomType Type = 0)
         {
             RoomType = Type;
+
         }
 
-        /// <summary>
-        /// Loop that calls Environment Ressources functions to add sprites.
-        /// </summary>
-        public void loopAddSprites()
+        public void parseRoom(Renderer renderer)
         {
-            /*foreach (var cell in Cells)
+            Cells = RoomParser.ParseRoom("Maps/TestRoom.txt");
+            Graphics.TextureFactory.Instance.initTextures();
+            Graphics.TextureFactory.Instance.load("test", Cells.ElementAt(0).Value.TexturePath);
+
+            Graphics.PaletteManager.Instance.AddPaletteInformations("test");
+            foreach (var cell in Cells)
             {
-                EnvironmentRessources.AddSprite(cell.Key.Row, cell.Key.Column, cell.Value.TexturePath, cell.Value.Texture);
-            }*/
+                er.AddSprite(cell.Key.Row, cell.Key.Column, "test", uint.Parse(cell.Value.Texture.ToString()));
+            }
+            renderer.Draw(er);
         }
 
         /// <summary>

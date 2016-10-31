@@ -71,7 +71,7 @@ namespace CerealSquad
             resolutionType = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
             windowed = false;
 #endif
-            currentView = new View(new FloatRect(0, 0, 800, 450));
+            currentView = new View(new FloatRect(0, 0, 1920, 1080));
         }
 
         /// <summary>

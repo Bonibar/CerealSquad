@@ -13,13 +13,19 @@ namespace CerealSquad
         private List<AWorld> Worlds = new List<AWorld>();
         //private List<IEntity> Players;
         //private IEntity WorldEntity;
+        private Renderer renderer = null;
 
-        public Game(/*IRenderer Renderer*/)
+        public Game(Renderer _renderer)
         {
+            renderer = _renderer;
         }
 
         public void GameLoop()
         {
+            ARoom room = new ARoom();
+
+            room.parseRoom(renderer);
+
             /* test
             AWorld World = new AWorld();
             for (int i = 0; i < 5; i++)

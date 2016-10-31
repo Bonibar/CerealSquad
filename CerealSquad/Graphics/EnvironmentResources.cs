@@ -8,7 +8,7 @@ using SFML.Graphics;
 
 namespace CerealSquad.Graphics
 {
-    class EnvironmentResources
+    class EnvironmentResources : SFML.Graphics.Drawable
     {
         private Dictionary<Vector2u, ASprite> sprites;
     
@@ -30,7 +30,8 @@ namespace CerealSquad.Graphics
             KeyValuePair<IntRect, Texture> infos = PaletteManager.Instance.GetInfoFromPalette(palette, texture);
 
             // TODO should not be 64x64 hardcoded
-            ASprite sprite = new RegularSprite(infos.Value, new Vector2i(32, 32), infos.Key);
+            ASprite sprite = new RegularSprite(infos.Value, new Vector2i(64, 64), infos.Key);
+            sprite.Position = new Vector2f(x * 64, y * 64);
 
             sprites[new Vector2u(x, y)] = sprite;
         }
