@@ -20,6 +20,8 @@ namespace CerealSquad
             Game game = new Game();
 
             game.GameLoop();
+
+            RoomParser.ParseRoom("Maps/TestRoom.txt");
         }
     }
 }
