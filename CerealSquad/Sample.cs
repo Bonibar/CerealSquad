@@ -11,10 +11,12 @@ namespace CerealSquad
         private Renderer renderer;
         private InputManager im;
         
-        Graphics.EntityResource entity = new Graphics.EntityResource();
-        Graphics.EntityResource entityAnimated = new Graphics.EntityResource();
+        Graphics.EntityResources entity = new Graphics.EntityResources();
+        Graphics.EntityResources entityAnimated = new Graphics.EntityResources();
 
-        Graphics.EnvironmentResource environment = new Graphics.EnvironmentResource();
+        Graphics.ASprite test;
+
+        Graphics.EnvironmentResources environment = new Graphics.EnvironmentResources();
 
         public Sample()
         {
@@ -26,7 +28,7 @@ namespace CerealSquad
             renderer.SetFullScreenEnabled(false);
             renderer.SetMouseCursorVisible(false);
             renderer.SetSyncVertical(true);
-
+            
             im = new InputManager(renderer.Win);
 
             Graphics.TextureFactory tf = Graphics.TextureFactory.Instance;
@@ -42,13 +44,16 @@ namespace CerealSquad
             world.loadSound(0, "shotgun");
 
             
-            entity.InitializationRegularSprite("DefaultCharacter", new SFML.Graphics.IntRect(32, 0, 32, 32));
-            entity.Position = new SFML.System.Vector2f(200, 200);
-            entity.Rotation = 15;
+            //entity.InitializationRegularSprite("DefaultCharacter", new SFML.Graphics.IntRect(32, 0, 32, 32));
+            //entity.Position = new SFML.System.Vector2f(200, 200);
+            //entity.Rotation = 15;
 
             entityAnimated.InitializationAnimatedSprite("DefaultCharacter", new SFML.System.Vector2i(32, 32));
             entityAnimated.JukeBox = world;
-            entityAnimated.Position = new SFML.System.Vector2f(20, 20);
+            entityAnimated.Position = new SFML.System.Vector2f(200, 200);
+
+            test = new Graphics.RegularSprite(Graphics.TextureFactory.Instance.getTexture("DefaultCharacter"), new SFML.System.Vector2i(32, 32), new SFML.Graphics.IntRect(32, 0, 32, 32));
+            test.Position = new SFML.System.Vector2f(10, 10);
 
             entityAnimated.JukeBox.PlayMusic(0);
 
@@ -63,8 +68,10 @@ namespace CerealSquad
                 entityAnimated.Update(clock.Restart());
 
                 renderer.Clear(SFML.Graphics.Color.White);
-                renderer.Draw(entity);
+
                 renderer.Draw(entityAnimated);
+                renderer.Draw(test);
+
                 renderer.Display();
             }
         }
