@@ -81,10 +81,11 @@
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
-    <Compile Include="Graphics\EntityResource.cs" />
-    <Compile Include="Graphics\EnvironmentResource.cs" />
+    <Compile Include="Graphics\EntityResources.cs" />
+    <Compile Include="Graphics\EnvironmentResources.cs" />
     <Compile Include="Graphics\IResource.cs" />
     <Compile Include="Graphics\JukeBox.cs" />
+    <Compile Include="Graphics\PaletteManager.cs" />
     <Compile Include="Graphics\RegularSprite.cs" />
     <Compile Include="Graphics\SoundBufferFactory.cs" />
     <Compile Include="InputManager.cs" />
@@ -141,6 +142,7 @@
     <Content Include="Assets\Shotgunsound.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\wall.gif" />
     <Content Include="csfml-audio-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

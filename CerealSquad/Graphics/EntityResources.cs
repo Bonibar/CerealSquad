@@ -8,7 +8,7 @@ using SFML.System;
 
 namespace CerealSquad.Graphics
 {
-    class EntityResource : Transformable, IResource
+    class EntityResources : Transformable, IResource
     {
         public ASprite sprite;
 
@@ -21,7 +21,7 @@ namespace CerealSquad.Graphics
         /// <param name="size">Vector2i</param>
         public void InitializationAnimatedSprite(String Texture, Vector2i size)
         {
-            sprite = new AnimatedSprite(Texture, size);  
+            sprite = new AnimatedSprite(TextureFactory.Instance.getTexture(Texture), size);  
         }
 
         /// <summary>
@@ -29,9 +29,9 @@ namespace CerealSquad.Graphics
         /// </summary>
         /// <param name="Texture"></param>
         /// <param name="textureRect"></param>
-        public void InitializationRegularSprite(String Texture, IntRect textureRect)
+        public void InitializationRegularSprite(String Texture, Vector2i Size, IntRect textureRect)
         {
-            sprite = new RegularSprite(Texture, textureRect);
+            sprite = new RegularSprite(TextureFactory.Instance.getTexture(Texture), Size, textureRect);
         }
 
         /// <summary>

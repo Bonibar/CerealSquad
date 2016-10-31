@@ -12,18 +12,20 @@ namespace CerealSquad.Graphics
     {
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
-
+        private Texture texture;
         protected Vector2i size = new Vector2i(0, 0);
 
-        public AnimatedSprite(String Texture, Vector2i Size) : base(Texture)
+        public AnimatedSprite(Texture Texture, Vector2i Size)
         {
             size = Size;
+            texture = Texture;
             initialization();
         }
 
-        public AnimatedSprite(String Texture, int Width, int Height) : base(Texture)
+        public AnimatedSprite(Texture Texture, int Width, int Height)
         {
             size = new Vector2i(Width, Height);
+            texture = Texture;
             initialization();
         }
 

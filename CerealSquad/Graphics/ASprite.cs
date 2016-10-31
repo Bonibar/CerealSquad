@@ -16,16 +16,7 @@ namespace CerealSquad.Graphics
 
     abstract class ASprite : Transformable, Drawable
     {
-        protected Texture texture = null;
-    
         public ETypeSprite Type { get; protected set; }
-
-        //protected JukeBox jukebox = new JukeBox();
-
-        public ASprite(String Texture)
-        {
-            texture = TextureFactory.Instance.getTexture(Texture);
-        }
 
         public ASprite()
         {

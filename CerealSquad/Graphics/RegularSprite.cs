@@ -10,19 +10,17 @@ namespace CerealSquad.Graphics
 {
     class RegularSprite : ASprite
     {
-        private Sprite sprite = new Sprite();
+        private VertexArray vertices = new VertexArray(PrimitiveType.Quads, 4);
+        private Texture texture;
 
-        public RegularSprite(string Texture) : base(Texture)
+        public RegularSprite(Texture Texture, Vector2i size, IntRect textureRect)
         {
             Type = ETypeSprite.REGULAR;
-            sprite.Texture = texture;
-        }
-
-        public RegularSprite(string Texture, IntRect rect) : base(Texture)
-        {
-            Type = ETypeSprite.REGULAR;
-            sprite.Texture = texture;
-            sprite.TextureRect = rect;
+            texture = Texture;
+            vertices[0] = new Vertex(new Vector2f(0, 0), new Vector2f(textureRect.Left, textureRect.Top));
+            vertices[1] = new Vertex(new Vector2f(size.X, 0), new Vector2f(textureRect.Left + textureRect.Width, textureRect.Top));
+            vertices[2] = new Vertex(new Vector2f(size.X, size.Y), new Vector2f(textureRect.Left + textureRect.Width, textureRect.Top + textureRect.Height));
+            vertices[3] = new Vertex(new Vector2f(0, size.Y), new Vector2f(textureRect.Left, textureRect.Top + textureRect.Height));
         }
 
         /// <summary>
@@ -33,7 +31,8 @@ namespace CerealSquad.Graphics
         public override void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            sprite.Draw(target, states);
+            states.Texture = texture;
+            target.Draw(vertices, states);
         }
     }
 }
