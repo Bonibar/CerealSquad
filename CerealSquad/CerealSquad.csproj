@@ -80,6 +80,8 @@
   <ItemGroup>
     <Compile Include="AEnemy.cs" />
     <Compile Include="ATrap.cs" />
+    <Compile Include="JackEnnemy.cs" />
+    <Compile Include="Ennemy.cs" />
     <Compile Include="Jack.cs" />
     <Compile Include="Mike.cs" />
     <Compile Include="Orangina.cs" />

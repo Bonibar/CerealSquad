@@ -16,5 +16,10 @@ namespace CerealSquad
         {
             throw new NotImplementedException();
         }
+
+        public override EName getName()
+        {
+            return EName.Jack;
+        }
     }
 }

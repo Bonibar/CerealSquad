@@ -30,16 +30,6 @@ namespace CerealSquad
             _type = e_EntityType.Player;
             input.KeyboardKeyPressed += thinkMove;
             input.KeyboardKeyReleased += thinkAction;
-            _inputPress = new Dictionary<Key, functionMove>();
-            _inputPress[Keyboard.Key.Z] = move_up;
-            _inputPress[Keyboard.Key.Q] = move_left;
-            _inputPress[Keyboard.Key.S] = move_down;
-            _inputPress[Keyboard.Key.D] = move_right;
-            _inputRelease = new Dictionary<Key, functionMove>();
-            _inputRelease[Keyboard.Key.Z] = move_up_release;
-            _inputRelease[Keyboard.Key.Q] = move_left_release;
-            _inputRelease[Keyboard.Key.S] = move_down_release;
-            _inputRelease[Keyboard.Key.D] = move_right_release;
             _playerInput._isRightPressed = false;
             _playerInput._isLeftPressed = false;
             _playerInput._isUpPressed = false;
@@ -120,5 +110,18 @@ namespace CerealSquad
         }
 
         public abstract void AttaqueSpe();
+
+        //
+        // EName must be consecutive int start at 0 for using inside a list
+        //
+        public enum EName
+        {
+            Jack = 0,
+            Orangina = 1,
+            Mike = 2,
+            Tchong = 3
+        }
+
+        public abstract EName getName();
     }
 }

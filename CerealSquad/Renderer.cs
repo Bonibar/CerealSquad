@@ -113,16 +113,27 @@ namespace CerealSquad
         /// </summary>
         public void loop()
         {
-            IEntity first = new Orangina(null, new s_position(0, 0, 1), im);
+            IEntity world = new WorldEntity();
+            IEntity first = new Orangina(world, new s_position(20, 20, 1), im);
+            first.ressourcesEntity.Position = new Vector2f(100, 100);
+            IEntity second = new Jack(world, new s_position(20, 20, 1), im);
+            second.ressourcesEntity.Position = new Vector2f(100, 100);
+            IEntity jackEnnemy = new JackEnnemy(world, new s_position(10, 10, 1));
+            jackEnnemy.ressourcesEntity.Position = new Vector2f(50, 50);
+            IEntity ennemy = new Ennemy(world, new s_position(10, 10, 1));
+            ennemy.ressourcesEntity.Position = new Vector2f(50, 50);
             SFML.System.Clock frameClock = new SFML.System.Clock();
 
             while (isOpen())
             {
                 DispatchEvents();
                 SFML.System.Time frameTime = frameClock.Restart();
-                first.update(frameTime);
+                world.update(frameTime);
                 Clear(Color.White);
                 win.Draw(first.ressourcesEntity);
+                win.Draw(second.ressourcesEntity);
+                win.Draw(jackEnnemy.ressourcesEntity);
+                win.Draw(ennemy.ressourcesEntity);
                 Display();
             }
         }

@@ -85,6 +85,8 @@ namespace CerealSquad
         public AEntity(IEntity owner, s_size size = new s_size())
         {
             _owner = owner;
+            if (owner != null)
+                _owner.addChild(this);
             _children = new List<IEntity>();
             _type = e_EntityType.World;
             _damageType = e_DamageType.NONE;
@@ -137,24 +139,24 @@ namespace CerealSquad
             switch (_move)
             {
                 case EMovement.Up:
-                    _pos += new s_position(0, _speed, 0);
+                    _pos += new s_position(0, -_speed, 0);
                     _ressources.playAnimation(EntityResources.EState.WALKING_UP);
-                    pos.Y -= 0.1f;
+                    pos.Y -= 5 * (float)_speed;
                     break;
                 case EMovement.Down:
-                    _pos += new s_position(0, -_speed, 0);
+                    _pos += new s_position(0, +_speed, 0);
                     _ressources.playAnimation(EntityResources.EState.WALKING_DOWN);
-                    pos.Y += 0.1f;
+                    pos.Y += 5 * (float)_speed;
                     break;
                 case EMovement.Right:
                     _pos += new s_position(_speed, 0, 0);
                     _ressources.playAnimation(EntityResources.EState.WALKING_RIGHT);
-                    pos.X += 0.1f;
+                    pos.X += 5 * (float)_speed;
                     break;
                 case EMovement.Left:
                     _pos += new s_position(-_speed, 0, 0);
                     _ressources.playAnimation(EntityResources.EState.WALKING_LEFT);
-                    pos.X -= 0.1f;
+                    pos.X -= 5 * (float)_speed;
                     break;
                 case EMovement.None:
                     _ressources.playAnimation(EntityResources.EState.IDLE);
