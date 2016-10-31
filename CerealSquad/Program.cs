@@ -12,16 +12,41 @@ namespace CerealSquad
         /// </summary>
         static void Main()
         {
-            //Renderer renderer = new Renderer();
+            /*
+            Renderer renderer = new Renderer();
 
-            //renderer.initialization();
-            //renderer.loop();
+            renderer.initialization();
+            renderer.loop();
+            */
+            RenderWindow win = new RenderWindow(new VideoMode(800, 800), "Cereal Menu");
+            InputManager.InputManager manager = new InputManager.InputManager(win);
 
-            Game game = new Game();
+            Menus.Menu mainMenu = Menus.Prefabs.MainMenu(win, manager);
+            Menus.MenuManager.Instance.AddMenu(mainMenu);
 
-            game.GameLoop();
+            manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
-            RoomParser.ParseRoom("Maps/TestRoom.txt");
+            while (win.IsOpen)
+            {
+                win.DispatchEvents();
+                win.Clear(Color.Magenta);
+                if (Menus.MenuManager.Instance.isDisplayed())
+                {
+                    Menus.MenuManager.Instance.CurrentMenu.Draw();
+                }
+                else
+                {
+                    // GameLogic
+                    // game.update();
+                }
+                win.Display();
+            }
+        }
+
+        private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
+        {
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
+                ((RenderWindow)source).Close();
         }
     }
 }
