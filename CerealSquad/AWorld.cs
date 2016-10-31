@@ -22,5 +22,10 @@ namespace CerealSquad
                 Console.WriteLine("RoomType = " + Room.getRoomType());
             }
         }
+
+        public void AddRoom(ARoom.e_RoomType Type = 0)
+        {
+            Rooms.Add(new ARoom(Type));
+        }
     }
 }

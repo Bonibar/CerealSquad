@@ -8,9 +8,19 @@ namespace CerealSquad
 {
     class ARoom
     {
+        /// <summary>
+        /// Contains the globale position in the world.
+        /// </summary>
         public struct s_MapRect
         {
-            public s_MapRect(int xStart, int xEnd, int yStart, int yEnd)
+            /// <summary>
+            /// Constructor of s_MapRect.
+            /// </summary>
+            /// <param name="xStart">uint</param>
+            /// <param name="xEnd">uint</param>
+            /// <param name="yStart">uint</param>
+            /// <param name="yEnd">uint</param>
+            public s_MapRect(uint xStart, uint xEnd, uint yStart, uint yEnd)
             {
                 this.xStart = xStart;
                 this.xEnd = xEnd;
@@ -18,23 +28,39 @@ namespace CerealSquad
                 this.yEnd = yEnd;
             }
 
-            public int xStart { get; }
-            public int xEnd { get; }
-            public int yStart { get; }
-            public int yEnd { get; }
+            public uint xStart { get; }
+            public uint xEnd { get; }
+            public uint yStart { get; }
+            public uint yEnd { get; }
         }
 
         public enum e_RoomType { FightRoom, TransitionRoom };
 
+        protected Dictionary<RoomParser.t_cellpos, RoomParser.t_cellcontent> Cells;
         protected e_RoomType RoomType = 0;
         //protected List<IEntity> Ennemies;
         protected s_MapRect MapRect;
-
+        
         public ARoom(e_RoomType Type = 0)
         {
             RoomType = Type;
         }
-        
+
+        /// <summary>
+        /// Loop that calls Environment Ressources functions to add sprites.
+        /// </summary>
+        public void loopAddSprites()
+        {
+            /*foreach (var cell in Cells)
+            {
+                EnvironmentRessources.AddSprite(cell.Key.Row, cell.Key.Column, cell.Value.TexturePath, cell.Value.Texture);
+            }*/
+        }
+
+        /// <summary>
+        /// Return the type of the room.
+        /// </summary>
+        /// <returns>e_RoomType</returns>
         public e_RoomType getRoomType()
         {
             return (RoomType);
@@ -55,9 +81,14 @@ namespace CerealSquad
             MapRect = Rect;
         }
 
-        public void setMapRect(int xStart, int xEnd, int yStart, int yEnd)
+        public void setMapRect(uint xStart, uint xEnd, uint yStart, uint yEnd)
         {
             MapRect = new s_MapRect(xStart, xEnd, yStart, yEnd);
+        }
+
+        public Dictionary<RoomParser.t_cellpos, RoomParser.t_cellcontent> getCells()
+        {
+            return (Cells);
         }
     }
 }

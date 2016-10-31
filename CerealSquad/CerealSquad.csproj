@@ -82,7 +82,6 @@
     <Compile Include="Game.cs" />
     <Compile Include="AWorld.cs" />
     <Compile Include="RoomParser.cs" />
-    <Compile Include="World.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
