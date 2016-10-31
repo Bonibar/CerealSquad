@@ -20,18 +20,25 @@ namespace CerealSquad
 
         public void GameLoop()
         {
-            /* test 
+            /* test */
             World World = new World();
             for (int i = 0; i < 5; i++)
                 World.AddRoom(0);
             AddWorld(World);
-            World.AddRoom(0);
-            CurrentWorld = World;
+            World World2 = new World();
+            for (int i = 0; i < 6; i++)
+                World2.AddRoom(0);
+            AddWorld(World2);
+            CurrentWorld = World2;
             CurrentWorld.DispRooms();
             Console.WriteLine("---------------");
-            var firstWorld = Worlds.Take(1);
-            foreach (AWorld w in firstWorld)
-                w.DispRooms();
+            var firstWorld = Worlds.ElementAt(0);
+            firstWorld.DispRooms();
+            var index = Worlds.FindIndex(a => a == CurrentWorld);
+            Console.WriteLine("Worlds : " + Worlds.Count);
+            Console.WriteLine("Rooms : " + firstWorld.getRooms().Count);
+            Console.WriteLine("Rooms 2 : " + Worlds.ElementAt(1).getRooms().Count);
+            Console.WriteLine("Index : " + index);
             //World.DispRooms();
             /* endTest */
         }
