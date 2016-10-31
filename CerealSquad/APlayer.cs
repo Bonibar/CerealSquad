@@ -13,7 +13,9 @@ namespace CerealSquad
 
         protected Dictionary<Key, functionMove> _inputPress;
         protected Dictionary<Key, functionMove> _inputRelease;
-        
+        protected bool _specialActive;
+        protected int _weight;
+
         protected struct s_input
         {
             public bool _isRightPressed;
@@ -23,6 +25,19 @@ namespace CerealSquad
         }
 
         protected s_input _playerInput;
+
+        public int Weight
+        {
+            get
+            {
+                return _weight;
+            }
+
+            set
+            {
+                _weight = value;
+            }
+        }
 
         public APlayer(IEntity owner, s_position position, InputManager input) : base(owner)
         {
@@ -34,44 +49,56 @@ namespace CerealSquad
             _playerInput._isLeftPressed = false;
             _playerInput._isUpPressed = false;
             _playerInput._isDownPressed = false;
+            _specialActive = false;
+            _weight = 1;
         }
 
-        public void move_up_release()
+        protected void special_end()
+        {
+            _specialActive = false;
+        }
+
+        protected void special_start()
+        {
+            _specialActive = true;
+        }
+
+        protected void move_up_release()
         {
             _playerInput._isUpPressed = false;
         }
 
-        public void move_down_release()
+        protected void move_down_release()
         {
             _playerInput._isDownPressed = false;
         }
 
-        public void move_right_release()
+        protected void move_right_release()
         {
             _playerInput._isRightPressed = false;
         }
 
-        public void move_left_release()
+        protected void move_left_release()
         {
             _playerInput._isLeftPressed = false;
         }
 
-        public void move_up()
+        protected void move_up()
         {
             _playerInput._isUpPressed = true;
         }
 
-        public void move_down()
+        protected void move_down()
         {
             _playerInput._isDownPressed = true;
         }
 
-        public void move_left()
+        protected void move_left()
         {
             _playerInput._isLeftPressed = true;
         }
 
-        public void move_right()
+        protected void move_right()
         {
             _playerInput._isRightPressed = true;
         }
@@ -105,6 +132,8 @@ namespace CerealSquad
 
         public override void update(SFML.System.Time deltaTime)
         {
+            if (_specialActive)
+                AttaqueSpe();
             move();
             _ressources.update(deltaTime);
         }

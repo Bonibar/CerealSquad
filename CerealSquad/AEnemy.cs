@@ -65,21 +65,18 @@ namespace CerealSquad
                 }
             }
 
-            public void propagateHeat(int x, int y, int intensity, EName character)
+            public void propagateHeat(int x, int y, int intensity, EName character, int characterWeight)
             {
-                if (x >= 0 && x < _x && y >= 0 && y < _y && _map[x][y][(int)character] != -1 && _map[x][y][(int)character] < intensity)
+                if (x >= 0 && x < _x && y >= 0 && y < _y && _map[x][y][(int)character] != -1 && _map[x][y][(int)character] < intensity * characterWeight)
                 {
-                    if (true)
-                    {
-                        _map[x][y][(int)character] = intensity;
+                        _map[x][y][(int)character] = intensity * characterWeight;
                         if (intensity > 1)
                         {
-                            propagateHeat(x - 1, y, intensity - 1, character);
-                            propagateHeat(x + 1, y, intensity - 1, character);
-                            propagateHeat(x, y - 1, intensity - 1, character);
-                            propagateHeat(x, y + 1, intensity - 1, character);
+                            propagateHeat(x - 1, y, intensity - 1, character, characterWeight);
+                            propagateHeat(x + 1, y, intensity - 1, character, characterWeight);
+                            propagateHeat(x, y - 1, intensity - 1, character, characterWeight);
+                            propagateHeat(x, y + 1, intensity - 1, character, characterWeight);
                         }
-                    }
                 }
             }
 
@@ -94,7 +91,7 @@ namespace CerealSquad
                     if (entity.getEntityType() == e_EntityType.Player)
                     {
                         APlayer p = (APlayer)entity;
-                        propagateHeat(p.Pos._x, p.Pos._y, 100, p.getName());
+                        propagateHeat(p.Pos._x, p.Pos._y, 100, p.getName(), p.Weight);
                     }
                 }
             }
