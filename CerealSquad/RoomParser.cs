@@ -55,7 +55,7 @@ namespace CerealSquad
             uint currentRow = 0;
             while (currentRow < rowCount)
             {
-                string[] columns = lines[i].Split(' ');
+                string[] columns = lines[currentRow].Split(' ');
                 uint currentColumn = 0;
                 //while (currentColumn < )
                 currentRow++;
