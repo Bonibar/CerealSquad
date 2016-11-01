@@ -7,46 +7,43 @@ namespace CerealSquad
 {
     static class Program
     {
+        public static Renderer renderer;
+
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
+        /// 
         static void Main()
         {
-            /*
-            Renderer renderer = new Renderer();
+            renderer = new Renderer();
+            renderer.Initialization();
+            renderer.ChangeResolution(Renderer.EResolution.R800x450);
 
-            renderer.initialization();
-            renderer.loop();
-            */
-            RenderWindow win = new RenderWindow(new VideoMode(800, 800), "Cereal Menu");
-            InputManager.InputManager manager = new InputManager.InputManager(win);
-
-            Menus.Menu mainMenu = Menus.Prefabs.MainMenu(win, manager);
-            Menus.MenuManager.Instance.AddMenu(mainMenu);
-
+            InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
-            while (win.IsOpen)
+            Game game = new Game(renderer);
+
+            game.GameLoop();
+            while (renderer.isOpen())
             {
-                win.DispatchEvents();
-                win.Clear(Color.Magenta);
-                if (Menus.MenuManager.Instance.isDisplayed())
-                {
-                    Menus.MenuManager.Instance.CurrentMenu.Draw();
-                }
-                else
-                {
-                    // GameLogic
-                    // game.update();
-                }
-                win.Display();
+                renderer.DispatchEvents();
+                renderer.Clear(SFML.Graphics.Color.Black);
+                game.GameLoop();
+                renderer.Display();
             }
         }
 
+        static bool fullscreen = false;
         private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
-                ((RenderWindow)source).Close();
+                ((Window)source).Close();
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.F))
+            {
+                renderer.SetFullScreenEnabled(!fullscreen);
+                fullscreen = !fullscreen;
+            }
         }
     }
 }

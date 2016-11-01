@@ -34,7 +34,7 @@ namespace CerealSquad.Graphics
             public String name;
         };
 
-        private Dictionary<Palette, Texture> content;
+        private Dictionary<Palette, Texture> content = new Dictionary<Palette, Texture>();
         private TextureFactory textureFactory = TextureFactory.Instance;
 
         public void AddPaletteInformations(String name, uint width = 64, uint height = 64)
@@ -58,7 +58,8 @@ namespace CerealSquad.Graphics
                 if (entry.Key.name.Equals(name))
                 {
                     Palette palette = entry.Key;
-                    return new KeyValuePair<IntRect, Texture>(new IntRect((int)number % (int)palette.perLine, (int)number / (int)palette.perLine, (int)palette.width, (int)palette.height), entry.Value);
+
+                    return new KeyValuePair<IntRect, Texture>(new IntRect(((int)number % (int)palette.perLine) * 64, (int)number / (int)palette.perLine, (int)palette.width, (int)palette.height), entry.Value);
                 }
             }
 
