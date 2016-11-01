@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CerealSquad
+namespace CerealSquad.GameWorld
 {
     public static class RoomParser
     {

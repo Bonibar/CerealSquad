@@ -78,10 +78,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ARoom.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="AWorld.cs" />
-    <Compile Include="RoomParser.cs" />
+    <Compile Include="GameWorld\ARoom.cs" />
+    <Compile Include="GameWorld\Game.cs" />
+    <Compile Include="GameWorld\AWorld.cs" />
+    <Compile Include="GameWorld\RoomParser.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />

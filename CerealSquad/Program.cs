@@ -24,7 +24,7 @@ namespace CerealSquad
 
             Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.MainMenu(renderer.Win, manager));
 
-            Game game = new Game(renderer);
+            GameWorld.Game game = new GameWorld.Game(renderer);
 
             game.GameLoop();
             while (renderer.isOpen())
@@ -34,7 +34,10 @@ namespace CerealSquad
                 if (Menus.MenuManager.Instance.isDisplayed())
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
                 else
+                {
                     game.GameLoop();
+                    renderer.Draw(game.CurrentWorld);
+                }
                 renderer.Display();
             }
         }
