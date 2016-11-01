@@ -12,43 +12,47 @@ namespace CerealSquad.GameWorld
         /// <summary>
         /// Contains the globale position in the world.
         /// </summary>
-        public struct s_MapRect
+        public struct s_MapPos
         {
-            public static s_MapRect Zero { get { return new s_MapRect(0, 0, 0, 0); } }
-            /// <summary>
-            /// Constructor of s_MapRect.
-            /// </summary>
-            /// <param name="xStart">uint</param>
-            /// <param name="xEnd">uint</param>
-            /// <param name="yStart">uint</param>
-            /// <param name="yEnd">uint</param>
-            public s_MapRect(uint xStart, uint xEnd, uint yStart, uint yEnd)
-            {
-                this.xStart = xStart;
-                this.xEnd = xEnd;
-                this.yStart = yStart;
-                this.yEnd = yEnd;
-            }
+            public static s_MapPos Zero { get { return new s_MapPos(0, 0); } }
 
-            public uint xStart { get; }
-            public uint xEnd { get; }
-            public uint yStart { get; }
-            public uint yEnd { get; }
+            public uint x { get; }
+            public uint y { get; }
+
+            public s_MapPos(uint x, uint y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        public struct s_MapSize
+        {
+            public uint width { get; }
+            public uint height { get; }
+
+            public s_MapSize(uint x, uint y)
+            {
+                this.width = x;
+                this.height = y;
+            }
         }
 
         public enum e_RoomType { FightRoom, TransitionRoom };
 
         public e_RoomType RoomType { get; private set; }
         //protected List<IEntity> Ennemies;
-        public s_MapRect MapRect { get; private set; }
+        public s_MapPos Position { get; private set; }
+        public s_MapSize Size { get; private set; }
         private Dictionary<RoomParser.t_cellpos, RoomParser.t_cellcontent> Cells;
         private Graphics.EnvironmentResources er = new Graphics.EnvironmentResources();
 
-        public ARoom(s_MapRect Position, string MapFile, e_RoomType Type = 0)
+        public ARoom(s_MapPos Pos, string MapFile, e_RoomType Type = 0)
         {
             RoomType = Type;
-            MapRect = Position;
+            Position = Pos;
             Cells = RoomParser.ParseRoom(MapFile);
+            Size = new s_MapSize(Cells.Keys.OrderBy(x => x.Row).Last().Row, Cells.Keys.OrderBy(x => x.Column).Last().Column);
             parseRoom();
         }
 
