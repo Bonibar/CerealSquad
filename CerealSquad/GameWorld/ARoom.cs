@@ -66,7 +66,7 @@ namespace CerealSquad.GameWorld
                     Graphics.TextureFactory.Instance.load(cell.Value.TexturePath, cell.Value.TexturePath);
                     Graphics.PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
                 }
-                er.AddSprite(cell.Key.Row, cell.Key.Column, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
+                er.AddSprite(cell.Key.Column, cell.Key.Row, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
             }
         }
 

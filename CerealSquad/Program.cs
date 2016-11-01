@@ -30,7 +30,7 @@ namespace CerealSquad
             while (renderer.isOpen())
             {
                 renderer.DispatchEvents();
-                renderer.Clear(SFML.Graphics.Color.Black);
+                renderer.Clear(Color.Black);
                 if (Menus.MenuManager.Instance.isDisplayed())
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
                 else
