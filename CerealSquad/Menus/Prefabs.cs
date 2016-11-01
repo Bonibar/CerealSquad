@@ -11,11 +11,11 @@ namespace CerealSquad.Menus
         public static Menu MainMenu(SFML.Graphics.RenderWindow win, InputManager.InputManager manager)
         {
             Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
-            Menu mainMenu = new Menu(win, manager);
+            Menu mainMenu = new Menu(manager);
 
             Buttons.IButton btn_continue = new Buttons.OpenMenuButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, SettingsMenu(win, manager));
             MenuItem item_continue = new MenuItem(btn_continue);
-            Buttons.IButton btn_newgame = new Buttons.OpenMenuButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 70, SettingsMenu(win, manager));
+            Buttons.IButton btn_newgame = new Buttons.BackButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 70, mainMenu);
             MenuItem item_newgame = new MenuItem(btn_newgame);
             Buttons.IButton btn_settings = new Buttons.OpenMenuButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 140, SettingsMenu(win, manager));
             MenuItem item_settings = new MenuItem(btn_settings);
@@ -38,7 +38,7 @@ namespace CerealSquad.Menus
         public static Menu SettingsMenu(SFML.Graphics.RenderWindow win, InputManager.InputManager manager)
         {
             Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
-            Menu settingsMenu = new Menu(win, manager);
+            Menu settingsMenu = new Menu(manager);
 
             Buttons.IButton btn_back = new Buttons.BackButton("Back", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 0, settingsMenu);
             MenuItem item_back = new MenuItem(btn_back);

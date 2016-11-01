@@ -18,11 +18,9 @@ namespace CerealSquad.Menus.Buttons
         public uint Y { get; }
     }
 
-    public interface IButton
+    public interface IButton : SFML.Graphics.Drawable
     {
         bool Selected { get; set; }
-
-        SFML.Graphics.Drawable getDrawable();
 
         void Trigger(object source, InputManager.Keyboard.KeyEventArgs e, bool up = true);
         void Trigger(object source, InputManager.Joystick.ButtonEventArgs e, bool up = true);

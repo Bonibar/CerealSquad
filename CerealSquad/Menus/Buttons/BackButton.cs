@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFML.Graphics;
 
 namespace CerealSquad.Menus.Buttons
 {
@@ -16,24 +17,20 @@ namespace CerealSquad.Menus.Buttons
         protected void selectionChanged()
         {
             if (Selected)
-                Text.Color = SFML.Graphics.Color.Green;
+                Text.Color = Color.Green;
             else
-                Text.Color = SFML.Graphics.Color.White;
+                Text.Color = Color.White;
         }
 
-        protected SFML.Graphics.Text Text;
+        protected Text Text;
 
         private BackButton() { }
-        public BackButton(string text, SFML.Graphics.Font font, int offsety, Menu menu)
+        public BackButton(string text, Font font, int offsety, Menu menu)
         {
             _Menu = menu;
-            Text = new SFML.Graphics.Text(text, font);
+            Text = new Text(text, font);
+            Text.CharacterSize = 64;
             Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + offsety);
-        }
-
-        public SFML.Graphics.Drawable getDrawable()
-        {
-            return Text;
         }
 
         public void Trigger(object source, InputManager.Keyboard.KeyEventArgs e, bool up = true)
@@ -45,10 +42,15 @@ namespace CerealSquad.Menus.Buttons
             }
             else if (e.KeyCode == InputManager.Keyboard.Key.Return && up == false)
             {
-                Text.Color = SFML.Graphics.Color.Red;
+                Text.Color = Color.Red;
             }
         }
         public void Trigger(object source, InputManager.Joystick.ButtonEventArgs e, bool up = true) { }
         public void Trigger(object source, InputManager.Joystick.MoveEventArgs e) { }
+
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            target.Draw(Text, states);
+        }
     }
 }
