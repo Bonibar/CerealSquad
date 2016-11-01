@@ -22,6 +22,8 @@ namespace CerealSquad
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
+            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.MainMenu(renderer.Win, manager));
+
             Game game = new Game(renderer);
 
             game.GameLoop();
@@ -29,7 +31,10 @@ namespace CerealSquad
             {
                 renderer.DispatchEvents();
                 renderer.Clear(SFML.Graphics.Color.Black);
-                game.GameLoop();
+                if (Menus.MenuManager.Instance.isDisplayed())
+                    renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
+                else
+                    game.GameLoop();
                 renderer.Display();
             }
         }

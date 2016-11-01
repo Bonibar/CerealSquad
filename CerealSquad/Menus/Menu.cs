@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFML.Graphics;
 
 namespace CerealSquad.Menus
 {
-    public class MenuItem
+    public class MenuItem : Drawable
     {
         public enum ItemType
         {
@@ -28,11 +29,15 @@ namespace CerealSquad.Menus
         public uint JoystickKey { get; private set; }
         public ItemType Type { get; set; }
         public Buttons.IButton Button { get; private set; }
+
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            Button.Draw(target, states);
+        }
     }
 
-    public class Menu
+    public class Menu : Drawable
     {
-        protected SFML.Graphics.RenderWindow _Win;
         protected InputManager.InputManager _InputManager;
 
         private bool _displayed = false;
@@ -40,10 +45,9 @@ namespace CerealSquad.Menus
 
         protected List<MenuItem> _menuList = new List<MenuItem>();
 
-        public Menu(SFML.Graphics.RenderWindow win, InputManager.InputManager inputManager)
+        public Menu(InputManager.InputManager inputManager)
         {
             _InputManager = inputManager;
-            _Win = win;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
             _InputManager.KeyboardKeyReleased += _InputManager_KeyboardKeyReleased;
@@ -158,16 +162,6 @@ namespace CerealSquad.Menus
                 Show();
         }
 
-        public void Draw()
-        {
-            if (Displayed)
-            {
-                _menuList.ForEach((MenuItem item) => {
-                    _Win.Draw(item.Button.getDrawable());
-                });
-            }
-        }
-
         public void Exit()
         {
             MenuManager.Instance.RemoveMenu(this);
@@ -189,6 +183,13 @@ namespace CerealSquad.Menus
             MenuItem firstValid = _menuList.FirstOrDefault<MenuItem>(x => x.Type != MenuItem.ItemType.Disabled && x.Type != MenuItem.ItemType.KeyBinded);
             if (firstValid != null)
                 firstValid.Button.Selected = true;
+        }
+            
+
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            if (Displayed)
+                _menuList.ForEach(x => x.Draw(target, states));
         }
     }
 }

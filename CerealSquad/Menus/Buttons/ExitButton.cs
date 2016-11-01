@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFML.Graphics;
 
 namespace CerealSquad.Menus.Buttons
 {
@@ -46,11 +47,6 @@ namespace CerealSquad.Menus.Buttons
             _Offsety = offsety;
         }
 
-        public SFML.Graphics.Drawable getDrawable()
-        {
-            return Text;
-        }
-
         public void Trigger(object source, InputManager.Keyboard.KeyEventArgs e, bool up = true)
         {
             if (e.KeyCode == InputManager.Keyboard.Key.Return && up == true)
@@ -65,5 +61,10 @@ namespace CerealSquad.Menus.Buttons
         }
         public void Trigger(object source, InputManager.Joystick.ButtonEventArgs e, bool up = true) { }
         public void Trigger(object source, InputManager.Joystick.MoveEventArgs e) { }
+
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            target.Draw(Text, states);
+        }
     }
 }
