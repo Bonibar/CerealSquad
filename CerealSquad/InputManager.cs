@@ -248,6 +248,7 @@ namespace CerealSquad.InputManager
     public class InputManager
     {
         private SFML.Window.Window _Win;
+        private Renderer _Renderer;
 
         /// <summary>
         /// Event fired when a Keyboard key has been pressed
@@ -280,22 +281,69 @@ namespace CerealSquad.InputManager
         /// </summary>
         public event Joystick.ConnectEventHandler JoystickDisconnected;
 
+        private InputManager() { }
         /// <summary>
         /// Manage all input events based on a SFML Window
         /// </summary>
         /// <param name="win">Window that will be listened for input events</param>
-        public InputManager(SFML.Window.Window win)
+        public InputManager(Renderer renderer)
         {
-            _Win = win;
-            _Win.KeyPressed += SFML_KeyboardKeyPressed;
-            _Win.KeyReleased += SFML_KeyboardKeyReleased;
+            if (renderer == null)
+                throw new ArgumentNullException("Renderer cannot be null");
+            _Renderer = renderer;
 
-            _Win.JoystickButtonPressed += SFML_JoystickButtonPressed;
-            _Win.JoystickButtonReleased += SFML_JoystickButtonReleased;
-            _Win.JoystickMoved += SFML_JoystickMoved;
+            _Renderer.WindowsClosed += _Renderer_WindowsClosed;
+            _Renderer.WindowsCreated += _Renderer_WindowsCreated;
 
-            _Win.JoystickConnected += SFML_JoystickConnected;
-            _Win.JoystickDisconnected += SFML_JoystickDisconnected;
+            if (renderer.Win != null)
+                registerWindow(renderer.Win);
+        }
+
+        private void _Renderer_WindowsCreated(object source, Renderer.WindowsEventArgs e)
+        {
+            if (_Win != null)
+                unregisterWindow();
+            registerWindow(e.Windows);
+        }
+        private void _Renderer_WindowsClosed(object source, Renderer.WindowsEventArgs e)
+        {
+            if (e.Windows == _Win)
+                unregisterWindow();
+        }
+
+        private void registerWindow(Window win)
+        {
+            if (win != null)
+            {
+                if (_Win != null)
+                    unregisterWindow();
+                _Win = win;
+                _Win.KeyPressed += SFML_KeyboardKeyPressed;
+                _Win.KeyReleased += SFML_KeyboardKeyReleased;
+
+                _Win.JoystickButtonPressed += SFML_JoystickButtonPressed;
+                _Win.JoystickButtonReleased += SFML_JoystickButtonReleased;
+                _Win.JoystickMoved += SFML_JoystickMoved;
+
+                _Win.JoystickConnected += SFML_JoystickConnected;
+                _Win.JoystickDisconnected += SFML_JoystickDisconnected;
+            }
+        }
+        private void unregisterWindow()
+        {
+            if (_Win != null)
+            {
+                _Win.KeyPressed -= SFML_KeyboardKeyPressed;
+                _Win.KeyReleased -= SFML_KeyboardKeyReleased;
+
+                _Win.JoystickButtonPressed -= SFML_JoystickButtonPressed;
+                _Win.JoystickButtonReleased -= SFML_JoystickButtonReleased;
+                _Win.JoystickMoved -= SFML_JoystickMoved;
+
+                _Win.JoystickConnected -= SFML_JoystickConnected;
+                _Win.JoystickDisconnected -= SFML_JoystickDisconnected;
+                _Win = null;
+            }
         }
 
         private void SFML_JoystickConnected(object sender, JoystickConnectEventArgs e)

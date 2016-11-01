@@ -7,15 +7,20 @@ namespace CerealSquad
 {
     static class Program
     {
+        public static Renderer renderer;
+
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
+        /// 
         static void Main()
         {
-            Renderer renderer = new Renderer();
+            renderer = new Renderer();
             renderer.Initialization();
-            renderer.ChangeResolution(Renderer.EResolution.R1920x1080);
-            renderer.SetFullScreenEnabled(true);
+            renderer.ChangeResolution(Renderer.EResolution.R800x450);
+
+            InputManager.InputManager manager = new InputManager.InputManager(renderer);
+            manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
             Game game = new Game(renderer);
 
@@ -26,6 +31,18 @@ namespace CerealSquad
                 renderer.Clear(SFML.Graphics.Color.Black);
                 game.GameLoop();
                 renderer.Display();
+            }
+        }
+
+        static bool fullscreen = false;
+        private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
+        {
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
+                ((Window)source).Close();
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.F))
+            {
+                renderer.SetFullScreenEnabled(!fullscreen);
+                fullscreen = !fullscreen;
             }
         }
     }
