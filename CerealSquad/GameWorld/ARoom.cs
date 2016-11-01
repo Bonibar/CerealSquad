@@ -16,25 +16,25 @@ namespace CerealSquad.GameWorld
         {
             public static s_MapPos Zero { get { return new s_MapPos(0, 0); } }
 
-            public uint x { get; }
-            public uint y { get; }
+            public uint X { get; }
+            public uint Y { get; }
 
             public s_MapPos(uint x, uint y)
             {
-                this.x = x;
-                this.y = y;
+                X = x;
+                Y = y;
             }
         }
 
         public struct s_MapSize
         {
-            public uint width { get; }
-            public uint height { get; }
+            public uint Width { get; }
+            public uint Height { get; }
 
-            public s_MapSize(uint x, uint y)
+            public s_MapSize(uint width, uint height)
             {
-                this.width = x;
-                this.height = y;
+                Width = width;
+                Height = height;
             }
         }
 
@@ -52,7 +52,7 @@ namespace CerealSquad.GameWorld
             RoomType = Type;
             Position = Pos;
             Cells = RoomParser.ParseRoom(MapFile);
-            Size = new s_MapSize(Cells.Keys.OrderBy(x => x.Row).Last().Row, Cells.Keys.OrderBy(x => x.Column).Last().Column);
+            Size = new s_MapSize(Cells.Keys.OrderBy(x => x.Row).Last().Row + 1, Cells.Keys.OrderBy(x => x.Column).Last().Column + 1);
             parseRoom();
         }
 
