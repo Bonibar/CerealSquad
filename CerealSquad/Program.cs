@@ -35,7 +35,6 @@ namespace CerealSquad
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
                 else
                 {
-                    game.GameLoop();
                     renderer.Draw(game.CurrentWorld);
                 }
                 renderer.Display();

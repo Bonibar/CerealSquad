@@ -9,20 +9,8 @@ namespace CerealSquad.GameWorld
 {
     class AWorld : Drawable
     {
+        public static int TILE_SIZE = 64;
         protected List<ARoom> Rooms = new List<ARoom>();
-
-        public List<ARoom> getRooms()
-        {
-            return (Rooms);
-        }
-
-        public void DispRooms()
-        {
-            foreach (ARoom Room in Rooms)
-            {
-                Console.WriteLine("RoomType = " + Room.RoomType);
-            }
-        }
 
         public void AddRoom(ARoom.e_RoomType Type = 0)
         {
@@ -32,12 +20,12 @@ namespace CerealSquad.GameWorld
 
         public void Draw(RenderTarget target, RenderStates states)
         {
-            Rooms.ForEach((ARoom x) => {
-                SFML.Graphics.RenderTexture t = new RenderTexture(13 * 64, 13 * 64);
-                x.Draw(t, states);
-                Sprite te = new Sprite(t.Texture);
-                te.Position = new SFML.System.Vector2f(x.MapRect.xStart * 64, x.MapRect.yStart * 64);
-                target.Draw(te, states);
+            Rooms.ForEach((ARoom room) => {
+                RenderTexture roomTexture = new RenderTexture(room.Size.Width * TILE_SIZE, room.Size.Height * TILE_SIZE);
+                room.Draw(roomTexture, states);
+                Sprite roomSprite = new Sprite(roomTexture.Texture);
+                roomSprite.Position = new SFML.System.Vector2f(room.Position.Width * TILE_SIZE, room.Position.Width * TILE_SIZE);
+                target.Draw(roomSprite, states);
             });
         }
     }
