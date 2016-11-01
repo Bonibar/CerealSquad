@@ -12,43 +12,47 @@ namespace CerealSquad.GameWorld
         /// <summary>
         /// Contains the globale position in the world.
         /// </summary>
-        public struct s_MapRect
+        public struct s_MapPos
         {
-            public static s_MapRect Zero { get { return new s_MapRect(0, 0, 0, 0); } }
-            /// <summary>
-            /// Constructor of s_MapRect.
-            /// </summary>
-            /// <param name="xStart">uint</param>
-            /// <param name="xEnd">uint</param>
-            /// <param name="yStart">uint</param>
-            /// <param name="yEnd">uint</param>
-            public s_MapRect(uint xStart, uint xEnd, uint yStart, uint yEnd)
-            {
-                this.xStart = xStart;
-                this.xEnd = xEnd;
-                this.yStart = yStart;
-                this.yEnd = yEnd;
-            }
+            public static s_MapPos Zero { get { return new s_MapPos(0, 0); } }
 
-            public uint xStart { get; }
-            public uint xEnd { get; }
-            public uint yStart { get; }
-            public uint yEnd { get; }
+            public uint X { get; }
+            public uint Y { get; }
+
+            public s_MapPos(uint x, uint y)
+            {
+                X = x;
+                Y = y;
+            }
+        }
+
+        public struct s_MapSize
+        {
+            public uint Width { get; }
+            public uint Height { get; }
+
+            public s_MapSize(uint width, uint height)
+            {
+                Width = width;
+                Height = height;
+            }
         }
 
         public enum e_RoomType { FightRoom, TransitionRoom };
 
         public e_RoomType RoomType { get; private set; }
         //protected List<IEntity> Ennemies;
-        public s_MapRect MapRect { get; private set; }
+        public s_MapPos Position { get; private set; }
+        public s_MapSize Size { get; private set; }
         private Dictionary<RoomParser.t_cellpos, RoomParser.t_cellcontent> Cells;
         private Graphics.EnvironmentResources er = new Graphics.EnvironmentResources();
 
-        public ARoom(s_MapRect Position, string MapFile, e_RoomType Type = 0)
+        public ARoom(s_MapPos Pos, string MapFile, e_RoomType Type = 0)
         {
             RoomType = Type;
-            MapRect = Position;
+            Position = Pos;
             Cells = RoomParser.ParseRoom(MapFile);
+            Size = new s_MapSize(Cells.Keys.OrderBy(x => x.Row).Last().Row + 1, Cells.Keys.OrderBy(x => x.Column).Last().Column + 1);
             parseRoom();
         }
 
@@ -62,7 +66,7 @@ namespace CerealSquad.GameWorld
                     Graphics.TextureFactory.Instance.load(cell.Value.TexturePath, cell.Value.TexturePath);
                     Graphics.PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
                 }
-                er.AddSprite(cell.Key.Row, cell.Key.Column, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
+                er.AddSprite(cell.Key.Column, cell.Key.Row, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
             }
         }
 
