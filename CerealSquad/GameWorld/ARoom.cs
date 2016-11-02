@@ -11,6 +11,8 @@ namespace CerealSquad.GameWorld
     {
         public static readonly uint TILE_SIZE = 64;
 
+        private static readonly SFML.System.Vector2f GROUND_TRANSFORM = new SFML.System.Vector2f(1f, 1f);
+
         /// <summary>
         /// Contains the globale position in the world.
         /// </summary>
@@ -56,10 +58,19 @@ namespace CerealSquad.GameWorld
             RoomType = Type;
             Position = Pos;
             Cells = RoomParser.ParseRoom(MapFile);
-            Size = new s_MapSize(Cells.Keys.OrderBy(x => x.Row).Last().Row + 1, Cells.Keys.OrderBy(x => x.Column).Last().Column + 1);
+            Size = new s_MapSize(Cells.Keys.OrderBy(x => x.Column).Last().Column + 1, Cells.Keys.OrderBy(x => x.Row).Last().Row + 1);
             _RenderTexture = new RenderTexture(Size.Width * TILE_SIZE, Size.Height * TILE_SIZE);
             _RenderSprite = new Sprite(_RenderTexture.Texture);
+            _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
+
+            /*View v = _RenderTexture.GetView();
+            v.Size = new SFML.System.Vector2f(v.Size.X, v.Size.Y * 2);
+            v.Center = v.Size * 0.5f;
+            v.Rotate(45f);
+            _RenderTexture.SetView(v);*/
+
+            _RenderSprite.Scale = new SFML.System.Vector2f(_RenderSprite.Scale.X * GROUND_TRANSFORM.X, _RenderSprite.Scale.Y * GROUND_TRANSFORM.Y);
         }
 
         private void parseRoom()
@@ -81,8 +92,7 @@ namespace CerealSquad.GameWorld
             _RenderTexture.Clear();
             _RenderTexture.Draw(er, states);
             _RenderTexture.Display();
-            _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE, Position.Y * TILE_SIZE);
-           target.Draw(_RenderSprite, states);
+            target.Draw(_RenderSprite, states);
         }
     }
 }

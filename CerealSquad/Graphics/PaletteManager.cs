@@ -59,7 +59,7 @@ namespace CerealSquad.Graphics
                 {
                     Palette palette = entry.Key;
 
-                    return new KeyValuePair<IntRect, Texture>(new IntRect(((int)number % (int)palette.perLine) * 64, (int)number / (int)palette.perLine, (int)palette.width, (int)palette.height), entry.Value);
+                    return new KeyValuePair<IntRect, Texture>(new IntRect(((int)number % (int)palette.perLine) * 64, (int)number / (int)palette.perLine * 64, (int)palette.width, (int)palette.height), entry.Value);
                 }
             }
 
