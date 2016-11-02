@@ -18,6 +18,7 @@ namespace CerealSquad
             renderer = new Renderer();
             renderer.Initialization();
             renderer.Resolution = Renderer.EResolution.R800x450;
+            renderer.FrameRate = 60;
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
@@ -46,9 +47,7 @@ namespace CerealSquad
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
                 ((Window)source).Close();
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.F))
-            {
                 renderer.FullScreen = !renderer.FullScreen;
-            }
         }
     }
 }

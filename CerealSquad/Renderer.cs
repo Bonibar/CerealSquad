@@ -7,6 +7,7 @@ using System.Threading;
 using SFML.Window;
 using SFML.Graphics;
 using SFML.System;
+using System.ComponentModel;
 
 namespace CerealSquad
 {
@@ -14,8 +15,23 @@ namespace CerealSquad
     {
         public enum EResolution
         {
+            [Description("3840x2160")]
+            R3840x2160,
+            [Description("2560x1440")]
+            R2560x1440,
+            [Description("1920x1080")]
             R1920x1080,
-            R2880x1800,
+            [Description("1600x900")]
+            R1600x900,
+            [Description("1366x768")]
+            R1366x768,
+            [Description("1280x720")]
+            R1280x720,
+            [Description("1024x576")]
+            R1024x576,
+            [Description("854x480")]
+            R854x480,
+            [Description("800x450")]
             R800x450,
         };
 
@@ -85,8 +101,14 @@ namespace CerealSquad
             Win = null;
 
             // Set all predefine resolutions. Order Bigger to smaller
-            resolutionContext[EResolution.R2880x1800] = new SResolution(2880, 1800);
+            resolutionContext[EResolution.R3840x2160] = new SResolution(3840, 2160);
+            resolutionContext[EResolution.R2560x1440] = new SResolution(2560, 1440);
             resolutionContext[EResolution.R1920x1080] = new SResolution(1920, 1080);
+            resolutionContext[EResolution.R1600x900] = new SResolution(1600, 900);
+            resolutionContext[EResolution.R1366x768] = new SResolution(1366, 768);
+            resolutionContext[EResolution.R1280x720] = new SResolution(1280, 720);
+            resolutionContext[EResolution.R1024x576] = new SResolution(1024, 576);
+            resolutionContext[EResolution.R854x480] = new SResolution(854, 480);
             resolutionContext[EResolution.R800x450] = new SResolution(800, 450);
 #if !DEBUG
             resolutionType = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
@@ -135,7 +157,7 @@ namespace CerealSquad
         /// </summary>
         public void Initialization()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Close : Styles.Fullscreen));
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close));
             Win.SetView(currentView);
             Win.SetKeyRepeatEnabled(_keyRepeated);
             Win.SetMouseCursorVisible(_mouseCursorVisible);
@@ -145,7 +167,7 @@ namespace CerealSquad
 
         public void ResetWindow()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Close : Styles.Fullscreen));
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close));
             Win.SetView(currentView);
             Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
             Win.SetKeyRepeatEnabled(_keyRepeated);
