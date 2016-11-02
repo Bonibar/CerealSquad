@@ -25,6 +25,8 @@ namespace CerealSquad.Menus
 
         public void AddMenu(Menu menu)
         {
+            if (menu == null)
+                throw new ArgumentNullException("Menu cannot be null");
             if (Menus.Count > 0)
                 Menus[Menus.Count - 1].Hide();
             Menus.Add(menu);
@@ -33,6 +35,9 @@ namespace CerealSquad.Menus
         }
         public void RemoveMenu(Menu menu)
         {
+            if (menu == null)
+                throw new ArgumentNullException("Menu cannot be null");
+            menu.Hide();
             Menus.Remove(menu);
             if (Menus.Count > 0)
                 Menus[Menus.Count - 1].Show();
