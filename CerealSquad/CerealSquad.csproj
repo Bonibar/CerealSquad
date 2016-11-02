@@ -78,10 +78,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameWorld\ARoom.cs" />
+    <Compile Include="GameWorld\Game.cs" />
+    <Compile Include="GameWorld\AWorld.cs" />
+    <Compile Include="GameWorld\RoomParser.cs" />
+    <Compile Include="Menus\Menu.cs" />
+    <Compile Include="Factories\FontFactory.cs" />
+    <Compile Include="Graphics\AnimatedSprite.cs" />
+    <Compile Include="Graphics\EntityResources.cs" />
+    <Compile Include="Graphics\EnvironmentResources.cs" />
+    <Compile Include="Graphics\IResource.cs" />
+    <Compile Include="Graphics\JukeBox.cs" />
+    <Compile Include="Graphics\PaletteManager.cs" />
+    <Compile Include="Graphics\RegularSprite.cs" />
+    <Compile Include="Graphics\SoundBufferFactory.cs" />
+    <Compile Include="InputManager.cs" />
+    <Compile Include="Menus\Buttons\BackButton.cs" />
+    <Compile Include="Menus\Buttons\ExitButton.cs" />
+    <Compile Include="Menus\Buttons\IButton.cs" />
+    <Compile Include="Menus\Buttons\OpenMenuButton.cs" />
+    <Compile Include="Menus\MenuManager.cs" />
+    <Compile Include="Menus\Prefabs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer.cs" />
-    <Compile Include="WindowsEventHandler.cs" />
+    <Compile Include="Graphics\SpriteAnimator.cs" />
+    <Compile Include="Graphics\Animation.cs" />
+    <Compile Include="Graphics\ASprite.cs" />
+    <Compile Include="Graphics\TextureFactory.cs" />
+    <Compile Include="FrameClock.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -91,6 +116,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Fonts\ReenieBeanie.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -100,11 +128,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Fonts\xirod.regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Tiles\TestTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="csfml-audio-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -123,6 +157,12 @@
     <Content Include="libsndfile-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Maps\TestRoom.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Maps\TestRoom2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="openal32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -133,8 +173,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
