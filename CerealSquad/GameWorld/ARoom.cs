@@ -80,6 +80,7 @@ namespace CerealSquad.GameWorld
         {
             _RenderTexture.Clear();
             _RenderTexture.Draw(er, states);
+            _RenderTexture.Display();
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE, Position.Y * TILE_SIZE);
            target.Draw(_RenderSprite, states);
         }
