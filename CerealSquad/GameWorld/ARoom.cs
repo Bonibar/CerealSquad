@@ -9,6 +9,8 @@ namespace CerealSquad.GameWorld
 {
     class ARoom : Drawable
     {
+        public static readonly uint TILE_SIZE = 64;
+
         /// <summary>
         /// Contains the globale position in the world.
         /// </summary>
@@ -44,7 +46,9 @@ namespace CerealSquad.GameWorld
         //protected List<IEntity> Ennemies;
         public s_MapPos Position { get; private set; }
         public s_MapSize Size { get; private set; }
-        private Dictionary<RoomParser.t_cellpos, RoomParser.t_cellcontent> Cells;
+        public Sprite _RenderSprite { get; }
+        private RenderTexture _RenderTexture = null;
+        private Dictionary<RoomParser.t_cellpos, RoomParser.t_cellcontent> Cells = null;
         private Graphics.EnvironmentResources er = new Graphics.EnvironmentResources();
 
         public ARoom(s_MapPos Pos, string MapFile, e_RoomType Type = 0)
@@ -53,6 +57,8 @@ namespace CerealSquad.GameWorld
             Position = Pos;
             Cells = RoomParser.ParseRoom(MapFile);
             Size = new s_MapSize(Cells.Keys.OrderBy(x => x.Row).Last().Row + 1, Cells.Keys.OrderBy(x => x.Column).Last().Column + 1);
+            _RenderTexture = new RenderTexture(Size.Width * TILE_SIZE, Size.Height * TILE_SIZE);
+            _RenderSprite = new Sprite(_RenderTexture.Texture);
             parseRoom();
         }
 
@@ -72,8 +78,10 @@ namespace CerealSquad.GameWorld
 
         public void Draw(RenderTarget target, RenderStates states)
         {
-           target.Draw(er);
-           // er.Draw(target, states);
+            _RenderTexture.Clear();
+            _RenderTexture.Draw(er, states);
+            _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE, Position.Y * TILE_SIZE);
+           target.Draw(_RenderSprite, states);
         }
     }
 }

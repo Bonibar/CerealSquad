@@ -15,6 +15,19 @@ namespace CerealSquad
         /// 
         static void Main()
         {
+            // File requirement
+            System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
+            Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
+            tasks.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/downloadedTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/TileMap.png")));
+            try
+            {
+                System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
+            } catch (System.AggregateException e)
+            {
+                System.Diagnostics.Debug.WriteLine("Downloader error ! " + e.InnerException.Message);
+                return;
+            }
+
             renderer = new Renderer();
             renderer.Initialization();
             renderer.Resolution = Renderer.EResolution.R800x450;
