@@ -31,7 +31,7 @@ namespace CerealSquad.Graphics
 
             // TODO should not be 64x64 hardcoded
             ASprite sprite = new RegularSprite(infos.Value, new Vector2i(64, 64), infos.Key);
-            sprite.Position = new Vector2f(x * 64, y * 64);
+            sprite.Position = new Vector2f(64 * x, 64 * y);
 
             sprites[new Vector2u(x, y)] = sprite;
         }
