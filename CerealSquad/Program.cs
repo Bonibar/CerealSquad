@@ -17,7 +17,7 @@ namespace CerealSquad
         {
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.ChangeResolution(Renderer.EResolution.R800x450);
+            renderer.Resolution = Renderer.EResolution.R800x450;
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
@@ -40,16 +40,14 @@ namespace CerealSquad
                 renderer.Display();
             }
         }
-
-        static bool fullscreen = false;
+        
         private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
                 ((Window)source).Close();
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.F))
             {
-                renderer.SetFullScreenEnabled(!fullscreen);
-                fullscreen = !fullscreen;
+                renderer.FullScreen = !renderer.FullScreen;
             }
         }
     }

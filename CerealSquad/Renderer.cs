@@ -19,12 +19,12 @@ namespace CerealSquad
             R800x450,
         };
 
-        struct Resolution
+        struct SResolution
         {
             public uint width { get; set; }
             public uint height { get; set; }
 
-            public Resolution(uint _width = 800, uint _height = 600)
+            public SResolution(uint _width = 800, uint _height = 600)
             {
                 width = _width;
                 height = _height;
@@ -36,11 +36,31 @@ namespace CerealSquad
         #endregion
 
         #region Windows Parameters
-        private Dictionary<EResolution, Resolution> resolutionContext = new Dictionary<EResolution, Resolution>();
-        EResolution resolutionType = EResolution.R800x450;
-        bool windowed = true;
-        string title = "Cereal Squad";
-        View currentView;
+
+        private bool _fullScreen = false;
+        public bool FullScreen { get { return _fullScreen; } set { _fullScreen = value; SetFullScreen(value); } }
+
+        private String _title = "Cereal Squad";
+        public String Title { get { return _title; } set { _title = value;  if (Win != null) Win.SetTitle(value); } }
+
+        private uint _frameRate = 60;
+        public uint FrameRate {  get { return _frameRate;  } set { _frameRate = value; if (Win != null) Win.SetFramerateLimit(value); } }
+
+        private bool _verticalSync = true;
+        public bool VerticalSync {  get { return _verticalSync; } set { _verticalSync = value; if (Win != null) Win.SetVerticalSyncEnabled(value); } }
+
+        private bool _keyRepeated = false;
+        public bool KeyRepeated { get { return _keyRepeated; } set { _keyRepeated = value; if (Win != null) Win.SetKeyRepeatEnabled(value); } }
+
+        private bool _mouseCursorVisible = false;
+        public bool MouseCursorVisible {  get { return _mouseCursorVisible; } set { _mouseCursorVisible = value; if (Win != null) Win.SetMouseCursorVisible(value); } }
+
+        private EResolution _resolution = EResolution.R800x450;
+        public EResolution Resolution { get { return _resolution; } set { _resolution = value; SetResolution(value); } }
+
+
+        private Dictionary<EResolution, SResolution> resolutionContext = new Dictionary<EResolution, SResolution>();
+        private View currentView;
         #endregion
 
         #region Event
@@ -63,10 +83,11 @@ namespace CerealSquad
         public Renderer()
         {
             Win = null;
+
             // Set all predefine resolutions. Order Bigger to smaller
-            resolutionContext[EResolution.R2880x1800] = new Resolution(2880, 1800);
-            resolutionContext[EResolution.R1920x1080] = new Resolution(1920, 1080);
-            resolutionContext[EResolution.R800x450] = new Resolution(800, 450);
+            resolutionContext[EResolution.R2880x1800] = new SResolution(2880, 1800);
+            resolutionContext[EResolution.R1920x1080] = new SResolution(1920, 1080);
+            resolutionContext[EResolution.R800x450] = new SResolution(800, 450);
 #if !DEBUG
             resolutionType = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
             windowed = false;
@@ -82,7 +103,7 @@ namespace CerealSquad
         /// <returns>EResolution</returns>
         private EResolution findAppropriateResolution(uint width, uint height)
         {
-            foreach (KeyValuePair<EResolution, Resolution> entry in resolutionContext) {
+            foreach (KeyValuePair<EResolution, SResolution> entry in resolutionContext) {
                 if (width <= entry.Value.width && height <= entry.Value.height) {
                     return entry.Key;
                 }
@@ -97,7 +118,7 @@ namespace CerealSquad
         /// <returns>Uint</returns>
         public uint getWidth()
         {
-            return resolutionContext[resolutionType].width;
+            return resolutionContext[Resolution].width;
         }
 
         /// <summary>
@@ -106,7 +127,7 @@ namespace CerealSquad
         /// <returns>Uint</returns>
         public uint getHeight()
         {
-            return resolutionContext[resolutionType].height;
+            return resolutionContext[Resolution].height;
         }
 
         /// <summary>
@@ -114,15 +135,23 @@ namespace CerealSquad
         /// </summary>
         public void Initialization()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), title, (windowed ? Styles.Close : Styles.Fullscreen));
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Close : Styles.Fullscreen));
             Win.SetView(currentView);
+            Win.SetKeyRepeatEnabled(_keyRepeated);
+            Win.SetMouseCursorVisible(_mouseCursorVisible);
+            Win.SetFramerateLimit(_frameRate);
+            Win.SetVerticalSyncEnabled(_verticalSync);
         }
 
         public void ResetWindow()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), title, (windowed ? Styles.Close : Styles.Fullscreen));
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Close : Styles.Fullscreen));
             Win.SetView(currentView);
             Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
+            Win.SetKeyRepeatEnabled(_keyRepeated);
+            Win.SetMouseCursorVisible(_mouseCursorVisible);
+            Win.SetFramerateLimit(_frameRate);
+            Win.SetVerticalSyncEnabled(_verticalSync);
         }
 
         public static Vector2f scaleToFit(Vector2f inh, Vector2f clip )
@@ -149,7 +178,9 @@ namespace CerealSquad
         /// </summary>
         public void Loop()
         {
-            while (isOpen())
+            if (Win == null)
+                return;
+                while (isOpen())
             {
                 DispatchEvents();
 
@@ -163,7 +194,9 @@ namespace CerealSquad
         /// </summary>
         /// <returns>boolean</returns>
         public bool isOpen()
-        {
+        { 
+           if (Win == null)
+                return false;
             return Win.IsOpen;
         }
 
@@ -172,6 +205,8 @@ namespace CerealSquad
         /// </summary>
         public void DispatchEvents()
         {
+            if (Win == null)
+                return;
             Win.DispatchEvents();
         }
 
@@ -181,6 +216,8 @@ namespace CerealSquad
         /// <param name="color">Color</param>
         public void Clear(Color color)
         {
+            if (Win == null)
+                return;
             Win.Clear(color);
         }
 
@@ -189,16 +226,31 @@ namespace CerealSquad
         /// </summary>
         public void Display()
         {
+            if (Win == null)
+                return;
             Win.Display();
+        }
+
+        /// <summary>
+        /// Move the camera
+        /// </summary>
+        /// <param name="x">int</param>
+        /// <param name="y">int</param>
+        public void Move(int x, int y)
+        {
+            if (Win == null)
+                return;
+            Win.DefaultView.Center = new Vector2f(x, y);
         }
 
         /// <summary>
         /// Change the current resolution of renderer.
         /// </summary>
         /// <param name="new_resolution">EResolution</param>
-        public void ChangeResolution(EResolution new_resolution)
+        public void SetResolution(EResolution new_resolution)
         {
-            resolutionType = new_resolution;
+            if (Win == null)
+                return;
             Win.Size = new Vector2u(getWidth(), getHeight());
             Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
             //Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
@@ -208,49 +260,14 @@ namespace CerealSquad
         /// Change the option windowed of the windows. (Delete and recrete the window)
         /// </summary>
         /// <param name="enabled"></param>
-        public void SetFullScreenEnabled(bool enabled)
+        public void SetFullScreen(bool enabled)
         {
-            windowed = !enabled;
+            if (Win == null)
+                return;
             WindowsClosed?.Invoke(this, new WindowsEventArgs(Win));
             Win.Close();
             ResetWindow();
             WindowsCreated?.Invoke(this, new WindowsEventArgs(Win));
-        }
-
-        /// <summary>
-        /// Set the framerate (ms)
-        /// </summary>
-        /// <param name="limit"></param>
-        public void SetFrameRate(uint limit)
-        {
-            Win.SetFramerateLimit(limit);
-        }
-
-        /// <summary>
-        /// Set the synchronisation Vertical
-        /// </summary>
-        /// <param name="SyncVertical"></param>
-        public void SetSyncVertical(bool SyncVertical)
-        {
-            Win.SetVerticalSyncEnabled(SyncVertical);
-        }
-
-        /// <summary>
-        /// Set the mouse cursor visible or hidden
-        /// </summary>
-        /// <param name="visible">bool</param>
-        public void SetMouseCursorVisible(bool visible)
-        {
-            Win.SetMouseCursorVisible(visible);
-        }
-
-        /// <summary>
-        /// Set the key repeated enabled
-        /// </summary>
-        /// <param name="enabled"></param>
-        public void SetKeyRepeatedEnabled(bool enabled)
-        {
-            Win.SetKeyRepeatEnabled(enabled);
         }
 
         /// <summary>
@@ -259,7 +276,10 @@ namespace CerealSquad
         /// <param name="obj"></param>
         public void Draw (Drawable obj)
         {
-            Win.Draw(obj);
+            if (obj != null)
+            {
+                Win.Draw(obj);
+            }
         }
     }
 }
