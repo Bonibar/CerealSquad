@@ -27,6 +27,7 @@ namespace CerealSquad
             _inputRelease[InputManager.Keyboard.Key.D] = move_right_release;
             _inputRelease[InputManager.Keyboard.Key.A] = special_end;
             _ressources = new EntityResources();
+            TextureFactory.Instance.load("jack", "jack.png");
             _ressources.InitializationAnimatedSprite("jack", new Vector2i(32, 32));
         }
 

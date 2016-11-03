@@ -35,7 +35,7 @@ namespace CerealSquad
             }
         }
 
-        public void draw(RenderWindow win)
+        public void draw(Renderer win)
         {
             _children.ToList<IEntity>().ForEach(i => win.Draw(i.ressourcesEntity));
         }

@@ -40,7 +40,8 @@ namespace CerealSquad
 
             GameWorld.Game game = new GameWorld.Game(renderer);
 
-            game.GameLoop();
+            game.GameLoop(manager);
+            FrameClock clock = new FrameClock();
             while (renderer.isOpen())
             {
                 renderer.DispatchEvents();
@@ -49,7 +50,9 @@ namespace CerealSquad
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
                 else
                 {
+                    game.WorldEntity.update(clock.Restart());
                     renderer.Draw(game.CurrentWorld);
+                    game.WorldEntity.draw(renderer);
                 }
                 renderer.Display();
             }
