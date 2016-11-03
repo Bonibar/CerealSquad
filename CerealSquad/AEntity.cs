@@ -153,22 +153,22 @@ namespace CerealSquad
                 case EMovement.Up:
                     _pos += new s_position(0, -_speed, 0);
                     _ressources.PlayAnimation(EStateEntity.WALKING_UP);
-                    pos.Y -= 5 * (float)_speed;
+                    pos.Y -= 32 * (float)_speed;
                     break;
                 case EMovement.Down:
                     _pos += new s_position(0, +_speed, 0);
                     _ressources.PlayAnimation(EStateEntity.WALKING_DOWN);
-                    pos.Y += 5 * (float)_speed;
+                    pos.Y += 32 * (float)_speed;
                     break;
                 case EMovement.Right:
                     _pos += new s_position(_speed, 0, 0);
                     _ressources.PlayAnimation(EStateEntity.WALKING_RIGHT);
-                    pos.X += 5 * (float)_speed;
+                    pos.X += 32 * (float)_speed;
                     break;
                 case EMovement.Left:
                     _pos += new s_position(-_speed, 0, 0);
                     _ressources.PlayAnimation(EStateEntity.WALKING_LEFT);
-                    pos.X -= 5 * (float)_speed;
+                    pos.X -= 32 * (float)_speed;
                     break;
                 case EMovement.None:
                     _ressources.PlayAnimation(EStateEntity.IDLE);
@@ -183,7 +183,7 @@ namespace CerealSquad
         {
             _die = true;
             _ressources.PlayAnimation(EStateEntity.DYING);
-            //Launch dying animation
+            _ressources.Loop = false;
         }
 
         // destroy the object

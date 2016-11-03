@@ -24,9 +24,13 @@ namespace CerealSquad
             _inputRelease[InputManager.Keyboard.Key.Left] = move_left_release;
             _inputRelease[InputManager.Keyboard.Key.Down] = move_down_release;
             _inputRelease[InputManager.Keyboard.Key.Right] = move_right_release;
-            TextureFactory.Instance.load("orangina", "Assets/Player/orangina.png");
+            TextureFactory.Instance.load("orangina", "Assets/Character/orangina.png");
             _ressources = new EntityResources();
-            _ressources.InitializationAnimatedSprite("orangina", new Vector2i(_pos._x * 32, _pos._y * 32));
+            _ressources.InitializationAnimatedSprite("orangina", new Vector2i(32, 32));
+            Vector2f pos = _ressources.Position;
+            pos.X = position._x * 32;
+            pos.Y = position._y * 32;
+            _ressources.Position = pos;
         }
 
         public override void AttaqueSpe()

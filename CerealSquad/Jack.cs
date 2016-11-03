@@ -27,8 +27,12 @@ namespace CerealSquad
             _inputRelease[InputManager.Keyboard.Key.D] = move_right_release;
             _inputRelease[InputManager.Keyboard.Key.A] = special_end;
             _ressources = new EntityResources();
-            TextureFactory.Instance.load("jack", "jack.png");
+            TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
             _ressources.InitializationAnimatedSprite("jack", new Vector2i(32, 32));
+            Vector2f pos = _ressources.Position;
+            pos.X = position._x * 32;
+            pos.Y = position._y * 32;
+            _ressources.Position = pos;
         }
 
         public override void AttaqueSpe()

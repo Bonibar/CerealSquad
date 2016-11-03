@@ -37,7 +37,12 @@ namespace CerealSquad
             _speed = 0.1;
             _scentMap = new JackEnnemyScentMap(100, 100);
             _ressources = new EntityResources();
+            TextureFactory.Instance.load("jackHunter", "Assets/Character/jackHunter.png");
             _ressources.InitializationAnimatedSprite("jackHunter", new Vector2i(32, 32));
+            Vector2f pos = _ressources.Position;
+            pos.X = position._x * 32;
+            pos.Y = position._y * 32;
+            _ressources.Position = pos;
         }
 
         //

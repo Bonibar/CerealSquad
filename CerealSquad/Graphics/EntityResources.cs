@@ -14,6 +14,25 @@ namespace CerealSquad.Graphics
 
         public JukeBox JukeBox { get; set; }
 
+        public bool Loop
+        {
+            get
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                {
+                    return (((AnimatedSprite)sprite).Loop);
+                }
+                return (false);
+            }
+            set
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                {
+                    ((AnimatedSprite)sprite).Loop = value;
+                }
+            }
+        }
+
         /// <summary>
         /// Initialize a animated sprite
         /// </summary>
