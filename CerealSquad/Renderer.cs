@@ -163,7 +163,7 @@ namespace CerealSquad
             Win.SetMouseCursorVisible(_mouseCursorVisible);
             Win.SetFramerateLimit(_frameRate);
             Win.SetVerticalSyncEnabled(_verticalSync);
-            Win.Position = new Vector2i((int)VideoMode.DesktopMode.Width / 2 - (int)getWidth(), (int)VideoMode.DesktopMode.Height / 2 - (int)getHeight());
+            Win.Position = new Vector2i((int)VideoMode.DesktopMode.Width / 2 - (int)getWidth() / 2, (int)VideoMode.DesktopMode.Height / 2 - (int)getHeight() / 2);
         }
 
         public void ResetWindow()
@@ -175,7 +175,7 @@ namespace CerealSquad
             Win.SetMouseCursorVisible(_mouseCursorVisible);
             Win.SetFramerateLimit(_frameRate);
             Win.SetVerticalSyncEnabled(_verticalSync);
-            Win.Position = new Vector2i((int)VideoMode.DesktopMode.Width / 2 - (int)getWidth(), (int)VideoMode.DesktopMode.Height / 2 - (int)getHeight());
+            Win.Position = new Vector2i((int)VideoMode.DesktopMode.Width / 2 - (int)getWidth() / 2, (int)VideoMode.DesktopMode.Height / 2 - (int)getHeight() / 2);
         }
 
         public static Vector2f scaleToFit(Vector2f inh, Vector2f clip )
@@ -277,7 +277,7 @@ namespace CerealSquad
                 return;
             Win.Size = new Vector2u(getWidth(), getHeight());
             Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
-            //Win.SetView(new View(new FloatRect(0, 0, getWidth(), getHeight())));
+            Win.Position = new Vector2i((int)VideoMode.DesktopMode.Width / 2 - (int)getWidth() / 2, (int)VideoMode.DesktopMode.Height / 2 - (int)getHeight() / 2);
         }
 
         /// <summary>
