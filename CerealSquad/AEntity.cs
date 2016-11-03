@@ -1,9 +1,9 @@
-﻿using System;
+﻿using CerealSquad.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CerealSquad.SFMLImplementation;
 
 namespace CerealSquad
 {
@@ -152,26 +152,26 @@ namespace CerealSquad
             {
                 case EMovement.Up:
                     _pos += new s_position(0, -_speed, 0);
-                    _ressources.playAnimation(EntityResources.EState.WALKING_UP);
+                    _ressources.PlayAnimation(EStateEntity.WALKING_UP);
                     pos.Y -= 5 * (float)_speed;
                     break;
                 case EMovement.Down:
                     _pos += new s_position(0, +_speed, 0);
-                    _ressources.playAnimation(EntityResources.EState.WALKING_DOWN);
+                    _ressources.PlayAnimation(EStateEntity.WALKING_DOWN);
                     pos.Y += 5 * (float)_speed;
                     break;
                 case EMovement.Right:
                     _pos += new s_position(_speed, 0, 0);
-                    _ressources.playAnimation(EntityResources.EState.WALKING_RIGHT);
+                    _ressources.PlayAnimation(EStateEntity.WALKING_RIGHT);
                     pos.X += 5 * (float)_speed;
                     break;
                 case EMovement.Left:
                     _pos += new s_position(-_speed, 0, 0);
-                    _ressources.playAnimation(EntityResources.EState.WALKING_LEFT);
+                    _ressources.PlayAnimation(EStateEntity.WALKING_LEFT);
                     pos.X -= 5 * (float)_speed;
                     break;
                 case EMovement.None:
-                    _ressources.playAnimation(EntityResources.EState.IDLE);
+                    _ressources.PlayAnimation(EStateEntity.IDLE);
                     break;
             }
             _ressources.Position = pos;
@@ -182,7 +182,7 @@ namespace CerealSquad
         public void die()
         {
             _die = true;
-            _ressources.playAnimation(EntityResources.EState.DYING);
+            _ressources.PlayAnimation(EStateEntity.DYING);
             //Launch dying animation
         }
 

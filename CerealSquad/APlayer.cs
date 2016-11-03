@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CerealSquad.Keyboard;
+using CerealSquad.InputManager.Keyboard;
 
 namespace CerealSquad
 {
@@ -41,7 +41,7 @@ namespace CerealSquad
             }
         }
 
-        public APlayer(IEntity owner, s_position position, InputManager input) : base(owner)
+        public APlayer(IEntity owner, s_position position, InputManager.InputManager input) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Player;
@@ -145,7 +145,7 @@ namespace CerealSquad
                 if (_ressources.isFinished())
                     destroy();
             }
-            _ressources.update(deltaTime);
+            _ressources.Update(deltaTime);
         }
 
         public abstract void AttaqueSpe();

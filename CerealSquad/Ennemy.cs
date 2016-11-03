@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
+using CerealSquad.Graphics;
 
 namespace CerealSquad
 {
@@ -15,7 +16,8 @@ namespace CerealSquad
         {
             _speed = 0.1;
             _scentMap = new scentMap(100, 100);
-            _ressources = new SFMLImplementation.EntityResources("basicEnnemy", 32, 32);
+            _ressources = new EntityResources();
+            _ressources.InitializationAnimatedSprite("basicEnnemy", new Vector2i(32, 32));
         }
 
         //
@@ -114,7 +116,7 @@ namespace CerealSquad
         {
             _scentMap.update((WorldEntity)_owner);
             think();
-            _ressources.update(deltaTime);
+            _ressources.Update(deltaTime);
             move();
         }
     }

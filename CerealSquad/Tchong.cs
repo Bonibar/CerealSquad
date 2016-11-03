@@ -8,7 +8,7 @@ namespace CerealSquad
 {
     class Tchong : APlayer
     {
-        public Tchong(IEntity owner, s_position position, InputManager input) : base(owner, position, input)
+        public Tchong(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input)
         {
         }
 
