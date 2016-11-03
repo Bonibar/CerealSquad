@@ -43,6 +43,10 @@ namespace CerealSquad.Downloaders
                 System.Net.FtpWebResponse response = (System.Net.FtpWebResponse) await ftpRequest.GetResponseAsync();
 
                 System.IO.Stream responseStream = response.GetResponseStream();
+                List<string> cuttedPath = localPath.Split('/').ToList();
+                cuttedPath.RemoveAt(cuttedPath.Count - 1);
+                string directoryPath = string.Join("/", cuttedPath);
+                System.IO.Directory.CreateDirectory(directoryPath);
                 System.IO.FileStream fileStream = new System.IO.FileStream(localPath, System.IO.FileMode.Create);
 
                 int Length = 4096;
@@ -55,11 +59,6 @@ namespace CerealSquad.Downloaders
                     bytesRead = responseStream.Read(buffer, 0, Length);
                 }
 
-                /*System.IO.StreamReader reader = new System.IO.StreamReader(responseStream);
-
-                System.IO.File.WriteAllText(localPath, reader.ReadToEnd(), reader.CurrentEncoding);*/
-
-                //reader.Close();
                 fileStream.Close();
                 response.Close();
             }
