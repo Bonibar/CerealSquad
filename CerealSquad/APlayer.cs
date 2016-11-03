@@ -30,6 +30,8 @@ namespace CerealSquad
         {
             get
             {
+                if (_die)
+                    return 0;
                 return _weight;
             }
 
@@ -132,9 +134,17 @@ namespace CerealSquad
 
         public override void update(SFML.System.Time deltaTime)
         {
-            if (_specialActive)
-                AttaqueSpe();
-            move();
+            if (!_die)
+            {
+                if (_specialActive)
+                    AttaqueSpe();
+                move();
+            }
+            else
+            {
+                if (_ressources.isFinished())
+                    destroy();
+            }
             _ressources.update(deltaTime);
         }
 

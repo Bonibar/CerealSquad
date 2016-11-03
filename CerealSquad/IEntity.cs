@@ -89,6 +89,11 @@ namespace CerealSquad
             get;
             set;
         }
+        bool Die
+        {
+            get;
+            set;
+        }
 
         void update(SFML.System.Time deltaTime);
         bool attemptDamage(IEntity Sender, e_DamageType damage);

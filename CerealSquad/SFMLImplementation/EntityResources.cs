@@ -91,11 +91,18 @@ namespace CerealSquad.SFMLImplementation
             walkingAnimationUp.addFrame(new IntRect(width, height * 3, width, height));
             walkingAnimationUp.addFrame(new IntRect(0, height * 3, width, height));
 
+            Animation deathAnimation = new Animation();
+            deathAnimation.setSpriteSheet(texture);
+            deathAnimation.addFrame(new IntRect(width * 2, height * 4, width, height));
+            deathAnimation.addFrame(new IntRect(width, height * 4, width, height));
+            deathAnimation.addFrame(new IntRect(0, height * 4, width, height));
+
             _animations.Add(EState.IDLE, walkingAnimationIdle);
             _animations.Add(EState.WALKING_UP, walkingAnimationUp);
             _animations.Add(EState.WALKING_DOWN, walkingAnimationDown);
             _animations.Add(EState.WALKING_LEFT, walkingAnimationLeft);
             _animations.Add(EState.WALKING_RIGHT, walkingAnimationRight);
+            _animations.Add(EState.DYING, deathAnimation);
         }
 
         /// <summary>
@@ -114,6 +121,8 @@ namespace CerealSquad.SFMLImplementation
         public void playAnimation(EState state)
         {
             animatedSprite.Play(_animations[state]);
+            if (state == EState.DYING)
+                animatedSprite.m_isLooped = false;
         }
 
         /// <summary>
@@ -134,6 +143,11 @@ namespace CerealSquad.SFMLImplementation
         {
             states.Transform *= Transform;
             animatedSprite.Draw(target, states);
+        }
+
+        public bool isFinished()
+        {
+            return (animatedSprite.m_isPaused);
         }
     }
 }

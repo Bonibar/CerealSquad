@@ -81,6 +81,18 @@ namespace CerealSquad
             }
         }
 
+        public bool Die
+        {
+            get
+            {
+                return _die;
+            }
+
+            set
+            {
+                _die = value;
+            }
+        }
 
         public AEntity(IEntity owner, s_size size = new s_size())
         {
@@ -170,6 +182,7 @@ namespace CerealSquad
         public void die()
         {
             _die = true;
+            _ressources.playAnimation(EntityResources.EState.DYING);
             //Launch dying animation
         }
 
