@@ -26,18 +26,13 @@ namespace CerealSquad.Factories
 
 
         private Object locker = new Object();
-        private Dictionary<String, Texture> _Textures;
+        private Dictionary<String, Texture> _Textures = new Dictionary<string, Texture>();
 
         /// <summary>
         /// Init all textures needed
         /// </summary>
         public void initTextures()
         {
-            _Textures = new Dictionary<String, Texture>();
-            if (_Textures == null)
-                throw new OutOfMemoryException("Failed to load textures");
-
-            load("DefaultWall", "Assets/Tiles/DefaultWall.png");
             load("TestTile", "Assets/Tiles/TestTile.png");
 
             Graphics.PaletteManager.Instance.AddPaletteInformations("TestTile");
