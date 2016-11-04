@@ -35,8 +35,9 @@ namespace CerealSquad
             renderer = new Renderer();
             renderer.Initialization();
             renderer.Resolution = Renderer.EResolution.R1280x720;
-
             renderer.FrameRate = 60;
+
+            Factories.TextureFactory.Instance.initTextures();
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;

@@ -85,8 +85,7 @@ namespace CerealSquad.GameWorld
             /*
              * building wall
             */
-            Graphics.TextureFactory.Instance.load("Assets/Tiles/DefaultWall.png", "Assets/Tiles/DefaultWall.png");
-            Graphics.PaletteManager.Instance.AddPaletteInformations("Assets/Tiles/DefaultWall.png");
+            Graphics.PaletteManager.Instance.AddPaletteInformations("DefaultWall");
             _WallTexture = new RenderTexture((Size.Width + 4) * TILE_SIZE, 4 * TILE_SIZE);
             IntRect wallRect = new IntRect(0, 0, (int)_WallTexture.Size.X, (int)_WallTexture.Size.Y);
             _WallSprite = new RegularSprite(_WallTexture.Texture, new SFML.System.Vector2i((int)_WallTexture.Size.X, (int)_WallTexture.Size.Y), wallRect);
@@ -105,7 +104,7 @@ namespace CerealSquad.GameWorld
                 uint j = 0;
                 while (j < 4)
                 {
-                    wallEr.AddSprite(i, j, "Assets/Tiles/DefaultWall.png", j);
+                    wallEr.AddSprite(i, j, "DefaultWall", j);
                     j++;
                 }
                 i++;
@@ -117,14 +116,8 @@ namespace CerealSquad.GameWorld
 
         private void parseRoom()
         {
-            Graphics.TextureFactory.Instance.initTextures();
             foreach (var cell in Cells)
             {
-                if (!Graphics.TextureFactory.Instance.exists(cell.Value.TexturePath))
-                {
-                    Graphics.TextureFactory.Instance.load(cell.Value.TexturePath, cell.Value.TexturePath);
-                    Graphics.PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
-                }
                 er.AddSprite(cell.Key.Column, cell.Key.Row, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
             }
         }

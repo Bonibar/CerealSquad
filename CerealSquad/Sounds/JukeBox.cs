@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Audio;
 
-namespace CerealSquad.Graphics
+namespace CerealSquad.Sounds
 {
     class JukeBox
     {
         private Dictionary<int, Sound> sounds;
         private Dictionary<int, Music> musics;
-        private SoundBufferFactory buffers;
+        private Factories.SoundBufferFactory buffers;
 
         public int LimitSound { get; set; }
         public int LimitMusic { get; set; }
@@ -22,7 +22,7 @@ namespace CerealSquad.Graphics
             LimitSound = 200;
             sounds = new Dictionary<int, Sound>();
             musics = new Dictionary<int, Music>();
-            buffers = SoundBufferFactory.Instance;
+            buffers = Factories.SoundBufferFactory.Instance;
         }
 
         /// <summary>
