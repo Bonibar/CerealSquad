@@ -14,6 +14,17 @@ namespace CerealSquad.Graphics
         protected SpriteAnimator animator = new SpriteAnimator();
         private Texture texture;
         protected Vector2i size = new Vector2i(0, 0);
+        public bool Loop
+        {
+            get
+            {
+                return (animator.m_isLooped);
+            }
+            set
+            {
+                animator.m_isLooped = value;
+            }
+        }
 
         public AnimatedSprite(Texture Texture, Vector2i Size)
         {
@@ -62,11 +73,19 @@ namespace CerealSquad.Graphics
             walkingAnimationUp.addFrame(new IntRect(size.X, size.Y * 3, size.X, size.Y));
             walkingAnimationUp.addFrame(new IntRect(0, size.Y * 3, size.X, size.Y));
 
+            Animation dyingAnimation = new Animation();
+            dyingAnimation.setSpriteSheet(texture);
+            dyingAnimation.addFrame(new IntRect(size.X, size.Y * 4, size.X, size.Y));
+            dyingAnimation.addFrame(new IntRect(size.X * 2, size.Y * 4, size.X, size.Y));
+            dyingAnimation.addFrame(new IntRect(size.X, size.Y * 4, size.X, size.Y));
+            dyingAnimation.addFrame(new IntRect(0, size.Y * 4, size.X, size.Y));
+
             animations.Add((uint)EStateEntity.IDLE, walkingAnimationDown);
             animations.Add((uint)EStateEntity.WALKING_UP, walkingAnimationUp);
             animations.Add((uint)EStateEntity.WALKING_DOWN, walkingAnimationDown);
             animations.Add((uint)EStateEntity.WALKING_LEFT, walkingAnimationLeft);
             animations.Add((uint)EStateEntity.WALKING_RIGHT, walkingAnimationRight);
+            animations.Add((uint)EStateEntity.DYING, dyingAnimation);
 
             animator.setAnimation(walkingAnimationDown);
         }
@@ -107,6 +126,11 @@ namespace CerealSquad.Graphics
         {
             states.Transform *= Transform;
             animator.Draw(target, states);
+        }
+
+        public bool isFinished()
+        {
+            return (animator.m_isPaused);
         }
     }
 }

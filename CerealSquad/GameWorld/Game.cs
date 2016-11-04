@@ -18,8 +18,12 @@ namespace CerealSquad.GameWorld
         }
         //private HUD HUD;
         private List<AWorld> Worlds = new List<AWorld>();
-        //private List<IEntity> Players;
-        //private IEntity WorldEntity;
+        private List<IEntity> Players = new List<IEntity>();
+        private WorldEntity worldEntity = new WorldEntity();
+        public WorldEntity WorldEntity
+        {
+            get { return worldEntity; }
+        }
         private Renderer renderer = null;
 
         public Game(Renderer _renderer)
@@ -27,12 +31,16 @@ namespace CerealSquad.GameWorld
             renderer = _renderer;
         }
 
-        public void GameLoop()
+        public void GameLoop(InputManager.InputManager im)
         {
             CurrentWorld = new AWorld();
 
             CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(2, 2), "Maps/TestRoom.txt", ARoom.e_RoomType.FightRoom));
             //CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(13, 0), "Maps/TestRoom2.txt", ARoom.e_RoomType.FightRoom));
+            Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
+            Players.Add(new Jack(WorldEntity, new s_position(2, 2, 1), im));
+            new Ennemy(WorldEntity, new s_position(10, 10, 1));
+            new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
         }
 
         public void AddWorld(AWorld World = null)
