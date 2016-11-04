@@ -19,6 +19,9 @@ namespace CerealSquad
             System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
             Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
             tasks.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/alts.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("F_ReenieBeanie", "Fonts/ReenieBeanie.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/ReenieBeanie.ttf"), false));
+            tasks.Add(ftpDownloader.RequireFile("F_XirodRegular", "Fonts/xirod.regular.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/xirod.regular.ttf"), false));
+            tasks.Add(ftpDownloader.RequireFile("T_DefaultWall", "Assets/Tiles/DefaultWall.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/DefaultWall.png"), false));
 
             try
             {
