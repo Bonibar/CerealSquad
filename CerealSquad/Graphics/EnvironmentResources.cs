@@ -12,7 +12,7 @@ namespace CerealSquad.Graphics
     {
         private Dictionary<Vector2u, ASprite> sprites;
     
-        public JukeBox JukeBox { get; set; }
+        public Sounds.JukeBox JukeBox { get; set; }
 
 
         public EnvironmentResources()

@@ -82,7 +82,7 @@ namespace CerealSquad.GameWorld
                 while (currentColumn < columnCount)
                 {
                     string[] values = columns[currentColumn].Split(':');
-                    result.Add(new t_cellpos(currentRow, currentColumn), new t_cellcontent(int.Parse(values[0]), "Assets/Tiles/TestTile.png", (e_CellType)int.Parse(values[2])));
+                    result.Add(new t_cellpos(currentRow, currentColumn), new t_cellcontent(int.Parse(values[0]), "TestTile", (e_CellType)int.Parse(values[2])));
                     currentColumn++;
                 }
                 currentRow++;

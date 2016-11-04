@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Audio;
 
-namespace CerealSquad.Graphics
+namespace CerealSquad.Factories
 {
     public sealed class SoundBufferFactory
     {
@@ -25,6 +25,7 @@ namespace CerealSquad.Graphics
         #endregion
 
         private Dictionary<String, SoundBuffer> _SoundBuffers;
+        private Object Locker = new Object();
 
         /// <summary>
         /// Init all sound buffer needed
@@ -45,7 +46,12 @@ namespace CerealSquad.Graphics
         /// <returns>bool</returns>
         public bool exists(String name)
         {
-            return _SoundBuffers.ContainsKey(name);
+            bool result = false;
+
+            lock (Locker)
+                result = _SoundBuffers.ContainsKey(name);
+
+            return result;
         }
 
         /// <summary>
@@ -57,12 +63,13 @@ namespace CerealSquad.Graphics
         public bool load(String name, String filename)
         {
             if (exists(name))
-            {
                 return true;
-            }
 
-            SoundBuffer buffer = new SoundBuffer(filename);
-            _SoundBuffers[name] = buffer;
+            lock (Locker)
+            {
+                SoundBuffer buffer = new SoundBuffer(filename);
+                _SoundBuffers[name] = buffer;
+            }
 
             return true;
         }
@@ -75,11 +82,13 @@ namespace CerealSquad.Graphics
         public SoundBuffer getBuffer(String name)
         {
             if (!exists(name))
-            {
                 throw new Exception("Unable to find sound buffer " + name);
-            }
+            SoundBuffer result = null;
 
-            return _SoundBuffers[name];
+            lock (Locker)
+                result = _SoundBuffers[name];
+
+            return result;
         }
     }
 }

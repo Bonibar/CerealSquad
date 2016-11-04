@@ -90,10 +90,10 @@
     <Compile Include="Graphics\EntityResources.cs" />
     <Compile Include="Graphics\EnvironmentResources.cs" />
     <Compile Include="Graphics\IResource.cs" />
-    <Compile Include="Graphics\JukeBox.cs" />
+    <Compile Include="Sounds\JukeBox.cs" />
     <Compile Include="Graphics\PaletteManager.cs" />
     <Compile Include="Graphics\RegularSprite.cs" />
-    <Compile Include="Graphics\SoundBufferFactory.cs" />
+    <Compile Include="Factories\SoundBufferFactory.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Menus\Buttons\BackButton.cs" />
     <Compile Include="Menus\Buttons\ExitButton.cs" />
@@ -107,7 +107,7 @@
     <Compile Include="Graphics\SpriteAnimator.cs" />
     <Compile Include="Graphics\Animation.cs" />
     <Compile Include="Graphics\ASprite.cs" />
-    <Compile Include="Graphics\TextureFactory.cs" />
+    <Compile Include="Factories\TextureFactory.cs" />
     <Compile Include="FrameClock.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -118,9 +118,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="Fonts\ReenieBeanie.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -130,9 +127,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Fonts\xirod.regular.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
