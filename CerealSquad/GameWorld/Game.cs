@@ -37,10 +37,10 @@ namespace CerealSquad.GameWorld
 
             CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(2, 2), "Maps/TestRoom.txt", ARoom.e_RoomType.FightRoom));
             //CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(13, 0), "Maps/TestRoom2.txt", ARoom.e_RoomType.FightRoom));
-            Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
+            //Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
             Players.Add(new Jack(WorldEntity, new s_position(2, 2, 1), im));
-            new Ennemy(WorldEntity, new s_position(10, 10, 1));
-            new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
+           // new Ennemy(WorldEntity, new s_position(10, 10, 1));
+           // new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
         }
 
         public void AddWorld(AWorld World = null)

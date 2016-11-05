@@ -20,14 +20,16 @@ namespace CerealSquad
             _inputPress[InputManager.Keyboard.Key.S] = move_down;
             _inputPress[InputManager.Keyboard.Key.D] = move_right;
             _inputPress[InputManager.Keyboard.Key.A] = special_start;
+            _inputPress[InputManager.Keyboard.Key.Space] = put_trap;
             _inputRelease = new Dictionary<Key, functionMove>();
             _inputRelease[InputManager.Keyboard.Key.Z] = move_up_release;
             _inputRelease[InputManager.Keyboard.Key.Q] = move_left_release;
             _inputRelease[InputManager.Keyboard.Key.S] = move_down_release;
             _inputRelease[InputManager.Keyboard.Key.D] = move_right_release;
             _inputRelease[InputManager.Keyboard.Key.A] = special_end;
+            _inputRelease[InputManager.Keyboard.Key.Space] = put_trap_release;
             _ressources = new EntityResources();
-            TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
+            Factories.TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
             _ressources.InitializationAnimatedSprite("jack", new Vector2i(32, 32));
             Vector2f pos = _ressources.Position;
             pos.X = position._x * 32;

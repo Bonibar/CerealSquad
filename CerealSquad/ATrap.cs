@@ -32,5 +32,23 @@ namespace CerealSquad
                 _type = e_EntityType.EnnemyTrap;
             _range = range;
         }
+
+        public void setPosition(EMovement direction)
+        {
+            s_position pos = new s_position();
+
+            if (direction == EMovement.Up)
+                pos = new s_position(_owner.Pos._x, _owner.Pos._y - 1);
+            else if (direction == EMovement.Down)
+                pos = new s_position(_owner.Pos._x, _owner.Pos._y + 1);
+            else if(direction == EMovement.Right)
+                pos = new s_position(_owner.Pos._x + 1, _owner.Pos._y);
+            else if(direction == EMovement.Left)
+                pos = new s_position(_owner.Pos._x - 1, _owner.Pos._y + 1);
+
+            Pos = pos;
+            System.Diagnostics.Debug.WriteLine("Pos : " + pos._x + " " + pos._y);
+            ressourcesEntity.Position = new SFML.System.Vector2f(Pos._x * 64, Pos._y * 64);
+        }
     }
 }

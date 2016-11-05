@@ -15,6 +15,8 @@ namespace CerealSquad
         protected Dictionary<Key, functionMove> _inputRelease;
         protected bool _specialActive;
         protected int _weight;
+        protected bool _isChoosingTarget;
+        protected EMovement _targeting;
 
         protected struct s_input
         {
@@ -22,6 +24,7 @@ namespace CerealSquad
             public bool _isLeftPressed;
             public bool _isUpPressed;
             public bool _isDownPressed;
+            public bool _isTrapDownPressed;
         }
 
         protected s_input _playerInput;
@@ -51,8 +54,10 @@ namespace CerealSquad
             _playerInput._isLeftPressed = false;
             _playerInput._isUpPressed = false;
             _playerInput._isDownPressed = false;
+            _playerInput._isTrapDownPressed = false;
             _specialActive = false;
             _weight = 1;
+            _isChoosingTarget = false;
         }
 
         protected void special_end()
@@ -85,6 +90,11 @@ namespace CerealSquad
             _playerInput._isLeftPressed = false;
         }
 
+        protected void put_trap_release()
+        {
+            _playerInput._isTrapDownPressed = false;
+        }
+
         protected void move_up()
         {
             _playerInput._isUpPressed = true;
@@ -105,6 +115,11 @@ namespace CerealSquad
             _playerInput._isRightPressed = true;
         }
 
+        protected void put_trap()
+        {
+            _playerInput._isTrapDownPressed = true;
+        }
+
         private void thinkMove(object source, KeyEventArgs e)
         {
             if (_inputPress.ContainsKey(e.KeyCode))
@@ -119,7 +134,9 @@ namespace CerealSquad
 
         public override void move()
         {
-            if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
+            if (_playerInput._isTrapDownPressed)
+                _move = EMovement.None;
+            else if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
                 _move = EMovement.Right;
             else if (!_playerInput._isRightPressed && _playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
                 _move = EMovement.Left;
@@ -132,6 +149,33 @@ namespace CerealSquad
             base.move();
         }
 
+        public void putTrap()
+        {
+            if (_playerInput._isTrapDownPressed && !_isChoosingTarget)
+                _isChoosingTarget = true;
+            else if (!_playerInput._isTrapDownPressed && _isChoosingTarget)
+            {
+                if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
+                    _targeting = EMovement.Right;
+                else if (!_playerInput._isRightPressed && _playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
+                    _targeting = EMovement.Left;
+                else if (!_playerInput._isRightPressed && !_playerInput._isLeftPressed && _playerInput._isDownPressed && !_playerInput._isUpPressed)
+                    _targeting = EMovement.Down;
+                else if (!_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && _playerInput._isUpPressed)
+                    _targeting = EMovement.Up;
+                else
+                    _targeting = EMovement.None;
+
+                if (_targeting != EMovement.None)
+                {
+                    ATrap trap = new TrapEntities.BearTrap(this);
+                    trap.setPosition(_targeting);
+                    addChild(trap);
+                }
+                _isChoosingTarget = false;
+            }
+        }
+
         public override void update(SFML.System.Time deltaTime)
         {
             if (!_die)
@@ -139,6 +183,7 @@ namespace CerealSquad
                 if (_specialActive)
                     AttaqueSpe();
                 move();
+                putTrap();
             }
             else
             {

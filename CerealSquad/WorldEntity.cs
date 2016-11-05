@@ -35,9 +35,20 @@ namespace CerealSquad
             }
         }
 
+        private void deepDraw(IEntity owner, Renderer win)
+        {
+            if (owner.getChildren().Count == 0)
+            {
+                win.Draw(owner.ressourcesEntity);
+                return;
+            }
+            owner.getChildren().ToList<IEntity>().ForEach(i => deepDraw(i, win)); //i => win.Draw(i.ressourcesEntity)
+            win.Draw(owner.ressourcesEntity);
+        }
+
         public void draw(Renderer win)
         {
-            _children.ToList<IEntity>().ForEach(i => win.Draw(i.ressourcesEntity));
+            deepDraw(this, win);
         }
     }
 }
