@@ -11,6 +11,19 @@ namespace CerealSquad.GameWorld
     {
         protected List<ARoom> Rooms = new List<ARoom>();
 
+        public AWorld(string path)
+        {
+            if (path == null)
+                throw new ArgumentNullException("Path cannot be null");
+
+            Dictionary<WorldParser.t_roompos, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld("Maps/TestWorld.txt");
+
+            foreach (var room in rooms)
+            {
+                AddRoom(new ARoom(new ARoom.s_MapPos((uint)room.Key.X, (uint)room.Key.Y), room.Value.RoomPath, (ARoom.e_RoomType)room.Value.Type));
+            }
+        }
+
         public void AddRoom(ARoom room)
         {
             if (room != null)

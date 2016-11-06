@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CerealSquad.GameWorld
 {
-    public static class RoomParser
+    static class RoomParser
     {
         public class t_cellpos
         {

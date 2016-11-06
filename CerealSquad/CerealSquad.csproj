@@ -84,6 +84,7 @@
     <Compile Include="GameWorld\Game.cs" />
     <Compile Include="GameWorld\AWorld.cs" />
     <Compile Include="GameWorld\RoomParser.cs" />
+    <Compile Include="GameWorld\WorldParser.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
@@ -154,6 +155,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Maps\TestRoom2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Maps\TestWorld.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="openal32.dll">
