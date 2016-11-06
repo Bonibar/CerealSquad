@@ -31,8 +31,8 @@ namespace CerealSquad.GameWorld
         {
             CurrentWorld = new AWorld();
 
-            CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(2, 2), "Maps/TestRoom.txt", ARoom.e_RoomType.FightRoom));
-            //CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(13, 0), "Maps/TestRoom2.txt", ARoom.e_RoomType.FightRoom));
+            CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(0, 0), "Maps/TestRoom.txt", ARoom.e_RoomType.FightRoom));
+            CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(13, 0), "Maps/TestRoom2.txt", ARoom.e_RoomType.FightRoom));
         }
 
         public void AddWorld(AWorld World = null)
