@@ -29,16 +29,13 @@ namespace CerealSquad.GameWorld
 
         public void GameLoop()
         {
-            CurrentWorld = new AWorld();
-
-            CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(2, 2), "Maps/TestRoom.txt", ARoom.e_RoomType.FightRoom));
-            //CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(13, 0), "Maps/TestRoom2.txt", ARoom.e_RoomType.FightRoom));
+            CurrentWorld = new AWorld("Maps/TestWorld.txt");
         }
 
-        public void AddWorld(AWorld World = null)
+        public void AddWorld(AWorld World)
         {
             if (World == null)
-                World = new AWorld();
+                throw new ArgumentNullException("World cannot be null");
             Worlds.Add(World);
         }
 
