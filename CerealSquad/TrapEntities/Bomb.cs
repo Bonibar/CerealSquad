@@ -12,8 +12,8 @@ namespace CerealSquad.TrapEntities
     {
         public Bomb(IEntity owner) : base(owner, e_DamageType.BOMB_DAMAGE, 1)
         {
-            Factories.TextureFactory.Instance.load("Bomb", "Assets/Bomb.png");
-            Factories.TextureFactory.Instance.load("BombExpl", "Assets/BombExploded.png");
+            Factories.TextureFactory.Instance.load("Bomb", "Assets/Trap/Bomb.png");
+            Factories.TextureFactory.Instance.load("BombExpl", "Assets/Trap/BombExploading.png");
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
