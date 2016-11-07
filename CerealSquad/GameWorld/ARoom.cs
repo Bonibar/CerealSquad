@@ -64,6 +64,16 @@ namespace CerealSquad.GameWorld
             }
         }
 
+        public RoomParser.e_CellType getPosition(uint x, uint y)
+        {
+            RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
+            if (x < Size.Width && y <= Size.Height)
+            {
+                cel = Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
+            }
+            return (cel);
+        }
+
         public void Draw(RenderTarget target, RenderStates states)
         {
             _RenderTexture.Clear();

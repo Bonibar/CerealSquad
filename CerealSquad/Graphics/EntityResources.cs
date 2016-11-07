@@ -14,6 +14,25 @@ namespace CerealSquad.Graphics
 
         public Sounds.JukeBox JukeBox { get; set; }
 
+        public bool Loop
+        {
+            get
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                {
+                    return (((AnimatedSprite)sprite).Loop);
+                }
+                return (false);
+            }
+            set
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                {
+                    ((AnimatedSprite)sprite).Loop = value;
+                }
+            }
+        }
+
         /// <summary>
         /// Initialize a animated sprite
         /// </summary>
@@ -79,6 +98,15 @@ namespace CerealSquad.Graphics
         {
             states.Transform *= Transform;
             sprite.Draw(target, states);
+        }
+
+        public bool isFinished()
+        {
+            if (sprite.Type == ETypeSprite.ANIMATED)
+            {
+                return (((AnimatedSprite)sprite).isFinished());
+            }
+            return (true);
         }
     }
 }

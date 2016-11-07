@@ -19,6 +19,10 @@ namespace CerealSquad
             System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
             Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
             tasks.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/alts.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("jack", "Assets/Character/Jack.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/Jack.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/JackHunter.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/Orangina.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/BasicEnnemy.png"), false));
             tasks.Add(ftpDownloader.RequireFile("F_ReenieBeanie", "Fonts/ReenieBeanie.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/ReenieBeanie.ttf"), false));
             tasks.Add(ftpDownloader.RequireFile("F_XirodRegular", "Fonts/xirod.regular.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/xirod.regular.ttf"), false));
 
@@ -45,7 +49,8 @@ namespace CerealSquad
 
             GameWorld.Game game = new GameWorld.Game(renderer);
 
-            game.GameLoop();
+            game.GameLoop(manager);
+            FrameClock clock = new FrameClock();
             while (renderer.isOpen())
             {
                 renderer.DispatchEvents();
@@ -54,7 +59,9 @@ namespace CerealSquad
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
                 else
                 {
+                    game.Update(clock.Restart());
                     renderer.Draw(game.CurrentWorld);
+                    game.WorldEntity.draw(renderer);
                 }
                 renderer.Display();
             }
