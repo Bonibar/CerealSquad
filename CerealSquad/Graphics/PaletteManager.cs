@@ -35,10 +35,32 @@ namespace CerealSquad.Graphics
         };
 
         private Dictionary<Palette, Texture> content = new Dictionary<Palette, Texture>();
-        private TextureFactory textureFactory = TextureFactory.Instance;
+        private Factories.TextureFactory textureFactory = Factories.TextureFactory.Instance;
+        private Object locker = new object();
+
+        public bool Exists(String name)
+        {
+            bool result = false;
+
+            lock (locker)
+                foreach (KeyValuePair<Palette, Texture> entry in content)
+                {
+                    if (entry.Key.name.Equals(name))
+                    {
+                        result = true;
+                        break;
+                    }
+
+                }
+
+            return result;
+        }
 
         public void AddPaletteInformations(String name, uint width = 64, uint height = 64)
         {
+            if (Exists(name))
+                return;
+
             Texture texture = textureFactory.getTexture(name);
             Palette palette = new Palette();
 
@@ -48,22 +70,28 @@ namespace CerealSquad.Graphics
             palette.perLine = (uint)texture.Size.X / width;
             palette.total = ((uint)texture.Size.Y / height) * palette.perLine;
 
-            content[palette] = texture;
+            lock (locker)
+                content[palette] = texture;
         }
 
         public KeyValuePair<IntRect, Texture> GetInfoFromPalette(String name, uint number)
         {
-            foreach (KeyValuePair<Palette, Texture> entry in content)
-            {
-                if (entry.Key.name.Equals(name))
+            KeyValuePair<IntRect, Texture> t = new KeyValuePair<IntRect, Texture>(new IntRect(), null);
+
+            lock (locker)
+                foreach (KeyValuePair<Palette, Texture> entry in content)
                 {
-                    Palette palette = entry.Key;
-
-                    return new KeyValuePair<IntRect, Texture>(new IntRect(((int)number % (int)palette.perLine) * 64, (int)number / (int)palette.perLine * 64, (int)palette.width, (int)palette.height), entry.Value);
+                    if (entry.Key.name.Equals(name))
+                    {
+                        Palette palette = entry.Key;
+                        t = new KeyValuePair<IntRect, Texture>(new IntRect(((int)number % (int)palette.perLine) * 64, (int)number / (int)palette.perLine * 64, (int)palette.width, (int)palette.height), entry.Value);
+                        break;
+                    }
                 }
-            }
 
-            throw new Exception("Palette not found");
+            if (t.Value == null)
+                throw new Exception("Palette not found");
+            return t;
         }
     }
 }

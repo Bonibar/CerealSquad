@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
 
-namespace CerealSquad.Graphics
+namespace CerealSquad.Factories
 {
     public sealed class TextureFactory
     {
@@ -24,18 +24,18 @@ namespace CerealSquad.Graphics
         }
         #endregion
 
-        private Dictionary<String, Texture> _Textures;
+
+        private Object locker = new Object();
+        private Dictionary<String, Texture> _Textures = new Dictionary<string, Texture>();
 
         /// <summary>
         /// Init all textures needed
         /// </summary>
         public void initTextures()
         {
-            _Textures = new Dictionary<String, Texture>();
-            if (_Textures == null)
-                throw new OutOfMemoryException("Failed to load textures");
-             
-            // use load(name, filename) ...
+            load("TestTile", "Assets/Tiles/TestTile.png");
+
+            Graphics.PaletteManager.Instance.AddPaletteInformations("TestTile");
         }
 
         /// <summary>
@@ -45,7 +45,12 @@ namespace CerealSquad.Graphics
         /// <returns>bool</returns>
         public bool exists(String name)
         {
-            return _Textures.ContainsKey(name);
+            bool result = false;
+
+            lock(locker)
+                result = _Textures.ContainsKey(name);
+
+            return result;
         }
 
         /// <summary>
@@ -56,12 +61,13 @@ namespace CerealSquad.Graphics
         /// <returns>bool</returns>
         public bool load(String name, String filename)
         {
-            if (exists(name)) {
+            if (exists(name))
                 return true;
-            }
 
-            Texture texture = new Texture(filename);
-            _Textures[name] = texture;
+            lock (locker) {
+                Texture texture = new Texture(filename);
+                _Textures[name] = texture;
+            }
 
             return true;
         }
@@ -73,11 +79,15 @@ namespace CerealSquad.Graphics
         /// <returns>Texture</returns>
         public Texture getTexture(String name)
         {
-            if (!exists(name)) {
-                throw new Exception("Unable to find texture " + name);
-            }
+            Texture texture = null;
 
-            return _Textures[name];
+            if (!exists(name))
+                throw new Exception("Unable to find texture " + name);
+
+            lock (locker)
+                texture = _Textures[name];
+
+            return texture;
         }
     }
 

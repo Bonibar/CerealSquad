@@ -23,6 +23,9 @@ namespace CerealSquad
             tasks.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/JackHunter.png"), false));
             tasks.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/Orangina.png"), false));
             tasks.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/BasicEnnemy.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("F_ReenieBeanie", "Fonts/ReenieBeanie.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/ReenieBeanie.ttf"), false));
+            tasks.Add(ftpDownloader.RequireFile("F_XirodRegular", "Fonts/xirod.regular.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/xirod.regular.ttf"), false));
+
             try
             {
                 System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
@@ -34,8 +37,10 @@ namespace CerealSquad
 
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R1600x900;
+            renderer.Resolution = Renderer.EResolution.R1280x720;
             renderer.FrameRate = 60;
+
+            Factories.TextureFactory.Instance.initTextures();
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;

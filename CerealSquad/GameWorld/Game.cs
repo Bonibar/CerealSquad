@@ -33,20 +33,17 @@ namespace CerealSquad.GameWorld
 
         public void GameLoop(InputManager.InputManager im)
         {
-            CurrentWorld = new AWorld();
-
-            CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(0, 0), "Maps/TestRoom.txt", ARoom.e_RoomType.FightRoom));
-            CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(13, 0), "Maps/TestRoom2.txt", ARoom.e_RoomType.FightRoom));
-            Players.Add(new Orangina(WorldEntity, new s_position(1, 1, 1), im));
+            Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
             Players.Add(new Jack(WorldEntity, new s_position(11, 2, 1), im));
-            new Ennemy(WorldEntity, new s_position(10, 10, 1));
-            new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
+            //new Ennemy(WorldEntity, new s_position(10, 10, 1));
+            //new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
+            CurrentWorld = new AWorld("Maps/TestWorld.txt");
         }
 
-        public void AddWorld(AWorld World = null)
+        public void AddWorld(AWorld World)
         {
             if (World == null)
-                World = new AWorld();
+                throw new ArgumentNullException("World cannot be null");
             Worlds.Add(World);
         }
 

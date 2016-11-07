@@ -12,7 +12,7 @@ namespace CerealSquad.Graphics
     {
         public ASprite sprite;
 
-        public JukeBox JukeBox { get; set; }
+        public Sounds.JukeBox JukeBox { get; set; }
 
         public bool Loop
         {
@@ -40,7 +40,7 @@ namespace CerealSquad.Graphics
         /// <param name="size">Vector2i</param>
         public void InitializationAnimatedSprite(String Texture, Vector2i size)
         {
-            sprite = new AnimatedSprite(TextureFactory.Instance.getTexture(Texture), size);  
+            sprite = new AnimatedSprite(Factories.TextureFactory.Instance.getTexture(Texture), size);  
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace CerealSquad.Graphics
         /// <param name="textureRect"></param>
         public void InitializationRegularSprite(String Texture, Vector2i Size, IntRect textureRect)
         {
-            sprite = new RegularSprite(TextureFactory.Instance.getTexture(Texture), Size, textureRect);
+            sprite = new RegularSprite(Factories.TextureFactory.Instance.getTexture(Texture), Size, textureRect);
         }
 
         /// <summary>

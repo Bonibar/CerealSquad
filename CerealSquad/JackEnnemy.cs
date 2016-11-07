@@ -7,6 +7,7 @@ using SFML.System;
 using static CerealSquad.APlayer;
 using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
+using CerealSquad.Factories;
 
 namespace CerealSquad
 {
