@@ -18,11 +18,11 @@ namespace CerealSquad
             // File requirement
             System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
             Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
-            tasks.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/alts.png"), true));
-            tasks.Add(ftpDownloader.RequireFile("jack", "Assets/Character/Jack.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/jack.png"), true));
-            tasks.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/JackHunter.png"), true));
-            tasks.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Orangina.png"), true));
-            tasks.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/basicEnnemy.png"), true));
+            tasks.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/alts.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("jack", "Assets/Character/Jack.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/Jack.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/JackHunter.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/Orangina.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/BasicEnnemy.png"), false));
             try
             {
                 System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
@@ -54,7 +54,7 @@ namespace CerealSquad
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
                 else
                 {
-                    game.WorldEntity.update(clock.Restart());
+                    game.Update(clock.Restart());
                     renderer.Draw(game.CurrentWorld);
                     game.WorldEntity.draw(renderer);
                 }

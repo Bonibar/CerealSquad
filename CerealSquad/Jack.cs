@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
 using CerealSquad.Graphics;
+using CerealSquad.GameWorld;
 
 namespace CerealSquad
 {
@@ -13,7 +14,7 @@ namespace CerealSquad
     {
         public Jack(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input)
         {
-            _speed = 0.5;
+            _speed = 0.1;
             _inputPress = new Dictionary<Key, functionMove>();
             _inputPress[InputManager.Keyboard.Key.Z] = move_up;
             _inputPress[InputManager.Keyboard.Key.Q] = move_left;
@@ -28,10 +29,10 @@ namespace CerealSquad
             _inputRelease[InputManager.Keyboard.Key.A] = special_end;
             _ressources = new EntityResources();
             TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
-            _ressources.InitializationAnimatedSprite("jack", new Vector2i(32, 32));
+            _ressources.InitializationAnimatedSprite("jack", new Vector2i(64, 64));
             Vector2f pos = _ressources.Position;
-            pos.X = position._x * 32;
-            pos.Y = position._y * 32;
+            pos.X = position._x * 64;
+            pos.Y = position._y * 64;
             _ressources.Position = pos;
         }
 
@@ -40,10 +41,10 @@ namespace CerealSquad
             _weight = 10;
         }
 
-        public override void update(Time deltaTime)
+        public override void update(Time deltaTime, AWorld world)
         {
             _weight = 1;
-            base.update(deltaTime);
+            base.update(deltaTime, world);
         }
 
         public override EName getName()

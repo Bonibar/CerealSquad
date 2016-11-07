@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SFML.System;
 using static CerealSquad.APlayer;
 using CerealSquad.Graphics;
+using CerealSquad.GameWorld;
 
 namespace CerealSquad
 {
@@ -38,10 +39,10 @@ namespace CerealSquad
             _scentMap = new JackEnnemyScentMap(100, 100);
             _ressources = new EntityResources();
             TextureFactory.Instance.load("jackHunter", "Assets/Character/jackHunter.png");
-            _ressources.InitializationAnimatedSprite("jackHunter", new Vector2i(32, 32));
+            _ressources.InitializationAnimatedSprite("jackHunter", new Vector2i(64, 64));
             Vector2f pos = _ressources.Position;
-            pos.X = position._x * 32;
-            pos.Y = position._y * 32;
+            pos.X = position._x * 64;
+            pos.Y = position._y * 64;
             _ressources.Position = pos;
         }
 
@@ -68,12 +69,12 @@ namespace CerealSquad
                 _move = EMovement.Left;
         }
 
-        public override void update(Time deltaTime)
+        public override void update(Time deltaTime, AWorld world)
         {
             _scentMap.update((WorldEntity)_owner);
             think();
             _ressources.Update(deltaTime);
-            move();
+            move(world);
         }
     }
 }

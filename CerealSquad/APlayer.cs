@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CerealSquad.InputManager.Keyboard;
+using CerealSquad.GameWorld;
 
 namespace CerealSquad
 {
@@ -117,7 +118,7 @@ namespace CerealSquad
                 _inputRelease[e.KeyCode]();
         }
 
-        public override void move()
+        public override void move(AWorld world)
         {
             if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
                 _move = EMovement.Right;
@@ -129,16 +130,16 @@ namespace CerealSquad
                 _move = EMovement.Up;
             else
                 _move = EMovement.None;
-            base.move();
+            base.move(world);
         }
 
-        public override void update(SFML.System.Time deltaTime)
+        public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             if (!_die)
             {
                 if (_specialActive)
                     AttaqueSpe();
-                move();
+                move(world);
             }
             else
             {

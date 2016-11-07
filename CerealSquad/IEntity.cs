@@ -1,4 +1,5 @@
-﻿using CerealSquad.Graphics;
+﻿using CerealSquad.GameWorld;
+using CerealSquad.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +96,7 @@ namespace CerealSquad
             set;
         }
 
-        void update(SFML.System.Time deltaTime);
+        void update(SFML.System.Time deltaTime, AWorld world);
         bool attemptDamage(IEntity Sender, e_DamageType damage);
         IEntity getOwner();
         ICollection<IEntity> getChildren();

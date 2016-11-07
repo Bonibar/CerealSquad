@@ -40,7 +40,8 @@ namespace CerealSquad.GameWorld
         public enum e_CellType
         {
             Normal = 0,
-            Wall = 1
+            Wall = 1,
+            Void = 2
         }
 
         private static string FILE_HASHEDKEY = "58672f161bdbe31526fd8384909d4aa22b8fd91da8fce113ea083fbd6022e73e";

@@ -13,29 +13,38 @@ namespace CerealSquad
     {
         public Orangina(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input)
         {
-            _speed = 1;
+            _speed = 0.1;
             _inputPress = new Dictionary<Key, functionMove>();
             _inputPress[InputManager.Keyboard.Key.Up] = move_up;
             _inputPress[InputManager.Keyboard.Key.Left] = move_left;
             _inputPress[InputManager.Keyboard.Key.Down] = move_down;
             _inputPress[InputManager.Keyboard.Key.Right] = move_right;
+            _inputPress[InputManager.Keyboard.Key.M] = special_start;
             _inputRelease = new Dictionary<Key, functionMove>();
             _inputRelease[InputManager.Keyboard.Key.Up] = move_up_release;
             _inputRelease[InputManager.Keyboard.Key.Left] = move_left_release;
             _inputRelease[InputManager.Keyboard.Key.Down] = move_down_release;
             _inputRelease[InputManager.Keyboard.Key.Right] = move_right_release;
+            _inputRelease[InputManager.Keyboard.Key.M] = special_end;
             TextureFactory.Instance.load("orangina", "Assets/Character/orangina.png");
             _ressources = new EntityResources();
-            _ressources.InitializationAnimatedSprite("orangina", new Vector2i(32, 32));
+            _ressources.InitializationAnimatedSprite("orangina", new Vector2i(64, 64));
             Vector2f pos = _ressources.Position;
-            pos.X = position._x * 32;
-            pos.Y = position._y * 32;
+            pos.X = position._x * 64;
+            pos.Y = position._y * 64;
             _ressources.Position = pos;
         }
 
         public override void AttaqueSpe()
         {
-            throw new NotImplementedException();
+            Console.Out.Write(Pos._trueX);
+            Console.Out.Write(" ");
+            Console.Out.Write(Pos._trueY);
+            Console.Out.Write(" ");
+            Console.Out.Write(_ressources.Position.X);
+            Console.Out.Write(" ");
+            Console.Out.Write(_ressources.Position.Y);
+            Console.Out.Write("\n");
         }
 
         public override EName getName()

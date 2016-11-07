@@ -37,8 +37,8 @@ namespace CerealSquad.GameWorld
 
             CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(0, 0), "Maps/TestRoom.txt", ARoom.e_RoomType.FightRoom));
             CurrentWorld.AddRoom(new ARoom(new ARoom.s_MapPos(13, 0), "Maps/TestRoom2.txt", ARoom.e_RoomType.FightRoom));
-            Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
-            Players.Add(new Jack(WorldEntity, new s_position(2, 2, 1), im));
+            Players.Add(new Orangina(WorldEntity, new s_position(1, 1, 1), im));
+            Players.Add(new Jack(WorldEntity, new s_position(11, 2, 1), im));
             new Ennemy(WorldEntity, new s_position(10, 10, 1));
             new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
         }
@@ -64,6 +64,11 @@ namespace CerealSquad.GameWorld
         private void setCurrentWorld(AWorld World)
         {
             currentWorld = World;
+        }
+
+        public void Update(SFML.System.Time deltaTime)
+        {
+            worldEntity.update(deltaTime, currentWorld);
         }
     }
 }
