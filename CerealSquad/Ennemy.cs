@@ -18,7 +18,7 @@ namespace CerealSquad
             _scentMap = new scentMap(100, 100);
             _ressources = new EntityResources();
             Factories.TextureFactory.Instance.load("basicEnnemy", "Assets/Character/basicEnnemy.png");
-            _ressources.InitializationAnimatedSprite("basicEnnemy", new Vector2u(32, 32));
+            _ressources.InitializationAnimatedSprite(new Vector2u(32, 32));
             Vector2f pos = _ressources.Position;
             pos.X = position._x * 32;
             pos.Y = position._y * 32;

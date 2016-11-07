@@ -178,7 +178,7 @@ namespace CerealSquad
             {
                 if (_targeting != EMovement.None)
                 {
-                    ATrap trap = new TrapEntities.BearTrap(this);
+                    ATrap trap = new TrapEntities.Bomb(this);
                     trap.setPosition(_targeting);
                     addChild(trap);
                 }

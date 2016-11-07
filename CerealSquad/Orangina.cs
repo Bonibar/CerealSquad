@@ -26,7 +26,7 @@ namespace CerealSquad
             _inputRelease[InputManager.Keyboard.Key.Right] = move_right_release;
             Factories.TextureFactory.Instance.load("orangina", "Assets/Character/orangina.png");
             _ressources = new EntityResources();
-            _ressources.InitializationAnimatedSprite("orangina", new Vector2u(32, 32));
+            _ressources.InitializationAnimatedSprite(new Vector2u(32, 32));
             Vector2f pos = _ressources.Position;
             pos.X = position._x * 32;
             pos.Y = position._y * 32;

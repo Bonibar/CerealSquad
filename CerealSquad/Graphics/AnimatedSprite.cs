@@ -12,7 +12,6 @@ namespace CerealSquad.Graphics
     {
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
-        private String texture;
         protected Vector2u size = new Vector2u(0, 0);
         public bool Loop
         {
@@ -26,17 +25,15 @@ namespace CerealSquad.Graphics
             }
         }
 
-        public AnimatedSprite(String Texture, Vector2u Size)
+        public AnimatedSprite(Vector2u Size)
         {
             size = Size;
-            texture = Texture;
             initialization();
         }
 
-        public AnimatedSprite(String Texture, uint Width, uint Height)
+        public AnimatedSprite(uint Width, uint Height)
         {
             size = new Vector2u(Width, Height);
-            texture = Texture;
             initialization();
         }
 
@@ -95,13 +92,13 @@ namespace CerealSquad.Graphics
         /// </summary>
         /// <param name="type">EStateEntity</param>
         /// <param name="texturePalette">List<int></int></param>
-        public void addAnimation(EStateEntity type, List<uint> texturePalette, Vector2u _size)
+        public void addAnimation(EStateEntity type, String textureAnimation, List<uint> texturePalette, Vector2u _size)
         {
             Animation anim = new Animation();
-            PaletteManager.Instance.AddPaletteInformations(texture, _size.X, _size.Y);
-            anim.setSpriteSheet(Factories.TextureFactory.Instance.getTexture(texture));
+            PaletteManager.Instance.AddPaletteInformations(textureAnimation, _size.X, _size.Y);
+            anim.setSpriteSheet(Factories.TextureFactory.Instance.getTexture(textureAnimation));
             texturePalette.ForEach((uint i) => {
-                KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(texture, i);
+                KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
                 anim.addFrame(size.X, size.Y, palette.Key);
             });
             animations.Add((uint)type, anim);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
+using SFML.System;
 
 namespace CerealSquad.Graphics
 {
@@ -11,13 +12,13 @@ namespace CerealSquad.Graphics
     {
         public struct SAnimation
         {
-            public IntRect rect;
-            public SFML.System.Vector2f size;
+            public IntRect Rect;
+            public Vector2f Size;
 
             public SAnimation(IntRect _rect, SFML.System.Vector2f _size)
             {
-                rect = _rect;
-                size = _size;
+                Rect = _rect;
+                Size = _size;
             }
         }
 
