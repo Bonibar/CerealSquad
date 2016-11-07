@@ -38,9 +38,9 @@ namespace CerealSquad.Graphics
         /// </summary>
         /// <param name="Texture">String</param>
         /// <param name="size">Vector2i</param>
-        public void InitializationAnimatedSprite(String Texture, Vector2i size)
+        public void InitializationAnimatedSprite(String Texture, Vector2u size)
         {
-            sprite = new AnimatedSprite(Factories.TextureFactory.Instance.getTexture(Texture), size);  
+            sprite = new AnimatedSprite(Texture, size);  
         }
 
         /// <summary>

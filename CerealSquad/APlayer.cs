@@ -15,7 +15,7 @@ namespace CerealSquad
         protected Dictionary<Key, functionMove> _inputRelease;
         protected bool _specialActive;
         protected int _weight;
-        protected bool _isChoosingTarget;
+        protected ETrapPuting _isChoosingTarget;
         protected EMovement _targeting;
 
         protected struct s_input
@@ -25,6 +25,15 @@ namespace CerealSquad
             public bool _isUpPressed;
             public bool _isDownPressed;
             public bool _isTrapDownPressed;
+        }
+
+        protected enum ETrapPuting
+        {
+            NO_PUTTING = 0,
+            START_SELECTING = 1,
+            SELECTING = 2,
+            END_SELECTING = 3,
+            PUTTING = 4
         }
 
         protected s_input _playerInput;
@@ -57,7 +66,7 @@ namespace CerealSquad
             _playerInput._isTrapDownPressed = false;
             _specialActive = false;
             _weight = 1;
-            _isChoosingTarget = false;
+            _isChoosingTarget = ETrapPuting.NO_PUTTING;
         }
 
         protected void special_end()
@@ -134,7 +143,7 @@ namespace CerealSquad
 
         public override void move()
         {
-            if (_playerInput._isTrapDownPressed)
+            if (_isChoosingTarget != ETrapPuting.NO_PUTTING)
                 _move = EMovement.None;
             else if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
                 _move = EMovement.Right;
@@ -151,9 +160,9 @@ namespace CerealSquad
 
         public void putTrap()
         {
-            if (_playerInput._isTrapDownPressed && !_isChoosingTarget)
-                _isChoosingTarget = true;
-            else if (!_playerInput._isTrapDownPressed && _isChoosingTarget)
+            if (_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.NO_PUTTING)
+                _isChoosingTarget = ETrapPuting.START_SELECTING;
+            else if (!_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.START_SELECTING)
             {
                 if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
                     _targeting = EMovement.Right;
@@ -163,17 +172,20 @@ namespace CerealSquad
                     _targeting = EMovement.Down;
                 else if (!_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && _playerInput._isUpPressed)
                     _targeting = EMovement.Up;
-                else
-                    _targeting = EMovement.None;
-
+                _isChoosingTarget = ETrapPuting.SELECTING;
+            }
+            else if (_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.SELECTING)
+            {
                 if (_targeting != EMovement.None)
                 {
                     ATrap trap = new TrapEntities.BearTrap(this);
                     trap.setPosition(_targeting);
                     addChild(trap);
                 }
-                _isChoosingTarget = false;
+                _isChoosingTarget = ETrapPuting.END_SELECTING;
             }
+            else if (!_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.END_SELECTING)
+                _isChoosingTarget = ETrapPuting.NO_PUTTING;
         }
 
         public override void update(SFML.System.Time deltaTime)
@@ -191,6 +203,7 @@ namespace CerealSquad
                     destroy();
             }
             _ressources.Update(deltaTime);
+            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime));
         }
 
         public abstract void AttaqueSpe();

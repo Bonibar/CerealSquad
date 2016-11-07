@@ -44,11 +44,16 @@ namespace CerealSquad
             else if(direction == EMovement.Right)
                 pos = new s_position(_owner.Pos._x + 1, _owner.Pos._y);
             else if(direction == EMovement.Left)
-                pos = new s_position(_owner.Pos._x - 1, _owner.Pos._y + 1);
+                pos = new s_position(_owner.Pos._x - 1, _owner.Pos._y);
 
             Pos = pos;
-            System.Diagnostics.Debug.WriteLine("Pos : " + pos._x + " " + pos._y);
             ressourcesEntity.Position = new SFML.System.Vector2f(Pos._x * 64, Pos._y * 64);
+        }
+
+        public override void update(SFML.System.Time deltaTime)
+        {
+            ressourcesEntity.Update(deltaTime);
+            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime));
         }
     }
 }

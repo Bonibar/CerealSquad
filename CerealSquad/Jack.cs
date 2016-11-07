@@ -30,10 +30,17 @@ namespace CerealSquad
             _inputRelease[InputManager.Keyboard.Key.Space] = put_trap_release;
             _ressources = new EntityResources();
             Factories.TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
-            _ressources.InitializationAnimatedSprite("jack", new Vector2i(32, 32));
+            _ressources.InitializationAnimatedSprite("jack", new Vector2u(64, 64));
+
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_LEFT, new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_RIGHT, new List<uint> { 7, 8, 9 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, new List<uint> { 10, 11, 12 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, new List<uint> { 13, 14, 15 }, new Vector2u(64, 64));
             Vector2f pos = _ressources.Position;
-            pos.X = position._x * 32;
-            pos.Y = position._y * 32;
+            pos.X = position._x * 64;
+            pos.Y = position._y * 64;
             _ressources.Position = pos;
         }
 

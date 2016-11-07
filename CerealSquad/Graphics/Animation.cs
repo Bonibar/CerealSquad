@@ -9,10 +9,21 @@ namespace CerealSquad.Graphics
 {
     public class Animation
     {
-
-        public void addFrame(IntRect rect)
+        public struct SAnimation
         {
-            m_frames.Add(rect);
+            public IntRect rect;
+            public SFML.System.Vector2f size;
+
+            public SAnimation(IntRect _rect, SFML.System.Vector2f _size)
+            {
+                rect = _rect;
+                size = _size;
+            }
+        }
+
+        public void addFrame(float width, float height, IntRect rect)
+        {
+            m_frames.Add(new SAnimation(rect, new SFML.System.Vector2f(width, height)));
         }
 
         public void setSpriteSheet(Texture texture)
@@ -27,15 +38,15 @@ namespace CerealSquad.Graphics
 
         public int getSize()
         {
-            return m_frames.Count<IntRect>();
+            return m_frames.Count<SAnimation>();
         }
 
-        public IntRect getFrame(int n)
+        public SAnimation getFrame(int n)
         {
             return m_frames[n];
         }
 
-        private List<IntRect> m_frames = new List<IntRect>();
+        private List<SAnimation> m_frames = new List<SAnimation>();
         private Texture m_texture = null;
     }
 }

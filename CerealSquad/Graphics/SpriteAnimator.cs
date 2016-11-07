@@ -22,6 +22,7 @@ namespace CerealSquad.Graphics
         private int m_currentFrame;
         private Texture m_texture;
         private List<Vertex> m_vertices = new List<Vertex>();
+        private Vector2f m_size;
 
 
         public SpriteAnimator()
@@ -30,11 +31,21 @@ namespace CerealSquad.Graphics
             m_isLooped = true;
             m_isPaused = false;
             m_animation = null;
+            m_size = new Vector2f();
 
             m_vertices.Add(new Vertex());
             m_vertices.Add(new Vertex());
             m_vertices.Add(new Vertex());
             m_vertices.Add(new Vertex());
+        }
+
+        /// <summary>
+        /// Check if the animator have an animation
+        /// </summary>
+        /// <returns>bool</returns>
+        public bool HaveAnimation()
+        {
+            return m_animation != null;
         }
 
         /// <summary>
@@ -166,10 +177,10 @@ namespace CerealSquad.Graphics
         /// <returns>FloatRect</returns>
         public FloatRect getLocalBounds()
         {
-            IntRect rect = m_animation.getFrame(m_currentFrame);
+            Animation.SAnimation animation = m_animation.getFrame(m_currentFrame);
 
-            float width = (float)(Math.Abs(rect.Width));
-            float height = (float)(Math.Abs(rect.Height));
+            float width = animation.size.X;
+            float height = animation.size.Y;
 
             return new FloatRect(0f, 0f, width, height);
         }
@@ -183,8 +194,8 @@ namespace CerealSquad.Graphics
         {
             if (m_animation != null)
             {
-                //calculate new vertex positions and texture coordiantes
-                IntRect rect = m_animation.getFrame(newFrame);
+                Animation.SAnimation animation = m_animation.getFrame(m_currentFrame);
+                IntRect rect = animation.rect;
 
                 float left = (float)(rect.Left) + 0.0001f;
                 float right = left + (float)(rect.Width);
@@ -192,9 +203,9 @@ namespace CerealSquad.Graphics
                 float bottom = top + (float)(rect.Height);
 
                 m_vertices[0] = new Vertex(new Vector2f(0f, 0f), new Vector2f(left, top));
-                m_vertices[1] = new Vertex(new Vector2f(0f, (float)(rect.Height)), new Vector2f(left, bottom));
-                m_vertices[2] = new Vertex(new Vector2f((float)(rect.Width), (float)(rect.Height)), new Vector2f(right, bottom));
-                m_vertices[3] = new Vertex(new Vector2f((float)(rect.Width), 0f), new Vector2f(right, top));
+                m_vertices[1] = new Vertex(new Vector2f(0f, animation.size.Y), new Vector2f(left, bottom));
+                m_vertices[2] = new Vertex(new Vector2f(animation.size.X, animation.size.Y), new Vector2f(right, bottom));
+                m_vertices[3] = new Vertex(new Vector2f(animation.size.X, 0f), new Vector2f(right, top));
             }
 
             if (resetTime)

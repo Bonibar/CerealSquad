@@ -13,9 +13,10 @@ namespace CerealSquad.TrapEntities
         {
             Factories.TextureFactory.Instance.load("BearTrap", "Assets/trapbear.png");
             ressourcesEntity = new Graphics.EntityResources();
-            ressourcesEntity.InitializationAnimatedSprite("BearTrap", new Vector2i(128, 128));
-            ressourcesEntity.Scale = new Vector2f(0.5f, 0.5f);
-            System.Diagnostics.Debug.WriteLine("TRAP INIT");
+            ressourcesEntity.InitializationAnimatedSprite("BearTrap", new Vector2u(64, 64));
+
+            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.IDLE, new List<uint> { 0, 1 }, new Vector2u(128, 128));
+
         }
 
         public override void update(Time deltaTime)

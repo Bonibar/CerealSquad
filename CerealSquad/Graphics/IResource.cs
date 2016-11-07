@@ -16,7 +16,7 @@ namespace CerealSquad.Graphics
         WALKING_DOWN,
         WALKING_RIGHT,
         WALKING_LEFT,
-        DYING
+        DYING,
     }
 
     interface IResource : Drawable
