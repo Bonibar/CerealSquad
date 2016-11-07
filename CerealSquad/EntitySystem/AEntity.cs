@@ -185,7 +185,7 @@ namespace CerealSquad
                     _ressources.PlayAnimation(EStateEntity.IDLE);
                     return;
             }
-            if (world.getPosition((uint)colPos._x, (uint)colPos._y) == RoomParser.e_CellType.Normal)
+            if (world.getPosition(colPos._x, colPos._y) == RoomParser.e_CellType.Normal)
             {
                 _pos = newPos;
                 _ressources.Position = ressourcePos;

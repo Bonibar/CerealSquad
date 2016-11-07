@@ -38,13 +38,13 @@ namespace CerealSquad.GameWorld
             });
         }
 
-        public RoomParser.e_CellType getPosition(uint x, uint y)
+        public RoomParser.e_CellType getPosition(int x, int y)
         {
             foreach(ARoom room in Rooms)
             {
                 if (x >= room.Position.X && x < room.Position.X + room.Size.Width &&
                 y >= room.Position.Y && y < room.Position.Y + room.Size.Height)
-                    return room.getPosition(x - room.Position.X, y - room.Position.Y);
+                    return room.getPosition((uint)(x - room.Position.X), (uint)(y - room.Position.Y));
             }
             return (RoomParser.e_CellType.Void);
         }

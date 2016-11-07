@@ -69,7 +69,7 @@ namespace CerealSquad.GameWorld
             RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
             if (x < Size.Width && y <= Size.Height)
             {
-                cel = Cells.First(z => z.Key.Column.Equals(x) && z.Key.Row.Equals(y)).Value.Type;
+                cel = Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
             }
             return (cel);
         }
