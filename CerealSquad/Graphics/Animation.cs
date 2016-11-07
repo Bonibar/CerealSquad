@@ -4,15 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
+using SFML.System;
 
 namespace CerealSquad.Graphics
 {
     public class Animation
     {
-
-        public void addFrame(IntRect rect)
+        public struct SAnimation
         {
-            m_frames.Add(rect);
+            public IntRect Rect;
+            public Vector2f Size;
+
+            public SAnimation(IntRect _rect, SFML.System.Vector2f _size)
+            {
+                Rect = _rect;
+                Size = _size;
+            }
+        }
+
+        public void addFrame(float width, float height, IntRect rect)
+        {
+            m_frames.Add(new SAnimation(rect, new SFML.System.Vector2f(width, height)));
         }
 
         public void setSpriteSheet(Texture texture)
@@ -27,15 +39,15 @@ namespace CerealSquad.Graphics
 
         public int getSize()
         {
-            return m_frames.Count<IntRect>();
+            return m_frames.Count<SAnimation>();
         }
 
-        public IntRect getFrame(int n)
+        public SAnimation getFrame(int n)
         {
             return m_frames[n];
         }
 
-        private List<IntRect> m_frames = new List<IntRect>();
+        private List<SAnimation> m_frames = new List<SAnimation>();
         private Texture m_texture = null;
     }
 }

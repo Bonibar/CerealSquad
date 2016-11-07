@@ -11,7 +11,7 @@ namespace CerealSquad
 
     abstract class AEntity : IEntity
     {
-        protected enum EMovement
+        public enum EMovement
         {
             Up,
             Down,

@@ -80,6 +80,18 @@
   <ItemGroup>
     <Compile Include="Downloaders\FTPDownloader.cs" />
     <Compile Include="Downloaders\IDownloader.cs" />
+    <Compile Include="EntitySystem\AEnemy.cs" />
+    <Compile Include="EntitySystem\AEntity.cs" />
+    <Compile Include="EntitySystem\APlayer.cs" />
+    <Compile Include="EntitySystem\ATrap.cs" />
+    <Compile Include="EntitySystem\Ennemy.cs" />
+    <Compile Include="EntitySystem\IEntity.cs" />
+    <Compile Include="EntitySystem\Jack.cs" />
+    <Compile Include="EntitySystem\JackEnnemy.cs" />
+    <Compile Include="EntitySystem\Mike.cs" />
+    <Compile Include="EntitySystem\Orangina.cs" />
+    <Compile Include="EntitySystem\Tchong.cs" />
+    <Compile Include="EntitySystem\WorldEntity.cs" />
     <Compile Include="GameWorld\ARoom.cs" />
     <Compile Include="GameWorld\Game.cs" />
     <Compile Include="GameWorld\AWorld.cs" />
@@ -110,18 +122,8 @@
     <Compile Include="Graphics\ASprite.cs" />
     <Compile Include="Factories\TextureFactory.cs" />
     <Compile Include="FrameClock.cs" />
-    <Compile Include="AEnemy.cs" />
-    <Compile Include="ATrap.cs" />
-    <Compile Include="JackEnnemy.cs" />
-    <Compile Include="Ennemy.cs" />
-    <Compile Include="Jack.cs" />
-    <Compile Include="Mike.cs" />
-    <Compile Include="Orangina.cs" />
-    <Compile Include="Tchong.cs" />
-    <Compile Include="WorldEntity.cs" />
-    <Compile Include="AEntity.cs" />
-    <Compile Include="APlayer.cs" />
-    <Compile Include="IEntity.cs" />
+    <Compile Include="TrapEntities\BearTrap.cs" />
+    <Compile Include="TrapEntities\Bomb.cs" />
     <Compile Include="Global.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -146,6 +148,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\BombExploded.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Bomb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\trapbear.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="csfml-audio-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -183,11 +194,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Assets\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

@@ -12,8 +12,7 @@ namespace CerealSquad.Graphics
     {
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
-        private Texture texture;
-        protected Vector2i size = new Vector2i(0, 0);
+        protected Vector2u size = new Vector2u(0, 0);
         public bool Loop
         {
             get
@@ -26,17 +25,15 @@ namespace CerealSquad.Graphics
             }
         }
 
-        public AnimatedSprite(Texture Texture, Vector2i Size)
+        public AnimatedSprite(Vector2u Size)
         {
             size = Size;
-            texture = Texture;
             initialization();
         }
 
-        public AnimatedSprite(Texture Texture, int Width, int Height)
+        public AnimatedSprite(uint Width, uint Height)
         {
-            size = new Vector2i(Width, Height);
-            texture = Texture;
+            size = new Vector2u(Width, Height);
             initialization();
         }
 
@@ -45,7 +42,7 @@ namespace CerealSquad.Graphics
             Type = ETypeSprite.ANIMATED;
             Position = new Vector2f(0, 0);
 
-            Animation walkingAnimationDown = new Animation();
+           /* Animation walkingAnimationDown = new Animation();
             walkingAnimationDown.setSpriteSheet(texture);
             walkingAnimationDown.addFrame(new IntRect(size.X, 0, size.X, size.Y));
             walkingAnimationDown.addFrame(new IntRect(size.X * 2, 0, size.X, size.Y));
@@ -87,7 +84,27 @@ namespace CerealSquad.Graphics
             animations.Add((uint)EStateEntity.WALKING_RIGHT, walkingAnimationRight);
             animations.Add((uint)EStateEntity.DYING, dyingAnimation);
 
-            animator.setAnimation(walkingAnimationDown);
+            animator.setAnimation(walkingAnimationDown);*/
+        }
+
+        /// <summary>
+        /// Add animation
+        /// </summary>
+        /// <param name="type">EStateEntity</param>
+        /// <param name="texturePalette">List<int></int></param>
+        public void addAnimation(EStateEntity type, String textureAnimation, List<uint> texturePalette, Vector2u _size)
+        {
+            Animation anim = new Animation();
+            PaletteManager.Instance.AddPaletteInformations(textureAnimation, _size.X, _size.Y);
+            anim.setSpriteSheet(Factories.TextureFactory.Instance.getTexture(textureAnimation));
+            texturePalette.ForEach((uint i) => {
+                KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
+                anim.addFrame(size.X, size.Y, palette.Key);
+            });
+            animations.Add((uint)type, anim);
+
+            if (!animator.HaveAnimation())
+                animator.setAnimation(anim);
         }
 
         /// <summary>

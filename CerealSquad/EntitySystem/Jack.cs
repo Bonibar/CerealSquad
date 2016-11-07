@@ -22,15 +22,26 @@ namespace CerealSquad
             _inputPress[InputManager.Keyboard.Key.S] = move_down;
             _inputPress[InputManager.Keyboard.Key.D] = move_right;
             _inputPress[InputManager.Keyboard.Key.A] = special_start;
+            _inputPress[InputManager.Keyboard.Key.Space] = put_trap;
             _inputRelease = new Dictionary<Key, functionMove>();
             _inputRelease[InputManager.Keyboard.Key.Z] = move_up_release;
             _inputRelease[InputManager.Keyboard.Key.Q] = move_left_release;
             _inputRelease[InputManager.Keyboard.Key.S] = move_down_release;
             _inputRelease[InputManager.Keyboard.Key.D] = move_right_release;
             _inputRelease[InputManager.Keyboard.Key.A] = special_end;
+            _inputRelease[InputManager.Keyboard.Key.Space] = put_trap_release;
             _ressources = new EntityResources();
-            TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
-            _ressources.InitializationAnimatedSprite("jack", new Vector2i(64, 64));
+
+            Factories.TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
+            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
+
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "jack", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, "jack", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_LEFT, "jack", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_RIGHT, "jack", new List<uint> { 6, 7, 8 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, "jack", new List<uint> { 9, 10, 11 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "jack", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
+
             Vector2f pos = _ressources.Position;
             pos.X = position._x * 64;
             pos.Y = position._y * 64;
