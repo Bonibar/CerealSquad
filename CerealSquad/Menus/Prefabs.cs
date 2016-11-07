@@ -14,13 +14,13 @@ namespace CerealSquad.Menus
             Menu mainMenu = new Menu(manager);
 
             Buttons.IButton btn_continue = new Buttons.OpenMenuButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, SettingsMenu(win, manager));
-            MenuItem item_continue = new MenuItem(btn_continue);
+            MenuItem item_continue = new MenuItem(btn_continue, MenuItem.ItemType.Disabled);
             Buttons.IButton btn_newgame = new Buttons.BackButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 70, mainMenu);
             MenuItem item_newgame = new MenuItem(btn_newgame);
             Buttons.IButton btn_settings = new Buttons.OpenMenuButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 140, SettingsMenu(win, manager));
-            MenuItem item_settings = new MenuItem(btn_settings);
+            MenuItem item_settings = new MenuItem(btn_settings, MenuItem.ItemType.Disabled);
             Buttons.IButton btn_credits = new Buttons.OpenMenuButton("Credits", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 210, SettingsMenu(win, manager));
-            MenuItem item_credits = new MenuItem(btn_credits);
+            MenuItem item_credits = new MenuItem(btn_credits, MenuItem.ItemType.Disabled);
             Buttons.IButton btn_exit = new Buttons.ExitButton("Exit", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 280, win);
             MenuItem item_exit = new MenuItem(btn_exit);
 

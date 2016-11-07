@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
 using CerealSquad.Graphics;
+using CerealSquad.GameWorld;
+using CerealSquad.Factories;
 
 namespace CerealSquad
 {
@@ -13,7 +15,7 @@ namespace CerealSquad
     {
         public Jack(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input)
         {
-            _speed = 0.5;
+            _speed = 0.1;
             _inputPress = new Dictionary<Key, functionMove>();
             _inputPress[InputManager.Keyboard.Key.Z] = move_up;
             _inputPress[InputManager.Keyboard.Key.Q] = move_left;
@@ -29,15 +31,17 @@ namespace CerealSquad
             _inputRelease[InputManager.Keyboard.Key.A] = special_end;
             _inputRelease[InputManager.Keyboard.Key.Space] = put_trap_release;
             _ressources = new EntityResources();
+
             Factories.TextureFactory.Instance.load("jack", "Assets/Character/jack.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "jack", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, "jack", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_LEFT, "jack", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_RIGHT, "jack", new List<uint> { 7, 8, 9 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, "jack", new List<uint> { 10, 11, 12 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "jack", new List<uint> { 13, 14, 15 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_RIGHT, "jack", new List<uint> { 6, 7, 8 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, "jack", new List<uint> { 9, 10, 11 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "jack", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
+
             Vector2f pos = _ressources.Position;
             pos.X = position._x * 64;
             pos.Y = position._y * 64;
@@ -49,10 +53,10 @@ namespace CerealSquad
             _weight = 10;
         }
 
-        public override void update(Time deltaTime)
+        public override void update(Time deltaTime, AWorld world)
         {
             _weight = 1;
-            base.update(deltaTime);
+            base.update(deltaTime, world);
         }
 
         public override EName getName()

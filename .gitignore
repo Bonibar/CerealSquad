@@ -22,6 +22,7 @@ bld/
 *[Oo]bj/
 [Ll]og/
 *[Aa]ssets
+*[Ff]onts
 
 # Visual Studio 2015 cache/options directory
 .vs/

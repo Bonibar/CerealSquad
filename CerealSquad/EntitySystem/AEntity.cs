@@ -1,4 +1,5 @@
-﻿using CerealSquad.Graphics;
+﻿using CerealSquad.GameWorld;
+using CerealSquad.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -145,39 +146,54 @@ namespace CerealSquad
 
         // Use this function for moving the entity whitout his action(ex: knockback)
         // Move the entity relative to his actual position
-        public virtual void move(/* , Map map*/)
+        public virtual void move(AWorld world)
         {
-            var pos = _ressources.Position;
+            var ressourcePos = _ressources.Position;
+            s_position newPos = _pos;
+            s_position colPos = _pos;
+            EStateEntity anim = EStateEntity.IDLE;
             switch (_move)
             {
                 case EMovement.Up:
-                    _pos += new s_position(0, -_speed, 0);
-                    _ressources.PlayAnimation(EStateEntity.WALKING_UP);
-                    pos.Y -= 64 * (float)_speed;
+                    newPos += new s_position(0, -_speed, 0);
+                    colPos = newPos;
+                    colPos += new s_position(0.99, 0, 0);
+                    anim = EStateEntity.WALKING_UP;
+                    ressourcePos.Y -= 64 * (float)_speed;
                     break;
                 case EMovement.Down:
-                    _pos += new s_position(0, +_speed, 0);
-                    _ressources.PlayAnimation(EStateEntity.WALKING_DOWN);
-                    pos.Y += 64 * (float)_speed;
+                    newPos += new s_position(0, +_speed, 0);
+                    colPos = newPos;
+                    colPos += new s_position(0.99, 0.99, 0);
+                    anim = EStateEntity.WALKING_DOWN;
+                    ressourcePos.Y += 64 * (float)_speed;
                     break;
                 case EMovement.Right:
-                    _pos += new s_position(_speed, 0, 0);
-                    _ressources.PlayAnimation(EStateEntity.WALKING_RIGHT);
-                    pos.X += 64 * (float)_speed;
+                    newPos += new s_position(_speed, 0, 0);
+                    colPos = newPos;
+                    colPos += new s_position(0.99, 0, 0);
+                    anim = EStateEntity.WALKING_RIGHT;
+                    ressourcePos.X += 64 * (float)_speed;
                     break;
                 case EMovement.Left:
-                    _pos += new s_position(-_speed, 0, 0);
-                    _ressources.PlayAnimation(EStateEntity.WALKING_LEFT);
-                    pos.X -= 64 * (float)_speed;
+                    newPos += new s_position(-_speed, 0, 0);
+                    colPos = newPos;
+                    anim = EStateEntity.WALKING_LEFT;
+                    ressourcePos.X -= 64 * (float)_speed;
                     break;
                 case EMovement.None:
                     _ressources.PlayAnimation(EStateEntity.IDLE);
-                    break;
+                    return;
             }
-            _ressources.Position = pos;
+            if (world.getPosition(colPos._x, colPos._y) == RoomParser.e_CellType.Normal)
+            {
+                _pos = newPos;
+                _ressources.Position = ressourcePos;
+                _ressources.PlayAnimation(anim);
+            }
         }
 
-        public abstract void update(SFML.System.Time deltaTime);
+        public abstract void update(SFML.System.Time deltaTime, AWorld world);
 
         public void die()
         {

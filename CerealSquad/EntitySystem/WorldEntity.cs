@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using CerealSquad.GameWorld;
+using SFML.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,10 @@ namespace CerealSquad
         {
         }
 
-        public override void update(SFML.System.Time deltaTime)
+        public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             _children.ToList<IEntity>().ForEach(i => check_death(i));
-            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime));
+            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
         }
 
         private void check_death(IEntity i)

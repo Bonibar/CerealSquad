@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CerealSquad.InputManager.Keyboard;
+using CerealSquad.GameWorld;
 
 namespace CerealSquad
 {
@@ -141,7 +142,7 @@ namespace CerealSquad
                 _inputRelease[e.KeyCode]();
         }
 
-        public override void move()
+        public override void move(AWorld world)
         {
             if (_isChoosingTarget != ETrapPuting.NO_PUTTING)
                 _move = EMovement.None;
@@ -155,7 +156,7 @@ namespace CerealSquad
                 _move = EMovement.Up;
             else
                 _move = EMovement.None;
-            base.move();
+            base.move(world);
         }
 
         public void putTrap()
@@ -188,13 +189,13 @@ namespace CerealSquad
                 _isChoosingTarget = ETrapPuting.NO_PUTTING;
         }
 
-        public override void update(SFML.System.Time deltaTime)
+        public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             if (!_die)
             {
                 if (_specialActive)
                     AttaqueSpe();
-                move();
+                move(world);
                 putTrap();
             }
             else
@@ -203,7 +204,7 @@ namespace CerealSquad
                     destroy();
             }
             _ressources.Update(deltaTime);
-            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime));
+            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
         }
 
         public abstract void AttaqueSpe();

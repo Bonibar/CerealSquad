@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
 using CerealSquad.Graphics;
+using CerealSquad.GameWorld;
+using CerealSquad.Factories;
 
 namespace CerealSquad
 {
@@ -18,10 +20,10 @@ namespace CerealSquad
             _scentMap = new scentMap(100, 100);
             _ressources = new EntityResources();
             Factories.TextureFactory.Instance.load("basicEnnemy", "Assets/Character/basicEnnemy.png");
-            _ressources.InitializationAnimatedSprite(new Vector2u(32, 32));
+            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
             Vector2f pos = _ressources.Position;
-            pos.X = position._x * 32;
-            pos.Y = position._y * 32;
+            pos.X = position._x * 64;
+            pos.Y = position._y * 64;
             _ressources.Position = pos;
         }
 
@@ -117,12 +119,12 @@ namespace CerealSquad
             }
         }
 
-        public override void update(Time deltaTime)
+        public override void update(Time deltaTime, AWorld world)
         {
             _scentMap.update((WorldEntity)_owner);
             think();
             _ressources.Update(deltaTime);
-            move();
+            move(world);
         }
     }
 }

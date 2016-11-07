@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CerealSquad.GameWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,10 +51,10 @@ namespace CerealSquad
             ressourcesEntity.Position = new SFML.System.Vector2f(Pos._x * 64, Pos._y * 64);
         }
 
-        public override void update(SFML.System.Time deltaTime)
+        public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             ressourcesEntity.Update(deltaTime);
-            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime));
+            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
         }
     }
 }

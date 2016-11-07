@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
+using CerealSquad.GameWorld;
 
 namespace CerealSquad.TrapEntities
 {
@@ -19,7 +20,7 @@ namespace CerealSquad.TrapEntities
 
         }
 
-        public override void update(Time deltaTime)
+        public override void update(Time deltaTime, AWorld world)
         {
             ressourcesEntity.Update(deltaTime);
         }
