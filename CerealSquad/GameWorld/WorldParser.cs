@@ -1,27 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CerealSquad.Global;
 
 namespace CerealSquad.GameWorld
 {
     static class WorldParser
     {
-        public class t_roompos
-        {
-            private t_roompos() { }
-
-            public t_roompos(int x, int y)
-            {
-                X = x;
-                Y = y;
-            }
-
-            public int X { get; }
-            public int Y { get; }
-        }
-
         public class t_roomcontent
         {
             private t_roomcontent() { }
@@ -48,9 +33,9 @@ namespace CerealSquad.GameWorld
             return line.Equals(FILE_HASHEDKEY);
         }
 
-        private static Dictionary<t_roompos, t_roomcontent> loadRooms(string[] lines)
+        private static Dictionary<s_Pos<int>, t_roomcontent> loadRooms(string[] lines)
         {
-            Dictionary<t_roompos, t_roomcontent> rooms = new Dictionary<t_roompos, t_roomcontent>();
+            Dictionary<s_Pos<int>, t_roomcontent> rooms = new Dictionary<s_Pos<int>, t_roomcontent>();
             uint startline = 0;
             uint endline;
 
@@ -79,7 +64,7 @@ namespace CerealSquad.GameWorld
                     int posY = int.Parse(positions[1]);
                     string roomPath = values[1];
                     e_RoomType roomType = (e_RoomType)int.Parse(values[2]);
-                    rooms.Add(new t_roompos(posX, posY), new t_roomcontent(roomPath, roomType));
+                    rooms.Add(new s_Pos<int>(posX, posY), new t_roomcontent(roomPath, roomType));
                 }
                 catch (Exception e)
                 {
@@ -96,7 +81,7 @@ namespace CerealSquad.GameWorld
             return rooms;
         }
 
-        public static Dictionary<t_roompos, t_roomcontent> ParseWorld(string path)
+        public static Dictionary<s_Pos<int>, t_roomcontent> ParseWorld(string path)
         {
             string[] lines = null;
             if (!System.IO.File.Exists(path))
@@ -109,7 +94,7 @@ namespace CerealSquad.GameWorld
             if (!checkHash(lines[0]))
                 throw new FormatException("Wrong file hash (" + path + ")");
 
-            Dictionary<t_roompos, t_roomcontent> world = loadRooms(lines);
+            Dictionary<s_Pos<int>, t_roomcontent> world = loadRooms(lines);
 
             return world;
         }

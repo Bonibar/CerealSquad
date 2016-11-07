@@ -110,6 +110,7 @@
     <Compile Include="Graphics\ASprite.cs" />
     <Compile Include="Factories\TextureFactory.cs" />
     <Compile Include="FrameClock.cs" />
+    <Compile Include="Global.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

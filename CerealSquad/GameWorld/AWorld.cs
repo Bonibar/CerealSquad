@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
+using CerealSquad.Global;
 
 namespace CerealSquad.GameWorld
 {
@@ -16,11 +17,11 @@ namespace CerealSquad.GameWorld
             if (path == null)
                 throw new ArgumentNullException("Path cannot be null");
 
-            Dictionary<WorldParser.t_roompos, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld("Maps/TestWorld.txt");
+            Dictionary<s_Pos<int>, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld("Maps/TestWorld.txt");
 
             foreach (var room in rooms)
             {
-                AddRoom(new ARoom(new ARoom.s_MapPos((uint)room.Key.X, (uint)room.Key.Y), room.Value.RoomPath, (ARoom.e_RoomType)room.Value.Type));
+                AddRoom(new ARoom(new s_Pos<int>(room.Key.X, room.Key.Y), room.Value.RoomPath, (ARoom.e_RoomType)room.Value.Type));
             }
         }
 
