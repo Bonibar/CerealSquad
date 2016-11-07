@@ -1,27 +1,12 @@
 ﻿using System;
+using CerealSquad.Global;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CerealSquad.GameWorld
 {
     static class RoomParser
     {
-        public class t_cellpos
-        {
-            private t_cellpos() { }
-
-            public t_cellpos(uint row, uint column)
-            {
-                Row = row;
-                Column = column;
-            }
-
-            public uint Row { get; }
-            public uint Column { get; }
-        }
-
         public class t_cellcontent
         {
             private t_cellcontent() { }
@@ -93,9 +78,9 @@ namespace CerealSquad.GameWorld
             return tiles;
         }
 
-        private static Dictionary<t_cellpos, t_cellcontent> loadRoom(string[] lines, Dictionary<int, string> tiles)
+        private static Dictionary<s_Pos<uint>, t_cellcontent> loadRoom(string[] lines, Dictionary<int, string> tiles)
         {
-            Dictionary<t_cellpos, t_cellcontent> cells = new Dictionary<t_cellpos, t_cellcontent>();
+            Dictionary<s_Pos<uint>, t_cellcontent> cells = new Dictionary<s_Pos<uint>, t_cellcontent>();
             uint startline = 0;
             uint endline;
 
@@ -126,7 +111,7 @@ namespace CerealSquad.GameWorld
                         int textureId = int.Parse(values[0]);
                         int tileId = int.Parse(values[1]);
                         e_CellType cellType = (e_CellType)int.Parse(values[2]);
-                        cells.Add(new t_cellpos(currentRow, currentColumn), new t_cellcontent(textureId, tiles[tileId], cellType));
+                        cells.Add(new s_Pos<uint>(currentColumn, currentRow), new t_cellcontent(textureId, tiles[tileId], cellType));
                     }
                     catch (Exception e)
                     {
@@ -145,7 +130,7 @@ namespace CerealSquad.GameWorld
             return cells;
         }
 
-        public static Dictionary<t_cellpos, t_cellcontent> ParseRoom(string path)
+        public static Dictionary<s_Pos<uint>, t_cellcontent> ParseRoom(string path)
         {
             string[] lines = null;
             if (!System.IO.File.Exists(path))
@@ -161,7 +146,7 @@ namespace CerealSquad.GameWorld
 
             Dictionary<int, string> tiles = loadTiles(lines);
 
-            Dictionary<t_cellpos, t_cellcontent> room = loadRoom(lines, tiles);
+            Dictionary<s_Pos<uint>, t_cellcontent> room = loadRoom(lines, tiles);
 
             return room;
         }
