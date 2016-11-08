@@ -80,9 +80,6 @@ namespace CerealSquad
                 }
             }
 
-            //
-            //  TODO Fix later with the true map
-            //
             public void update(WorldEntity world)
             {
                 reset();

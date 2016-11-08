@@ -36,7 +36,7 @@ namespace CerealSquad.GameWorld
             CurrentWorld = new AWorld("Maps/TestWorld.txt");
             //Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
             Players.Add(new Jack(WorldEntity, new s_position(11, 2, 1), im));
-            //new Ennemy(WorldEntity, new s_position(10, 10, 1));
+            new Ennemy(WorldEntity, new s_position(10, 10, 1));
             //new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
         }
 
