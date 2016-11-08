@@ -23,6 +23,7 @@ namespace CerealSquad.EntitySystem
 
         public EStep Step { get; private set; }
         public EMovement Target { get; private set; }
+        public bool IsTargetValid { get; private set; }
 
 
         private AnimatedSprite Sprite;
@@ -35,11 +36,13 @@ namespace CerealSquad.EntitySystem
         {
             Player = player;
             Step = EStep.NOTHING;
+            Target = EMovement.Up;
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
             Sprite = new AnimatedSprite(64, 64);
             Sprite.addAnimation(EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
             Sprite.SetColor(Color.Green);
             Sprite.Speed = Time.FromMilliseconds(100);
+            IsTargetValid = true;
         }
 
         public bool IsNotDelivering()
@@ -49,11 +52,11 @@ namespace CerealSquad.EntitySystem
 
         public void Update(SFML.System.Time deltaTime, GameWorld.AWorld world, APlayer.s_input input)
         {
-            Processing(input);
+            Processing(input, world);
             Sprite.Update(deltaTime);
         }
 
-        private void Processing(APlayer.s_input input)
+        private void Processing(APlayer.s_input input, GameWorld.AWorld world)
         {
             // Player have nothing to put on map.
             if (Player.TrapInventory.Equals(e_TrapType.NONE))
@@ -80,17 +83,26 @@ namespace CerealSquad.EntitySystem
                 else if (!input._isRightPressed && !input._isLeftPressed && !input._isDownPressed && input._isUpPressed)
                     Target = EMovement.Up;
 
+                Vector2i pos = new Vector2i();
                 if (Target.Equals(EMovement.Down))
-                    Position = new Vector2f(Player.Pos._x * 64, (Player.Pos._y + 1) * 64);
+                    pos = new Vector2i(Player.Pos._x, Player.Pos._y + 1);
                 else if (Target.Equals(EMovement.Up))
-                    Position = new Vector2f(Player.Pos._x * 64, (Player.Pos._y - 1) * 64);
+                    pos = new Vector2i(Player.Pos._x, Player.Pos._y - 1);
                 else if (Target.Equals(EMovement.Right))
-                    Position = new Vector2f((Player.Pos._x + 1) * 64, Player.Pos._y * 64);
+                    pos = new Vector2i(Player.Pos._x + 1, Player.Pos._y);
                 else if (Target.Equals(EMovement.Left))
-                    Position = new Vector2f((Player.Pos._x - 1) * 64, Player.Pos._y * 64);
+                    pos = new Vector2i(Player.Pos._x - 1, Player.Pos._y);
+
+                Position = new Vector2f(pos.X * 64, pos.Y * 64);
+                if (world.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
+                    IsTargetValid = false;
+                else
+                    IsTargetValid = true;
+                
+                Sprite.SetColor((IsTargetValid) ? Color.Green : Color.Red);
             }
 
-            if (input._isTrapDownPressed && Step == EStep.SELECTING)
+            if (input._isTrapDownPressed && Step == EStep.SELECTING && IsTargetValid)
             {
                 if (Target != EMovement.None)
                 {
