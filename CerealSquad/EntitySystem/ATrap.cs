@@ -9,20 +9,8 @@ namespace CerealSquad
 {
     abstract class ATrap : AEntity
     {
-        protected int _range;
-
-        public int Range
-        {
-            get
-            {
-                return _range;
-            }
-
-            set
-            {
-                _range = value;
-            }
-        }
+        public e_TrapType TrapType { get; protected set; }
+        public int Range { get; protected set; }
 
         public ATrap(IEntity owner, e_DamageType damage, int range = 1) : base(owner)
         {
@@ -31,7 +19,7 @@ namespace CerealSquad
                 _type = e_EntityType.PlayerTrap;
             else
                 _type = e_EntityType.EnnemyTrap;
-            _range = range;
+            Range = range;
         }
 
         public void setPosition(EMovement direction)

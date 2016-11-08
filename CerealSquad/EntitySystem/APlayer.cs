@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CerealSquad.InputManager.Keyboard;
 using CerealSquad.GameWorld;
+using SFML.Graphics;
 
 namespace CerealSquad
 {
@@ -16,10 +17,11 @@ namespace CerealSquad
         protected Dictionary<Key, functionMove> _inputRelease;
         protected bool _specialActive;
         protected int _weight;
-        protected ETrapPuting _isChoosingTarget;
-        protected EMovement _targeting;
 
-        protected struct s_input
+        public EntitySystem.TrapDeliver TrapDeliver { get; protected set; }
+        public e_TrapType TrapInventory { get; set; }
+
+        public struct s_input
         {
             public bool _isRightPressed;
             public bool _isLeftPressed;
@@ -67,7 +69,10 @@ namespace CerealSquad
             _playerInput._isTrapDownPressed = false;
             _specialActive = false;
             _weight = 1;
-            _isChoosingTarget = ETrapPuting.NO_PUTTING;
+            TrapDeliver = new EntitySystem.TrapDeliver(this);
+
+            // for test, add Trap to inventory
+            TrapInventory = e_TrapType.BOMB;
         }
 
         protected void special_end()
@@ -144,7 +149,7 @@ namespace CerealSquad
 
         public override void move(AWorld world)
         {
-            if (_isChoosingTarget != ETrapPuting.NO_PUTTING)
+            if (_playerInput._isTrapDownPressed || !TrapDeliver.IsNotDelivering())
                 _move = EMovement.None;
             else if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
                 _move = EMovement.Right;
@@ -159,36 +164,6 @@ namespace CerealSquad
             base.move(world);
         }
 
-        public void putTrap()
-        {
-            if (_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.NO_PUTTING)
-                _isChoosingTarget = ETrapPuting.START_SELECTING;
-            else if (!_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.START_SELECTING)
-            {
-                if (_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
-                    _targeting = EMovement.Right;
-                else if (!_playerInput._isRightPressed && _playerInput._isLeftPressed && !_playerInput._isDownPressed && !_playerInput._isUpPressed)
-                    _targeting = EMovement.Left;
-                else if (!_playerInput._isRightPressed && !_playerInput._isLeftPressed && _playerInput._isDownPressed && !_playerInput._isUpPressed)
-                    _targeting = EMovement.Down;
-                else if (!_playerInput._isRightPressed && !_playerInput._isLeftPressed && !_playerInput._isDownPressed && _playerInput._isUpPressed)
-                    _targeting = EMovement.Up;
-                _isChoosingTarget = ETrapPuting.SELECTING;
-            }
-            else if (_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.SELECTING)
-            {
-                if (_targeting != EMovement.None)
-                {
-                    ATrap trap = new TrapEntities.Bomb(this);
-                    trap.setPosition(_targeting);
-                    addChild(trap);
-                }
-                _isChoosingTarget = ETrapPuting.END_SELECTING;
-            }
-            else if (!_playerInput._isTrapDownPressed && _isChoosingTarget == ETrapPuting.END_SELECTING)
-                _isChoosingTarget = ETrapPuting.NO_PUTTING;
-        }
-
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             if (!_die)
@@ -196,7 +171,7 @@ namespace CerealSquad
                 if (_specialActive)
                     AttaqueSpe();
                 move(world);
-                putTrap();
+                TrapDeliver.Update(deltaTime, world, _playerInput);
             }
             else
             {

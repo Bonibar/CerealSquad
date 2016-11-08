@@ -22,19 +22,21 @@ namespace CerealSquad.Graphics
             }
         }
 
+        private List<SAnimation> m_frames = new List<SAnimation>();
+
+        public Texture Texture { get; set; }
+        public Time Time { get; set; }
+
+
+        public Animation()
+        {
+            Time = Time.FromMilliseconds(200);
+            Texture = null;
+        }
+
         public void addFrame(float width, float height, IntRect rect)
         {
             m_frames.Add(new SAnimation(rect, new SFML.System.Vector2f(width, height)));
-        }
-
-        public void setSpriteSheet(Texture texture)
-        {
-            m_texture = texture;
-        }
-
-        public Texture getSpriteSheet()
-        {
-            return m_texture;
         }
 
         public int getSize()
@@ -46,8 +48,5 @@ namespace CerealSquad.Graphics
         {
             return m_frames[n];
         }
-
-        private List<SAnimation> m_frames = new List<SAnimation>();
-        private Texture m_texture = null;
     }
 }
