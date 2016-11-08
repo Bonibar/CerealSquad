@@ -28,6 +28,7 @@ namespace CerealSquad
             tasks.Add(ftpDownloader.RequireFile("Bomb", "Assets/Trap/Bomb.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Bomb.png"), false));
             tasks.Add(ftpDownloader.RequireFile("BombExploding", "Assets/Trap/BombExploading.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/BombExploading.png"), false));
             tasks.Add(ftpDownloader.RequireFile("BearTrap", "Assets/Trap/Beartrap.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Beartrap.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("Cursor", "Assets/Effects/Cursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Effects/Cursor.png"), false));
 
             try
             {

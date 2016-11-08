@@ -10,14 +10,15 @@ namespace CerealSquad.TrapEntities
 {
     class BearTrap : ATrap
     {
-        public BearTrap(IEntity owner) : base(owner, e_DamageType.BEAR_TRAP, 0)
+        public BearTrap(IEntity owner) : base(owner, e_DamageType.TRUE_DAMAGE, 0)
         {
-            Factories.TextureFactory.Instance.load("BearTrap", "Assets/trapbear.png");
+            TrapType = e_TrapType.BEAR_TRAP;
+            Factories.TextureFactory.Instance.load("BearTrap", "Assets/Trap/Beartrap.png");
 
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.IDLE, "BeartTrap", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.IDLE, "BearTrap", new List<uint> { 0, 1 }, new Vector2u(128, 128));
 
         }
 
