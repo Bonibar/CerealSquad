@@ -13,6 +13,7 @@ namespace CerealSquad.TrapEntities
         public BearTrap(IEntity owner) : base(owner, e_DamageType.BEAR_TRAP, 0)
         {
             Factories.TextureFactory.Instance.load("BearTrap", "Assets/trapbear.png");
+
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 

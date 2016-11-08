@@ -14,6 +14,7 @@ namespace CerealSquad.TrapEntities
         {
             Factories.TextureFactory.Instance.load("Bomb", "Assets/Bomb.png");
             Factories.TextureFactory.Instance.load("BombExpl", "Assets/BombExploded.png");
+
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
