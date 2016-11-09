@@ -191,15 +191,15 @@ namespace CerealSquad.Graphics
                 float top = (float)(rect.Top);
                 float bottom = top + (float)(rect.Height);
 
-                m_vertices[0] = new Vertex(new Vector2f(0f, 0f), m_vertices[0].Color,  new Vector2f(left, top));
+               /* m_vertices[0] = new Vertex(new Vector2f(0f, 0f), m_vertices[0].Color,  new Vector2f(left, top));
                 m_vertices[1] = new Vertex(new Vector2f(0f, animation.Size.Y), m_vertices[1].Color, new Vector2f(left, bottom));
                 m_vertices[2] = new Vertex(new Vector2f(animation.Size.X, animation.Size.Y), m_vertices[2].Color, new Vector2f(right, bottom));
-                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X, 0f), m_vertices[3].Color, new Vector2f(right, top));
+                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X, 0f), m_vertices[3].Color, new Vector2f(right, top));*/
 
-               /* m_vertices[0] = new Vertex(new Vector2f(-(animation.Size.X / 2), -animation.Size.Y), new Vector2f(left, top));
-                m_vertices[1] = new Vertex(new Vector2f(-(animation.Size.X / 2), 0f), new Vector2f(left, bottom));
-                m_vertices[2] = new Vertex(new Vector2f(animation.Size.X / 2, 0f), new Vector2f(right, bottom));
-                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X / 2, -animation.Size.Y), new Vector2f(right, top));*/
+                m_vertices[0] = new Vertex(new Vector2f(-(animation.Size.X / 2), -animation.Size.Y), m_vertices[0].Color, new Vector2f(left, top));
+                m_vertices[1] = new Vertex(new Vector2f(-(animation.Size.X / 2), 0f), m_vertices[1].Color, new Vector2f(left, bottom));
+                m_vertices[2] = new Vertex(new Vector2f(animation.Size.X / 2, 0f), m_vertices[2].Color, new Vector2f(right, bottom));
+                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X / 2, -animation.Size.Y), m_vertices[3].Color, new Vector2f(right, top));
 
             }
 
