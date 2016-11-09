@@ -83,20 +83,21 @@ namespace CerealSquad.EntitySystem
                 else if (!input._isRightPressed && !input._isLeftPressed && !input._isDownPressed && input._isUpPressed)
                     Target = EMovement.Up;
 
-                Vector2i pos = new Vector2i();
+                Vector2f pos = new Vector2f();
                 if (Target.Equals(EMovement.Down))
-                    pos = new Vector2i(Player.Pos._x, Player.Pos._y + 1);
+                    pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y + Player.ressourcesEntity.sprite.Size.Y);
                 else if (Target.Equals(EMovement.Up))
-                    pos = new Vector2i(Player.Pos._x, Player.Pos._y - 1);
+                    pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y - Player.ressourcesEntity.sprite.Size.Y);
                 else if (Target.Equals(EMovement.Right))
-                    pos = new Vector2i(Player.Pos._x + 1, Player.Pos._y);
+                    pos = new Vector2f(Player.ressourcesEntity.Position.X + Player.ressourcesEntity.sprite.Size.X, Player.ressourcesEntity.Position.Y);
                 else if (Target.Equals(EMovement.Left))
-                    pos = new Vector2i(Player.Pos._x - 1, Player.Pos._y);
+                    pos = new Vector2f(Player.ressourcesEntity.Position.X - Player.ressourcesEntity.sprite.Size.X, Player.ressourcesEntity.Position.Y);
 
-                Position = new Vector2f(pos.X * 64, pos.Y * 64);
-                if (world.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
-                    IsTargetValid = false;
-                else
+                Position = pos;
+                //Position = new Vector2f(pos.X * 64, pos.Y * 64);
+               // if (world.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
+                //    IsTargetValid = false;
+                //else
                     IsTargetValid = true;
                 
                 Sprite.SetColor((IsTargetValid) ? Color.Green : Color.Red);

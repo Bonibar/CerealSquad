@@ -11,36 +11,45 @@ namespace CerealSquad.Graphics
     class EntityResources : Transformable, IResource
     {
         public ASprite sprite;
-
         public Sounds.JukeBox JukeBox { get; set; }
 
-        public bool Loop
-        {
-            get
-            {
+        private Vector2f _SizeHitBox;
+        public Vector2f SizeHitBox { get { return getSizeHitBox(); } set { _SizeHitBox = value; } }
+        public FloatRect HitBox { get { return getHitBox(); } }
+
+        public bool Loop {
+            get {
                 if (sprite.Type == ETypeSprite.ANIMATED)
-                {
                     return (((AnimatedSprite)sprite).Loop);
-                }
                 return (false);
             }
-            set
-            {
+            set {
                 if (sprite.Type == ETypeSprite.ANIMATED)
-                {
                     ((AnimatedSprite)sprite).Loop = value;
-                }
             }
+        }
+
+        private FloatRect getHitBox()
+        {
+            return new FloatRect(new Vector2f(sprite.Position.X - ((float)sprite.Size.X / 2.0f), sprite.Position.Y - (float)sprite.Size.Y),
+                new Vector2f(sprite.Position.X + ((float)sprite.Size.X / 2.0f), sprite.Position.Y));
+        }
+
+        private Vector2f getSizeHitBox()
+        {
+            if (_SizeHitBox != null)
+                return _SizeHitBox;
+            return new Vector2f((float)sprite.Size.X, (float)sprite.Size.Y);
         }
 
         /// <summary>
         /// Initialize a animated sprite
         /// </summary>
         /// <param name="Texture">String</param>
-        /// <param name="size">Vector2i</param>
-        public void InitializationAnimatedSprite(Vector2u size)
+        /// <param name="Size">Vector2i</param>
+        public void InitializationAnimatedSprite(Vector2u Size)
         {
-            sprite = new AnimatedSprite(size);  
+            sprite = new AnimatedSprite(Size);
         }
 
         /// <summary>
@@ -60,9 +69,7 @@ namespace CerealSquad.Graphics
         public void PlayAnimation(EStateEntity animation)
         {
             if (sprite.Type == ETypeSprite.ANIMATED)
-            {
                 ((AnimatedSprite)sprite).PlayAnimation(animation);
-            }
         }
 
         /// <summary>

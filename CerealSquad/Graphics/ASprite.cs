@@ -17,11 +17,12 @@ namespace CerealSquad.Graphics
     abstract class ASprite : Transformable, Drawable
     {
         public ETypeSprite Type { get; protected set; }
+        public Vector2u Size { get; protected set; }
 
         public ASprite()
         {
         }
-
+        
         public abstract void Draw(RenderTarget target, RenderStates states);
     }
 }

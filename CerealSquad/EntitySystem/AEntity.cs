@@ -148,49 +148,57 @@ namespace CerealSquad
         // Move the entity relative to his actual position
         public virtual void move(AWorld world)
         {
-            var ressourcePos = _ressources.Position;
-            s_position newPos = _pos;
-            s_position colPos = _pos;
             EStateEntity anim = EStateEntity.IDLE;
+            var OldResourcePosition = _ressources.Position;
+            s_position NewPosition = _pos;
+
+            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f();
+            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f();
+
             switch (_move)
             {
                 case EMovement.Up:
-                    newPos += new s_position(0, -_speed, 0);
-                    colPos = newPos;
-                    colPos += new s_position(0.99, 0, 0);
+                    NewPosition += new s_position(0, -_speed, 0);
+                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
                     anim = EStateEntity.WALKING_UP;
-                    ressourcePos.Y -= 64 * (float)_speed;
                     break;
                 case EMovement.Down:
-                    newPos += new s_position(0, +_speed, 0);
-                    colPos = newPos;
-                    colPos += new s_position(0.99, 0.99, 0);
+                    NewPosition += new s_position(0, +_speed, 0);
+                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, 0);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, 0);
                     anim = EStateEntity.WALKING_DOWN;
-                    ressourcePos.Y += 64 * (float)_speed;
                     break;
                 case EMovement.Right:
-                    newPos += new s_position(_speed, 0, 0);
-                    colPos = newPos;
-                    colPos += new s_position(0.99, 0, 0);
+                    NewPosition += new s_position(_speed, 0, 0);
+                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
+                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, 0);
                     anim = EStateEntity.WALKING_RIGHT;
-                    ressourcePos.X += 64 * (float)_speed;
                     break;
                 case EMovement.Left:
-                    newPos += new s_position(-_speed, 0, 0);
-                    colPos = newPos;
+                    NewPosition += new s_position(-_speed, 0, 0);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, 0);
                     anim = EStateEntity.WALKING_LEFT;
-                    ressourcePos.X -= 64 * (float)_speed;
                     break;
                 case EMovement.None:
                     _ressources.PlayAnimation(EStateEntity.IDLE);
                     return;
             }
-            if (world.getPosition(colPos._x, colPos._y) == RoomParser.e_CellType.Normal)
-            {
-                _pos = newPos;
-                _ressources.Position = ressourcePos;
-                _ressources.PlayAnimation(anim);
-            }
+
+            _ressources.PlayAnimation(anim);
+            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64.0f, (float)NewPosition._trueY * 64.0f);
+            CollisionPointOne += _ressources.Position;
+            CollisionPointTwo += _ressources.Position;
+
+            CollisionPointOne /= 64.0f;
+            CollisionPointTwo /= 64.0f;
+
+            if (world.getPosition((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)) == RoomParser.e_CellType.Normal
+                && world.getPosition((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)) == RoomParser.e_CellType.Normal)
+                _pos = NewPosition;
+            else
+                _ressources.Position = OldResourcePosition;
         }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);

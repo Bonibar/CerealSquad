@@ -46,6 +46,9 @@ namespace CerealSquad
             pos.X = position._x * 64;
             pos.Y = position._y * 64;
             _ressources.Position = pos;
+
+            _ressources.SizeHitBox = new Vector2f(64.0f, 20.0f);
+
         }
 
         public override void AttaqueSpe()

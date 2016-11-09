@@ -24,19 +24,17 @@ namespace CerealSquad
 
         public void setPosition(EMovement direction)
         {
-            s_position pos = new s_position();
+            var pos = _owner.ressourcesEntity.Position;
+            var size = _owner.ressourcesEntity.sprite.Size;
 
             if (direction == EMovement.Up)
-                pos = new s_position(_owner.Pos._x, _owner.Pos._y - 1);
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X, pos.Y - size.Y);
             else if (direction == EMovement.Down)
-                pos = new s_position(_owner.Pos._x, _owner.Pos._y + 1);
-            else if(direction == EMovement.Right)
-                pos = new s_position(_owner.Pos._x + 1, _owner.Pos._y);
-            else if(direction == EMovement.Left)
-                pos = new s_position(_owner.Pos._x - 1, _owner.Pos._y);
-
-            Pos = pos;
-            ressourcesEntity.Position = new SFML.System.Vector2f(Pos._x * 64, Pos._y * 64);
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X, pos.Y + size.Y);
+            else if (direction == EMovement.Right)
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X + size.X, pos.Y);
+            else if (direction == EMovement.Left)
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X - size.X, pos.Y);
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)

@@ -12,21 +12,20 @@ namespace CerealSquad.Graphics
     {
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
-        protected Vector2u size = new Vector2u(0, 0);
 
 
         public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
         public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
 
-        public AnimatedSprite(Vector2u Size)
+        public AnimatedSprite(Vector2u _Size)
         {
-            size = Size;
+            Size = _Size;
             initialization();
         }
 
         public AnimatedSprite(uint Width, uint Height)
         {
-            size = new Vector2u(Width, Height);
+            Size = new Vector2u(Width, Height);
             initialization();
         }
 
@@ -52,7 +51,7 @@ namespace CerealSquad.Graphics
         /// <returns>FloatRect</returns>
         public FloatRect getBounds()
         {
-            return new FloatRect(Position.X, Position.Y, size.X, size.Y);
+            return new FloatRect(Position.X, Position.Y, Size.X, Size.Y);
         }
 
         /// <summary>
@@ -74,7 +73,7 @@ namespace CerealSquad.Graphics
                 anim.Time = Time.FromMilliseconds(time);
             texturePalette.ForEach((uint i) => {
                 KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
-                anim.addFrame(size.X, size.Y, palette.Key);
+                anim.addFrame(Size.X, Size.Y, palette.Key);
             });
             animations.Add((uint)type, anim);
 
