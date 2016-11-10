@@ -127,12 +127,12 @@ namespace CerealSquad.Menus
             {
                 MenuItem _keyBinded = _menuList.Find(x => x.Type == MenuItem.ItemType.KeyBinded && x.KeyboardKey == e.KeyCode);
                 if (_keyBinded != null)
-                    _keyBinded.Button.Trigger(source, e);
+                    _keyBinded.Button.Trigger(source, e, true);
                 else if (_lastItemPressed != null)
                 {
                     MenuItem _current = _menuList.Find(x => x.Button.Selected == true);
                     if (_current != null && _lastItemPressed == _current)
-                        _current.Button.Trigger(source, e);
+                        _current.Button.Trigger(source, e, true);
                 }
             }
         }

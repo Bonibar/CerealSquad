@@ -79,7 +79,7 @@ namespace CerealSquad.Menus
                     _SelectionText[Selection].Color = Color.White;
             }
 
-            private Text _JoinText = new Text("Press a button\n\t\tto Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+            private Text _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
             private Text[] _SelectionText = new Text[SELECTION_COUNT];
             public void Draw(RenderTarget target, RenderStates states)
             {
@@ -120,6 +120,10 @@ namespace CerealSquad.Menus
             Players[1] = new Players.Player(Menus.Players.Type.Undefined, 1);
             Players[2] = new Players.Player(Menus.Players.Type.Undefined, 2);
             Players[3] = new Players.Player(Menus.Players.Type.Undefined, 3);
+
+            Buttons.IButton returnButton = new Buttons.BackButton("", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, this);
+            MenuItem back_Button = new MenuItem(returnButton, MenuItem.ItemType.KeyBinded, InputManager.Keyboard.Key.Escape);
+            _menuList.Add(back_Button);
 
             _InputManager.JoystickButtonPressed += _InputManager_JoystickButtonPressed;
             _InputManager.JoystickMoved += _InputManager_JoystickMoved;
@@ -206,6 +210,7 @@ namespace CerealSquad.Menus
                 target.Draw(Players[i]);
                 i++;
             }
+            base.Draw(target, states);
         }
     }
 }
