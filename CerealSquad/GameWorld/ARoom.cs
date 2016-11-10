@@ -37,6 +37,7 @@ namespace CerealSquad.GameWorld
         private RenderTexture _RenderTexture = null;
         private Dictionary<s_Pos<uint>, RoomParser.t_cellcontent> Cells = null;
         private EnvironmentResources er = new Graphics.EnvironmentResources();
+        List<s_Pos<int>> SpawnList;
 
         public ARoom(s_Pos<int> Pos, string MapFile, e_RoomType Type = 0)
         {
@@ -49,6 +50,14 @@ namespace CerealSquad.GameWorld
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
+
+            for (int i = 0; i < 5; i++)
+            {
+                s_Pos<int> SpawnPos = new s_Pos<int>(i, i);
+                SpawnList.Add(SpawnPos);
+            }
+
+
         }
 
         private void parseRoom()
