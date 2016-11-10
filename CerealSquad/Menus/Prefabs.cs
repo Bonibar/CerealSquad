@@ -15,7 +15,7 @@ namespace CerealSquad.Menus
 
             Buttons.IButton btn_continue = new Buttons.OpenMenuButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, SettingsMenu(manager));
             MenuItem item_continue = new MenuItem(btn_continue, MenuItem.ItemType.Disabled);
-            Buttons.IButton btn_newgame = new Buttons.OpenMenuButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 70, CharacterSelectMenu(manager));
+            Buttons.IButton btn_newgame = new Buttons.OpenMenuButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 70, CharacterSelectMenu(renderer, manager));
             MenuItem item_newgame = new MenuItem(btn_newgame);
             Buttons.IButton btn_settings = new Buttons.OpenMenuButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 140, SettingsMenu(manager));
             MenuItem item_settings = new MenuItem(btn_settings, MenuItem.ItemType.Disabled);
@@ -50,9 +50,9 @@ namespace CerealSquad.Menus
             return settingsMenu;
         }
 
-        public static Menu CharacterSelectMenu(InputManager.InputManager manager)
+        public static Menu CharacterSelectMenu(Renderer renderer, InputManager.InputManager manager)
         {
-            Menu characterMenu = new CharacterSelectMenu(manager);
+            Menu characterMenu = new CharacterSelectMenu(renderer, manager);
 
             return characterMenu;
         }
