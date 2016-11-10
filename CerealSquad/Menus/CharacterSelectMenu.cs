@@ -65,23 +65,42 @@ namespace CerealSquad.Menus
                 init(type, id);
             }
 
-            public void SelectNext()
+            public void SelectNext(List<uint> lockedList)
             {
                 if (!LockedChoice)
                 {
-                    Selection++;
-                    if (Selection >= CharacterSelectMenu.SELECTION_COUNT)
-                        Selection = 0;
+                    bool prevent_continue = false;
+                    uint checking_counter = 0;
+                    while (!prevent_continue)
+                    {
+                        if (checking_counter > CharacterSelectMenu.SELECTION_COUNT)
+                            throw new NotSupportedException("No character left for selection");
+                        Selection++;
+                        Selection = Selection % CharacterSelectMenu.SELECTION_COUNT;
+                        if (!lockedList.Contains(Selection))
+                            prevent_continue = true;
+                        checking_counter++;
+                    }
                 }
             }
 
-            public void SelectPrevious()
+            public void SelectPrevious(List<uint> lockedList)
             {
                 if (!LockedChoice)
                 {
-                    if (Selection == 0)
-                        Selection = CharacterSelectMenu.SELECTION_COUNT;
-                    Selection--;
+                    bool prevent_continue = false;
+                    uint checking_counter = 0;
+                    while (!prevent_continue)
+                    {
+                        if (checking_counter > CharacterSelectMenu.SELECTION_COUNT)
+                            throw new NotSupportedException("No character left for selection");
+                        if (Selection == 0)
+                            Selection = CharacterSelectMenu.SELECTION_COUNT;
+                        Selection--;
+                        if (!lockedList.Contains(Selection))
+                            prevent_continue = true;
+                        checking_counter++;
+                    }
                 }
             }
 
@@ -164,6 +183,15 @@ namespace CerealSquad.Menus
         {
             if (Displayed)
             {
+                List<uint> LockedList = new List<uint>();
+                uint locked_i = 0;
+                while (locked_i < SELECTION_COUNT)
+                {
+                    if (Players[locked_i].Type != Menus.Players.Type.Undefined && Players[locked_i].LockedChoice)
+                        LockedList.Add(Players[locked_i].Selection);
+                    locked_i++;
+                }
+
                 System.Diagnostics.Debug.WriteLine("JOYBUTTON " + e.Button.ToString());
                 if (Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined && x.ControllerId == e.JoystickId) == null) // Joining
                     JoinControllerPlayer(source, e);
@@ -171,22 +199,16 @@ namespace CerealSquad.Menus
                 {
                     if (e.Button == 0) // A Button
                     {
-                        List<uint> LockedList = new List<uint>();
                         uint i = 0;
-                        Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId).LockSelection(true);
                         while (i < SELECTION_COUNT)
                         {
-                            if (Players[i].Type != Menus.Players.Type.Undefined && Players[i].LockedChoice)
-                                LockedList.Add(Players[i].Selection);
-                            i++;
-                        }
-                        i = 0;
-                        while (i < SELECTION_COUNT)
-                        {
+                            Players.Player currentPlayer = Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId);
+                            currentPlayer.LockSelection(true);
+                            LockedList.Add(currentPlayer.Selection);
                             if (Players[i].Type != Menus.Players.Type.Undefined && Players[i].LockedChoice == false)
                             {
                                 while (LockedList.Contains(Players[i].Selection))
-                                    Players[i].SelectNext();
+                                    Players[i].SelectNext(LockedList);
                             }
                             i++;
                         }
@@ -207,9 +229,9 @@ namespace CerealSquad.Menus
                         }
                     }
                     else if (e.Button == 4)
-                        Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId).SelectPrevious();
+                        Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId).SelectPrevious(LockedList);
                     else if (e.Button == 5)
-                        Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId).SelectNext();
+                        Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId).SelectNext(LockedList);
                 }
                 
             }
