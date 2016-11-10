@@ -9,20 +9,8 @@ namespace CerealSquad
 {
     abstract class ATrap : AEntity
     {
-        protected int _range;
-
-        public int Range
-        {
-            get
-            {
-                return _range;
-            }
-
-            set
-            {
-                _range = value;
-            }
-        }
+        public e_TrapType TrapType { get; protected set; }
+        public int Range { get; protected set; }
 
         public ATrap(IEntity owner, e_DamageType damage, int range = 1) : base(owner)
         {
@@ -31,24 +19,22 @@ namespace CerealSquad
                 _type = e_EntityType.PlayerTrap;
             else
                 _type = e_EntityType.EnnemyTrap;
-            _range = range;
+            Range = range;
         }
 
         public void setPosition(EMovement direction)
         {
-            s_position pos = new s_position();
+            var pos = _owner.ressourcesEntity.Position;
+            var size = _owner.ressourcesEntity.sprite.Size;
 
             if (direction == EMovement.Up)
-                pos = new s_position(_owner.Pos._x, _owner.Pos._y - 1);
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X, pos.Y - size.Y);
             else if (direction == EMovement.Down)
-                pos = new s_position(_owner.Pos._x, _owner.Pos._y + 1);
-            else if(direction == EMovement.Right)
-                pos = new s_position(_owner.Pos._x + 1, _owner.Pos._y);
-            else if(direction == EMovement.Left)
-                pos = new s_position(_owner.Pos._x - 1, _owner.Pos._y);
-
-            Pos = pos;
-            ressourcesEntity.Position = new SFML.System.Vector2f(Pos._x * 64, Pos._y * 64);
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X, pos.Y + size.Y);
+            else if (direction == EMovement.Right)
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X + size.X, pos.Y);
+            else if (direction == EMovement.Left)
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X - size.X, pos.Y);
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)

@@ -14,6 +14,13 @@ namespace CerealSquad
     enum e_DamageType
     {
         BOMB_DAMAGE,
+        TRUE_DAMAGE,
+        NONE
+    }
+
+    enum e_TrapType
+    {
+        BOMB,
         BEAR_TRAP,
         NONE
     }

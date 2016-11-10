@@ -15,6 +15,7 @@ namespace CerealSquad.Graphics
 
         public RegularSprite(Texture Texture, Vector2i size, IntRect textureRect)
         {
+            base.Size = new Vector2u((uint)size.X, (uint)size.Y);
             Type = ETypeSprite.REGULAR;
             texture = Texture;
             vertices[0] = new Vertex(new Vector2f(0, 0), new Vector2f(textureRect.Left, textureRect.Top));

@@ -12,28 +12,20 @@ namespace CerealSquad.Graphics
     {
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
-        protected Vector2u size = new Vector2u(0, 0);
-        public bool Loop
-        {
-            get
-            {
-                return (animator.m_isLooped);
-            }
-            set
-            {
-                animator.m_isLooped = value;
-            }
-        }
 
-        public AnimatedSprite(Vector2u Size)
+
+        public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
+        public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
+
+        public AnimatedSprite(Vector2u _Size)
         {
-            size = Size;
+            Size = _Size;
             initialization();
         }
 
         public AnimatedSprite(uint Width, uint Height)
         {
-            size = new Vector2u(Width, Height);
+            Size = new Vector2u(Width, Height);
             initialization();
         }
 
@@ -41,65 +33,47 @@ namespace CerealSquad.Graphics
         {
             Type = ETypeSprite.ANIMATED;
             Position = new Vector2f(0, 0);
+        }
 
-           /* Animation walkingAnimationDown = new Animation();
-            walkingAnimationDown.setSpriteSheet(texture);
-            walkingAnimationDown.addFrame(new IntRect(size.X, 0, size.X, size.Y));
-            walkingAnimationDown.addFrame(new IntRect(size.X * 2, 0, size.X, size.Y));
-            walkingAnimationDown.addFrame(new IntRect(size.X, 0, size.X, size.Y));
-            walkingAnimationDown.addFrame(new IntRect(0, 0, size.X, size.Y));
+        public bool isFinished()
+        {
+            return (animator.m_isPaused);
+        }
 
-            Animation walkingAnimationLeft = new Animation();
-            walkingAnimationLeft.setSpriteSheet(texture);
-            walkingAnimationLeft.addFrame(new IntRect(size.X, size.Y, size.X, size.Y));
-            walkingAnimationLeft.addFrame(new IntRect(size.X * 2, size.Y, size.X, size.Y));
-            walkingAnimationLeft.addFrame(new IntRect(size.X, size.Y, size.X, size.Y));
-            walkingAnimationLeft.addFrame(new IntRect(0, size.Y, size.X, size.Y));
-
-            Animation walkingAnimationRight = new Animation();
-            walkingAnimationRight.setSpriteSheet(texture);
-            walkingAnimationRight.addFrame(new IntRect(size.X, size.Y * 2, size.X, size.Y));
-            walkingAnimationRight.addFrame(new IntRect(size.X * 2, size.Y * 2, size.X, size.Y));
-            walkingAnimationRight.addFrame(new IntRect(size.X, size.Y * 2, size.X, size.Y));
-            walkingAnimationRight.addFrame(new IntRect(0, size.Y * 2, size.X, size.Y));
-
-            Animation walkingAnimationUp = new Animation();
-            walkingAnimationUp.setSpriteSheet(texture);
-            walkingAnimationUp.addFrame(new IntRect(size.X, size.Y * 3, size.X, size.Y));
-            walkingAnimationUp.addFrame(new IntRect(size.X * 2, size.Y * 3, size.X, size.Y));
-            walkingAnimationUp.addFrame(new IntRect(size.X, size.Y * 3, size.X, size.Y));
-            walkingAnimationUp.addFrame(new IntRect(0, size.Y * 3, size.X, size.Y));
-
-            Animation dyingAnimation = new Animation();
-            dyingAnimation.setSpriteSheet(texture);
-            dyingAnimation.addFrame(new IntRect(size.X, size.Y * 4, size.X, size.Y));
-            dyingAnimation.addFrame(new IntRect(size.X * 2, size.Y * 4, size.X, size.Y));
-            dyingAnimation.addFrame(new IntRect(size.X, size.Y * 4, size.X, size.Y));
-            dyingAnimation.addFrame(new IntRect(0, size.Y * 4, size.X, size.Y));
-
-            animations.Add((uint)EStateEntity.IDLE, walkingAnimationDown);
-            animations.Add((uint)EStateEntity.WALKING_UP, walkingAnimationUp);
-            animations.Add((uint)EStateEntity.WALKING_DOWN, walkingAnimationDown);
-            animations.Add((uint)EStateEntity.WALKING_LEFT, walkingAnimationLeft);
-            animations.Add((uint)EStateEntity.WALKING_RIGHT, walkingAnimationRight);
-            animations.Add((uint)EStateEntity.DYING, dyingAnimation);
-
-            animator.setAnimation(walkingAnimationDown);*/
+        public void SetColor(Color color)
+        {
+            animator.setColor(color);
         }
 
         /// <summary>
-        /// Add animation
+        /// Get the bounds
         /// </summary>
-        /// <param name="type">EStateEntity</param>
-        /// <param name="texturePalette">List<int></int></param>
-        public void addAnimation(EStateEntity type, String textureAnimation, List<uint> texturePalette, Vector2u _size)
+        /// <returns>FloatRect</returns>
+        public FloatRect getBounds()
+        {
+            return new FloatRect(Position.X, Position.Y, Size.X, Size.Y);
+        }
+
+        /// <summary>
+        /// Add animation. 
+        /// Time is in millisecond
+        /// Size is the real size of individual sprite in texture
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="textureAnimation"></param>
+        /// <param name="texturePalette"></param>
+        /// <param name="_size"></param>
+        /// <param name="time"></param>
+        public void addAnimation(EStateEntity type, String textureAnimation, List<uint> texturePalette, Vector2u _size, int time = -1)
         {
             Animation anim = new Animation();
             PaletteManager.Instance.AddPaletteInformations(textureAnimation, _size.X, _size.Y);
-            anim.setSpriteSheet(Factories.TextureFactory.Instance.getTexture(textureAnimation));
+            anim.Texture = Factories.TextureFactory.Instance.getTexture(textureAnimation);
+            if (time != -1)
+                anim.Time = Time.FromMilliseconds(time);
             texturePalette.ForEach((uint i) => {
                 KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
-                anim.addFrame(size.X, size.Y, palette.Key);
+                anim.addFrame(Size.X, Size.Y, palette.Key);
             });
             animations.Add((uint)type, anim);
 
@@ -143,11 +117,6 @@ namespace CerealSquad.Graphics
         {
             states.Transform *= Transform;
             animator.Draw(target, states);
-        }
-
-        public bool isFinished()
-        {
-            return (animator.m_isPaused);
         }
     }
 }

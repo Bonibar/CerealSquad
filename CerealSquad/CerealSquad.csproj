@@ -84,6 +84,7 @@
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
     <Compile Include="EntitySystem\ATrap.cs" />
+    <Compile Include="EntitySystem\TrapDeliver.cs" />
     <Compile Include="EntitySystem\Ennemy.cs" />
     <Compile Include="EntitySystem\IEntity.cs" />
     <Compile Include="EntitySystem\Jack.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="EntitySystem\Orangina.cs" />
     <Compile Include="EntitySystem\Tchong.cs" />
     <Compile Include="EntitySystem\WorldEntity.cs" />
+    <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="GameWorld\ARoom.cs" />
     <Compile Include="GameWorld\Game.cs" />
     <Compile Include="GameWorld\AWorld.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="Graphics\ASprite.cs" />
     <Compile Include="Factories\TextureFactory.cs" />
     <Compile Include="FrameClock.cs" />
+    <Compile Include="Timer.cs" />
     <Compile Include="TrapEntities\BearTrap.cs" />
     <Compile Include="TrapEntities\Bomb.cs" />
     <Compile Include="Global.cs" />

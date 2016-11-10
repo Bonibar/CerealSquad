@@ -15,5 +15,10 @@ namespace CerealSquad
         {
            return frameClock.Restart();
         }
+
+        public Time GetElapsedTime()
+        {
+            return frameClock.ElapsedTime;
+        }
     }
 }

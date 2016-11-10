@@ -38,12 +38,12 @@ namespace CerealSquad
 
         private void deepDraw(IEntity owner, Renderer win)
         {
-            if (owner.getChildren().Count == 0)
-            {
-                win.Draw(owner.ressourcesEntity);
-                return;
-            }
-            owner.getChildren().ToList<IEntity>().ForEach(i => deepDraw(i, win)); //i => win.Draw(i.ressourcesEntity)
+            owner.getChildren().ToList<IEntity>().ForEach(i => deepDraw(i, win));
+
+            // This is ugly.. To change !
+            if (owner.getEntityType() == e_EntityType.Player)
+                win.Draw(((APlayer)owner).TrapDeliver);
+
             win.Draw(owner.ressourcesEntity);
         }
 

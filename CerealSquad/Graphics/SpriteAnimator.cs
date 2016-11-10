@@ -13,7 +13,7 @@ namespace CerealSquad.Graphics
     {
         private Animation m_animation;
 
-        public Time m_frameTime { get; private set; }
+        public Time m_frameTime { get; set; }
 
         public bool m_isPaused { get; set; }
         public bool m_isLooped { get; set; }
@@ -37,6 +37,8 @@ namespace CerealSquad.Graphics
             m_vertices.Add(new Vertex());
             m_vertices.Add(new Vertex());
             m_vertices.Add(new Vertex());
+
+            setColor(Color.White);
         }
 
         /// <summary>
@@ -90,8 +92,9 @@ namespace CerealSquad.Graphics
         public void setAnimation(Animation animation)
         {
             m_animation = animation;
-            m_texture = m_animation.getSpriteSheet();
+            m_texture = m_animation.Texture;
             m_currentFrame = 0;
+            m_frameTime = m_animation.Time;
             setFrame(m_currentFrame);
         }
 
@@ -156,10 +159,10 @@ namespace CerealSquad.Graphics
         /// <param name="color"></param>
         public void setColor(Color color)
         {
-            m_vertices[0] = new Vertex(m_vertices[0].Position, color);
-            m_vertices[1] = new Vertex(m_vertices[1].Position, color);
-            m_vertices[2] = new Vertex(m_vertices[2].Position, color);
-            m_vertices[3] = new Vertex(m_vertices[3].Position, color);
+            m_vertices[0] = new Vertex(m_vertices[0].Position, color, m_vertices[0].TexCoords);
+            m_vertices[1] = new Vertex(m_vertices[1].Position, color, m_vertices[1].TexCoords);
+            m_vertices[2] = new Vertex(m_vertices[2].Position, color, m_vertices[2].TexCoords);
+            m_vertices[3] = new Vertex(m_vertices[3].Position, color, m_vertices[3].TexCoords);
         }
 
         /// <summary>
@@ -169,20 +172,6 @@ namespace CerealSquad.Graphics
         public Animation getAnimation()
         {
             return m_animation;
-        }
-
-        /// <summary>
-        /// Get the local bounds (The bounds of the current frame)
-        /// </summary>
-        /// <returns>FloatRect</returns>
-        public FloatRect getLocalBounds()
-        {
-            Animation.SAnimation animation = m_animation.getFrame(m_currentFrame);
-
-            float width = animation.Size.X;
-            float height = animation.Size.Y;
-
-            return new FloatRect(0f, 0f, width, height);
         }
 
         /// <summary>
@@ -202,10 +191,24 @@ namespace CerealSquad.Graphics
                 float top = (float)(rect.Top);
                 float bottom = top + (float)(rect.Height);
 
-                m_vertices[0] = new Vertex(new Vector2f(0f, 0f), new Vector2f(left, top));
-                m_vertices[1] = new Vertex(new Vector2f(0f, animation.Size.Y), new Vector2f(left, bottom));
-                m_vertices[2] = new Vertex(new Vector2f(animation.Size.X, animation.Size.Y), new Vector2f(right, bottom));
-                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X, 0f), new Vector2f(right, top));
+                //Center is top left
+               /* m_vertices[0] = new Vertex(new Vector2f(0f, 0f), m_vertices[0].Color,  new Vector2f(left, top));
+                m_vertices[1] = new Vertex(new Vector2f(0f, animation.Size.Y), m_vertices[1].Color, new Vector2f(left, bottom));
+                m_vertices[2] = new Vertex(new Vector2f(animation.Size.X, animation.Size.Y), m_vertices[2].Color, new Vector2f(right, bottom));
+                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X, 0f), m_vertices[3].Color, new Vector2f(right, top));*/
+
+                // Center is bottom middle
+                /*m_vertices[0] = new Vertex(new Vector2f(-(animation.Size.X / 2), -animation.Size.Y), m_vertices[0].Color, new Vector2f(left, top));
+                m_vertices[1] = new Vertex(new Vector2f(-(animation.Size.X / 2), 0f), m_vertices[1].Color, new Vector2f(left, bottom));
+                m_vertices[2] = new Vertex(new Vector2f(animation.Size.X / 2, 0f), m_vertices[2].Color, new Vector2f(right, bottom));
+                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X / 2, -animation.Size.Y), m_vertices[3].Color, new Vector2f(right, top));
+                */
+
+                // Center is middle middle
+                m_vertices[0] = new Vertex(new Vector2f(-(animation.Size.X / 2), -(animation.Size.Y / 2)), m_vertices[0].Color, new Vector2f(left, top));
+                m_vertices[1] = new Vertex(new Vector2f(-(animation.Size.X / 2), animation.Size.Y / 2), m_vertices[1].Color, new Vector2f(left, bottom));
+                m_vertices[2] = new Vertex(new Vector2f(animation.Size.X / 2, animation.Size.Y / 2), m_vertices[2].Color, new Vector2f(right, bottom));
+                m_vertices[3] = new Vertex(new Vector2f(animation.Size.X / 2, -(animation.Size.Y / 2)), m_vertices[3].Color, new Vector2f(right, top));
             }
 
             if (resetTime)
