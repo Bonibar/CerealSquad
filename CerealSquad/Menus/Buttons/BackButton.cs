@@ -35,7 +35,7 @@ namespace CerealSquad.Menus.Buttons
 
         public void Trigger(object source, InputManager.Keyboard.KeyEventArgs e, bool up = true)
         {
-            if (e.KeyCode == InputManager.Keyboard.Key.Return && up == true)
+            if ((e.KeyCode == InputManager.Keyboard.Key.Return || e.KeyCode == InputManager.Keyboard.Key.Escape) && up == true)
             {
                 selectionChanged();
                 MenuManager.Instance.RemoveMenu(_Menu);
