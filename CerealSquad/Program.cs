@@ -29,6 +29,8 @@ namespace CerealSquad
             tasks.Add(ftpDownloader.RequireFile("BombExploding", "Assets/Trap/BombExploading.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/BombExploading.png"), false));
             tasks.Add(ftpDownloader.RequireFile("BearTrap", "Assets/Trap/Beartrap.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Beartrap.png"), false));
             tasks.Add(ftpDownloader.RequireFile("Cursor", "Assets/Effects/Cursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Effects/Cursor.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("CS_UnselectedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/select_test.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/unselect_test.png"), false));
 
             try
             {
@@ -49,11 +51,11 @@ namespace CerealSquad
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
-            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.MainMenu(renderer.Win, manager));
+            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.MainMenu(renderer, manager));
 
-            GameWorld.Game game = new GameWorld.Game(renderer);
+            GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);
+            gameManager.newGame();
 
-            game.GameLoop(manager);
             FrameClock clock = new FrameClock();
             while (renderer.isOpen())
             {
@@ -61,20 +63,20 @@ namespace CerealSquad
                 renderer.Clear(Color.Black);
                 if (Menus.MenuManager.Instance.isDisplayed())
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
-                else
+                else if (gameManager.CurrentGame != null)
                 {
-                    game.Update(clock.Restart());
-                    renderer.Draw(game.CurrentWorld);
-                    game.WorldEntity.draw(renderer);
+                    gameManager.CurrentGame.Update(clock.Restart());
+                    renderer.Draw(gameManager.CurrentGame.CurrentWorld);
+                    gameManager.CurrentGame.WorldEntity.draw(renderer);
                 }
+                else
+                    renderer.Win.Close();
                 renderer.Display();
             }
         }
         
         private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
-            if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
-                ((Window)source).Close();
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.F))
                 renderer.FullScreen = !renderer.FullScreen;
         }

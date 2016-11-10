@@ -97,8 +97,10 @@
     <Compile Include="GameWorld\ARoom.cs" />
     <Compile Include="GameWorld\Game.cs" />
     <Compile Include="GameWorld\AWorld.cs" />
+    <Compile Include="GameWorld\GameManager.cs" />
     <Compile Include="GameWorld\RoomParser.cs" />
     <Compile Include="GameWorld\WorldParser.cs" />
+    <Compile Include="Menus\CharacterSelectMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
