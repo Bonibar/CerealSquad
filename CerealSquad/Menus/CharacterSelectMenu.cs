@@ -156,10 +156,19 @@ namespace CerealSquad.Menus
         public Players.Player[] Players { get; private set; }
 
         private Renderer _Renderer;
+        private GameWorld.GameManager _GameManager;
+        private Text _StartGameText;
+        private RectangleShape _StartGameShape;
 
-        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager) : base(inputManager)
+        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
         {
+            if (renderer == null)
+                throw new ArgumentNullException("Renderer cannot be null");
+            if (gameManager == null)
+                throw new ArgumentNullException("Game Manager cannot be null");
+
             _Renderer = renderer;
+            _GameManager = gameManager;
 
             Players = new Players.Player[SELECTION_COUNT];
             uint i = 0;
@@ -172,6 +181,14 @@ namespace CerealSquad.Menus
             Buttons.IButton returnButton = new Buttons.BackButton("", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, this);
             MenuItem back_Button = new MenuItem(returnButton, MenuItem.ItemType.KeyBinded, InputManager.Keyboard.Key.Escape);
             _menuList.Add(back_Button);
+
+            _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 80);
+            _StartGameText.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
+            _StartGameText.Color = Color.Red;
+
+            _StartGameShape = new RectangleShape(new SFML.System.Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 10));
+            _StartGameShape.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameShape.GetLocalBounds().Left + _StartGameShape.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2 - (_StartGameShape.GetLocalBounds().Top + _StartGameShape.GetLocalBounds().Height) / 2);
+            _StartGameShape.FillColor = Color.White;
 
             _InputManager.JoystickButtonPressed += _InputManager_JoystickButtonPressed;
             _InputManager.JoystickMoved += _InputManager_JoystickMoved;
@@ -191,6 +208,26 @@ namespace CerealSquad.Menus
             base.Show();
         }
 
+        private List<uint> GetLockedList()
+        {
+            List<uint> LockedList = new List<uint>();
+            uint locked_i = 0;
+            while (locked_i < SELECTION_COUNT)
+            {
+                if (Players[locked_i].Type != Menus.Players.Type.Undefined && Players[locked_i].LockedChoice)
+                    LockedList.Add(Players[locked_i].Selection);
+                locked_i++;
+            }
+
+            return LockedList;
+        }
+
+        private bool AllPlayersReady()
+        {
+            
+            return Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined && x.LockedChoice != true) == null && Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined) != null;
+        }
+
         private void _InputManager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
             if (Displayed)
@@ -201,6 +238,8 @@ namespace CerealSquad.Menus
                 {
                     if (Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1) == null) // Joining
                         JoinKeyboardPlayer(source, e, 1, LockedList);
+                    else if (AllPlayersReady())
+                        StartGame();
                     else
                     {
                         Players.Player currentPlayer = Players.First(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1);
@@ -232,20 +271,6 @@ namespace CerealSquad.Menus
             }
         }
 
-        private List<uint> GetLockedList()
-        {
-            List<uint> LockedList = new List<uint>();
-            uint locked_i = 0;
-            while (locked_i < SELECTION_COUNT)
-            {
-                if (Players[locked_i].Type != Menus.Players.Type.Undefined && Players[locked_i].LockedChoice)
-                    LockedList.Add(Players[locked_i].Selection);
-                locked_i++;
-            }
-
-            return LockedList;
-        }
-
         private void _InputManager_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
             if (Displayed)
@@ -256,6 +281,8 @@ namespace CerealSquad.Menus
                 {
                     if (Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId) == null) // Joining
                         JoinControllerPlayer(source, e, LockedList);
+                    else if (AllPlayersReady())
+                        StartGame();
                     else
                         ValidatePlayer(Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
                 }
@@ -329,6 +356,15 @@ namespace CerealSquad.Menus
             }
         }
 
+        private void StartGame()
+        {
+            if (AllPlayersReady())
+            {
+                MenuManager.Instance.Clear();
+                _GameManager.newGame();
+            }
+        }
+
         public new void Draw(RenderTarget target, RenderStates states)
         {
             uint i = 0;
@@ -338,6 +374,12 @@ namespace CerealSquad.Menus
                 i++;
             }
             base.Draw(target, states);
+
+            if (AllPlayersReady())
+            {
+                target.Draw(_StartGameShape, states);
+                target.Draw(_StartGameText, states);
+            }
         }
     }
 }

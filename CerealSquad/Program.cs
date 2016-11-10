@@ -51,10 +51,9 @@ namespace CerealSquad
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
-            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.MainMenu(renderer, manager));
-
             GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);
-            gameManager.newGame();
+
+            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.Instance.MainMenu(renderer, manager, gameManager));
 
             FrameClock clock = new FrameClock();
             while (renderer.isOpen())

@@ -38,6 +38,17 @@ namespace CerealSquad.GameWorld
             Players.Add(new Jack(WorldEntity, new s_position(2, 4, 1), im));
             //new Ennemy(WorldEntity, new s_position(10, 10, 1));
             //new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
+
+            im.KeyboardKeyPressed += Im_KeyboardKeyPressed;
+        }
+
+        private void Im_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
+        {
+            if (!Menus.MenuManager.Instance.isDisplayed()) // Are we on game
+            {
+                if (e.KeyCode == InputManager.Keyboard.Key.Escape)
+                    renderer.Win.Close();
+            }
         }
 
         public void AddWorld(AWorld World)
