@@ -138,15 +138,16 @@ namespace CerealSquad.Menus
         }
         #endregion
 
-        public void Show()
+        public virtual void Show()
         {
+            System.Diagnostics.Debug.WriteLine("SHOWED MENU");
             if (!Displayed)
             {
                 _displayed = true;
             }
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             if (Displayed)
             {
@@ -185,7 +186,6 @@ namespace CerealSquad.Menus
                 firstValid.Button.Selected = true;
         }
             
-
         public void Draw(RenderTarget target, RenderStates states)
         {
             if (Displayed)

@@ -58,9 +58,13 @@ namespace CerealSquad.Menus
 
                 init(Type.Undefined, id);
             }
-            protected Player(Type type, uint id, Renderer renderer)
+            protected Player(Type type, uint id, Renderer renderer, List<uint> LockedList)
             {
                 _Renderer = renderer;
+
+                Selection = 0;
+                if (LockedList.Contains(Selection))
+                    SelectNext(LockedList);
 
                 init(type, id);
             }
@@ -128,7 +132,7 @@ namespace CerealSquad.Menus
 
         class ControllerPlayer : Player
         {
-            public ControllerPlayer(uint controllerId, uint id, Renderer renderer) : base(Type.Controller, id, renderer)
+            public ControllerPlayer(uint controllerId, uint id, Renderer renderer, List<uint> LockedList) : base(Type.Controller, id, renderer, LockedList)
             {
                 ControllerId = controllerId;
             }
@@ -136,7 +140,7 @@ namespace CerealSquad.Menus
 
         class KeyboardPlayer : Player
         {
-            public KeyboardPlayer(uint keyboardId, uint id, Renderer renderer) : base(Type.Keyboard, id, renderer)
+            public KeyboardPlayer(uint keyboardId, uint id, Renderer renderer, List<uint> LockedList) : base(Type.Keyboard, id, renderer, LockedList)
             {
                 if (keyboardId > 2 || keyboardId < 1)
                     throw new ArgumentOutOfRangeException("Keyboard Id can only be 1 or 2");
@@ -171,73 +175,100 @@ namespace CerealSquad.Menus
 
             _InputManager.JoystickButtonPressed += _InputManager_JoystickButtonPressed;
             _InputManager.JoystickMoved += _InputManager_JoystickMoved;
+
+            _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
+        }
+
+        public override void Show()
+        {
+            uint i = 0;
+            while (i < SELECTION_COUNT)
+            {
+                if (Players[i].Type != Menus.Players.Type.Undefined)
+                    Players[i] = new Players.Player(i, _Renderer);
+                i++;
+            }
+            base.Show();
+        }
+
+        private void _InputManager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
+        {
+            if (Displayed)
+            {
+                List<uint> LockedList = GetLockedList();
+
+                if (e.KeyCode == InputManager.Keyboard.Key.Space || e.KeyCode == InputManager.Keyboard.Key.Z)
+                {
+                    if (Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1) == null) // Joining
+                        JoinKeyboardPlayer(source, e, 1, LockedList);
+                    else
+                    {
+                        Players.Player currentPlayer = Players.First(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1);
+                        if (!currentPlayer.LockedChoice)
+                            ValidatePlayer(currentPlayer, LockedList);
+                        else
+                            ReturnPlayer(currentPlayer);
+                    }
+                }
+                else if (e.KeyCode == InputManager.Keyboard.Key.BackSpace || e.KeyCode == InputManager.Keyboard.Key.S)
+                    ReturnPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1));
+                else if (e.KeyCode == InputManager.Keyboard.Key.Q)
+                    SelectPreviousPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1), LockedList);
+                else if (e.KeyCode == InputManager.Keyboard.Key.D)
+                    SelectNextPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1), LockedList);
+            }
         }
 
         private void _InputManager_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
-            if (Displayed && e.Axis.Equals(InputManager.Joystick.Axis.Z))
-                System.Diagnostics.Debug.WriteLine(e.Axis.ToString() + " JOYBUTTON " + e.Position.ToString());
+            List<uint> LockedList = GetLockedList();
+
+            if (Displayed && (e.Axis == InputManager.Joystick.Axis.X || e.Axis == InputManager.Joystick.Axis.PovX || e.Axis == InputManager.Joystick.Axis.U))
+            {
+                if (e.Position > 99)
+                    SelectNextPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
+                else if (e.Position < -99)
+                    SelectPreviousPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
+            }
+        }
+
+        private List<uint> GetLockedList()
+        {
+            List<uint> LockedList = new List<uint>();
+            uint locked_i = 0;
+            while (locked_i < SELECTION_COUNT)
+            {
+                if (Players[locked_i].Type != Menus.Players.Type.Undefined && Players[locked_i].LockedChoice)
+                    LockedList.Add(Players[locked_i].Selection);
+                locked_i++;
+            }
+
+            return LockedList;
         }
 
         private void _InputManager_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
             if (Displayed)
             {
-                List<uint> LockedList = new List<uint>();
-                uint locked_i = 0;
-                while (locked_i < SELECTION_COUNT)
-                {
-                    if (Players[locked_i].Type != Menus.Players.Type.Undefined && Players[locked_i].LockedChoice)
-                        LockedList.Add(Players[locked_i].Selection);
-                    locked_i++;
-                }
+                List<uint> LockedList = GetLockedList();
 
-                System.Diagnostics.Debug.WriteLine("JOYBUTTON " + e.Button.ToString());
-                if (Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined && x.ControllerId == e.JoystickId) == null) // Joining
-                    JoinControllerPlayer(source, e);
-                else // Player already in
+                if (e.Button == 0) // A Button
                 {
-                    if (e.Button == 0) // A Button
-                    {
-                        uint i = 0;
-                        while (i < SELECTION_COUNT)
-                        {
-                            Players.Player currentPlayer = Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId);
-                            currentPlayer.LockSelection(true);
-                            LockedList.Add(currentPlayer.Selection);
-                            if (Players[i].Type != Menus.Players.Type.Undefined && Players[i].LockedChoice == false)
-                            {
-                                while (LockedList.Contains(Players[i].Selection))
-                                    Players[i].SelectNext(LockedList);
-                            }
-                            i++;
-                        }
-                    }
-                    else if (e.Button == 1)
-                    {
-                        uint i = 0;
-                        while (i < SELECTION_COUNT)
-                        {
-                            if (Players[i].Type == Menus.Players.Type.Controller && Players[i].ControllerId == e.JoystickId)
-                            {
-                                if (Players[i].LockedChoice == true)
-                                    Players[i].LockSelection(false);
-                                else
-                                    Players[i] = new Players.Player(i, _Renderer);
-                            }
-                            i++;
-                        }
-                    }
-                    else if (e.Button == 4)
-                        Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId).SelectPrevious(LockedList);
-                    else if (e.Button == 5)
-                        Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId).SelectNext(LockedList);
+                    if (Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId) == null) // Joining
+                        JoinControllerPlayer(source, e, LockedList);
+                    else
+                        ValidatePlayer(Players.First(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
                 }
-                
+                else if (e.Button == 1)
+                    ReturnPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId));
+                else if (e.Button == 4)
+                    SelectPreviousPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
+                else if (e.Button == 5)
+                    SelectNextPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
             }
         }
 
-        private void JoinControllerPlayer(object source, InputManager.Joystick.ButtonEventArgs e)
+        private void JoinControllerPlayer(object source, InputManager.Joystick.ButtonEventArgs e, List<uint> LockedList)
         {
             uint i = 0;
             while (i < 4 && Players[i] != null && Players[i].Type != Menus.Players.Type.Undefined)
@@ -245,7 +276,56 @@ namespace CerealSquad.Menus
             if (i < 4) // Team is not full
             {
                 System.Diagnostics.Debug.WriteLine("NEW PLAYER JOINED");
-                Players[i] = new Players.ControllerPlayer(e.JoystickId, i, _Renderer);
+                Players[i] = new Players.ControllerPlayer(e.JoystickId, i, _Renderer, LockedList);
+            }
+        }
+        private void JoinKeyboardPlayer(object source, InputManager.Keyboard.KeyEventArgs e, uint keyboardId, List<uint> LockedList)
+        {
+            uint i = 0;
+            while (i < 4 && Players[i] != null && Players[i].Type != Menus.Players.Type.Undefined)
+                i++;
+            if (i < 4) // Team is not full
+            {
+                System.Diagnostics.Debug.WriteLine("NEW PLAYER JOINED");
+                Players[i] = new Players.KeyboardPlayer(keyboardId, i, _Renderer, LockedList);
+            }
+        }
+
+        private void SelectPreviousPlayer(Players.Player currentPlayer, List<uint> LockedList)
+        {
+            if (currentPlayer != null)
+                currentPlayer.SelectPrevious(LockedList);
+        }
+        private void SelectNextPlayer(Players.Player currentPlayer, List<uint> LockedList)
+        {
+            if (currentPlayer != null)
+                currentPlayer.SelectNext(LockedList);
+        }
+
+        private void ReturnPlayer(Players.Player currentPlayer)
+        {
+            int id = Array.IndexOf(Players, currentPlayer);
+            if (id != -1 && Players[id].Type != Menus.Players.Type.Undefined)
+            {
+                if (Players[id].LockedChoice == true)
+                    Players[id].LockSelection(false);
+                else
+                    Players[id] = new Players.Player((uint)id, _Renderer);
+            }
+        }
+        private void ValidatePlayer(Players.Player currentPlayer, List<uint> LockedList)
+        {
+            currentPlayer.LockSelection(true);
+            LockedList.Add(currentPlayer.Selection);
+            uint i = 0;
+            while (i < SELECTION_COUNT)
+            {
+                if (Players[i].Type != Menus.Players.Type.Undefined && Players[i].LockedChoice == false)
+                {
+                    while (LockedList.Contains(Players[i].Selection))
+                        Players[i].SelectNext(LockedList);
+                }
+                i++;
             }
         }
 
