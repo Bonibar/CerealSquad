@@ -27,6 +27,9 @@ namespace CerealSquad.Menus
 
             private uint _Id;
             private Renderer _Renderer;
+            private Text _PlayerText;
+            private Text _JoinText;
+            private Text[] _SelectionText = new Text[CharacterSelectMenu.SELECTION_COUNT];
 
             private void init(Type type, uint id)
             {
@@ -36,20 +39,31 @@ namespace CerealSquad.Menus
 
                 _Id = id;
 
+                float x_margin = _Renderer.Win.GetView().Size.X / CharacterSelectMenu.SELECTION_COUNT;
+                float x_padding = x_margin / 2;
+                float y_margin = 0;
+                float y_padding = y_margin / 2;
+
+                List<String> char_names = new List<string> { "Mike", "Jack", "Orange Hina", "Tchong" };
+
+                uint i = 0;
+                while (i < CharacterSelectMenu.SELECTION_COUNT)
+                {
+                    _SelectionText[i] = new Text(char_names[(int)i], Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+
+                    float text_x_offset = (_SelectionText[i].GetLocalBounds().Left + _SelectionText[i].GetLocalBounds().Width) / 2;
+                    float text_y_offset = 0;
+
+                    _SelectionText[i].Position = new SFML.System.Vector2f((x_margin * _Id + x_padding) - text_x_offset, 40 + text_y_offset - text_y_offset);
+                    i++;
+                }
+
                 _PlayerText = new Text("Player " + (id + 1), Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _PlayerText.Position = new SFML.System.Vector2f(50 + 400 * _Id, 5);
+                _PlayerText.Position = new SFML.System.Vector2f((x_margin * _Id + x_padding) - (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2, (y_margin * _Id + y_padding));
 
-                _JoinText.Position = new SFML.System.Vector2f(120 + 400 * _Id, 500);
+                _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+                _JoinText.Position = new SFML.System.Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 40 + (y_margin * _Id + y_padding));
                 _JoinText.Color = Color.Green;
-
-                _SelectionText[0] = new Text("Mike", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _SelectionText[0].Position = new SFML.System.Vector2f(95 + 400 * _Id, 40);
-                _SelectionText[1] = new Text("Jack", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _SelectionText[1].Position = new SFML.System.Vector2f(90 + 400 * _Id, 40);
-                _SelectionText[2] = new Text("Orange Hina", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _SelectionText[2].Position = new SFML.System.Vector2f(5 + 400 * _Id, 40);
-                _SelectionText[3] = new Text("Tchong", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _SelectionText[3].Position = new SFML.System.Vector2f(60 + 400 * _Id, 40);
             }
 
             public Player(uint id, Renderer renderer)
@@ -117,9 +131,6 @@ namespace CerealSquad.Menus
                     _SelectionText[Selection].Color = Color.White;
             }
 
-            private Text _PlayerText;
-            private Text _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-            private Text[] _SelectionText = new Text[CharacterSelectMenu.SELECTION_COUNT];
             public void Draw(RenderTarget target, RenderStates states)
             {
                 target.Draw(_PlayerText);
@@ -182,11 +193,11 @@ namespace CerealSquad.Menus
             MenuItem back_Button = new MenuItem(returnButton, MenuItem.ItemType.KeyBinded, InputManager.Keyboard.Key.Escape);
             _menuList.Add(back_Button);
 
-            _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 80);
+            _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
             _StartGameText.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
             _StartGameText.Color = Color.Red;
 
-            _StartGameShape = new RectangleShape(new SFML.System.Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 10));
+            _StartGameShape = new RectangleShape(new SFML.System.Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 20));
             _StartGameShape.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameShape.GetLocalBounds().Left + _StartGameShape.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2 - (_StartGameShape.GetLocalBounds().Top + _StartGameShape.GetLocalBounds().Height) / 2);
             _StartGameShape.FillColor = Color.White;
 
