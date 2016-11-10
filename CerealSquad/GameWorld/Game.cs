@@ -33,7 +33,7 @@ namespace CerealSquad.GameWorld
 
         public void GameLoop(InputManager.InputManager im)
         {
-            CurrentWorld = new AWorld("Maps/TestWorld.txt");
+            CurrentWorld = new AWorld("Maps/TestWorld.txt", worldEntity);
             //Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
             //Players.Add(new Jack(WorldEntity, new s_position(2, 4, 1), im));
             Players.Add(new Tchong(WorldEntity, new s_position(2, 4, 1), im));
