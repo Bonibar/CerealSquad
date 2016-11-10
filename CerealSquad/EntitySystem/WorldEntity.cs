@@ -1,4 +1,5 @@
 ﻿using CerealSquad.GameWorld;
+using CerealSquad.Graphics;
 using SFML.Graphics;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,46 @@ namespace CerealSquad
             {
                 ((APlayer)i).die();
             }
+        }
+
+        private List<AEntity> GetCollidingEntityRecursive(IEntity Owner, CircleShape Circle)
+        {
+            List<AEntity> Tmp = new List<AEntity>();
+
+            Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                Tmp = Tmp.Concat(GetCollidingEntityRecursive(i, Circle)).ToList();
+            });
+
+            if (Owner.getEntityType() != e_EntityType.World)
+                if (((AEntity)Owner).ressourcesEntity.IsColliding(Circle))
+                    Tmp.Add((AEntity)Owner);
+
+            return Tmp;
+        }
+
+        public List<AEntity> GetCollidingEntity(CircleShape Circle)
+        {
+            return GetCollidingEntityRecursive(this, Circle);
+        }
+
+        private List<AEntity> GetCollidingEntityRecursive(IEntity Owner, EntityResources Other)
+        {
+            List<AEntity> Tmp = new List<AEntity>();
+
+            Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                Tmp = Tmp.Concat(GetCollidingEntityRecursive(i, Other)).ToList();
+            });
+
+            if (Owner.getEntityType() != e_EntityType.World)
+                if (((AEntity)Owner).ressourcesEntity.IsColliding(Other))
+                    Tmp.Add((AEntity)Owner);
+
+            return Tmp;
+        }
+
+        public List<AEntity> GetCollidingEntity(EntityResources Other)
+        {
+            return GetCollidingEntityRecursive(this, Other);
         }
 
         private void deepDraw(IEntity owner, Renderer win)

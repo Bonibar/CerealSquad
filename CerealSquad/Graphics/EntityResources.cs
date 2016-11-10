@@ -58,6 +58,55 @@ namespace CerealSquad.Graphics
         }
 
         /// <summary>
+        /// Check collision with CircleShape
+        /// </summary>
+        /// <param name="Circle"></param>
+        /// <returns></returns>
+        public bool IsColliding(CircleShape Circle)
+        {
+            double circleDistanceX = Math.Abs(Circle.Position.X - Position.X);
+            double circleDistanceY = Math.Abs(Circle.Position.Y - Position.Y);
+
+            if (circleDistanceX > (SizeHitBox.X / 2.0f + Circle.Radius))
+                return false;
+            if (circleDistanceY > (SizeHitBox.Y / 2.0f + Circle.Radius))
+                return false;
+
+            if (circleDistanceX <= (SizeHitBox.X / 2.0f))
+                return true;
+            if (circleDistanceY <= (SizeHitBox.Y / 2.0f))
+                return true;
+
+            double cornerDistance_sq = Math.Pow((circleDistanceX - SizeHitBox.X / 2.0f), 2.0f) + Math.Pow((circleDistanceY - SizeHitBox.Y / 2.0f), 2.0f);
+
+            return (cornerDistance_sq <= Math.Pow((Circle.Radius), 2.0f));
+        }
+
+        /// <summary>
+        /// Check collision with other EntityResources
+        /// </summary>
+        /// <param name="Other"></param>
+        /// <returns></returns>
+        public bool IsColliding(EntityResources Other)
+        {
+            double distanceX = Math.Abs(Other.Position.X - Position.X);
+            double distanceY = Math.Abs(Other.Position.Y - Position.Y);
+
+            if (distanceX > (SizeHitBox.X / 2.0f + Other.SizeHitBox.X / 2.0f))
+                return false;
+            if (distanceY > (SizeHitBox.Y / 2.0f + Other.SizeHitBox.Y / 2.0f))
+                return false;
+
+            if (distanceX <= (SizeHitBox.X / 2.0f + Other.SizeHitBox.X / 2.0f))
+                return false;
+            if (distanceY <= (SizeHitBox.Y / 2.0f + Other.SizeHitBox.Y / 2.0f))
+                return false;
+
+            // TODO find why we are in this case ...
+            return false;
+        }
+
+        /// <summary>
         /// Initialize a animated sprite
         /// </summary>
         /// <param name="Texture">String</param>

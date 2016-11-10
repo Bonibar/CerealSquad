@@ -88,11 +88,14 @@ namespace CerealSquad.EntitySystem
                     pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y);
 
                 Position = pos;
-                //Position = new Vector2f(pos.X * 64, pos.Y * 64);
-               // if (World.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
+                // CHECK 4 points
+
+                
+                // if (World.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
                 //    IsTargetValid = false;
                 //else
-                    IsTargetValid = true;
+                
+                IsTargetValid = true;
                 if (EMovement.None == Target)
                     IsTargetValid = false;
                 
