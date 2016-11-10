@@ -74,7 +74,7 @@ namespace CerealSquad.EntitySystem
             if (Step == EStep.START_SELECTING || Step == EStep.SELECTING)
             {
                Target = (Input.Count > 0) ? Input.ElementAt(Input.Count - 1) : EMovement.None;
-
+                
                 Vector2f pos = new Vector2f();
                 if (Target.Equals(EMovement.Down))
                     pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y + Player.ressourcesEntity.sprite.Size.Y);

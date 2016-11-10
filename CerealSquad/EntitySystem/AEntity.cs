@@ -154,7 +154,6 @@ namespace CerealSquad
 
             SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f();
             SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f();
-
             double speedMove = _speed * deltaTime.AsSeconds();
 
             switch (_move)

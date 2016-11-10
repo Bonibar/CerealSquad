@@ -209,7 +209,6 @@ namespace CerealSquad.Graphics
                 m_vertices[1] = new Vertex(new Vector2f(-(animation.Size.X / 2), animation.Size.Y / 2), m_vertices[1].Color, new Vector2f(left, bottom));
                 m_vertices[2] = new Vertex(new Vector2f(animation.Size.X / 2, animation.Size.Y / 2), m_vertices[2].Color, new Vector2f(right, bottom));
                 m_vertices[3] = new Vertex(new Vector2f(animation.Size.X / 2, -(animation.Size.Y / 2)), m_vertices[3].Color, new Vector2f(right, top));
-
             }
 
             if (resetTime)
