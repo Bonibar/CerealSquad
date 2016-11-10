@@ -146,7 +146,7 @@ namespace CerealSquad
 
         // Use this function for moving the entity whitout his action(ex: knockback)
         // Move the entity relative to his actual position
-        public virtual void move(AWorld world)
+        public virtual void move(AWorld world, SFML.System.Time deltaTime)
         {
             EStateEntity anim = EStateEntity.IDLE;
             var OldResourcePosition = _ressources.Position;
@@ -155,30 +155,32 @@ namespace CerealSquad
             SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f();
             SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f();
 
+            double speedMove = _speed * deltaTime.AsSeconds();
+
             switch (_move)
             {
                 case EMovement.Up:
-                    NewPosition += new s_position(0, -_speed, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
+                    NewPosition += new s_position(0, -speedMove, 0);
+                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
                     anim = EStateEntity.WALKING_UP;
                     break;
                 case EMovement.Down:
-                    NewPosition += new s_position(0, +_speed, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, 0);
+                    NewPosition += new s_position(0, +speedMove, 0);
+                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_DOWN;
                     break;
                 case EMovement.Right:
-                    NewPosition += new s_position(_speed, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.SizeHitBox.X / 2.0f, 0);
+                    NewPosition += new s_position(speedMove, 0, 0);
+                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
+                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_RIGHT;
                     break;
                 case EMovement.Left:
-                    NewPosition += new s_position(-_speed, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, -ressourcesEntity.SizeHitBox.Y);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.SizeHitBox.X / 2.0f, 0);
+                    NewPosition += new s_position(-speedMove, 0, 0);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
+                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_LEFT;
                     break;
                 case EMovement.None:

@@ -50,13 +50,13 @@ namespace CerealSquad.EntitySystem
             return Step.Equals(EStep.NOTHING);
         }
 
-        public void Update(SFML.System.Time deltaTime, GameWorld.AWorld world, APlayer.s_input input)
+        public void Update(SFML.System.Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
-            Processing(input, world);
-            Sprite.Update(deltaTime);
+            Processing(Input, World, TrapPressed);
+            Sprite.Update(DeltaTime);
         }
 
-        private void Processing(APlayer.s_input input, GameWorld.AWorld world)
+        private void Processing(List<EMovement> Input, GameWorld.AWorld World, bool TrapPressed)
         {
             // Player have nothing to put on map.
             if (Player.TrapInventory.Equals(e_TrapType.NONE))
@@ -66,22 +66,14 @@ namespace CerealSquad.EntitySystem
             if (!Timer.IsTimerOver())
                 return;
 
-            if (input._isTrapDownPressed && Step == EStep.NOTHING)
+            if (TrapPressed && Step == EStep.NOTHING)
                 Step = EStep.START_SELECTING;
-            else if (!input._isTrapDownPressed && EStep.START_SELECTING == Step)
+            else if (!TrapPressed && EStep.START_SELECTING == Step)
                 Step = EStep.SELECTING;
 
             if (Step == EStep.START_SELECTING || Step == EStep.SELECTING)
             {
-                
-                if (input._isRightPressed && !input._isLeftPressed && !input._isDownPressed && !input._isUpPressed)
-                    Target = EMovement.Right;
-                else if (!input._isRightPressed && input._isLeftPressed && !input._isDownPressed && !input._isUpPressed)
-                    Target = EMovement.Left;
-                else if (!input._isRightPressed && !input._isLeftPressed && input._isDownPressed && !input._isUpPressed)
-                    Target = EMovement.Down;
-                else if (!input._isRightPressed && !input._isLeftPressed && !input._isDownPressed && input._isUpPressed)
-                    Target = EMovement.Up;
+               Target = (Input.Count > 0) ? Input.ElementAt(Input.Count - 1) : EMovement.None;
 
                 Vector2f pos = new Vector2f();
                 if (Target.Equals(EMovement.Down))
@@ -92,20 +84,24 @@ namespace CerealSquad.EntitySystem
                     pos = new Vector2f(Player.ressourcesEntity.Position.X + Player.ressourcesEntity.sprite.Size.X, Player.ressourcesEntity.Position.Y);
                 else if (Target.Equals(EMovement.Left))
                     pos = new Vector2f(Player.ressourcesEntity.Position.X - Player.ressourcesEntity.sprite.Size.X, Player.ressourcesEntity.Position.Y);
+                else
+                    pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y);
 
                 Position = pos;
                 //Position = new Vector2f(pos.X * 64, pos.Y * 64);
-               // if (world.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
+               // if (World.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
                 //    IsTargetValid = false;
                 //else
                     IsTargetValid = true;
+                if (EMovement.None == Target)
+                    IsTargetValid = false;
                 
                 Sprite.SetColor((IsTargetValid) ? Color.Green : Color.Red);
             }
 
-            if (input._isTrapDownPressed && Step == EStep.SELECTING && IsTargetValid)
+            if (TrapPressed && Step == EStep.SELECTING)
             {
-                if (Target != EMovement.None)
+                if (Target != EMovement.None && IsTargetValid)
                 {
                     //TODO check position of futur Trap
 
@@ -115,7 +111,7 @@ namespace CerealSquad.EntitySystem
                 }
                 Step = EStep.END_SELECTING;
             }
-            else if (!input._isTrapDownPressed && Step == EStep.END_SELECTING)
+            else if (!TrapPressed && Step == EStep.END_SELECTING)
             {
                 Step = EStep.NOTHING;
                 // Restart timer to launch cooldown
@@ -125,7 +121,7 @@ namespace CerealSquad.EntitySystem
 
         public void Draw(RenderTarget target, RenderStates states)
         {
-            if (Step > EStep.NOTHING && !Target.Equals(EMovement.None))
+            if (Step > EStep.NOTHING)
             {
                 states.Transform *= Transform;
                 ((Drawable)Sprite).Draw(target, states);

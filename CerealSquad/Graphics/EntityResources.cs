@@ -13,9 +13,17 @@ namespace CerealSquad.Graphics
         public ASprite sprite;
         public Sounds.JukeBox JukeBox { get; set; }
 
+
+        #region Collision
+        private FloatRect _CollisionBox;
+        public FloatRect CollisionBox { get { return geCollisionBox(); } set { _CollisionBox = value; } }
+        #endregion
+
+        #region Hitbox
         private Vector2f _SizeHitBox;
         public Vector2f SizeHitBox { get { return getSizeHitBox(); } set { _SizeHitBox = value; } }
         public FloatRect HitBox { get { return getHitBox(); } }
+        #endregion
 
         public bool Loop {
             get {
@@ -27,6 +35,14 @@ namespace CerealSquad.Graphics
                 if (sprite.Type == ETypeSprite.ANIMATED)
                     ((AnimatedSprite)sprite).Loop = value;
             }
+        }
+
+        private FloatRect geCollisionBox()
+        {
+            if (_CollisionBox != null)
+                return _CollisionBox;
+            return new FloatRect(new Vector2f(sprite.Position.X - ((float)sprite.Size.X / 2.0f), sprite.Position.Y - ((float)sprite.Size.Y / 2.0f)),
+                new Vector2f(sprite.Position.X + ((float)sprite.Size.X / 2.0f), sprite.Position.Y + ((float)sprite.Size.Y / 2.0f)));
         }
 
         private FloatRect getHitBox()
