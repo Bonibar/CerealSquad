@@ -76,7 +76,7 @@ namespace CerealSquad
             _scentMap.update((WorldEntity)_owner);
             think();
             _ressources.Update(deltaTime);
-            move(world);
+            move(world, deltaTime);
         }
     }
 }
