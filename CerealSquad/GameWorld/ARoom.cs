@@ -89,7 +89,7 @@ namespace CerealSquad.GameWorld
         public void Draw(RenderTarget target, RenderStates states)
         {
             _RenderTexture.Clear();
-            _RenderTexture.Draw(er);
+            _RenderTexture.Draw(er, states);
             _RenderTexture.Display();
 
             target.Draw(_RenderSprite, states);

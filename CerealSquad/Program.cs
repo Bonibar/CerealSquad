@@ -20,7 +20,7 @@ namespace CerealSquad
             Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
             tasks.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/alts.png"), false));
             tasks.Add(ftpDownloader.RequireFile("JackWalking", "Assets/Character/JackWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/JackWalking.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("TchongWalking", "Assets/Character/ChongWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/ChongWalking.png"), true));
+            tasks.Add(ftpDownloader.RequireFile("TchongWalking", "Assets/Character/ChongWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/ChongWalking.png"), false));
             tasks.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/JackHunter.png"), false));
             tasks.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/Orangina.png"), false));
             tasks.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/BasicEnnemy.png"), false));
