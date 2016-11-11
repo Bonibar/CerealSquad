@@ -151,35 +151,25 @@ namespace CerealSquad
             EStateEntity anim = EStateEntity.IDLE;
             var OldResourcePosition = _ressources.Position;
             s_position NewPosition = _pos;
-
-            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f();
-            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f();
+            
             double speedMove = _speed * deltaTime.AsSeconds();
 
             switch (_move)
             {
                 case EMovement.Up:
                     NewPosition += new s_position(0, -speedMove, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
                     anim = EStateEntity.WALKING_UP;
                     break;
                 case EMovement.Down:
                     NewPosition += new s_position(0, +speedMove, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_DOWN;
                     break;
                 case EMovement.Right:
                     NewPosition += new s_position(speedMove, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_RIGHT;
                     break;
                 case EMovement.Left:
                     NewPosition += new s_position(-speedMove, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_LEFT;
                     break;
                 case EMovement.None:
@@ -188,18 +178,14 @@ namespace CerealSquad
             }
 
             _ressources.PlayAnimation(anim);
-            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64.0f, (float)NewPosition._trueY * 64.0f);
-            CollisionPointOne += _ressources.Position;
-            CollisionPointTwo += _ressources.Position;
+            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64, (float)NewPosition._trueY * 64);
 
-            CollisionPointOne /= 64.0f;
-            CollisionPointTwo /= 64.0f;
-
-            if (world.getPosition((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)) == RoomParser.e_CellType.Normal
-                && world.getPosition((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)) == RoomParser.e_CellType.Normal)
+           // if (!world.IsCollidingWithWall(_ressources))
+           // {
                 _pos = NewPosition;
-            else
-                _ressources.Position = OldResourcePosition;
+           // }
+           // else
+           //     _ressources.Position = OldResourcePosition;
         }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);

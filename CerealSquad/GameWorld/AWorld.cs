@@ -50,5 +50,36 @@ namespace CerealSquad.GameWorld
             }
             return (RoomParser.e_CellType.Void);
         }
+
+        /// <summary>
+        /// Look at 4 points of CollisionBox of EntityResources and return true if one of them is inside a wall/void
+        /// </summary>
+        /// <param name="Res">Graphics.EntityResource</param>
+        /// <returns>bool</returns>
+        public bool IsCollidingWithWall(Graphics.EntityResources Res)
+        {
+            return false;
+            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(Res.CollisionBox.Width, -Res.CollisionBox.Top);
+            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(-Res.CollisionBox.Left, -Res.CollisionBox.Top);
+            SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(Res.CollisionBox.Width, Res.CollisionBox.Height);
+            SFML.System.Vector2f CollisionPointFour = new SFML.System.Vector2f(-Res.CollisionBox.Left, Res.CollisionBox.Height);
+
+            CollisionPointOne += Res.Position;
+            CollisionPointTwo += Res.Position;
+            CollisionPointThree += Res.Position;
+            CollisionPointFour += Res.Position;
+
+            CollisionPointOne /= 64.0f;
+            CollisionPointTwo /= 64.0f;
+            CollisionPointThree /= 64.0f;
+            CollisionPointFour /= 64.0f;
+
+            if (getPosition((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)) != RoomParser.e_CellType.Normal
+                || getPosition((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)) != RoomParser.e_CellType.Normal
+                || getPosition((int)(CollisionPointThree.X), (int)(CollisionPointThree.Y)) != RoomParser.e_CellType.Normal
+                || getPosition((int)(CollisionPointFour.X), (int)(CollisionPointFour.Y)) != RoomParser.e_CellType.Normal)
+                return true;
+            return false;
+        }
     }
 }

@@ -58,8 +58,10 @@ namespace CerealSquad
             Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.Instance.MainMenu(renderer, manager, gameManager));
 
             FrameClock clock = new FrameClock();
+            SFML.System.Clock time = new SFML.System.Clock();
             while (renderer.isOpen())
             {
+                time.Restart();
                 renderer.DispatchEvents();
                 renderer.Clear(Color.Black);
                 if (Menus.MenuManager.Instance.isDisplayed())
@@ -72,6 +74,7 @@ namespace CerealSquad
                 }
                 else
                     renderer.Win.Close();
+                System.Diagnostics.Debug.Write(time.ElapsedTime.AsMicroseconds() + "\n");
                 renderer.Display();
             }
         }
