@@ -35,6 +35,8 @@ namespace CerealSquad
                 ressourcesEntity.Position = new SFML.System.Vector2f(pos.X + size.X, pos.Y);
             else if (direction == EMovement.Left)
                 ressourcesEntity.Position = new SFML.System.Vector2f(pos.X - size.X, pos.Y);
+            else
+                ressourcesEntity.Position = new SFML.System.Vector2f(pos.X, pos.Y);
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)

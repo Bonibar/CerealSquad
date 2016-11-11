@@ -10,6 +10,8 @@ namespace CerealSquad.TrapEntities
 {
     class BearTrap : ATrap
     {
+        public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(12, 12, 12, 12);
+
         public BearTrap(IEntity owner) : base(owner, e_DamageType.TRUE_DAMAGE, 0)
         {
             TrapType = e_TrapType.BEAR_TRAP;

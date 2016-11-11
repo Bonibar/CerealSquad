@@ -10,6 +10,8 @@ namespace CerealSquad.TrapEntities
 {
     class Bomb : ATrap
     {
+        public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(12, 12, 12, 12);
+
         public Time Cooldown { get { return Timer.Time; } set { Timer.Time = value; } }
         private Timer Timer = new Timer(Time.FromSeconds(7));
         private Timer TimerDelete = new Timer(Time.FromSeconds(0.5f));
@@ -26,6 +28,7 @@ namespace CerealSquad.TrapEntities
             ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
             ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
 
+            ressourcesEntity.CollisionBox = COLLISION_BOX;
             Timer.Start();
         }
 

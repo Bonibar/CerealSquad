@@ -45,7 +45,7 @@ namespace CerealSquad
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsColliding(Circle))
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Circle))
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;
@@ -65,7 +65,7 @@ namespace CerealSquad
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsColliding(Other))
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Other))
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;

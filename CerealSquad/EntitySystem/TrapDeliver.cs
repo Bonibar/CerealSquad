@@ -10,7 +10,7 @@ using SFML.Graphics;
 
 namespace CerealSquad.EntitySystem
 {
-    class TrapDeliver : Transformable, Drawable
+    class TrapDeliver : Drawable
     {
         public enum EStep
         {
@@ -26,7 +26,8 @@ namespace CerealSquad.EntitySystem
         public bool IsTargetValid { get; private set; }
 
 
-        private AnimatedSprite Sprite;
+        private EntityResources ResourcesEntity = new EntityResources();
+        //private AnimatedSprite Sprite;
         private APlayer Player;
         private Timer Timer = new Timer(Time.FromSeconds(1));
 
@@ -38,10 +39,12 @@ namespace CerealSquad.EntitySystem
             Step = EStep.NOTHING;
             Target = EMovement.Up;
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
-            Sprite = new AnimatedSprite(64, 64);
-            Sprite.addAnimation(EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
-            Sprite.SetColor(Color.Green);
-            Sprite.Speed = Time.FromMilliseconds(100);
+            ResourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
+            //Sprite = new AnimatedSprite(64, 64);
+            ((AnimatedSprite)ResourcesEntity.sprite).addAnimation(EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
+            ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.Green);
+            ((AnimatedSprite)ResourcesEntity.sprite).Speed = Time.FromMilliseconds(100);
+
             IsTargetValid = true;
         }
 
@@ -53,7 +56,7 @@ namespace CerealSquad.EntitySystem
         public void Update(SFML.System.Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
             Processing(Input, World, TrapPressed);
-            Sprite.Update(DeltaTime);
+            ResourcesEntity.Update(DeltaTime);
         }
 
         private void Processing(List<EMovement> Input, GameWorld.AWorld World, bool TrapPressed)
@@ -65,6 +68,8 @@ namespace CerealSquad.EntitySystem
             // Player can't put on map because of cooldown.
             if (!Timer.IsTimerOver())
                 return;
+
+            ResourcesEntity.CollisionBox = Factories.TrapFactory.GetCollisionBox(Player.TrapInventory);
 
             if (TrapPressed && Step == EStep.NOTHING)
                 Step = EStep.START_SELECTING;
@@ -87,28 +92,22 @@ namespace CerealSquad.EntitySystem
                 else
                     pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y);
 
-                Position = pos;
+                ResourcesEntity.Position = pos;
                 // CHECK 4 points
-
-                
-                // if (World.getPosition(pos.X, pos.Y) == GameWorld.RoomParser.e_CellType.Wall)
-                //    IsTargetValid = false;
-                //else
-                
-                IsTargetValid = true;
-                if (EMovement.None == Target)
+                if (World.IsCollidingWithWall(ResourcesEntity)
+                    || World.WorldEntity.GetCollidingEntity(ResourcesEntity).Count > 0)
                     IsTargetValid = false;
+                else
+                    IsTargetValid = true;
                 
-                Sprite.SetColor((IsTargetValid) ? Color.Green : Color.Red);
+                ((AnimatedSprite)ResourcesEntity.sprite).SetColor((IsTargetValid) ? Color.Green : Color.Red);
             }
 
             if (TrapPressed && Step == EStep.SELECTING)
             {
-                if (Target != EMovement.None && IsTargetValid)
+                if (IsTargetValid)
                 {
-                    //TODO check position of futur Trap
-
-                    ATrap trap = Factories.TrapFactory.createTrap(Player, Player.TrapInventory);
+                    ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
                     Player.addChild(trap);
                 }
@@ -126,8 +125,7 @@ namespace CerealSquad.EntitySystem
         {
             if (Step > EStep.NOTHING)
             {
-                states.Transform *= Transform;
-                ((Drawable)Sprite).Draw(target, states);
+                ResourcesEntity.Draw(target, states);
             }
         }
     }

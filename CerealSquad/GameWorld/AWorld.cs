@@ -52,21 +52,21 @@ namespace CerealSquad.GameWorld
         }
 
         /// <summary>
-        /// Look at 4 points of CollisionBox of EntityResources and return true if one of them is inside a wall/void
+        /// Check 4 points from position and collision box return true if one of them is inside a wall/void
         /// </summary>
         /// <param name="Res">Graphics.EntityResource</param>
         /// <returns>bool</returns>
-        public bool IsCollidingWithWall(Graphics.EntityResources Res)
+        public bool IsCollidingWithWall(SFML.System.Vector2f Position, SFML.Graphics.FloatRect CollisionBox)
         {
-            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(Res.CollisionBox.Width, -Res.CollisionBox.Top);
-            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(-Res.CollisionBox.Left, -Res.CollisionBox.Top);
-            SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(Res.CollisionBox.Width, Res.CollisionBox.Height);
-            SFML.System.Vector2f CollisionPointFour = new SFML.System.Vector2f(-Res.CollisionBox.Left, Res.CollisionBox.Height);
+            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(CollisionBox.Width, -CollisionBox.Top);
+            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(-CollisionBox.Left, -CollisionBox.Top);
+            SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(CollisionBox.Width, CollisionBox.Height);
+            SFML.System.Vector2f CollisionPointFour = new SFML.System.Vector2f(-CollisionBox.Left, CollisionBox.Height);
 
-            CollisionPointOne += Res.Position;
-            CollisionPointTwo += Res.Position;
-            CollisionPointThree += Res.Position;
-            CollisionPointFour += Res.Position;
+            CollisionPointOne += Position;
+            CollisionPointTwo += Position;
+            CollisionPointThree += Position;
+            CollisionPointFour += Position;
 
             CollisionPointOne /= 64.0f;
             CollisionPointTwo /= 64.0f;
@@ -79,6 +79,16 @@ namespace CerealSquad.GameWorld
                 || getPosition((int)(CollisionPointFour.X), (int)(CollisionPointFour.Y)) != RoomParser.e_CellType.Normal)
                 return true;
             return false;
+        }
+
+        /// <summary>
+        /// Look at 4 points of CollisionBox of EntityResources and return true if one of them is inside a wall/void
+        /// </summary>
+        /// <param name="Res">Graphics.EntityResource</param>
+        /// <returns>bool</returns>
+        public bool IsCollidingWithWall(Graphics.EntityResources Res)
+        {
+            return IsCollidingWithWall(Res.Position, Res.CollisionBox);
         }
     }
 }

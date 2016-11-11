@@ -22,7 +22,6 @@ namespace CerealSquad.Graphics
         private int m_currentFrame;
         private Texture m_texture;
         private List<Vertex> m_vertices = new List<Vertex>();
-        private Vector2f m_size;
 
 
         public SpriteAnimator()
@@ -31,7 +30,6 @@ namespace CerealSquad.Graphics
             m_isLooped = true;
             m_isPaused = false;
             m_animation = null;
-            m_size = new Vector2f();
 
             m_vertices.Add(new Vertex());
             m_vertices.Add(new Vertex());
