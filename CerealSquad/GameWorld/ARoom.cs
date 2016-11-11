@@ -78,7 +78,6 @@ namespace CerealSquad.GameWorld
 
         public RoomParser.e_CellType getPosition(uint x, uint y)
         {
-            return RoomParser.e_CellType.Normal;
             RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
             if (x < Size.Width && y <= Size.Height)
             {
@@ -90,7 +89,7 @@ namespace CerealSquad.GameWorld
         public void Draw(RenderTarget target, RenderStates states)
         {
             _RenderTexture.Clear();
-            _RenderTexture.Draw(er, states);
+            _RenderTexture.Draw(er);
             _RenderTexture.Display();
 
             target.Draw(_RenderSprite, states);

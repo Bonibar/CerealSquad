@@ -151,7 +151,7 @@ namespace CerealSquad
             EStateEntity anim = EStateEntity.IDLE;
             var OldResourcePosition = _ressources.Position;
             s_position NewPosition = _pos;
-            
+
             double speedMove = _speed * deltaTime.AsSeconds();
 
             switch (_move)
@@ -180,12 +180,10 @@ namespace CerealSquad
             _ressources.PlayAnimation(anim);
             _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64, (float)NewPosition._trueY * 64);
 
-           // if (!world.IsCollidingWithWall(_ressources))
-           // {
+           if (!world.IsCollidingWithWall(_ressources))
                 _pos = NewPosition;
-           // }
-           // else
-           //     _ressources.Position = OldResourcePosition;
+            else
+                _ressources.Position = OldResourcePosition;
         }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);

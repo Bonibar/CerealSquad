@@ -17,7 +17,6 @@ namespace CerealSquad
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
-            _children.ToList<IEntity>().ForEach(i => check_death(i));
             _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
         }
 
