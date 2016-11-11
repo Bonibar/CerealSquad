@@ -16,7 +16,7 @@ namespace CerealSquad.TrapEntities
         private Timer Timer = new Timer(Time.FromSeconds(5));
         private Timer TimerDelete = new Timer(Time.FromSeconds(0.5f));
 
-        public Bomb(IEntity owner) : base(owner, e_DamageType.BOMB_DAMAGE, 1)
+        public Bomb(IEntity owner) : base(owner, e_DamageType.BOMB_DAMAGE, 5)
         {
             TrapType = e_TrapType.BOMB;
             Factories.TextureFactory.Instance.load("Bomb", "Assets/Trap/Bomb.png");

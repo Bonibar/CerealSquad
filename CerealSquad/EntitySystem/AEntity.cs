@@ -231,7 +231,7 @@ namespace CerealSquad
 
         private void setResourceEntityPosition()
         {
-            ressourcesEntity.Position = new SFML.System.Vector2f((float)Pos._trueX + ressourcesEntity.Size.X / 2.0f, (float)Pos._trueY + ressourcesEntity.Size.Y / 2.0f);
+            ressourcesEntity.Position = new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
         }
     }
 }
