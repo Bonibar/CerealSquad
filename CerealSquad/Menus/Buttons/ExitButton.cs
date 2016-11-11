@@ -9,7 +9,7 @@ namespace CerealSquad.Menus.Buttons
 {
     public class ExitButton : IButton
     {
-        private SFML.Window.Window _Win;
+        private Renderer _Renderer;
         t_pos _pos = new t_pos(300, 300);
         private bool selected;
         public bool Selected { get { return selected; } set { selected = value; selectionChanged(); } }
@@ -18,31 +18,31 @@ namespace CerealSquad.Menus.Buttons
         {
             if (Selected)
             {
-                Text = new SFML.Graphics.Text(">" + _Text, CerealSquad.Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 64);
-                Text.Color = SFML.Graphics.Color.Green;
-                Text.Style = SFML.Graphics.Text.Styles.Bold;
+                Text = new Text(">" + _Text, CerealSquad.Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 64);
+                Text.Color = Color.Green;
+                Text.Style = Text.Styles.Bold;
                 Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + _Offsety);
             }
             else
             {
-                Text = new SFML.Graphics.Text(" " + _Text, CerealSquad.Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 64);
-                Text.Color = SFML.Graphics.Color.White;
-                Text.Style = SFML.Graphics.Text.Styles.Bold;
+                Text = new Text(" " + _Text, CerealSquad.Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 64);
+                Text.Color = Color.White;
+                Text.Style = Text.Styles.Bold;
                 Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + _Offsety);
             }
         }
 
-        protected SFML.Graphics.Text Text;
+        protected Text Text;
         protected string _Text;
         protected int _Offsety;
 
         private ExitButton() { }
-        public ExitButton(string text, SFML.Graphics.Font font, int offsety, SFML.Window.Window win)
+        public ExitButton(string text, Font font, int offsety, Renderer renderer)
         {
-            _Win = win;
+            _Renderer = renderer;
             _Text = text;
-            Text = new SFML.Graphics.Text(" " + text, font, 64);
-            Text.Style = SFML.Graphics.Text.Styles.Bold;
+            Text = new Text(" " + text, font, 64);
+            Text.Style = Text.Styles.Bold;
             Text.Position = new SFML.System.Vector2f(_pos.X, _pos.Y + offsety);
             _Offsety = offsety;
         }
@@ -52,11 +52,11 @@ namespace CerealSquad.Menus.Buttons
             if (e.KeyCode == InputManager.Keyboard.Key.Return && up == true)
             {
                 selectionChanged();
-                _Win.Close();
+                _Renderer.Win.Close();
             }
             else if (e.KeyCode == InputManager.Keyboard.Key.Return && up == false)
             {
-                Text.Color = SFML.Graphics.Color.Red;
+                Text.Color = Color.Red;
             }
         }
         public void Trigger(object source, InputManager.Joystick.ButtonEventArgs e, bool up = true) { }

@@ -94,11 +94,14 @@
     <Compile Include="EntitySystem\Tchong.cs" />
     <Compile Include="EntitySystem\WorldEntity.cs" />
     <Compile Include="Factories\TrapFactory.cs" />
+    <Compile Include="EntitySystem\Crates.cs" />
     <Compile Include="GameWorld\ARoom.cs" />
     <Compile Include="GameWorld\Game.cs" />
     <Compile Include="GameWorld\AWorld.cs" />
+    <Compile Include="GameWorld\GameManager.cs" />
     <Compile Include="GameWorld\RoomParser.cs" />
     <Compile Include="GameWorld\WorldParser.cs" />
+    <Compile Include="Menus\CharacterSelectMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />

@@ -42,6 +42,11 @@ namespace CerealSquad.Menus
             if (Menus.Count > 0)
                 Menus[Menus.Count - 1].Show();
         }
+        public void Clear()
+        {
+            while (CurrentMenu != null)
+                RemoveMenu(CurrentMenu);
+        }
 
         /// <summary>
         /// Returns the current displayed menu or null

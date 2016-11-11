@@ -11,17 +11,19 @@ namespace CerealSquad.GameWorld
     class AWorld : Drawable
     {
         protected List<ARoom> Rooms = new List<ARoom>();
+        public WorldEntity WorldEntity { get; protected set; }
 
-        public AWorld(string path)
+        public AWorld(string path, WorldEntity worldentity)
         {
             if (path == null)
                 throw new ArgumentNullException("Path cannot be null");
 
             Dictionary<s_Pos<int>, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld("Maps/TestWorld.txt");
+            WorldEntity = worldentity;
 
             foreach (var room in rooms)
             {
-                AddRoom(new ARoom(new s_Pos<int>(room.Key.X, room.Key.Y), room.Value.RoomPath, (ARoom.e_RoomType)room.Value.Type));
+                AddRoom(new ARoom(new s_Pos<int>(room.Key.X, room.Key.Y), room.Value.RoomPath, WorldEntity, (ARoom.e_RoomType)room.Value.Type));
             }
         }
 
