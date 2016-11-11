@@ -76,6 +76,24 @@ namespace CerealSquad
             return GetCollidingEntityRecursive(this, Other);
         }
 
+        private List<AEntity> GetAllEntitiesRecursive(IEntity Owner)
+        {
+            List<AEntity> Tmp = new List<AEntity>();
+
+            Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                Tmp = Tmp.Concat(GetAllEntitiesRecursive(i)).ToList();
+            });
+
+           Tmp.Add((AEntity)Owner);
+
+            return Tmp;
+        }
+
+        public List<AEntity> GetAllEntities()
+        {
+            return GetAllEntitiesRecursive(this);
+        }
+
         private void deepDraw(IEntity owner, Renderer win)
         {
             owner.getChildren().ToList<IEntity>().ForEach(i => deepDraw(i, win));

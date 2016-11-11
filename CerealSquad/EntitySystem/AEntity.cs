@@ -41,6 +41,7 @@ namespace CerealSquad
             set
             {
                 _pos = value;
+                setResourceEntityPosition();
             }
         }
         
@@ -114,9 +115,18 @@ namespace CerealSquad
             _children.Add(child);
         }
 
-        public bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
         {
-            return false;
+            double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
+
+            if (Distance > Range)
+                return false;
+
+            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+                && !((ATrap)this).Triggered)
+                ((ATrap)this).Trigger();
+
+            return true;
         }
 
         public ICollection<IEntity> getChildren()
@@ -142,6 +152,13 @@ namespace CerealSquad
         public bool removeChild(IEntity child)
         {
             return (_children.Remove(child));
+        }
+
+        public bool IsColliding(AWorld world, EntityResources Res)
+        {
+            if (world.IsCollidingWithWall(Res))
+                return true;
+            return false;
         }
 
         // Use this function for moving the entity whitout his action(ex: knockback)
@@ -180,7 +197,7 @@ namespace CerealSquad
             _ressources.PlayAnimation(anim);
             _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64, (float)NewPosition._trueY * 64);
 
-           if (!world.IsCollidingWithWall(_ressources))
+           if (!IsColliding(world, ressourcesEntity))
                 _pos = NewPosition;
             else
                 _ressources.Position = OldResourcePosition;
@@ -200,6 +217,21 @@ namespace CerealSquad
         public void destroy()
         {
             _owner.removeChild(this);
+        }
+
+        public IEntity getRootEntity()
+        {
+            IEntity parent = this;
+
+            while (parent.getOwner() != null)
+                parent = parent.getOwner();
+
+            return parent;
+        }
+
+        private void setResourceEntityPosition()
+        {
+            ressourcesEntity.Position = new SFML.System.Vector2f((float)Pos._trueX + ressourcesEntity.Size.X / 2.0f, (float)Pos._trueY + ressourcesEntity.Size.Y / 2.0f);
         }
     }
 }

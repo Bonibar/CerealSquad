@@ -24,6 +24,11 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.CollisionBox = COLLISION_BOX;
         }
 
+        public override void Trigger()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void update(Time deltaTime, AWorld world)
         {
             ressourcesEntity.Update(deltaTime);

@@ -16,7 +16,6 @@ namespace CerealSquad.EntitySystem
         {
             NOTHING             = 0,
             START_SELECTING     = 1,
-            SELECTING           = 2,
             END_SELECTING       = 3,
             DELIVER             = 4
         }
@@ -73,10 +72,8 @@ namespace CerealSquad.EntitySystem
 
             if (TrapPressed && Step == EStep.NOTHING)
                 Step = EStep.START_SELECTING;
-            else if (!TrapPressed && EStep.START_SELECTING == Step)
-                Step = EStep.SELECTING;
 
-            if (Step == EStep.START_SELECTING || Step == EStep.SELECTING)
+            if (Step == EStep.START_SELECTING)
             {
                Target = (Input.Count > 0) ? Input.ElementAt(Input.Count - 1) : EMovement.None;
                 
@@ -94,16 +91,21 @@ namespace CerealSquad.EntitySystem
 
                 ResourcesEntity.Position = pos;
                 // CHECK 4 points
-                if (World.IsCollidingWithWall(ResourcesEntity)
-                    || World.WorldEntity.GetCollidingEntity(ResourcesEntity).Count > 0)
-                    IsTargetValid = false;
+                if (!Target.Equals(EMovement.None))
+                {
+                    if (World.IsCollidingWithWall(ResourcesEntity)
+                        || World.WorldEntity.GetCollidingEntity(ResourcesEntity).Count > 0)
+                        IsTargetValid = false;
+                    else
+                        IsTargetValid = true;
+                }
                 else
-                    IsTargetValid = true;
+                    IsTargetValid = false;
                 
                 ((AnimatedSprite)ResourcesEntity.sprite).SetColor((IsTargetValid) ? Color.Green : Color.Red);
             }
 
-            if (TrapPressed && Step == EStep.SELECTING)
+            if (!TrapPressed && Step == EStep.START_SELECTING)
             {
                 if (IsTargetValid)
                 {
@@ -117,7 +119,8 @@ namespace CerealSquad.EntitySystem
             {
                 Step = EStep.NOTHING;
                 // Restart timer to launch cooldown
-                Timer.Start();
+                if (IsTargetValid)
+                    Timer.Start();
             }
         }
 

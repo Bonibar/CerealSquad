@@ -13,7 +13,7 @@ namespace CerealSquad.TrapEntities
         public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(12, 12, 12, 12);
 
         public Time Cooldown { get { return Timer.Time; } set { Timer.Time = value; } }
-        private Timer Timer = new Timer(Time.FromSeconds(7));
+        private Timer Timer = new Timer(Time.FromSeconds(5));
         private Timer TimerDelete = new Timer(Time.FromSeconds(0.5f));
 
         public Bomb(IEntity owner) : base(owner, e_DamageType.BOMB_DAMAGE, 1)
@@ -35,10 +35,7 @@ namespace CerealSquad.TrapEntities
         public override void update(Time deltaTime, AWorld world)
         {
             if (Timer.IsTimerOver() && !TimerDelete.Started)
-            {
-                TimerDelete.Start();
-                ressourcesEntity.PlayAnimation(Graphics.EStateEntity.DYING);
-            } 
+                Trigger();
             else if (TimerDelete.Started && TimerDelete.IsTimerOver())
             {
                 // SHOULD BE GONE
@@ -49,5 +46,19 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.Update(deltaTime);
         }
 
+        public override void Trigger()
+        {
+            Triggered = true;
+            TimerDelete.Start();
+            ressourcesEntity.PlayAnimation(Graphics.EStateEntity.DYING);
+
+            List<AEntity> allEntities = ((WorldEntity)getRootEntity()).GetAllEntities();
+
+            allEntities.ForEach(i =>
+            {
+                if (!i.Equals(this))
+                    i.attemptDamage(this, getDamageType(), Range);
+            });
+        }
     }
 }
