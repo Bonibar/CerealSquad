@@ -33,6 +33,7 @@ namespace CerealSquad
             tasks.Add(ftpDownloader.RequireFile("CS_LockedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/select_test.png"), false));
             tasks.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/unselect_test.png"), false));
             tasks.Add(ftpDownloader.RequireFile("Crates", "Assets/GameplayElement/Crates.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Crates.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("S_CharacterSelect", "Assets/Music/CharacterSelection.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Music/Crates.png"), false));
 
             try
             {
