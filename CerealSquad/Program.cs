@@ -15,6 +15,14 @@ namespace CerealSquad
         /// 
         static void Main()
         {
+            // Debug Clock Watcher
+            Debug.Time.Instance.DebugMode(Debug.Type.Info, true);
+            Debug.Time.Instance.DebugMode(Debug.Type.Warning, true);
+            Debug.Time.Instance.DebugMode(Debug.Type.Critical, true);
+            Debug.Time.Instance.DebugMode(Debug.Type.Debug, true);
+
+            Debug.Time.Instance.StartTimer("Main", Debug.Type.Debug, false);
+
             // File requirement
             System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
             Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
@@ -75,6 +83,8 @@ namespace CerealSquad
                     renderer.Win.Close();
                 renderer.Display();
             }
+
+            Debug.Time.Instance.StopTimer("Main");
         }
         
         private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)

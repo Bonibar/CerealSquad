@@ -41,7 +41,6 @@ namespace CerealSquad
 
         public bool IsTimerOver()
         {
-            //System.Diagnostics.Debug.Write("TIMER DEBUG " + TimerClock.ElapsedTime.AsSeconds() + " Start->" + _Start + "\n");
             if (!_Start)
                 return true;
 

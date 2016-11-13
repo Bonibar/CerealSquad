@@ -48,7 +48,7 @@ namespace CerealSquad
             pos.Y = position._y * 64;
             _ressources.Position = pos;
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(11.0f, 0.0f), new Vector2f(11.0f, 27.0f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(12.0f, -20.0f), new Vector2f(12.0f, 27.0f));
         }
 
         public override void AttaqueSpe()
