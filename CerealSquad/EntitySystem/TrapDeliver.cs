@@ -64,10 +64,6 @@ namespace CerealSquad.EntitySystem
             if (Player.TrapInventory.Equals(e_TrapType.NONE))
                 return;
 
-            // Player can't put on map because of cooldown.
-            if (!Timer.IsTimerOver())
-                return;
-
             ResourcesEntity.CollisionBox = Factories.TrapFactory.GetCollisionBox(Player.TrapInventory);
 
             if (TrapPressed && Step == EStep.NOTHING)
@@ -75,8 +71,8 @@ namespace CerealSquad.EntitySystem
 
             if (Step == EStep.START_SELECTING)
             {
-               Target = (Input.Count > 0) ? Input.ElementAt(Input.Count - 1) : EMovement.None;
-                
+                Target = (Input.Count > 0) ? Input.ElementAt(Input.Count - 1) : EMovement.None;
+
                 Vector2f pos = new Vector2f();
                 if (Target.Equals(EMovement.Down))
                     pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y + Player.ressourcesEntity.sprite.Size.Y);
@@ -91,7 +87,7 @@ namespace CerealSquad.EntitySystem
 
                 ResourcesEntity.Position = pos;
                 // CHECK 4 points
-                if (!Target.Equals(EMovement.None))
+                if (!Target.Equals(EMovement.None) && Timer.IsTimerOver())
                 {
                     if (World.IsCollidingWithWall(ResourcesEntity)
                         || World.WorldEntity.GetCollidingEntity(ResourcesEntity).Count > 0)
@@ -101,7 +97,7 @@ namespace CerealSquad.EntitySystem
                 }
                 else
                     IsTargetValid = false;
-                
+
                 ((AnimatedSprite)ResourcesEntity.sprite).SetColor((IsTargetValid) ? Color.Green : Color.Red);
             }
 
