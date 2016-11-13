@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debug.cs" />
     <Compile Include="Downloaders\FTPDownloader.cs" />
     <Compile Include="Downloaders\IDownloader.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />
