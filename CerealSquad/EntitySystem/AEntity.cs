@@ -71,6 +71,8 @@ namespace CerealSquad
             }
         }
 
+        public List<EntityResources> SecondaryResourcesEntities { get; set; }
+
         public s_size Size
         {
             get
@@ -108,6 +110,7 @@ namespace CerealSquad
             _speed = 0;
             _die = false;
             _move = EMovement.None;
+            SecondaryResourcesEntities = new List<EntityResources>();
         }
 
         public void addChild(IEntity child)
@@ -118,6 +121,8 @@ namespace CerealSquad
         public bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
         {
             double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
+            if (ressourcesEntity != null)
+                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
 
             if (Distance > Range)
                 return false;
@@ -127,6 +132,11 @@ namespace CerealSquad
                 ((ATrap)this).Trigger();
 
             return true;
+        }
+
+        public bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        {
+            return false;
         }
 
         public ICollection<IEntity> getChildren()

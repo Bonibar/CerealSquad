@@ -102,6 +102,8 @@ namespace CerealSquad
             if (owner.getEntityType() == e_EntityType.Player)
                 win.Draw(((APlayer)owner).TrapDeliver);
 
+            owner.SecondaryResourcesEntities.OrderBy(v => v.sprite.Level);
+            owner.SecondaryResourcesEntities.ForEach(i => win.Draw(i));
             win.Draw(owner.ressourcesEntity);
         }
 

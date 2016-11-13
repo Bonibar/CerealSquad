@@ -13,7 +13,7 @@ namespace CerealSquad.Graphics
         public ASprite sprite;
         public Sounds.JukeBox JukeBox { get; set; }
 
-        public Vector2u Size { get { return sprite.Size; } }
+        public Vector2f Size { get { return sprite.Size; } set { sprite.Size = value; } }
 
         #region Collision
         private bool _CollisionBoxDefault = true;

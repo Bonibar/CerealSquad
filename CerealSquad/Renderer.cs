@@ -157,7 +157,8 @@ namespace CerealSquad
         /// </summary>
         public void Initialization()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close));
+            ContextSettings c = new ContextSettings(0, 0, 10);
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close), c);
             Win.SetView(currentView);
             Win.SetKeyRepeatEnabled(_keyRepeated);
             Win.SetMouseCursorVisible(_mouseCursorVisible);
@@ -168,7 +169,8 @@ namespace CerealSquad
 
         public void ResetWindow()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close));
+            ContextSettings c = new ContextSettings(0, 0, 10);
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close), c);
             Win.SetView(currentView);
             Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
             Win.SetKeyRepeatEnabled(_keyRepeated);
