@@ -1,4 +1,5 @@
 ﻿using CerealSquad.GameWorld;
+using CerealSquad.Graphics;
 using SFML.Graphics;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,6 @@ namespace CerealSquad
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
-            _children.ToList<IEntity>().ForEach(i => check_death(i));
             _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
         }
 
@@ -36,6 +36,64 @@ namespace CerealSquad
             }
         }
 
+        private List<AEntity> GetCollidingEntityRecursive(IEntity Owner, CircleShape Circle)
+        {
+            List<AEntity> Tmp = new List<AEntity>();
+
+            Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                Tmp = Tmp.Concat(GetCollidingEntityRecursive(i, Circle)).ToList();
+            });
+
+            if (Owner.getEntityType() != e_EntityType.World)
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Circle))
+                    Tmp.Add((AEntity)Owner);
+
+            return Tmp;
+        }
+
+        public List<AEntity> GetCollidingEntity(CircleShape Circle)
+        {
+            return GetCollidingEntityRecursive(this, Circle);
+        }
+
+        private List<AEntity> GetCollidingEntityRecursive(IEntity Owner, EntityResources Other)
+        {
+            List<AEntity> Tmp = new List<AEntity>();
+
+            Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                Tmp = Tmp.Concat(GetCollidingEntityRecursive(i, Other)).ToList();
+            });
+
+            if (Owner.getEntityType() != e_EntityType.World)
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Other))
+                    Tmp.Add((AEntity)Owner);
+
+            return Tmp;
+        }
+
+        public List<AEntity> GetCollidingEntity(EntityResources Other)
+        {
+            return GetCollidingEntityRecursive(this, Other);
+        }
+
+        private List<AEntity> GetAllEntitiesRecursive(IEntity Owner)
+        {
+            List<AEntity> Tmp = new List<AEntity>();
+
+            Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                Tmp = Tmp.Concat(GetAllEntitiesRecursive(i)).ToList();
+            });
+
+           Tmp.Add((AEntity)Owner);
+
+            return Tmp;
+        }
+
+        public List<AEntity> GetAllEntities()
+        {
+            return GetAllEntitiesRecursive(this);
+        }
+
         private void deepDraw(IEntity owner, Renderer win)
         {
             owner.getChildren().ToList<IEntity>().ForEach(i => deepDraw(i, win));
@@ -44,6 +102,8 @@ namespace CerealSquad
             if (owner.getEntityType() == e_EntityType.Player)
                 win.Draw(((APlayer)owner).TrapDeliver);
 
+            owner.SecondaryResourcesEntities.OrderBy(v => v.sprite.Level);
+            owner.SecondaryResourcesEntities.ForEach(i => win.Draw(i));
             win.Draw(owner.ressourcesEntity);
         }
 

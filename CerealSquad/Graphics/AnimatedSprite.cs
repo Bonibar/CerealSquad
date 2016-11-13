@@ -19,13 +19,13 @@ namespace CerealSquad.Graphics
 
         public AnimatedSprite(Vector2u _Size)
         {
-            Size = _Size;
+            Size = new Vector2f(_Size.X, _Size.Y);
             initialization();
         }
 
         public AnimatedSprite(uint Width, uint Height)
         {
-            Size = new Vector2u(Width, Height);
+            Size = new Vector2f(Width, Height);
             initialization();
         }
 
@@ -71,7 +71,8 @@ namespace CerealSquad.Graphics
             anim.Texture = Factories.TextureFactory.Instance.getTexture(textureAnimation);
             if (time != -1)
                 anim.Time = Time.FromMilliseconds(time);
-            texturePalette.ForEach((uint i) => {
+            texturePalette.ForEach((uint i) =>
+            {
                 KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
                 anim.addFrame(Size.X, Size.Y, palette.Key);
             });
@@ -115,8 +116,16 @@ namespace CerealSquad.Graphics
         /// <param name="states">RenderStates</param>
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            states.Transform *= Transform;
-            animator.Draw(target, states);
+            if (Displayed)
+            {
+                states.Transform *= Transform;
+                animator.Draw(target, states);
+            }
+        }
+
+        protected override void UpdateSize()
+        {
+            animator.Size = new Vector2f(Size.X, Size.Y);
         }
     }
 }

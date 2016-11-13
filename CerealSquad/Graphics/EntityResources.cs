@@ -13,15 +13,18 @@ namespace CerealSquad.Graphics
         public ASprite sprite;
         public Sounds.JukeBox JukeBox { get; set; }
 
+        public Vector2f Size { get { return sprite.Size; } set { sprite.Size = value; } }
+
         #region Collision
+        private bool _CollisionBoxDefault = true;
         private FloatRect _CollisionBox;
-        public FloatRect CollisionBox { get { return geCollisionBox(); } set { _CollisionBox = value; } }
+        public FloatRect CollisionBox { get { return geCollisionBox(); } set { _CollisionBox = value; _CollisionBoxDefault = false; } }
         #endregion
 
         #region Hitbox
-        private Vector2f _SizeHitBox;
-        public Vector2f SizeHitBox { get { return getSizeHitBox(); } set { _SizeHitBox = value; } }
-        public FloatRect HitBox { get { return getHitBox(); } }
+        private bool _HitBoxDefault = true;
+        private FloatRect _HitBox;
+        public FloatRect HitBox { get { return getHitBox(); } set { _HitBox = value; _HitBoxDefault = false; } }
         #endregion
 
         public bool Loop {
@@ -38,23 +41,57 @@ namespace CerealSquad.Graphics
 
         private FloatRect geCollisionBox()
         {
-            if (_CollisionBox != null)
+            if (!_CollisionBoxDefault)
                 return _CollisionBox;
-            return new FloatRect(new Vector2f(sprite.Position.X - ((float)sprite.Size.X / 2.0f), sprite.Position.Y - ((float)sprite.Size.Y / 2.0f)),
-                new Vector2f(sprite.Position.X + ((float)sprite.Size.X / 2.0f), sprite.Position.Y + ((float)sprite.Size.Y / 2.0f)));
+            return new FloatRect(new Vector2f(Position.X - ((float)sprite.Size.X / 2.0f), Position.Y - ((float)sprite.Size.Y / 2.0f)),
+                new Vector2f(Position.X + ((float)sprite.Size.X / 2.0f), Position.Y + ((float)sprite.Size.Y / 2.0f)));
         }
 
         private FloatRect getHitBox()
         {
-            return new FloatRect(new Vector2f(sprite.Position.X - ((float)sprite.Size.X / 2.0f), sprite.Position.Y - (float)sprite.Size.Y),
-                new Vector2f(sprite.Position.X + ((float)sprite.Size.X / 2.0f), sprite.Position.Y));
+            if (_HitBoxDefault)
+                return new FloatRect(new Vector2f(Position.X - CollisionBox.Left, Position.Y - CollisionBox.Top),
+                    new Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top + CollisionBox.Height));
+            return _HitBox;
         }
 
-        private Vector2f getSizeHitBox()
+        /// <summary>
+        /// Check collision with CircleShape
+        /// </summary>
+        /// <param name="Circle"></param>
+        /// <returns></returns>
+        public bool IsTouchingHitBox(CircleShape Circle)
         {
-            if (_SizeHitBox != null)
-                return _SizeHitBox;
-            return new Vector2f((float)sprite.Size.X, (float)sprite.Size.Y);
+            FloatRect CenteredRect = new FloatRect(
+                new Vector2f(HitBox.Left + HitBox.Width / 2.0f, HitBox.Top + HitBox.Height / 2.0f),
+                new Vector2f(HitBox.Width / 2.0f, HitBox.Top / 2.0f)
+                );
+            double circleDistanceX = Math.Abs(Circle.Position.X - CenteredRect.Left);
+            double circleDistanceY = Math.Abs(Circle.Position.Y - CenteredRect.Top);
+
+            if (circleDistanceX > (CenteredRect.Width / 2.0f + Circle.Radius))
+                return false;
+            if (circleDistanceY > (CenteredRect.Height / 2.0f + Circle.Radius))
+                return false;
+
+            if (circleDistanceX <= (CenteredRect.Width / 2.0f))
+                return true;
+            if (circleDistanceY <= (CenteredRect.Height / 2.0f))
+                return true;
+
+            double cornerDistance_sq = Math.Pow((circleDistanceX - CenteredRect.Width / 2.0f), 2.0f) + Math.Pow((circleDistanceY - CenteredRect.Height / 2.0f), 2.0f);
+
+            return (cornerDistance_sq <= Math.Pow((Circle.Radius), 2.0f));
+        }
+
+        /// <summary>
+        /// Check collision with other EntityResources hitBox
+        /// </summary>
+        /// <param name="Other"></param>
+        /// <returns></returns>
+        public bool IsTouchingHitBox(EntityResources Other)
+        {
+            return HitBox.Intersects(Other.HitBox);
         }
 
         /// <summary>

@@ -41,6 +41,7 @@ namespace CerealSquad
             set
             {
                 _pos = value;
+                setResourceEntityPosition();
             }
         }
         
@@ -69,6 +70,8 @@ namespace CerealSquad
                 _ressources = value;
             }
         }
+
+        public List<EntityResources> SecondaryResourcesEntities { get; set; }
 
         public s_size Size
         {
@@ -107,6 +110,7 @@ namespace CerealSquad
             _speed = 0;
             _die = false;
             _move = EMovement.None;
+            SecondaryResourcesEntities = new List<EntityResources>();
         }
 
         public void addChild(IEntity child)
@@ -114,7 +118,23 @@ namespace CerealSquad
             _children.Add(child);
         }
 
-        public bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        {
+            double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
+            if (ressourcesEntity != null)
+                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+
+            if (Distance > Range)
+                return false;
+
+            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+                && !((ATrap)this).Triggered)
+                ((ATrap)this).Trigger();
+
+            return true;
+        }
+
+        public bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
         {
             return false;
         }
@@ -144,6 +164,13 @@ namespace CerealSquad
             return (_children.Remove(child));
         }
 
+        public bool IsColliding(AWorld world, EntityResources Res)
+        {
+            if (world.IsCollidingWithWall(Res))
+                return true;
+            return false;
+        }
+
         // Use this function for moving the entity whitout his action(ex: knockback)
         // Move the entity relative to his actual position
         public virtual void move(AWorld world, SFML.System.Time deltaTime)
@@ -152,34 +179,24 @@ namespace CerealSquad
             var OldResourcePosition = _ressources.Position;
             s_position NewPosition = _pos;
 
-            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f();
-            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f();
             double speedMove = _speed * deltaTime.AsSeconds();
 
             switch (_move)
             {
                 case EMovement.Up:
                     NewPosition += new s_position(0, -speedMove, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
                     anim = EStateEntity.WALKING_UP;
                     break;
                 case EMovement.Down:
                     NewPosition += new s_position(0, +speedMove, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_DOWN;
                     break;
                 case EMovement.Right:
                     NewPosition += new s_position(speedMove, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_RIGHT;
                     break;
                 case EMovement.Left:
                     NewPosition += new s_position(-speedMove, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
                     anim = EStateEntity.WALKING_LEFT;
                     break;
                 case EMovement.None:
@@ -188,15 +205,9 @@ namespace CerealSquad
             }
 
             _ressources.PlayAnimation(anim);
-            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64.0f, (float)NewPosition._trueY * 64.0f);
-            CollisionPointOne += _ressources.Position;
-            CollisionPointTwo += _ressources.Position;
+            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64, (float)NewPosition._trueY * 64);
 
-            CollisionPointOne /= 64.0f;
-            CollisionPointTwo /= 64.0f;
-
-            if (world.getPosition((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)) == RoomParser.e_CellType.Normal
-                && world.getPosition((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)) == RoomParser.e_CellType.Normal)
+           if (!IsColliding(world, ressourcesEntity))
                 _pos = NewPosition;
             else
                 _ressources.Position = OldResourcePosition;
@@ -216,6 +227,21 @@ namespace CerealSquad
         public void destroy()
         {
             _owner.removeChild(this);
+        }
+
+        public IEntity getRootEntity()
+        {
+            IEntity parent = this;
+
+            while (parent.getOwner() != null)
+                parent = parent.getOwner();
+
+            return parent;
+        }
+
+        private void setResourceEntityPosition()
+        {
+            ressourcesEntity.Position = new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
         }
     }
 }
