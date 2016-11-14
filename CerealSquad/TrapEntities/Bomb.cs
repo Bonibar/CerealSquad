@@ -15,8 +15,8 @@ namespace CerealSquad.TrapEntities
         public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(12, 12, 12, 12);
 
         public Time Cooldown { get { return Timer.Time; } set { Timer.Time = value; } }
-        private Timer Timer = new Timer(Time.FromSeconds(5));
-        private Timer TimerDelete = new Timer(Time.FromSeconds(1.0f));
+        private Timer Timer = new Timer(Time.FromSeconds(10));
+        private Timer TimerDelete = new Timer(Time.FromSeconds(0.2f));
         private Timer TimerTrigger = new Timer(Time.FromSeconds(0.2f));
 
         private uint state = 0;
@@ -32,8 +32,8 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
             
             ((AnimatedSprite)ressourcesEntity.sprite).addAnimation(Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            //((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
-            ((AnimatedSprite)ressourcesEntity.sprite).addAnimation(Graphics.EStateEntity.DYING, "MegaExpl", new List<uint> { 0 }, new Vector2u(128, 128));
+            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
+            //((AnimatedSprite)ressourcesEntity.sprite).addAnimation(Graphics.EStateEntity.DYING, "MegaExpl", new List<uint> { 0 }, new Vector2u(128, 128));
            
             EntityResources secondary = new EntityResources();
             secondary.sprite = new EllipseShapeSprite(new Vector2f(Range * 64.0f, Range / 2.0f * 64.0f), new Color(219, 176, 10, 100), new Color(219, 130, 10, 255));
@@ -65,7 +65,7 @@ namespace CerealSquad.TrapEntities
                     else
                     {
                         float speed = 500f * deltaTime.AsSeconds();
-                        if (ressourcesEntity.Size.X + speed < 64.0f * Range * 1.5f)
+                        if (ressourcesEntity.Size.X + speed < 64.0f * Range)
                             ressourcesEntity.Size = new Vector2f(ressourcesEntity.Size.X + speed, ressourcesEntity.Size.Y + speed);
                     }
                 }
@@ -78,7 +78,7 @@ namespace CerealSquad.TrapEntities
         {
             TimerDelete.Start();
             ressourcesEntity.PlayAnimation(Graphics.EStateEntity.DYING);
-            ((AnimatedSprite)ressourcesEntity.sprite).SetColor(new Color(255, 255, 255, 150));
+            ((AnimatedSprite)ressourcesEntity.sprite).SetColor(new Color(255, 255, 255, 200));
 
             SecondaryResourcesEntities.ForEach(i =>
             {
