@@ -20,8 +20,6 @@ namespace CerealSquad.Downloaders
 
         System.Timers.Timer timer = new System.Timers.Timer(100);
 
-        public LoadingScreen screen;
-
         public TaskAwaiter()
         {
             Status = TaskStatus.Empty;
@@ -39,8 +37,15 @@ namespace CerealSquad.Downloaders
             }
             if (_Tasks.Where(x => x.IsFaulted).Count() > 0)
                 Status = TaskStatus.Faulted;
-            if (Status == TaskStatus.Running && screen != null)
-                screen.state = 9 - (int)((float)Finished / (float)Total * 9.0);
+        }
+
+        public void Reset()
+        {
+            Status = TaskStatus.Empty;
+            _Tasks.Clear();
+            Finished = 0;
+            if (timer.Enabled)
+                timer.Stop();
         }
 
         public void Add(Task task)

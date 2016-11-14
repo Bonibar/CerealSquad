@@ -12,6 +12,10 @@ namespace CerealSquad.Downloaders
         private static readonly string FTP_USERNAME = "2233064_ClientGame";
         private static readonly string FTP_PASSWORD = "CerealSquadClient1:";
 
+        public static readonly string FTP_PATH_BACKUP = "ftp://ftp.byethost17.com/htdocs/GameClient/";
+        private static readonly string FTP_USERNAME_BACKUP = "b17_19158990";
+        private static readonly string FTP_PASSWORD_BACKUP = "CerealSquad5!";
+
         private Dictionary<string, string> _Files = new Dictionary<string, string>();
 
         public bool FileExist(string name)
@@ -38,7 +42,7 @@ namespace CerealSquad.Downloaders
                 System.Net.FtpWebRequest ftpRequest = (System.Net.FtpWebRequest)System.Net.FtpWebRequest.Create(distantPath);
                 ftpRequest.Method = System.Net.WebRequestMethods.Ftp.DownloadFile;
                 
-                ftpRequest.Credentials = new System.Net.NetworkCredential(FTP_USERNAME, FTP_PASSWORD);
+                ftpRequest.Credentials = new System.Net.NetworkCredential(FTP_USERNAME_BACKUP, FTP_PASSWORD_BACKUP);
 
                 System.Net.FtpWebResponse response = (System.Net.FtpWebResponse) await ftpRequest.GetResponseAsync();
 

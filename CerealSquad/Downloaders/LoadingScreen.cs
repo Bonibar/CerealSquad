@@ -11,7 +11,7 @@ namespace CerealSquad.Downloaders
     {
         private Renderer _Renderer;
 
-        private Graphics.ASprite[] _background;
+        private Graphics.AnimatedSprite _background;
 
         private LoadingScreen() { }
         public LoadingScreen(Renderer renderer)
@@ -21,30 +21,28 @@ namespace CerealSquad.Downloaders
 
             _Renderer = renderer;
 
-            Factories.TextureFactory.Instance.initTextures();
             Factories.TextureFactory.Instance.load("LS_background", "Assets/Loading/loading.png");
 
             int x = (int)renderer.Win.GetView().Size.X;
             int y = (int)renderer.Win.GetView().Size.Y;
 
-            _background = new Graphics.ASprite[10];
+            _background = new Graphics.AnimatedSprite((uint)x, (uint)y);
 
-            uint i = 0;
-            while (i < 10)
-            {
-                _background[i] = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("LS_background"), new SFML.System.Vector2i(x, y), new IntRect(192 * (int)i, 0, 192, 108));
-                i++;
-            }
+            _background.addAnimation(Graphics.EStateEntity.IDLE, "LS_background", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0 }, new SFML.System.Vector2u(192, 136));
+            _background.Loop = true;
 
-            
-            //_background.Origin = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2, renderer.Win.GetView().Size.Y / 2);
+
+            _background.Position = new SFML.System.Vector2f(x / 2, y / 2);
         }
 
-        public int state = 9;
+        public void update(SFML.System.Time deltaTime)
+        {
+            _background.Update(deltaTime);
+        }
 
         public void Draw(RenderTarget target, RenderStates states)
         {
-            target.Draw(_background[state]);
+            target.Draw(_background);
         }
     }
 }
