@@ -34,7 +34,7 @@ namespace CerealSquad
             }
         }
 
-        public JackEnnemy(IEntity owner, s_position position) : base(owner, position)
+        public JackEnnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 0.1;
             _scentMap = new JackEnnemyScentMap(100, 100);
@@ -53,10 +53,12 @@ namespace CerealSquad
         //
         public override void think()
         {
-            int left = _scentMap.getScent(_pos._x - 1, _pos._y);
-            int right = _scentMap.getScent(_pos._x + 1, _pos._y);
-            int top = _scentMap.getScent(_pos._x, _pos._y - 1);
-            int bottom = _scentMap.getScent(_pos._x, _pos._y + 1);
+            s_position pos = getCoord(_pos);
+
+            int left = _scentMap.getScent(pos._x - 1, pos._y);
+            int right = _scentMap.getScent(pos._x + 1, pos._y);
+            int top = _scentMap.getScent(pos._x, pos._y - 1);
+            int bottom = _scentMap.getScent(pos._x, pos._y + 1);
             int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
 
             if (maxscent == 0)
@@ -73,7 +75,7 @@ namespace CerealSquad
 
         public override void update(Time deltaTime, AWorld world)
         {
-            _scentMap.update((WorldEntity)_owner);
+            _scentMap.update((WorldEntity)_owner, _room);
             think();
             _ressources.Update(deltaTime);
             move(world, deltaTime);

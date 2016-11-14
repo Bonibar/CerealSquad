@@ -14,10 +14,10 @@ namespace CerealSquad
     {
         protected static scentMap _scentMap;
 
-        public Ennemy(IEntity owner, s_position position) : base(owner, position)
+        public Ennemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 0.1;
-            _scentMap = new scentMap(100, 100);
+            _scentMap = new scentMap(_room.Size.Height, _room.Size.Width);
             _ressources = new EntityResources();
             Factories.TextureFactory.Instance.load("basicEnnemy", "Assets/Character/basicEnnemy.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
@@ -32,10 +32,12 @@ namespace CerealSquad
         //
         public override void think()
         {
-            int left = _scentMap.getScent(_pos._x - 1, _pos._y);
-            int right = _scentMap.getScent(_pos._x + 1, _pos._y);
-            int top = _scentMap.getScent(_pos._x, _pos._y - 1);
-            int bottom = _scentMap.getScent(_pos._x, _pos._y + 1);
+            s_position pos = getCoord(_pos);
+
+            int left = _scentMap.getScent(pos._x - 1, pos._y);
+            int right = _scentMap.getScent(pos._x + 1, pos._y);
+            int top = _scentMap.getScent(pos._x, pos._y - 1);
+            int bottom = _scentMap.getScent(pos._x, pos._y + 1);
             int maxScent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
 
             if (maxScent == 0)
@@ -69,15 +71,16 @@ namespace CerealSquad
         private void check_egality(int left, int right, int top, int bottom, int maxScent)
         {
             int maxCharacterScent = 0;
+            s_position pos = getCoord(_pos);
 
             if (left == maxScent)
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    if (_scentMap.Map[_pos._x - 1][_pos._y][i] > maxCharacterScent)
+                    if (_scentMap.Map[pos._x - 1][pos._y][i] > maxCharacterScent)
                     {
                         _move = EMovement.Left;
-                        maxCharacterScent = _scentMap.Map[_pos._x - 1][_pos._y][i];
+                        maxCharacterScent = _scentMap.Map[pos._x - 1][pos._y][i];
                     }
                 }
             }
@@ -86,10 +89,10 @@ namespace CerealSquad
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    if (_scentMap.Map[_pos._x + 1][_pos._y][i] > maxCharacterScent)
+                    if (_scentMap.Map[pos._x + 1][pos._y][i] > maxCharacterScent)
                     {
                         _move = EMovement.Right;
-                        maxCharacterScent = _scentMap.Map[_pos._x + 1][_pos._y][i];
+                        maxCharacterScent = _scentMap.Map[pos._x + 1][pos._y][i];
                     }
                 }
             }
@@ -98,10 +101,10 @@ namespace CerealSquad
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    if (_scentMap.Map[_pos._x][_pos._y - 1][i] > maxCharacterScent)
+                    if (_scentMap.Map[pos._x][pos._y - 1][i] > maxCharacterScent)
                     {
                         _move = EMovement.Up;
-                        maxCharacterScent = _scentMap.Map[_pos._x][_pos._y - 1][i];
+                        maxCharacterScent = _scentMap.Map[pos._x][pos._y - 1][i];
                     }
                 }
             }
@@ -110,10 +113,10 @@ namespace CerealSquad
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    if (_scentMap.Map[_pos._x][_pos._y + 1][i] > maxCharacterScent)
+                    if (_scentMap.Map[pos._x][pos._y + 1][i] > maxCharacterScent)
                     {
                         _move = EMovement.Down;
-                        maxCharacterScent = _scentMap.Map[_pos._x][_pos._y + 1][i];
+                        maxCharacterScent = _scentMap.Map[pos._x][pos._y + 1][i];
                     }
                 }
             }
@@ -121,7 +124,7 @@ namespace CerealSquad
 
         public override void update(Time deltaTime, AWorld world)
         {
-            _scentMap.update((WorldEntity)_owner);
+            _scentMap.update((WorldEntity)_owner, _room);
             think();
             _ressources.Update(deltaTime);
             move(world, deltaTime);

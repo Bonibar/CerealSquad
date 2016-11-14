@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CerealSquad.GameWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +10,13 @@ namespace CerealSquad
 {
     abstract class AEnemy : AEntity
     {
+        protected ARoom _room;
 
-        public AEnemy(IEntity owner, s_position position) : base(owner)
+        public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Ennemy;
+            _room = room;
         }
 
         public virtual void attack()
@@ -22,6 +25,17 @@ namespace CerealSquad
         }
 
         public abstract void think();
+
+        public s_position getCoord(s_position pos)
+        {
+            double x = pos._x;
+            double y = pos._y;
+
+            x -= _room.Position.X;
+            y -= _room.Position.Y;
+            return (new s_position(x, y));
+        }
+
 
         protected class scentMap
         {
@@ -48,19 +62,22 @@ namespace CerealSquad
                 _y = y;
             }
 
-            protected void reset()
+            protected void reset(ARoom room)
             {
                 _map = new int[_x][][];
-                for (int i = 0; i < _x; i++)
+                for (uint i = 0; i < _x; i++)
                 {
                     _map[i] = new int[_y][];
-                    for (int j = 0; j < _y; j++)
+                    for (uint j = 0; j < _y; j++)
                     {
                         _map[i][j] = new int[4];
-                        _map[i][j][0] = 0;
-                        _map[i][j][1] = 0;
-                        _map[i][j][2] = 0;
-                        _map[i][j][3] = 0;
+                        if (room.getPosition(i, j) == RoomParser.e_CellType.Normal)
+                        {
+                            _map[i][j][0] = 0;
+                            _map[i][j][1] = 0;
+                            _map[i][j][2] = 0;
+                            _map[i][j][3] = 0;
+                        }
                     }
                 }
             }
@@ -80,9 +97,9 @@ namespace CerealSquad
                 }
             }
 
-            public void update(WorldEntity world)
+            public void update(WorldEntity world, ARoom room)
             {
-                reset();
+                reset(room);
                 foreach (IEntity entity in world.getChildren())
                 {
                     if (entity.getEntityType() == e_EntityType.Player)
