@@ -53,7 +53,7 @@ namespace CerealSquad
 
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R1280x720;
+            renderer.Resolution = Renderer.EResolution.R1920x1080;
             renderer.FrameRate = 60;
 
             Factories.TextureFactory.Instance.initTextures();
