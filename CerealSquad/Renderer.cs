@@ -278,6 +278,14 @@ namespace CerealSquad
             Win.SetView(currentView);
         }
 
+        public void Zoom(float zoom)
+        {
+            if (Win == null)
+                return;
+            currentView.Zoom(zoom);
+            Win.SetView(currentView);
+        }
+
         /// <summary>
         /// Change the current resolution of renderer.
         /// </summary>
