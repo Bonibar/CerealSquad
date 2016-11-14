@@ -28,7 +28,8 @@ namespace CerealSquad
         PlayerTrap,
         Ennemy,
         EnnemyTrap,
-        World
+        World,
+        Crate
     }
 
     public struct s_position
