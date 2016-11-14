@@ -13,9 +13,9 @@ namespace CerealSquad.Graphics
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
 
-
         public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
         public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
+        public bool Pause { get { return (animator.m_isPaused); } set { animator.m_isPaused = value; } }
 
         public AnimatedSprite(Vector2u _Size)
         {
@@ -106,7 +106,7 @@ namespace CerealSquad.Graphics
         /// <param name="DeltaTime">Time</param>
         public void Update(Time DeltaTime)
         {
-            animator.update(DeltaTime);
+            animator.Update(DeltaTime);
         }
 
         /// <summary>
