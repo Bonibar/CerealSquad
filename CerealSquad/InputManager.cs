@@ -182,11 +182,11 @@ namespace CerealSquad.InputManager
             /// <summary>
             /// Index of the joystick
             /// </summary>
-            uint JoystickId { get; }
+            public uint JoystickId { get; }
             /// <summary>
             /// Index of the button
             /// </summary>
-            uint Button { get; }
+            public uint Button { get; }
 
             public ButtonEventArgs(SFML.Window.JoystickButtonEventArgs e)
             {
@@ -204,12 +204,12 @@ namespace CerealSquad.InputManager
             /// <summary>
             /// Index of the joystick
             /// </summary>
-            uint JoystickId { get; }
+            public uint JoystickId { get; }
             /// <summary>
             /// Current position of the axis, in range [-100 .. 100]
             /// </summary>
-            float Position { get; }
-            Axis Axis { get; }
+            public float Position { get; }
+            public Axis Axis { get; }
 
             public MoveEventArgs(SFML.Window.JoystickMoveEventArgs e)
             {
@@ -229,7 +229,7 @@ namespace CerealSquad.InputManager
             /// <summary>
             /// Index of the joystick
             /// </summary>
-            uint JoystickId { get; }
+            public uint JoystickId { get; }
 
             public ConnectionEventArgs(SFML.Window.JoystickConnectEventArgs e)
             {

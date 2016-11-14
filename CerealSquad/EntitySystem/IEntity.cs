@@ -101,6 +101,11 @@ namespace CerealSquad
             get;
             set;
         }
+        List<EntityResources> SecondaryResourcesEntities
+        {
+            get;
+            set;
+        }
         bool Die
         {
             get;
@@ -108,12 +113,15 @@ namespace CerealSquad
         }
 
         void update(SFML.System.Time deltaTime, AWorld world);
-        bool attemptDamage(IEntity Sender, e_DamageType damage);
+        bool attemptDamage(IEntity Sender, e_DamageType damage, float Range);
+        bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY);
+
         IEntity getOwner();
         ICollection<IEntity> getChildren();
         void addChild(IEntity child);
         bool removeChild(IEntity child);
         e_DamageType getDamageType();
         e_EntityType getEntityType();
+        IEntity getRootEntity();
     }
 }

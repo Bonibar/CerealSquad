@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SFML.Graphics;
 using CerealSquad.Graphics;
 using CerealSquad.Global;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad.GameWorld
 {
@@ -37,11 +38,14 @@ namespace CerealSquad.GameWorld
         private RenderTexture _RenderTexture = null;
         private Dictionary<s_Pos<uint>, RoomParser.t_cellcontent> Cells = null;
         private EnvironmentResources er = new Graphics.EnvironmentResources();
+        private List<s_Pos<int>> SpawnList = new List<s_Pos<int>>();
+        public WorldEntity WorldEntity { get; protected set; }
 
-        public ARoom(s_Pos<int> Pos, string MapFile, e_RoomType Type = 0)
+        public ARoom(s_Pos<int> Pos, string MapFile, WorldEntity worldentity, e_RoomType Type = 0)
         {
             RoomType = Type;
             Position = Pos;
+            WorldEntity = worldentity;
             Cells = RoomParser.ParseRoom(MapFile);
             Size = new s_MapSize(Cells.Keys.OrderBy(x => x.X).Last().X + 1, Cells.Keys.OrderBy(x => x.Y).Last().Y + 1);
             _RenderTexture = new RenderTexture(Size.Width * TILE_SIZE, Size.Height * TILE_SIZE);
@@ -49,6 +53,14 @@ namespace CerealSquad.GameWorld
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
+
+            for (int i = 0; i < 5; i++)
+            {
+                s_Pos<int> SpawnPos = new s_Pos<int>(i + 1, i + 1);
+                SpawnList.Add(SpawnPos);
+            }
+
+            new Crates(WorldEntity, SpawnList.ElementAt(4), 0);
         }
 
         private void parseRoom()

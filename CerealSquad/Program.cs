@@ -15,6 +15,14 @@ namespace CerealSquad
         /// 
         static void Main()
         {
+            // Debug Clock Watcher
+            Debug.Time.Instance.DebugMode(Debug.Type.Info, true);
+            Debug.Time.Instance.DebugMode(Debug.Type.Warning, true);
+            Debug.Time.Instance.DebugMode(Debug.Type.Critical, true);
+            Debug.Time.Instance.DebugMode(Debug.Type.Debug, true);
+
+            Debug.Time.Instance.StartTimer("Main", Debug.Type.Debug, false);
+
             // File requirement
             System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
             Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
@@ -30,6 +38,9 @@ namespace CerealSquad
             tasks.Add(ftpDownloader.RequireFile("BombExploding", "Assets/Trap/BombExploading.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/BombExploading.png"), false));
             tasks.Add(ftpDownloader.RequireFile("BearTrap", "Assets/Trap/Beartrap.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Beartrap.png"), false));
             tasks.Add(ftpDownloader.RequireFile("Cursor", "Assets/Effects/Cursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Effects/Cursor.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("CS_UnselectedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/select_test.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/unselect_test.png"), false));
+            tasks.Add(ftpDownloader.RequireFile("Crates", "Assets/GameplayElement/Crates.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Crates.png"), false));
 
             try
             {
@@ -42,7 +53,7 @@ namespace CerealSquad
 
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R1280x720;
+            renderer.Resolution = Renderer.EResolution.R1920x1080;
             renderer.FrameRate = 60;
 
             Factories.TextureFactory.Instance.initTextures();
@@ -50,11 +61,10 @@ namespace CerealSquad
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
-            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.MainMenu(renderer.Win, manager));
+            GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);
 
-            GameWorld.Game game = new GameWorld.Game(renderer);
+            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.Instance.MainMenu(renderer, manager, gameManager));
 
-            game.GameLoop(manager);
             FrameClock clock = new FrameClock();
             while (renderer.isOpen())
             {
@@ -62,20 +72,22 @@ namespace CerealSquad
                 renderer.Clear(Color.Black);
                 if (Menus.MenuManager.Instance.isDisplayed())
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
-                else
+                else if (gameManager.CurrentGame != null)
                 {
-                    game.Update(clock.Restart());
-                    renderer.Draw(game.CurrentWorld);
-                    game.WorldEntity.draw(renderer);
+                    gameManager.CurrentGame.Update(clock.Restart());
+                    renderer.Draw(gameManager.CurrentGame.CurrentWorld);
+                    gameManager.CurrentGame.WorldEntity.draw(renderer);
                 }
+                else
+                    renderer.Win.Close();
                 renderer.Display();
             }
+
+            Debug.Time.Instance.StopTimer("Main");
         }
         
         private static void Manager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
-            if (e.KeyCode.Equals(InputManager.Keyboard.Key.Escape))
-                ((Window)source).Close();
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.F))
                 renderer.FullScreen = !renderer.FullScreen;
         }

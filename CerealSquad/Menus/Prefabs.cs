@@ -6,22 +6,35 @@ using System.Threading.Tasks;
 
 namespace CerealSquad.Menus
 {
-    public static class Prefabs
+    class Prefabs
     {
-        public static Menu MainMenu(SFML.Graphics.RenderWindow win, InputManager.InputManager manager)
+        #region Singleton
+        private Prefabs() { }
+
+        public static Prefabs Instance { get { return Nested.instance; } }
+
+        private class Nested
+        {
+            static Nested() { }
+
+            internal static readonly Prefabs instance = new Prefabs();
+        }
+        #endregion
+
+        public Menu MainMenu(Renderer renderer, InputManager.InputManager manager, GameWorld.GameManager gameManager)
         {
             Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
             Menu mainMenu = new Menu(manager);
 
-            Buttons.IButton btn_continue = new Buttons.OpenMenuButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, SettingsMenu(win, manager));
+            Buttons.IButton btn_continue = new Buttons.OpenMenuButton("Continue", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, SettingsMenu(manager));
             MenuItem item_continue = new MenuItem(btn_continue, MenuItem.ItemType.Disabled);
-            Buttons.IButton btn_newgame = new Buttons.BackButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 70, mainMenu);
+            Buttons.IButton btn_newgame = new Buttons.OpenMenuButton("New Game", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 70, CharacterSelectMenu(renderer, manager, gameManager));
             MenuItem item_newgame = new MenuItem(btn_newgame);
-            Buttons.IButton btn_settings = new Buttons.OpenMenuButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 140, SettingsMenu(win, manager));
+            Buttons.IButton btn_settings = new Buttons.OpenMenuButton("Settings", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 140, SettingsMenu(manager));
             MenuItem item_settings = new MenuItem(btn_settings, MenuItem.ItemType.Disabled);
-            Buttons.IButton btn_credits = new Buttons.OpenMenuButton("Credits", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 210, SettingsMenu(win, manager));
+            Buttons.IButton btn_credits = new Buttons.OpenMenuButton("Credits", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 210, SettingsMenu(manager));
             MenuItem item_credits = new MenuItem(btn_credits, MenuItem.ItemType.Disabled);
-            Buttons.IButton btn_exit = new Buttons.ExitButton("Exit", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 280, win);
+            Buttons.IButton btn_exit = new Buttons.ExitButton("Exit", fontFactory.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 280, renderer);
             MenuItem item_exit = new MenuItem(btn_exit);
 
             mainMenu.AddItem(item_continue);
@@ -35,7 +48,7 @@ namespace CerealSquad.Menus
             return mainMenu;
         }
 
-        public static Menu SettingsMenu(SFML.Graphics.RenderWindow win, InputManager.InputManager manager)
+        public Menu SettingsMenu(InputManager.InputManager manager)
         {
             Factories.FontFactory.FontFactory fontFactory = Factories.FontFactory.FontFactory.Instance;
             Menu settingsMenu = new Menu(manager);
@@ -48,6 +61,13 @@ namespace CerealSquad.Menus
             settingsMenu.Initialize();
 
             return settingsMenu;
+        }
+
+        public Menu CharacterSelectMenu(Renderer renderer, InputManager.InputManager manager, GameWorld.GameManager gameManager)
+        {
+            Menu characterMenu = new CharacterSelectMenu(renderer, manager, gameManager);
+
+            return characterMenu;
         }
     }
 }

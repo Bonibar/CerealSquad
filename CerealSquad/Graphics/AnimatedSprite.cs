@@ -13,19 +13,19 @@ namespace CerealSquad.Graphics
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
 
-
         public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
         public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
+        public bool Pause { get { return (animator.m_isPaused); } set { animator.m_isPaused = value; } }
 
         public AnimatedSprite(Vector2u _Size)
         {
-            Size = _Size;
+            Size = new Vector2f(_Size.X, _Size.Y);
             initialization();
         }
 
         public AnimatedSprite(uint Width, uint Height)
         {
-            Size = new Vector2u(Width, Height);
+            Size = new Vector2f(Width, Height);
             initialization();
         }
 
@@ -71,7 +71,8 @@ namespace CerealSquad.Graphics
             anim.Texture = Factories.TextureFactory.Instance.getTexture(textureAnimation);
             if (time != -1)
                 anim.Time = Time.FromMilliseconds(time);
-            texturePalette.ForEach((uint i) => {
+            texturePalette.ForEach((uint i) =>
+            {
                 KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
                 anim.addFrame(Size.X, Size.Y, palette.Key);
             });
@@ -105,7 +106,7 @@ namespace CerealSquad.Graphics
         /// <param name="DeltaTime">Time</param>
         public void Update(Time DeltaTime)
         {
-            animator.update(DeltaTime);
+            animator.Update(DeltaTime);
         }
 
         /// <summary>
@@ -115,8 +116,16 @@ namespace CerealSquad.Graphics
         /// <param name="states">RenderStates</param>
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            states.Transform *= Transform;
-            animator.Draw(target, states);
+            if (Displayed)
+            {
+                states.Transform *= Transform;
+                animator.Draw(target, states);
+            }
+        }
+
+        protected override void UpdateSize()
+        {
+            animator.Size = new Vector2f(Size.X, Size.Y);
         }
     }
 }
