@@ -260,13 +260,22 @@ namespace CerealSquad
         /// <summary>
         /// Move the camera
         /// </summary>
-        /// <param name="x">int</param>
-        /// <param name="y">int</param>
-        public void Move(int x, int y)
+        /// <param name="x">float</param>
+        /// <param name="y">float</param>
+        public void Move(float x, float y)
         {
             if (Win == null)
                 return;
-            Win.DefaultView.Center = new Vector2f(x, y);
+            currentView.Move(new Vector2f(x, y));
+            Win.SetView(currentView);
+        }
+
+        public void Rotate(float angle)
+        {
+            if (Win == null)
+                return;
+            currentView.Rotate(angle);
+            Win.SetView(currentView);
         }
 
         /// <summary>
