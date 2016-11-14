@@ -177,5 +177,18 @@ namespace CerealSquad
         }
 
         public abstract EName getName();
+
+        public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
+        {
+            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
+            bool result = false;
+            CollidingEntities.ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.PlayerTrap)
+                    result = true;
+            });
+
+            return result || baseResult;
+        }
     }
 }

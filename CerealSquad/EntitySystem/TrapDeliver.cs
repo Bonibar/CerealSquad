@@ -90,7 +90,7 @@ namespace CerealSquad.EntitySystem
                 if (!Target.Equals(EMovement.None) && Timer.IsTimerOver())
                 {
                     if (World.IsCollidingWithWall(ResourcesEntity)
-                        || World.WorldEntity.GetCollidingEntity(ResourcesEntity).Count > 0)
+                        || World.WorldEntity.GetCollidingEntities(ResourcesEntity).Count > 0)
                         IsTargetValid = false;
                     else
                         IsTargetValid = true;
