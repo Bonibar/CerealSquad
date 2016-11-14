@@ -36,12 +36,12 @@ namespace CerealSquad
             }
         }
 
-        private List<AEntity> GetCollidingEntityRecursive(IEntity Owner, CircleShape Circle)
+        private List<AEntity> GetCollidingEntitiesRecursive(IEntity Owner, CircleShape Circle)
         {
             List<AEntity> Tmp = new List<AEntity>();
 
             Owner.getChildren().ToList<IEntity>().ForEach(i => {
-                Tmp = Tmp.Concat(GetCollidingEntityRecursive(i, Circle)).ToList();
+                Tmp = Tmp.Concat(GetCollidingEntitiesRecursive(i, Circle)).ToList();
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
@@ -51,17 +51,17 @@ namespace CerealSquad
             return Tmp;
         }
 
-        public List<AEntity> GetCollidingEntity(CircleShape Circle)
+        public List<AEntity> GetCollidingEntities(CircleShape Circle)
         {
-            return GetCollidingEntityRecursive(this, Circle);
+            return GetCollidingEntitiesRecursive(this, Circle);
         }
 
-        private List<AEntity> GetCollidingEntityRecursive(IEntity Owner, EntityResources Other)
+        private List<AEntity> GetCollidingEntitiesRecursive(IEntity Owner, EntityResources Other)
         {
             List<AEntity> Tmp = new List<AEntity>();
 
             Owner.getChildren().ToList<IEntity>().ForEach(i => {
-                Tmp = Tmp.Concat(GetCollidingEntityRecursive(i, Other)).ToList();
+                Tmp = Tmp.Concat(GetCollidingEntitiesRecursive(i, Other)).ToList();
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
@@ -71,9 +71,9 @@ namespace CerealSquad
             return Tmp;
         }
 
-        public List<AEntity> GetCollidingEntity(EntityResources Other)
+        public List<AEntity> GetCollidingEntities(EntityResources Other)
         {
-            return GetCollidingEntityRecursive(this, Other);
+            return GetCollidingEntitiesRecursive(this, Other);
         }
 
         private List<AEntity> GetAllEntitiesRecursive(IEntity Owner)

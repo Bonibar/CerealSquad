@@ -164,10 +164,29 @@ namespace CerealSquad
             return (_children.Remove(child));
         }
 
-        public bool IsColliding(AWorld world, EntityResources Res)
+        public virtual bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
-            if (world.IsCollidingWithWall(Res))
+            return false;
+        }
+
+        public bool IsColliding(AWorld World)
+        {
+            if (World.IsCollidingWithWall(ressourcesEntity))
                 return true;
+
+            if (ressourcesEntity == null)
+                return false;
+
+            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
+
+            if (collidingEntities.Count == 0)
+                return false;
+
+            return IsCollidingEntity(World, collidingEntities);
+        }
+
+        public bool IsCollidingAndDead(AWorld World)
+        {
             return false;
         }
 
@@ -207,10 +226,12 @@ namespace CerealSquad
             _ressources.PlayAnimation(anim);
             _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64, (float)NewPosition._trueY * 64);
 
-           if (!IsColliding(world, ressourcesEntity))
+           if (!IsColliding(world))
                 _pos = NewPosition;
             else
                 _ressources.Position = OldResourcePosition;
+            if (IsCollidingAndDead(world))
+                Die = true;
         }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);

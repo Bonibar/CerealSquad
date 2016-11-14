@@ -28,9 +28,10 @@ namespace CerealSquad.EntitySystem
         private EntityResources ResourcesEntity = new EntityResources();
         //private AnimatedSprite Sprite;
         private APlayer Player;
-        private Timer Timer = new Timer(Time.FromSeconds(1));
+        private Timer TimerCoolDown = new Timer(Time.FromSeconds(1));
+        //private Timer TimerToPut = new Timer(Time.FromSeconds(3));
 
-        public Time Cooldown { get { return Timer.Time; } set { Timer.Time = value; } }
+        public Time Cooldown { get { return TimerCoolDown.Time; } set { TimerCoolDown.Time = value; } }
 
         public TrapDeliver(APlayer player)
         {
@@ -87,10 +88,10 @@ namespace CerealSquad.EntitySystem
 
                 ResourcesEntity.Position = pos;
                 // CHECK 4 points
-                if (!Target.Equals(EMovement.None) && Timer.IsTimerOver())
+                if (!Target.Equals(EMovement.None) && TimerCoolDown.IsTimerOver())
                 {
                     if (World.IsCollidingWithWall(ResourcesEntity)
-                        || World.WorldEntity.GetCollidingEntity(ResourcesEntity).Count > 0)
+                        || World.WorldEntity.GetCollidingEntities(ResourcesEntity).Count > 0)
                         IsTargetValid = false;
                     else
                         IsTargetValid = true;
@@ -108,15 +109,16 @@ namespace CerealSquad.EntitySystem
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
                     Player.addChild(trap);
+                   // TimerToPut.Start();
                 }
                 Step = EStep.END_SELECTING;
             }
-            else if (!TrapPressed && Step == EStep.END_SELECTING)
+            else if (!TrapPressed && Step == EStep.END_SELECTING)// && TimerToPut.IsTimerOver())
             {
                 Step = EStep.NOTHING;
                 // Restart timer to launch cooldown
                 if (IsTargetValid)
-                    Timer.Start();
+                    TimerCoolDown.Start();
             }
         }
 
