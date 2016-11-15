@@ -28,7 +28,8 @@ namespace CerealSquad
         protected s_size _size;
         protected double _speed;
         protected bool _die;
-        protected EMovement _move;
+        protected List<EMovement> _move;
+        protected float _inputForce;
         protected EntityResources _ressources;
 
         public s_position Pos
@@ -41,6 +42,7 @@ namespace CerealSquad
             set
             {
                 _pos = value;
+                setResourceEntityPosition();
             }
         }
         
@@ -69,6 +71,8 @@ namespace CerealSquad
                 _ressources = value;
             }
         }
+
+        public List<EntityResources> SecondaryResourcesEntities { get; set; }
 
         public s_size Size
         {
@@ -105,8 +109,10 @@ namespace CerealSquad
             _damageType = e_DamageType.NONE;
             _size = size;
             _speed = 0;
+            _inputForce = 1;
             _die = false;
-            _move = EMovement.None;
+            _move = new List<EMovement> { EMovement.None };
+            SecondaryResourcesEntities = new List<EntityResources>();
         }
 
         public void addChild(IEntity child)
@@ -114,9 +120,50 @@ namespace CerealSquad
             _children.Add(child);
         }
 
-        public bool attemptDamage(IEntity Sender, e_DamageType damage)
+        private bool NotInCircleRange(IEntity Sender, float Range)
         {
-            return false;
+            double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
+            if (ressourcesEntity != null)
+                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+
+            return !(Distance > Range);
+        }
+
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        {
+            if (NotInCircleRange(Sender, Range))
+                return false;
+
+            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+                && !((ATrap)this).Triggered)
+                ((ATrap)this).Trigger();
+
+            return true;
+        }
+
+        private static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
+        {
+            double a = Math.Pow(x - x_el, 2.0f) / Math.Pow(rX, 2.0f);
+            double b = Math.Pow(y - y_el, 2.0f) / Math.Pow(rY, 2.0f);
+
+            return (a + b) <= 1;
+        }
+
+        private bool NotInEllipseRange(IEntity Sender, float RadiusX, float RadiusY)
+        {
+            return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
+        }
+
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        {
+            if (NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
+                return false;
+
+            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+                && !((ATrap)this).Triggered)
+                ((ATrap)this).Trigger();
+
+            return true;
         }
 
         public ICollection<IEntity> getChildren()
@@ -144,6 +191,32 @@ namespace CerealSquad
             return (_children.Remove(child));
         }
 
+        public virtual bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
+        {
+            return false;
+        }
+
+        public bool IsColliding(AWorld World)
+        {
+            if (ressourcesEntity == null)
+                return false;
+
+            if (World.IsCollidingWithWall(ressourcesEntity))
+                return true;
+
+            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
+
+            if (collidingEntities.Count == 0)
+                return false;
+
+            return IsCollidingEntity(World, collidingEntities);
+        }
+
+        public virtual bool IsCollidingAndDead(AWorld World)
+        {
+            return false;
+        }
+
         // Use this function for moving the entity whitout his action(ex: knockback)
         // Move the entity relative to his actual position
         public virtual void move(AWorld world, SFML.System.Time deltaTime)
@@ -152,54 +225,52 @@ namespace CerealSquad
             var OldResourcePosition = _ressources.Position;
             s_position NewPosition = _pos;
 
-            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f();
-            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f();
-            double speedMove = _speed * deltaTime.AsSeconds();
+            double speedMove = (_speed * deltaTime.AsSeconds()) * _inputForce;
 
-            switch (_move)
+            if (_move.Count == 2)
+                speedMove *= 1.0f / Math.Sqrt(2.0f);
+
+            if (_move.Contains(EMovement.Right))
             {
-                case EMovement.Up:
-                    NewPosition += new s_position(0, -speedMove, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
-                    anim = EStateEntity.WALKING_UP;
-                    break;
-                case EMovement.Down:
-                    NewPosition += new s_position(0, +speedMove, 0);
-                    CollisionPointOne = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
-                    anim = EStateEntity.WALKING_DOWN;
-                    break;
-                case EMovement.Right:
-                    NewPosition += new s_position(speedMove, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Height);
-                    anim = EStateEntity.WALKING_RIGHT;
-                    break;
-                case EMovement.Left:
-                    NewPosition += new s_position(-speedMove, 0, 0);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, -ressourcesEntity.CollisionBox.Top);
-                    CollisionPointTwo = new SFML.System.Vector2f(-ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Height);
-                    anim = EStateEntity.WALKING_LEFT;
-                    break;
-                case EMovement.None:
-                    _ressources.PlayAnimation(EStateEntity.IDLE);
-                    return;
+                NewPosition += new s_position(speedMove, 0, 0);
+                anim = EStateEntity.WALKING_RIGHT;
             }
 
-            _ressources.PlayAnimation(anim);
-            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64.0f, (float)NewPosition._trueY * 64.0f);
-            CollisionPointOne += _ressources.Position;
-            CollisionPointTwo += _ressources.Position;
+            if (_move.Contains(EMovement.Left))
+            {
+                NewPosition += new s_position(-speedMove, 0, 0);
+                anim = EStateEntity.WALKING_LEFT;
+            }
 
-            CollisionPointOne /= 64.0f;
-            CollisionPointTwo /= 64.0f;
 
-            if (world.getPosition((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)) == RoomParser.e_CellType.Normal
-                && world.getPosition((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)) == RoomParser.e_CellType.Normal)
-                _pos = NewPosition;
+            if (_move.Contains(EMovement.Up))
+            {
+                NewPosition += new s_position(0, -speedMove, 0);
+                anim = EStateEntity.WALKING_UP;
+            }
+
+            if (_move.Contains(EMovement.Down))
+            {
+                NewPosition += new s_position(0, +speedMove, 0);
+                anim = EStateEntity.WALKING_DOWN;
+            }
+
+            _ressources.PlayAnimation((uint)anim);
+
+            if (_move.Contains(EMovement.None))
+            {
+                ((AnimatedSprite)_ressources.sprite).Pause = true;
+            }
+
+            // Set manually the position of entity Resources to check collision
+            _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
+
+            if (!IsColliding(world))
+                Pos = NewPosition;
             else
                 _ressources.Position = OldResourcePosition;
+            if (IsCollidingAndDead(world))
+                die();
         }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);
@@ -207,7 +278,7 @@ namespace CerealSquad
         public void die()
         {
             _die = true;
-            _ressources.PlayAnimation(EStateEntity.DYING);
+            _ressources.PlayAnimation((uint)EStateEntity.DYING);
             _ressources.Loop = false;
         }
 
@@ -216,6 +287,26 @@ namespace CerealSquad
         public void destroy()
         {
             _owner.removeChild(this);
+        }
+
+        public IEntity getRootEntity()
+        {
+            IEntity parent = this;
+
+            while (parent.getOwner() != null)
+                parent = parent.getOwner();
+
+            return parent;
+        }
+
+        private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
+        {
+            return new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+        }
+
+        private void setResourceEntityPosition()
+        {
+            ressourcesEntity.Position = EntityPositionToResourcesEntityPosition(Pos);
         }
     }
 }

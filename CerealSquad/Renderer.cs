@@ -157,7 +157,8 @@ namespace CerealSquad
         /// </summary>
         public void Initialization()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close));
+            ContextSettings c = new ContextSettings(0, 0, 10);
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close), c);
             Win.SetView(currentView);
             Win.SetKeyRepeatEnabled(_keyRepeated);
             Win.SetMouseCursorVisible(_mouseCursorVisible);
@@ -168,14 +169,14 @@ namespace CerealSquad
 
         public void ResetWindow()
         {
-            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close));
+            ContextSettings c = new ContextSettings(0, 0, 10);
+            Win = new RenderWindow(new VideoMode(getWidth(), getHeight()), Title, (FullScreen ? Styles.Fullscreen : Styles.Close), c);
             Win.SetView(currentView);
             Win.DefaultView.Viewport = new FloatRect(new Vector2f(0, 0), scaleToFit(new Vector2f(currentView.Viewport.Width, currentView.Viewport.Height), new Vector2f(getWidth(), getHeight())));
             Win.SetKeyRepeatEnabled(_keyRepeated);
             Win.SetMouseCursorVisible(_mouseCursorVisible);
             Win.SetFramerateLimit(_frameRate);
             Win.SetVerticalSyncEnabled(_verticalSync);
-            Win.Position = new Vector2i((int)VideoMode.DesktopMode.Width / 2 - (int)getWidth() / 2, (int)VideoMode.DesktopMode.Height / 2 - (int)getHeight() / 2);
         }
 
         public static Vector2f scaleToFit(Vector2f inh, Vector2f clip )
@@ -258,13 +259,30 @@ namespace CerealSquad
         /// <summary>
         /// Move the camera
         /// </summary>
-        /// <param name="x">int</param>
-        /// <param name="y">int</param>
-        public void Move(int x, int y)
+        /// <param name="x">float</param>
+        /// <param name="y">float</param>
+        public void Move(float x, float y)
         {
             if (Win == null)
                 return;
-            Win.DefaultView.Center = new Vector2f(x, y);
+            currentView.Move(new Vector2f(x, y));
+            Win.SetView(currentView);
+        }
+
+        public void Rotate(float angle)
+        {
+            if (Win == null)
+                return;
+            currentView.Rotate(angle);
+            Win.SetView(currentView);
+        }
+
+        public void Zoom(float zoom)
+        {
+            if (Win == null)
+                return;
+            currentView.Zoom(zoom);
+            Win.SetView(currentView);
         }
 
         /// <summary>

@@ -78,8 +78,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debug.cs" />
     <Compile Include="Downloaders\FTPDownloader.cs" />
     <Compile Include="Downloaders\IDownloader.cs" />
+    <Compile Include="Downloaders\LoadingScreen.cs" />
+    <Compile Include="Downloaders\TaskAwaiter.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
@@ -101,6 +104,8 @@
     <Compile Include="GameWorld\GameManager.cs" />
     <Compile Include="GameWorld\RoomParser.cs" />
     <Compile Include="GameWorld\WorldParser.cs" />
+    <Compile Include="Graphics\EllipseShape.cs" />
+    <Compile Include="Graphics\EllipseShapeSprite.cs" />
     <Compile Include="Menus\CharacterSelectMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />

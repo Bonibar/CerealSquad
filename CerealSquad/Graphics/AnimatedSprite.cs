@@ -13,19 +13,20 @@ namespace CerealSquad.Graphics
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
 
-
+        public uint Animation { get; private set; }
         public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
         public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
+        public bool Pause { get { return (animator.m_isPaused); } set { animator.m_isPaused = value; } }
 
         public AnimatedSprite(Vector2u _Size)
         {
-            Size = _Size;
+            Size = new Vector2f(_Size.X, _Size.Y);
             initialization();
         }
 
         public AnimatedSprite(uint Width, uint Height)
         {
-            Size = new Vector2u(Width, Height);
+            Size = new Vector2f(Width, Height);
             initialization();
         }
 
@@ -59,34 +60,39 @@ namespace CerealSquad.Graphics
         /// Time is in millisecond
         /// Size is the real size of individual sprite in texture
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">uint</param>
         /// <param name="textureAnimation"></param>
         /// <param name="texturePalette"></param>
         /// <param name="_size"></param>
         /// <param name="time"></param>
-        public void addAnimation(EStateEntity type, String textureAnimation, List<uint> texturePalette, Vector2u _size, int time = -1)
+        public void addAnimation(uint type, String textureAnimation, List<uint> texturePalette, Vector2u _size, int time = -1)
         {
             Animation anim = new Animation();
             PaletteManager.Instance.AddPaletteInformations(textureAnimation, _size.X, _size.Y);
             anim.Texture = Factories.TextureFactory.Instance.getTexture(textureAnimation);
             if (time != -1)
                 anim.Time = Time.FromMilliseconds(time);
-            texturePalette.ForEach((uint i) => {
+            texturePalette.ForEach((uint i) =>
+            {
                 KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
                 anim.addFrame(Size.X, Size.Y, palette.Key);
             });
             animations.Add((uint)type, anim);
 
             if (!animator.HaveAnimation())
+            {
+                Animation = type;
                 animator.setAnimation(anim);
+            }
         }
 
         /// <summary>
         /// Play animation
         /// </summary>
-        /// <param name="animation">EStateEntity</param>
-        public void PlayAnimation(EStateEntity animation)
+        /// <param name="animation">uint</param>
+        public void PlayAnimation(uint animation)
         {
+            Animation = animation;
             animator.Play(animations[(uint)animation]);
         }
 
@@ -105,7 +111,7 @@ namespace CerealSquad.Graphics
         /// <param name="DeltaTime">Time</param>
         public void Update(Time DeltaTime)
         {
-            animator.update(DeltaTime);
+            animator.Update(DeltaTime);
         }
 
         /// <summary>
@@ -115,8 +121,16 @@ namespace CerealSquad.Graphics
         /// <param name="states">RenderStates</param>
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            states.Transform *= Transform;
-            animator.Draw(target, states);
+            if (Displayed)
+            {
+                states.Transform *= Transform;
+                animator.Draw(target, states);
+            }
+        }
+
+        protected override void UpdateSize()
+        {
+            animator.Size = new Vector2f(Size.X, Size.Y);
         }
     }
 }

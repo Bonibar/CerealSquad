@@ -14,7 +14,6 @@ namespace CerealSquad.Graphics
     
         public Sounds.JukeBox JukeBox { get; set; }
 
-
         public EnvironmentResources()
         {
             sprites = new Dictionary<Vector2u, ASprite>();
@@ -45,13 +44,8 @@ namespace CerealSquad.Graphics
         public ASprite GetSpriteOnPosition(uint x, uint y)
         {
             foreach (KeyValuePair<Vector2u, ASprite> entry in sprites)
-            {
                 if (entry.Key.X.Equals(x) && entry.Key.Y.Equals(y))
-                {
                     return entry.Value;
-                }
-            }
-
             throw new Exception("Can't find sprite on this position");
         }
 
@@ -63,12 +57,8 @@ namespace CerealSquad.Graphics
         public void Update(Time DeltaTime)
         {
             foreach (KeyValuePair<Vector2u, ASprite> entry in sprites)
-            {
                 if (entry.Value.Type == ETypeSprite.ANIMATED)
-                {
                     ((AnimatedSprite)entry.Value).Update(DeltaTime);
-                }
-            }
         }
 
         /// <summary>
@@ -79,10 +69,7 @@ namespace CerealSquad.Graphics
         public void Draw(RenderTarget target, RenderStates states)
         {
             foreach (KeyValuePair<Vector2u, ASprite> entry in sprites)
-            {
-                // TODO CHANGE POSITION
                 entry.Value.Draw(target, states);
-            }
         }
     }
 }
