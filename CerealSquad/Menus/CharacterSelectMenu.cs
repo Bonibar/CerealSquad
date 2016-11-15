@@ -160,6 +160,39 @@ namespace CerealSquad.Menus
         }
     }
 
+    namespace Characters
+    {
+        public class Character : Drawable
+        {
+            public int id_on_it = -1;
+            public bool id_locked = false;
+            Graphics.ASprite on_it;
+            Graphics.ASprite locked;
+
+            public Character(Renderer renderer, uint id)
+            {
+                Factories.TextureFactory.Instance.load("aura_select", "Assets/Debug/select_test.png");
+                Factories.TextureFactory.Instance.load("aura_locked", "Assets/Debug/unselect_test.png");
+                Factories.TextureFactory.Instance.initTextures();
+
+                Texture t = Factories.TextureFactory.Instance.getTexture("aura_select");
+                on_it = new Graphics.RegularSprite(t, new SFML.System.Vector2i(512, 512), new IntRect(0, 0, (int)t.Size.X, (int)t.Size.Y));
+                on_it.Position = new SFML.System.Vector2f(50 + id * 350, 200);
+                Texture t2 = Factories.TextureFactory.Instance.getTexture("aura_locked");
+                locked = new Graphics.RegularSprite(t2, new SFML.System.Vector2i(512, 512), new IntRect(0, 0, (int)t2.Size.X, (int)t2.Size.Y));
+                locked.Position = new SFML.System.Vector2f(50 + id * 350, 200);
+            }
+
+            public void Draw(RenderTarget target, RenderStates states)
+            {
+                if (id_on_it != -1 && id_locked)
+                    target.Draw(locked, states);
+                else if (id_on_it != -1)
+                    target.Draw(on_it, states);
+            }
+        }
+    }
+
     class CharacterSelectMenu : Menu, Drawable
     {
         public static uint SELECTION_COUNT = 4;
@@ -170,6 +203,9 @@ namespace CerealSquad.Menus
         private GameWorld.GameManager _GameManager;
         private Text _StartGameText;
         private RectangleShape _StartGameShape;
+        private Sounds.JukeBox Jukebox = new Sounds.JukeBox();
+
+        private Characters.Character[] _Characters;
 
         public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
         {
@@ -182,12 +218,16 @@ namespace CerealSquad.Menus
             _GameManager = gameManager;
 
             Players = new Players.Player[SELECTION_COUNT];
+            _Characters = new Characters.Character[SELECTION_COUNT];
             uint i = 0;
             while (i < SELECTION_COUNT)
             {
                 Players[i] = new Players.Player(i, _Renderer);
+                _Characters[i] = new Characters.Character(_Renderer, i);
                 i++;
             }
+
+            Jukebox.loadMusic(0, "Assets/Music/CharacterSelection.ogg");
 
             Buttons.IButton returnButton = new Buttons.BackButton("", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, this);
             MenuItem back_Button = new MenuItem(returnButton, MenuItem.ItemType.KeyBinded, InputManager.Keyboard.Key.Escape);
@@ -216,7 +256,17 @@ namespace CerealSquad.Menus
                     Players[i] = new Players.Player(i, _Renderer);
                 i++;
             }
+
+            Jukebox.PlayMusic(0, true);
+
             base.Show();
+        }
+
+        public override void Hide()
+        {
+            Jukebox.StopMusic(0);
+
+            base.Hide();
         }
 
         private List<uint> GetLockedList()
@@ -237,6 +287,21 @@ namespace CerealSquad.Menus
         {
             
             return Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined && x.LockedChoice != true) == null && Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined) != null;
+        }
+
+        private void UpdateEffects()
+        {
+            uint i = 0;
+            _Characters.ToList().ForEach(x => x.id_on_it = -1);
+            while (i < SELECTION_COUNT)
+            {
+                if (Players[i].Type != Menus.Players.Type.Undefined)
+                {
+                    _Characters[Players[i].Selection].id_on_it = (int)i;
+                    _Characters[Players[i].Selection].id_locked = Players[i].LockedChoice;
+                }
+                i++;
+            }
         }
 
         private void _InputManager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
@@ -316,6 +381,8 @@ namespace CerealSquad.Menus
                 System.Diagnostics.Debug.WriteLine("NEW PLAYER JOINED");
                 Players[i] = new Players.ControllerPlayer(e.JoystickId, i, _Renderer, LockedList);
             }
+
+            UpdateEffects();
         }
         private void JoinKeyboardPlayer(object source, InputManager.Keyboard.KeyEventArgs e, uint keyboardId, List<uint> LockedList)
         {
@@ -327,17 +394,23 @@ namespace CerealSquad.Menus
                 System.Diagnostics.Debug.WriteLine("NEW PLAYER JOINED");
                 Players[i] = new Players.KeyboardPlayer(keyboardId, i, _Renderer, LockedList);
             }
+
+            UpdateEffects();
         }
 
         private void SelectPreviousPlayer(Players.Player currentPlayer, List<uint> LockedList)
         {
             if (currentPlayer != null)
                 currentPlayer.SelectPrevious(LockedList);
+
+            UpdateEffects();
         }
         private void SelectNextPlayer(Players.Player currentPlayer, List<uint> LockedList)
         {
             if (currentPlayer != null)
                 currentPlayer.SelectNext(LockedList);
+
+            UpdateEffects();
         }
 
         private void ReturnPlayer(Players.Player currentPlayer)
@@ -350,6 +423,8 @@ namespace CerealSquad.Menus
                 else
                     Players[id] = new Players.Player((uint)id, _Renderer);
             }
+
+            UpdateEffects();
         }
         private void ValidatePlayer(Players.Player currentPlayer, List<uint> LockedList)
         {
@@ -365,6 +440,8 @@ namespace CerealSquad.Menus
                 }
                 i++;
             }
+
+            UpdateEffects();
         }
 
         private void StartGame()
@@ -376,12 +453,13 @@ namespace CerealSquad.Menus
             }
         }
 
-        public new void Draw(RenderTarget target, RenderStates states)
+        public override void Draw(RenderTarget target, RenderStates states)
         {
             uint i = 0;
             while (i < SELECTION_COUNT)
             {
-                target.Draw(Players[i]);
+                target.Draw(Players[i], states);
+                target.Draw(_Characters[i], states);
                 i++;
             }
             base.Draw(target, states);

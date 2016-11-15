@@ -186,7 +186,7 @@ namespace CerealSquad.Menus
                 firstValid.Button.Selected = true;
         }
             
-        public void Draw(RenderTarget target, RenderStates states)
+        public virtual void Draw(RenderTarget target, RenderStates states)
         {
             if (Displayed)
                 _menuList.ForEach(x => x.Draw(target, states));
