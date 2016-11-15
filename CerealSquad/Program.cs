@@ -57,6 +57,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("CS_LockedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Debug/select_test.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Debug/unselect_test.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Crates", "Assets/GameplayElement/Crates.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/GameplayElement/Crates.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("CratesOpening", "Assets/GameplayElement/CratesOpening.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/GameplayElement/CratesOpening.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_BackgroundMusic", "Assets/Music/CharacterSelection.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Music/CharacterSelection.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_BackgroundImage", "Assets/Background/CharacterSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Background/CharacterSelectionBackground.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_Mike", "Assets/Character/Selection/MikeSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/MikeSelection.png"), false));
@@ -67,8 +68,7 @@ namespace CerealSquad
             // Initialisation
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R3840x2160;
-            renderer.FullScreen = true;
+            renderer.Resolution = Renderer.EResolution.R854x480;
             renderer.FrameRate = 60;
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);

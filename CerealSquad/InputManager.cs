@@ -260,25 +260,13 @@ namespace CerealSquad.InputManager
 
             private Dictionary<int, int> _KeyMap = new Dictionary<int, int>();
             private Dictionary<int, int> _KeyMapAxis = new Dictionary<int, int>();
-            XmlSerializer serializer_button = null;
-            XmlSerializer serializer_axis = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Axis"));
+            XmlSerializer serializer = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Mapping"));
 
             private Player() { }
             public Player(int id, Type type)
             {
                 Id = id;
                 Type = type;
-
-                switch (Type)
-                {
-                    case Type.Keyboard:
-                        serializer_button = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Keyboard"));
-                        break;
-                    case Type.Controller:
-                        serializer_button = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Controller_Button"));
-                        serializer_axis = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Controller_Axis"));
-                        break;
-                }
 
                 LoadKeyMap();
             }
@@ -289,10 +277,9 @@ namespace CerealSquad.InputManager
                 if (System.IO.File.Exists(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km"))
                 {
                     System.IO.FileStream stream = new System.IO.FileStream(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km", System.IO.FileMode.Open, System.IO.FileAccess.Read);
-                    if (serializer_button != null)
-                        _KeyMap = ((item[])serializer_button.Deserialize(stream)).ToDictionary(i => i.Key, i => i.Function);
-                    if (serializer_axis != null)
-                        _KeyMapAxis = ((item[])serializer_axis.Deserialize(stream)).ToDictionary(i => i.Key, i => i.Function);
+                    item[] _items = ((item[])serializer.Deserialize(stream));
+                    _KeyMap = _items.Where(i => i.isAxis == false).ToDictionary(i => i.Key, i => i.Function);
+                    _KeyMapAxis = _items.Where(i => i.isAxis == true).ToDictionary(i => i.Key, i => i.Function);
                     stream.Close();
                 }
                 else
@@ -355,10 +342,9 @@ namespace CerealSquad.InputManager
             {
                 System.IO.Directory.CreateDirectory(FOLDER_PATH);
                 System.IO.FileStream stream = new System.IO.FileStream(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km", System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                if (serializer_button != null)
-                    serializer_button.Serialize(stream, _KeyMap.Select(kv => new item() { Key = kv.Key, Function = kv.Value }).ToArray());
-                if (serializer_axis != null)
-                    serializer_axis.Serialize(stream, _KeyMapAxis.Select(kv => new item() { Key = kv.Key, Function = kv.Value }).ToArray());
+                List<item> _serialize = _KeyMap.Select(kv => new item() { Key = kv.Key, isAxis = false, Function = kv.Value }).ToList();
+                _serialize.AddRange(_KeyMapAxis.Select(kv => new item() { Key = kv.Key, isAxis = true, Function = kv.Value }).ToList());
+                serializer.Serialize(stream, _serialize.ToArray());
                 stream.Flush(true);
                 stream.Close();
             }
@@ -366,6 +352,7 @@ namespace CerealSquad.InputManager
             public class item
             {
                 public int Key;
+                public bool isAxis;
                 public int Function;
             }
         }
