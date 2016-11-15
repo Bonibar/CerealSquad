@@ -67,11 +67,14 @@ namespace CerealSquad
             // Initialisation
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R800x450;
+            renderer.Resolution = Renderer.EResolution.R854x480;
             renderer.FrameRate = 60;
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
+
+            manager.GetAssociateFunction(1, InputManager.Player.Type.Keyboard, 0);
+            manager.SaveKeyMaps();
 
             GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Window;
+using System.Xml.Serialization;
 
 namespace CerealSquad.InputManager
 {
@@ -242,13 +243,109 @@ namespace CerealSquad.InputManager
         }
     }
 
+    namespace Player
+    {
+        public enum Type
+        {
+            Keyboard,
+            Controller
+        }
+
+        public class Player
+        {
+            private static readonly string FOLDER_PATH = "KeyMaps/";
+
+            public uint Id { get; }
+            public Type Type { get; }
+
+            private Dictionary<int, int> _KeyMap = new Dictionary<int, int>();
+            XmlSerializer serializer = new XmlSerializer(typeof(item[]), new XmlRootAttribute() { ElementName = "items" });
+
+            private Player() { }
+            public Player(uint id, Type type)
+            {
+                Id = id;
+                Type = type;
+
+                LoadKeyMap();
+            }
+
+            public void LoadKeyMap()
+            {
+                System.IO.Directory.CreateDirectory(FOLDER_PATH);
+                if (System.IO.File.Exists(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km"))
+                {
+                    System.IO.FileStream stream = new System.IO.FileStream(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Read);
+                    var _KeyMap = ((item[])serializer.Deserialize(stream)).ToDictionary(i => i.Key, i => i.Function);
+                    stream.Close();
+                }
+                else
+                {
+                    ResetKeyMap();
+                }
+            }
+
+            public void ResetKeyMap()
+            {
+                _KeyMap.Clear();
+                if (Type == Type.Keyboard && Id == 1)
+                {
+                    _KeyMap.Add((int)Keyboard.Key.Z, 0);
+                    _KeyMap.Add((int)Keyboard.Key.S, 1);
+                    _KeyMap.Add((int)Keyboard.Key.D, 2);
+                    _KeyMap.Add((int)Keyboard.Key.Q, 3);
+                    _KeyMap.Add((int)Keyboard.Key.Space, 4);
+                    _KeyMap.Add((int)Keyboard.Key.Escape, 6);
+                } else if (Type == Type.Keyboard && Id == 2)
+                {
+                    _KeyMap.Add((int)Keyboard.Key.Numpad5, 0);
+                    _KeyMap.Add((int)Keyboard.Key.Numpad2, 1);
+                    _KeyMap.Add((int)Keyboard.Key.Numpad3, 2);
+                    _KeyMap.Add((int)Keyboard.Key.Numpad1, 3);
+                }
+            }
+
+            public void SetKey(int key, int function)
+            {
+                if (_KeyMap.Keys.Contains(key))
+                    _KeyMap[key] = function;
+                else
+                    _KeyMap.Add(key, function);
+            }
+
+            public int GetFunction(int key)
+            {
+                if (_KeyMap.Keys.Contains(key))
+                    return _KeyMap[key];
+                return -1;
+            }
+
+            public void SaveKeyMap()
+            {
+                System.IO.Directory.CreateDirectory(FOLDER_PATH);
+                System.IO.FileStream stream = new System.IO.FileStream(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                serializer.Serialize(stream, _KeyMap.Select(kv => new item() { Key = kv.Key, Function = kv.Value }).ToArray());
+                stream.Flush(true);
+                stream.Close();
+            }
+
+            public class item
+            {
+                public int Key;
+                public int Function;
+            }
+        }
+    }
+
     /// <summary>
     /// Class managing all input events (Keyboard, Joystick, etc)
     /// </summary>
     public class InputManager
     {
-        private SFML.Window.Window _Win;
+        private Window _Win;
         private Renderer _Renderer;
+
+        private List<Player.Player> _KeyMaps = new List<Player.Player>();
 
         /// <summary>
         /// Event fired when a Keyboard key has been pressed
@@ -297,6 +394,32 @@ namespace CerealSquad.InputManager
 
             if (renderer.Win != null)
                 registerWindow(renderer.Win);
+        }
+
+
+        public void SaveKeyMaps()
+        {
+            _KeyMaps.ForEach(x => x.SaveKeyMap());
+        }
+        public void LoadKeyMaps()
+        {
+            _KeyMaps.ForEach(x => x.LoadKeyMap());
+        }
+        public void SetAssociateFunction(int id, Player.Type type, int key, int function)
+        {
+            Player.Player _current = _KeyMaps.Find(x => x.Type == type && x.Id == id);
+            if (_current == null)
+                throw new ArgumentOutOfRangeException("KeyMap id not found");
+            _current.SetKey(key, function);
+        }
+        public int GetAssociateFunction(int id, Player.Type type, int key)
+        {
+            if (_KeyMaps.Count == 0)
+                _KeyMaps.Add(new Player.Player(1, Player.Type.Keyboard));
+            Player.Player _current = _KeyMaps.Find(x => x.Type == type && x.Id == id);
+            if (_current == null)
+                throw new ArgumentOutOfRangeException("KeyMap id not found");
+            return _current.GetFunction(key);
         }
 
         private void _Renderer_WindowsCreated(object source, Renderer.WindowsEventArgs e)

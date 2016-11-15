@@ -376,7 +376,7 @@ namespace CerealSquad.Menus
             _BackgroundImage = new Graphics.AnimatedSprite(new Vector2u((uint)_Renderer.Win.GetView().Size.X, (uint)_Renderer.Win.GetView().Size.Y));
             _BackgroundImage.addAnimation(Graphics.EStateEntity.IDLE, "S_CS_BackgroundImage", Enumerable.Range(0, 8).Select(s => (uint)s).ToList(), new Vector2u(800, 450), 200);
             _BackgroundImage.Loop = true;
-            _BackgroundImage.Position = new Vector2f(_Renderer.Win.GetView().Size.X / 2, _Renderer.Win.GetView().Size.Y / 2);
+            _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
 
             Jukebox.loadMusic(0, "Assets/Music/CharacterSelection.ogg");
 
