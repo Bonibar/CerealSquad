@@ -45,7 +45,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Tiles/TestTile.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("JackWalking", "Assets/Character/JackWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/JackWalking.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("TchongWalking", "Assets/Character/ChongWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/ChongWalking.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/JackHunter.png"), true));
+            awaiter.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/JackHunter.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Orangina.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/BasicEnnemy.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("F_ReenieBeanie", "Fonts/ReenieBeanie.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Fonts/ReenieBeanie.ttf"), false));
@@ -57,12 +57,17 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("CS_LockedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Debug/select_test.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Debug/unselect_test.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Crates", "Assets/GameplayElement/Crates.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/GameplayElement/Crates.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("S_CharacterSelect", "Assets/Music/CharacterSelection.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Music/CharacterSelection.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_BackgroundMusic", "Assets/Music/CharacterSelection.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Music/CharacterSelection.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_BackgroundImage", "Assets/Background/CharacterSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Background/CharacterSelectionBackground.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Mike", "Assets/Character/Selection/MikeSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/MikeSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Jack", "Assets/Character/Selection/JackSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/JackSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Hina", "Assets/Character/Selection/HinaSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/HinaSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Tchong", "Assets/Character/Selection/TchongSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/TchongSelection.png"), false));
 
             // Initialisation
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R1920x1080;
+            renderer.Resolution = Renderer.EResolution.R854x480;
             renderer.FrameRate = 60;
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
@@ -83,7 +88,10 @@ namespace CerealSquad
                     renderer.Draw(_loadingScreen);
                 }
                 else if (Menus.MenuManager.Instance.isDisplayed())
+                {
+                    Menus.MenuManager.Instance.Update(clock.Restart());
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
+                }
                 else if (gameManager.CurrentGame != null)
                 {
                     gameManager.CurrentGame.Update(clock.Restart());

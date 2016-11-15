@@ -14,7 +14,7 @@ namespace CerealSquad
 {
     class Tchong : APlayer
     {
-        public Tchong(IEntity owner, s_position position, InputManager.InputManager input, bool keyboard, uint id) : base(owner, position, input, keyboard, id)
+        public Tchong(IEntity owner, s_position position, InputManager.InputManager input, int type, int id) : base(owner, position, input, type, id)
         {
             _speed = 5;
             ressourcesEntity = new EntityResources();

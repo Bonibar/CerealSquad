@@ -261,7 +261,6 @@ namespace CerealSquad
                     return;
             }*/
 
-         
             // Set manually the position of entity Resources to check collision
             _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
 

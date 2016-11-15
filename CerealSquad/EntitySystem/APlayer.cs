@@ -23,6 +23,8 @@ namespace CerealSquad
             MENU
         };
 
+        protected InputManager.InputManager InputManager;
+
         protected bool _specialActive;
         protected int _weight;
 
@@ -33,7 +35,7 @@ namespace CerealSquad
         public bool TrapPressed = false;
 
         public int TypeInput { get; set; }
-        public uint Id { get; protected set; }
+        public int Id { get; protected set; }
 
         protected enum ETrapPuting
         {
@@ -58,7 +60,7 @@ namespace CerealSquad
             }
         }
 
-        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 0, uint id = 1) : base(owner)
+        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 0, int id = 1) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Player;
@@ -85,12 +87,12 @@ namespace CerealSquad
 
             // for test, add Trap to inventory
             TrapInventory = e_TrapType.BOMB;
+            InputManager = input;
         }
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
         {
-            //if (im.getAction(Id, (int)e.KeyCode)
-            SKeyPlayer action = SKeyPlayer.MENU;
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Keyboard, ((int)e.KeyCode));
 
             switch (action)
             {
@@ -113,7 +115,10 @@ namespace CerealSquad
 
         private void Input_KeyboardKeyPressed(object source, KeyEventArgs e)
         {
-            SKeyPlayer action = SKeyPlayer.MENU;
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Keyboard, ((int)e.KeyCode));
+
+            System.Diagnostics.Debug.WriteLine(e.KeyCode);
+            System.Diagnostics.Debug.WriteLine(Enum.GetName(typeof(SKeyPlayer), action));
 
             switch (action)
             {

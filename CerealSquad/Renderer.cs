@@ -177,7 +177,6 @@ namespace CerealSquad
             Win.SetMouseCursorVisible(_mouseCursorVisible);
             Win.SetFramerateLimit(_frameRate);
             Win.SetVerticalSyncEnabled(_verticalSync);
-            Win.Position = new Vector2i((int)VideoMode.DesktopMode.Width / 2 - (int)getWidth() / 2, (int)VideoMode.DesktopMode.Height / 2 - (int)getHeight() / 2);
         }
 
         public static Vector2f scaleToFit(Vector2f inh, Vector2f clip )

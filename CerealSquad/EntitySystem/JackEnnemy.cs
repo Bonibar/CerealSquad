@@ -9,6 +9,7 @@ using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
 using CerealSquad.Factories;
 using SFML.Graphics;
+
 /*
 namespace CerealSquad
 {
