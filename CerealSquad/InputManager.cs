@@ -255,17 +255,30 @@ namespace CerealSquad.InputManager
         {
             private static readonly string FOLDER_PATH = "KeyMaps/";
 
-            public uint Id { get; }
+            public int Id { get; }
             public Type Type { get; }
 
             private Dictionary<int, int> _KeyMap = new Dictionary<int, int>();
-            XmlSerializer serializer = new XmlSerializer(typeof(item[]), new XmlRootAttribute() { ElementName = "items" });
+            private Dictionary<int, int> _KeyMapAxis = new Dictionary<int, int>();
+            XmlSerializer serializer_button = null;
+            XmlSerializer serializer_axis = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Axis"));
 
             private Player() { }
-            public Player(uint id, Type type)
+            public Player(int id, Type type)
             {
                 Id = id;
                 Type = type;
+
+                switch (Type)
+                {
+                    case Type.Keyboard:
+                        serializer_button = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Keyboard"));
+                        break;
+                    case Type.Controller:
+                        serializer_button = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Controller_Button"));
+                        serializer_axis = new XmlSerializer(typeof(item[]), new XmlRootAttribute("Controller_Axis"));
+                        break;
+                }
 
                 LoadKeyMap();
             }
@@ -275,8 +288,11 @@ namespace CerealSquad.InputManager
                 System.IO.Directory.CreateDirectory(FOLDER_PATH);
                 if (System.IO.File.Exists(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km"))
                 {
-                    System.IO.FileStream stream = new System.IO.FileStream(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Read);
-                    var _KeyMap = ((item[])serializer.Deserialize(stream)).ToDictionary(i => i.Key, i => i.Function);
+                    System.IO.FileStream stream = new System.IO.FileStream(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km", System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                    if (serializer_button != null)
+                        _KeyMap = ((item[])serializer_button.Deserialize(stream)).ToDictionary(i => i.Key, i => i.Function);
+                    if (serializer_axis != null)
+                        _KeyMapAxis = ((item[])serializer_axis.Deserialize(stream)).ToDictionary(i => i.Key, i => i.Function);
                     stream.Close();
                 }
                 else
@@ -303,22 +319,34 @@ namespace CerealSquad.InputManager
                     _KeyMap.Add((int)Keyboard.Key.Numpad2, 1);
                     _KeyMap.Add((int)Keyboard.Key.Numpad3, 2);
                     _KeyMap.Add((int)Keyboard.Key.Numpad1, 3);
+                } else if (Type == Type.Controller)
+                {
+                    _KeyMap.Add(0, 4);
+                    _KeyMapAxis.Add((int)Joystick.Axis.X, 3);
+                    _KeyMapAxis.Add((int)Joystick.Axis.Y, 0);
                 }
             }
 
-            public void SetKey(int key, int function)
+            public void SetKey(int key, int function, bool isAxis = false)
             {
-                if (_KeyMap.Keys.Contains(key))
-                    _KeyMap[key] = function;
+                Dictionary<int, int> _current = _KeyMap;
+
+                if (isAxis)
+                    _current = _KeyMapAxis;
+                if (_current.Keys.Contains(key))
+                    _current[key] = function;
                 else
-                    _KeyMap.Add(key, function);
+                    _current.Add(key, function);
             }
 
-            public int GetFunction(int key)
+            public int GetFunction(int key, bool isAxis = false)
             {
-                System.Diagnostics.Debug.WriteLine(_KeyMap.Count);
-                if (_KeyMap.Keys.Contains(key))
-                    return _KeyMap[key];
+                Dictionary<int, int> _current = _KeyMap;
+
+                if (isAxis)
+                    _current = _KeyMapAxis;
+                if (_current.Keys.Contains(key))
+                    return _current[key];
                 return -1;
             }
 
@@ -326,7 +354,10 @@ namespace CerealSquad.InputManager
             {
                 System.IO.Directory.CreateDirectory(FOLDER_PATH);
                 System.IO.FileStream stream = new System.IO.FileStream(FOLDER_PATH + Id + "_" + Enum.GetName(typeof(Type), Type) + ".km", System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                serializer.Serialize(stream, _KeyMap.Select(kv => new item() { Key = kv.Key, Function = kv.Value }).ToArray());
+                if (serializer_button != null)
+                    serializer_button.Serialize(stream, _KeyMap.Select(kv => new item() { Key = kv.Key, Function = kv.Value }).ToArray());
+                if (serializer_axis != null)
+                    serializer_axis.Serialize(stream, _KeyMapAxis.Select(kv => new item() { Key = kv.Key, Function = kv.Value }).ToArray());
                 stream.Flush(true);
                 stream.Close();
             }
@@ -399,6 +430,16 @@ namespace CerealSquad.InputManager
         }
 
 
+        public Player.Player AddKeyMap(int id, Player.Type type)
+        {
+            if (_KeyMaps.Find(x => x.Id == id && x.Type == type) != null)
+                throw new ArgumentException("KeyMap already exist !");
+
+            Player.Player result = new Player.Player(id, type);
+            _KeyMaps.Add(result);
+
+            return result;
+        }
         public void SaveKeyMaps()
         {
             _KeyMaps.ForEach(x => x.SaveKeyMap());
@@ -407,21 +448,19 @@ namespace CerealSquad.InputManager
         {
             _KeyMaps.ForEach(x => x.LoadKeyMap());
         }
-        public void SetAssociateFunction(int id, Player.Type type, int key, int function)
+        public void SetAssociateFunction(int id, Player.Type type, int key, int function, bool isAxis = false)
         {
             Player.Player _current = _KeyMaps.Find(x => x.Type == type && x.Id == id);
             if (_current == null)
-                throw new ArgumentOutOfRangeException("KeyMap id not found");
-            _current.SetKey(key, function);
+                _current = AddKeyMap(id, type);
+            _current.SetKey(key, function, isAxis);
         }
-        public int GetAssociateFunction(int id, Player.Type type, int key)
+        public int GetAssociateFunction(int id, Player.Type type, int key, bool isAxis = false)
         {
-            if (_KeyMaps.Count == 0)
-                _KeyMaps.Add(new Player.Player(1, Player.Type.Keyboard));
             Player.Player _current = _KeyMaps.Find(x => x.Type == type && x.Id == id);
             if (_current == null)
-                throw new ArgumentOutOfRangeException("KeyMap id not found");
-            return _current.GetFunction(key);
+                _current = AddKeyMap(id, type);
+            return _current.GetFunction(key, isAxis);
         }
 
         private void _Renderer_WindowsCreated(object source, Renderer.WindowsEventArgs e)
