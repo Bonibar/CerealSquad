@@ -58,5 +58,10 @@ namespace CerealSquad.Menus
         /// Is a menu currently displayed?
         /// </summary>
         public bool isDisplayed() { return Menus.Count > 0; }
+
+        public void Update(SFML.System.Time DeltaTime)
+        {
+            CurrentMenu.Update(DeltaTime);
+        }
     }
 }

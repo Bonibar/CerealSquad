@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CerealSquad.InputManager;
 using SFML.Graphics;
+using SFML.System;
 
 namespace CerealSquad.Menus
 {
@@ -162,33 +163,169 @@ namespace CerealSquad.Menus
 
     namespace Characters
     {
-        public class Character : Drawable
+        abstract class Character : Drawable
         {
-            public int id_on_it = -1;
-            public bool id_locked = false;
-            Graphics.ASprite on_it;
-            Graphics.ASprite locked;
+            public int id_on_it { get; private set; }
+            public bool id_locked { get; private set; }
 
-            public Character(Renderer renderer, uint id)
+            public Character(Renderer renderer)
             {
-                Factories.TextureFactory.Instance.load("aura_select", "Assets/Debug/select_test.png");
-                Factories.TextureFactory.Instance.load("aura_locked", "Assets/Debug/unselect_test.png");
-                Factories.TextureFactory.Instance.initTextures();
-
-                Texture t = Factories.TextureFactory.Instance.getTexture("aura_select");
-                on_it = new Graphics.RegularSprite(t, new SFML.System.Vector2i(512, 512), new IntRect(0, 0, (int)t.Size.X, (int)t.Size.Y));
-                on_it.Position = new SFML.System.Vector2f(50 + id * 350, 200);
-                Texture t2 = Factories.TextureFactory.Instance.getTexture("aura_locked");
-                locked = new Graphics.RegularSprite(t2, new SFML.System.Vector2i(512, 512), new IntRect(0, 0, (int)t2.Size.X, (int)t2.Size.Y));
-                locked.Position = new SFML.System.Vector2f(50 + id * 350, 200);
+                id_on_it = -1;
+                id_locked = false;
             }
 
-            public void Draw(RenderTarget target, RenderStates states)
+            public virtual void Select(int id) { id_on_it = id; }
+            public virtual void Lock(bool isLocked) { id_locked = true; }
+
+            public abstract void Draw(RenderTarget target, RenderStates states);
+            public abstract void Update(Time DeltaTime);
+        }
+
+        class Mike : Character
+        {
+            Graphics.AnimatedSprite _Sprite;
+
+            public Mike(Renderer renderer) : base(renderer)
             {
-                if (id_on_it != -1 && id_locked)
-                    target.Draw(locked, states);
-                else if (id_on_it != -1)
-                    target.Draw(on_it, states);
+                Factories.TextureFactory.Instance.load("CS_Mike", "Assets/Character/Selection/MikeSelection.png");
+
+                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+
+                _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
+                _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Mike", new List<uint> { 0 }, new Vector2u(128, 128));
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Mike", Enumerable.Range(0, 5).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.Loop = false;
+                _Sprite.Position = new Vector2f(display_size, renderer.Win.GetView().Size.Y - display_size);
+            }
+
+            public override void Draw(RenderTarget target, RenderStates states)
+            {
+                target.Draw(_Sprite, states);
+            }
+
+            public override void Lock(bool isLocked)
+            {
+                base.Lock(isLocked);
+                if (isLocked)
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.WALKING_DOWN);
+                else
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.IDLE);
+            }
+
+            public override void Update(Time DeltaTime)
+            {
+                _Sprite.Update(DeltaTime);
+            }
+        }
+
+        class Jack : Character
+        {
+            Graphics.AnimatedSprite _Sprite;
+
+            public Jack(Renderer renderer) : base(renderer)
+            {
+                Factories.TextureFactory.Instance.load("CS_Jack", "Assets/Character/Selection/JackSelection.png");
+
+                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+
+                _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
+                _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Jack", new List<uint> { 0 }, new Vector2u(128, 128));
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Jack", Enumerable.Range(0, 12).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.Loop = false;
+                _Sprite.Position = new Vector2f(display_size * 2, renderer.Win.GetView().Size.Y - display_size);
+            }
+
+            public override void Draw(RenderTarget target, RenderStates states)
+            {
+                target.Draw(_Sprite, states);
+            }
+
+            public override void Lock(bool isLocked)
+            {
+                base.Lock(isLocked);
+                if (isLocked)
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.WALKING_DOWN);
+                else
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.IDLE);
+            }
+
+            public override void Update(Time DeltaTime)
+            {
+                _Sprite.Update(DeltaTime);
+            }
+        }
+
+        class OrangeHina : Character
+        {
+            Graphics.AnimatedSprite _Sprite;
+
+            public OrangeHina(Renderer renderer) : base(renderer)
+            {
+                Factories.TextureFactory.Instance.load("CS_Hina", "Assets/Character/Selection/HinaSelection.png");
+
+                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+
+                _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
+                _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Hina", new List<uint> { 0 }, new Vector2u(128, 128));
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Hina", Enumerable.Range(0, 9).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.Loop = false;
+                _Sprite.Position = new Vector2f(display_size * 3, renderer.Win.GetView().Size.Y - display_size);
+            }
+
+            public override void Draw(RenderTarget target, RenderStates states)
+            {
+                target.Draw(_Sprite, states);
+            }
+
+            public override void Lock(bool isLocked)
+            {
+                base.Lock(isLocked);
+                if (isLocked)
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.WALKING_DOWN);
+                else
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.IDLE);
+            }
+
+            public override void Update(Time DeltaTime)
+            {
+                _Sprite.Update(DeltaTime);
+            }
+        }
+
+        class Tchong : Character
+        {
+            Graphics.AnimatedSprite _Sprite;
+
+            public Tchong(Renderer renderer) : base(renderer)
+            {
+                Factories.TextureFactory.Instance.load("CS_Tchong", "Assets/Character/Selection/TchongSelection.png");
+
+                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+
+                _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
+                _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Tchong", new List<uint> { 0 }, new Vector2u(128, 128));
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Tchong", Enumerable.Range(0, 12).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.Loop = false;
+                _Sprite.Position = new Vector2f(display_size * 4, renderer.Win.GetView().Size.Y - display_size);
+            }
+
+            public override void Draw(RenderTarget target, RenderStates states)
+            {
+                target.Draw(_Sprite, states);
+            }
+
+            public override void Lock(bool isLocked)
+            {
+                base.Lock(isLocked);
+                if (isLocked)
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.WALKING_DOWN);
+                else
+                    _Sprite.PlayAnimation(Graphics.EStateEntity.IDLE);
+            }
+
+            public override void Update(Time DeltaTime)
+            {
+                _Sprite.Update(DeltaTime);
             }
         }
     }
@@ -219,11 +356,16 @@ namespace CerealSquad.Menus
 
             Players = new Players.Player[SELECTION_COUNT];
             _Characters = new Characters.Character[SELECTION_COUNT];
+            _Characters[0] = new Characters.Mike(_Renderer);
+            _Characters[1] = new Characters.Jack(_Renderer);
+            _Characters[2] = new Characters.OrangeHina(_Renderer);
+            _Characters[3] = new Characters.Tchong(_Renderer);
             uint i = 0;
             while (i < SELECTION_COUNT)
             {
                 Players[i] = new Players.Player(i, _Renderer);
-                _Characters[i] = new Characters.Character(_Renderer, i);
+                //_Characters[i] = new Characters.Mike(_Renderer);
+                //_Characters[i] = new Characters.Character(_Renderer, i);
                 i++;
             }
 
@@ -234,17 +376,27 @@ namespace CerealSquad.Menus
             _menuList.Add(back_Button);
 
             _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
-            _StartGameText.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
+            _StartGameText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
             _StartGameText.Color = Color.Red;
 
             _StartGameShape = new RectangleShape(new SFML.System.Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 20));
-            _StartGameShape.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameShape.GetLocalBounds().Left + _StartGameShape.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2 - (_StartGameShape.GetLocalBounds().Top + _StartGameShape.GetLocalBounds().Height) / 2);
+            _StartGameShape.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameShape.GetLocalBounds().Left + _StartGameShape.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameShape.GetLocalBounds().Top + _StartGameShape.GetLocalBounds().Height) / 2);
             _StartGameShape.FillColor = Color.White;
 
             _InputManager.JoystickButtonPressed += _InputManager_JoystickButtonPressed;
             _InputManager.JoystickMoved += _InputManager_JoystickMoved;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
+        }
+
+        public override void Update(SFML.System.Time DeltaTime)
+        {
+            uint i = 0;
+            while (i < SELECTION_COUNT)
+            {
+                _Characters[i].Update(DeltaTime);
+                i++;
+            }
         }
 
         public override void Show()
@@ -292,13 +444,13 @@ namespace CerealSquad.Menus
         private void UpdateEffects()
         {
             uint i = 0;
-            _Characters.ToList().ForEach(x => x.id_on_it = -1);
+            _Characters.ToList().ForEach(x => x.Select(-1));
             while (i < SELECTION_COUNT)
             {
                 if (Players[i].Type != Menus.Players.Type.Undefined)
                 {
-                    _Characters[Players[i].Selection].id_on_it = (int)i;
-                    _Characters[Players[i].Selection].id_locked = Players[i].LockedChoice;
+                    _Characters[Players[i].Selection].Select((int)i);
+                    _Characters[Players[i].Selection].Lock(Players[i].LockedChoice);
                 }
                 i++;
             }

@@ -138,6 +138,8 @@ namespace CerealSquad.Menus
         }
         #endregion
 
+        public virtual void Update(SFML.System.Time DeltaTime) { }
+
         public virtual void Show()
         {
             System.Diagnostics.Debug.WriteLine("SHOWED MENU");
