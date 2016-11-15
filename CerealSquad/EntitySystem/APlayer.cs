@@ -219,5 +219,20 @@ namespace CerealSquad
 
             return result || baseResult;
         }
+
+        public override bool IsCollidingAndDead(AWorld World)
+        {
+            bool result = false;
+            List<AEntity> allEntities = ((WorldEntity)getRootEntity()).GetAllEntities();
+
+            allEntities.ForEach(i =>
+            {
+                if (!i.Equals(this))
+                    if (i.getEntityType() == e_EntityType.Ennemy)
+                        result = true;
+            });
+
+            return result;
+        }
     }
 }

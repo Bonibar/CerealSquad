@@ -76,7 +76,7 @@ namespace CerealSquad.TrapEntities
         private void StartExplosion()
         {
             TimerDelete.Start();
-            ressourcesEntity.PlayAnimation(Graphics.EStateEntity.DYING);
+            ressourcesEntity.PlayAnimation((uint)Graphics.EStateEntity.DYING);
             ((AnimatedSprite)ressourcesEntity.sprite).SetColor(new Color(255, 255, 255, 200));
 
             SecondaryResourcesEntities.ForEach(i =>
@@ -90,7 +90,7 @@ namespace CerealSquad.TrapEntities
             allEntities.ForEach(i =>
             {
                 if (!i.Equals(this))
-                    i.attemptDamage(this, getDamageType(), Range - (ressourcesEntity.HitBox.Width / 2.0f / 64.0f));
+                    i.attemptDamage(this, getDamageType(), Range, Range / 2.0f);
             });
             state++;
         }
