@@ -13,6 +13,7 @@ namespace CerealSquad.Graphics
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
 
+        public EStateEntity Animation { get; private set; }
         public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
         public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
         public bool Pause { get { return (animator.m_isPaused); } set { animator.m_isPaused = value; } }
@@ -79,7 +80,10 @@ namespace CerealSquad.Graphics
             animations.Add((uint)type, anim);
 
             if (!animator.HaveAnimation())
+            {
+                Animation = type;
                 animator.setAnimation(anim);
+            }
         }
 
         /// <summary>
@@ -88,6 +92,7 @@ namespace CerealSquad.Graphics
         /// <param name="animation">EStateEntity</param>
         public void PlayAnimation(EStateEntity animation)
         {
+            Animation = animation;
             animator.Play(animations[(uint)animation]);
         }
 

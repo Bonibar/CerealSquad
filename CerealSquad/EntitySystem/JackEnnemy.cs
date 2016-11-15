@@ -8,6 +8,7 @@ using static CerealSquad.APlayer;
 using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
 using CerealSquad.Factories;
+using SFML.Graphics;
 
 namespace CerealSquad
 {
@@ -39,13 +40,32 @@ namespace CerealSquad
             _speed = 0.1;
             _scentMap = new JackEnnemyScentMap(100, 100);
             _ressources = new EntityResources();
-            Factories.TextureFactory.Instance.load("jackHunter", "Assets/Character/jackHunter.png");
+            Factories.TextureFactory.Instance.load("JackHunter", "Assets/Character/JackHunter.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            Vector2f pos = _ressources.Position;
-            pos.X = position._x * 64;
-            pos.Y = position._y * 64;
-            _ressources.Position = pos;
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_LEFT, "JackHunter", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_RIGHT, "JackHunter", new List<uint> { 6, 7, 8 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, "JackHunter", new List<uint> { 9, 10, 11 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "JackHunter", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
+
+            _ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
+            Pos = position;
+        }
+
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        {
+            double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
+            if (ressourcesEntity != null)
+                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+
+            if (Distance > Range)
+                return false;
+
+            Die = true;
+
+            return true;
         }
 
         //
@@ -73,10 +93,41 @@ namespace CerealSquad
 
         public override void update(Time deltaTime, AWorld world)
         {
-            _scentMap.update((WorldEntity)_owner);
-            think();
+            if (Die)
+            {
+                if (((AnimatedSprite)ressourcesEntity.sprite).Animation == EStateEntity.DYING)
+                {
+                    if (ressourcesEntity.isFinished())
+                        destroy();
+                }
+                else
+                {
+                    ressourcesEntity.Loop = false;
+                    ressourcesEntity.PlayAnimation(EStateEntity.DYING);
+                }
+            }
+            else
+            {
+                _scentMap.update((WorldEntity)_owner);
+                think();
+                move(world, deltaTime);
+            }
             _ressources.Update(deltaTime);
-            move(world, deltaTime);
+        }
+
+        public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
+        {
+            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
+            bool result = false;
+
+            CollidingEntities.ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.PlayerTrap)
+                    Die = true;
+            });
+
+
+            return result || baseResult;
         }
     }
 }

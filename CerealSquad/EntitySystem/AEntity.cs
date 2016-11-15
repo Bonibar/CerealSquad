@@ -118,7 +118,7 @@ namespace CerealSquad
             _children.Add(child);
         }
 
-        public bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
         {
             double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
             if (ressourcesEntity != null)
@@ -224,10 +224,11 @@ namespace CerealSquad
             }
 
             _ressources.PlayAnimation(anim);
-            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64, (float)NewPosition._trueY * 64);
+            // Set manually the position of entity Resources to check collision
+            _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
 
-           if (!IsColliding(world))
-                _pos = NewPosition;
+            if (!IsColliding(world))
+                Pos = NewPosition;
             else
                 _ressources.Position = OldResourcePosition;
             if (IsCollidingAndDead(world))
@@ -260,9 +261,14 @@ namespace CerealSquad
             return parent;
         }
 
+        private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
+        {
+            return new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+        }
+
         private void setResourceEntityPosition()
         {
-            ressourcesEntity.Position = new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+            ressourcesEntity.Position = EntityPositionToResourcesEntityPosition(Pos);
         }
     }
 }
