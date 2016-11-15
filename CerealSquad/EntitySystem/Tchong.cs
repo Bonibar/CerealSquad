@@ -14,41 +14,23 @@ namespace CerealSquad
 {
     class Tchong : APlayer
     {
-        public Tchong(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input)
+        public Tchong(IEntity owner, s_position position, InputManager.InputManager input, bool keyboard, uint id) : base(owner, position, input, keyboard, id)
         {
             _speed = 5;
-            _inputPress = new Dictionary<Key, functionMove>();
-            _inputPress[InputManager.Keyboard.Key.Z] = move_up;
-            _inputPress[InputManager.Keyboard.Key.Q] = move_left;
-            _inputPress[InputManager.Keyboard.Key.S] = move_down;
-            _inputPress[InputManager.Keyboard.Key.D] = move_right;
-            _inputPress[InputManager.Keyboard.Key.A] = special_start;
-            _inputPress[InputManager.Keyboard.Key.Space] = put_trap;
-            _inputRelease = new Dictionary<Key, functionMove>();
-            _inputRelease[InputManager.Keyboard.Key.Z] = move_up_release;
-            _inputRelease[InputManager.Keyboard.Key.Q] = move_left_release;
-            _inputRelease[InputManager.Keyboard.Key.S] = move_down_release;
-            _inputRelease[InputManager.Keyboard.Key.D] = move_right_release;
-            _inputRelease[InputManager.Keyboard.Key.A] = special_end;
-            _inputRelease[InputManager.Keyboard.Key.Space] = put_trap_release;
-            _ressources = new EntityResources();
+            ressourcesEntity = new EntityResources();
 
             Factories.TextureFactory.Instance.load("ChongWalking", "Assets/Character/ChongWalking.png");
-            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
+            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "ChongWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, "ChongWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_LEFT, "ChongWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_RIGHT, "ChongWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, "ChongWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
-            //((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "ChongWalking", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
+            ressourcesEntity.AddAnimation((uint)EStateEntity.IDLE, "ChongWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)EStateEntity.WALKING_DOWN, "ChongWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)EStateEntity.WALKING_LEFT, "ChongWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)EStateEntity.WALKING_RIGHT, "ChongWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)EStateEntity.WALKING_UP, "ChongWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
+            //ressourcesEntity.AddAnimation((uint)EStateEntity.DYING, "ChongWalking", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
-            Vector2f pos = _ressources.Position;
-            pos.X = position._x * 64;
-            pos.Y = position._y * 64;
-            _ressources.Position = pos;
-
-            _ressources.CollisionBox = new FloatRect(new Vector2f(12.0f, -20.0f), new Vector2f(12.0f, 27.0f));
+            ressourcesEntity.CollisionBox = new FloatRect(new Vector2f(12.0f, -20.0f), new Vector2f(12.0f, 27.0f));
+            Pos = position;
         }
 
         public override void AttaqueSpe()

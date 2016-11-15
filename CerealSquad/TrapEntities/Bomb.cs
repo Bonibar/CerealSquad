@@ -31,9 +31,8 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity = new EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
             
-            ((AnimatedSprite)ressourcesEntity.sprite).addAnimation(Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
-            //((AnimatedSprite)ressourcesEntity.sprite).addAnimation(Graphics.EStateEntity.DYING, "MegaExpl", new List<uint> { 0 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
            
             EntityResources secondary = new EntityResources();
             secondary.sprite = new EllipseShapeSprite(new Vector2f(Range * 64.0f, Range / 2.0f * 64.0f), new Color(219, 176, 10, 100), new Color(219, 130, 10, 255));

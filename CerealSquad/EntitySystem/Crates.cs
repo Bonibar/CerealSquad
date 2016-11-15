@@ -34,7 +34,7 @@ namespace CerealSquad.EntitySystem
                 PosFrames.Add(i);
             }
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
             //Ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
 
             _ressources.Position = new Vector2f(Position.X * 64, Position.Y * 64);
