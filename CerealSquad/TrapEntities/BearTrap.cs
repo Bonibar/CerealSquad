@@ -20,7 +20,7 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.IDLE, "BearTrap", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.IDLE, "BearTrap", new List<uint> { 0, 1 }, new Vector2u(128, 128));
             ressourcesEntity.CollisionBox = COLLISION_BOX;
         }
 

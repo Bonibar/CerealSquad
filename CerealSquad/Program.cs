@@ -73,9 +73,6 @@ namespace CerealSquad
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
-            manager.GetAssociateFunction(1, InputManager.Player.Type.Keyboard, 0);
-            manager.SaveKeyMaps();
-
             GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);
 
             Downloaders.LoadingScreen _loadingScreen = new Downloaders.LoadingScreen(renderer);

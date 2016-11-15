@@ -282,6 +282,7 @@ namespace CerealSquad.InputManager
                 else
                 {
                     ResetKeyMap();
+                    SaveKeyMap();
                 }
             }
 
@@ -315,6 +316,7 @@ namespace CerealSquad.InputManager
 
             public int GetFunction(int key)
             {
+                System.Diagnostics.Debug.WriteLine(_KeyMap.Count);
                 if (_KeyMap.Keys.Contains(key))
                     return _KeyMap[key];
                 return -1;

@@ -28,8 +28,11 @@ namespace CerealSquad
         protected s_size _size;
         protected double _speed;
         protected bool _die;
-        protected EMovement _move;
+        protected List<EMovement> _move;
+        protected float _inputForce;
         protected EntityResources _ressources;
+
+
 
         public s_position Pos
         {
@@ -108,8 +111,9 @@ namespace CerealSquad
             _damageType = e_DamageType.NONE;
             _size = size;
             _speed = 0;
+            _inputForce = 1;
             _die = false;
-            _move = EMovement.None;
+            _move = new List<EMovement> { EMovement.None };
             SecondaryResourcesEntities = new List<EntityResources>();
         }
 
@@ -198,9 +202,43 @@ namespace CerealSquad
             var OldResourcePosition = _ressources.Position;
             s_position NewPosition = _pos;
 
-            double speedMove = _speed * deltaTime.AsSeconds();
+            double speedMove = (_speed * deltaTime.AsSeconds()) * _inputForce;
 
-            switch (_move)
+            if (_move.Count == 2)
+                speedMove *= 1.0f / Math.Sqrt(2.0f);
+
+            if (_move.Contains(EMovement.Right))
+            {
+                NewPosition += new s_position(speedMove, 0, 0);
+                anim = EStateEntity.WALKING_RIGHT;
+            }
+
+            if (_move.Contains(EMovement.Left))
+            {
+                NewPosition += new s_position(-speedMove, 0, 0);
+                anim = EStateEntity.WALKING_LEFT;
+            }
+
+            if (_move.Contains(EMovement.Up))
+            {
+                NewPosition += new s_position(0, -speedMove, 0);
+                anim = EStateEntity.WALKING_UP;
+            }
+
+            if (_move.Contains(EMovement.Down))
+            {
+                NewPosition += new s_position(0, +speedMove, 0);
+                anim = EStateEntity.WALKING_DOWN;
+            }
+
+            _ressources.PlayAnimation(anim);
+
+            if (_move.Contains(EMovement.None))
+            {
+                ((AnimatedSprite)_ressources.sprite).Pause = true;
+            }
+
+            /*switch (_move)
             {
                 case EMovement.Up:
                     NewPosition += new s_position(0, -speedMove, 0);
@@ -221,9 +259,8 @@ namespace CerealSquad
                 case EMovement.None:
                     _ressources.PlayAnimation(EStateEntity.IDLE);
                     return;
-            }
+            }*/
 
-            _ressources.PlayAnimation(anim);
             // Set manually the position of entity Resources to check collision
             _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
 

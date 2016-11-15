@@ -40,8 +40,8 @@ namespace CerealSquad.EntitySystem
             Target = EMovement.Up;
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
             ResourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
-            //Sprite = new AnimatedSprite(64, 64);
-            ((AnimatedSprite)ResourcesEntity.sprite).addAnimation(EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
+
+            ResourcesEntity.AddAnimation((uint)EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
             ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.Green);
             ((AnimatedSprite)ResourcesEntity.sprite).Speed = Time.FromMilliseconds(100);
 
