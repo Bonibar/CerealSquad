@@ -193,9 +193,9 @@ namespace CerealSquad.Menus
 
                 _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Mike", new List<uint> { 0 }, new Vector2u(128, 128));
-                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Mike", Enumerable.Range(0, 5).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Mike", Enumerable.Range(0, 5).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
-                _Sprite.Position = new Vector2f(display_size, renderer.Win.GetView().Size.Y - display_size);
+                _Sprite.Position = new Vector2f(display_size, renderer.Win.GetView().Size.Y - display_size / 2);
             }
 
             public override void Draw(RenderTarget target, RenderStates states)
@@ -230,9 +230,9 @@ namespace CerealSquad.Menus
 
                 _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Jack", new List<uint> { 0 }, new Vector2u(128, 128));
-                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Jack", Enumerable.Range(0, 12).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Jack", Enumerable.Range(0, 12).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
-                _Sprite.Position = new Vector2f(display_size * 2, renderer.Win.GetView().Size.Y - display_size);
+                _Sprite.Position = new Vector2f(display_size * 2, renderer.Win.GetView().Size.Y - display_size / 2);
             }
 
             public override void Draw(RenderTarget target, RenderStates states)
@@ -267,9 +267,9 @@ namespace CerealSquad.Menus
 
                 _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Hina", new List<uint> { 0 }, new Vector2u(128, 128));
-                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Hina", Enumerable.Range(0, 9).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Hina", Enumerable.Range(0, 9).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
-                _Sprite.Position = new Vector2f(display_size * 3, renderer.Win.GetView().Size.Y - display_size);
+                _Sprite.Position = new Vector2f(display_size * 3, renderer.Win.GetView().Size.Y - display_size / 2);
             }
 
             public override void Draw(RenderTarget target, RenderStates states)
@@ -306,7 +306,7 @@ namespace CerealSquad.Menus
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Tchong", new List<uint> { 0 }, new Vector2u(128, 128));
                 _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Tchong", Enumerable.Range(0, 12).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
-                _Sprite.Position = new Vector2f(display_size * 4, renderer.Win.GetView().Size.Y - display_size);
+                _Sprite.Position = new Vector2f(display_size * 4, renderer.Win.GetView().Size.Y - display_size / 2);
             }
 
             public override void Draw(RenderTarget target, RenderStates states)
@@ -343,6 +343,8 @@ namespace CerealSquad.Menus
         private RectangleShape _StartGameShape;
         private Sounds.JukeBox Jukebox = new Sounds.JukeBox();
 
+        private Graphics.AnimatedSprite _BackgroundImage;
+
         private Characters.Character[] _Characters;
 
         public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
@@ -368,6 +370,13 @@ namespace CerealSquad.Menus
                 Players[i] = new Players.Player(i, _Renderer);
                 i++;
             }
+
+            Factories.TextureFactory.Instance.load("S_CS_BackgroundImage", "Assets/Background/CharacterSelection.png");
+
+            _BackgroundImage = new Graphics.AnimatedSprite(new Vector2u((uint)_Renderer.Win.GetView().Size.X, (uint)_Renderer.Win.GetView().Size.Y));
+            _BackgroundImage.addAnimation(Graphics.EStateEntity.IDLE, "S_CS_BackgroundImage", Enumerable.Range(0, 8).Select(s => (uint)s).ToList(), new Vector2u(800, 450), 200);
+            _BackgroundImage.Loop = true;
+            _BackgroundImage.Position = new Vector2f(_Renderer.Win.GetView().Size.X / 2, _Renderer.Win.GetView().Size.Y / 2);
 
             Jukebox.loadMusic(0, "Assets/Music/CharacterSelection.ogg");
 
@@ -397,6 +406,7 @@ namespace CerealSquad.Menus
                 _Characters[i].Update(DeltaTime);
                 i++;
             }
+            _BackgroundImage.Update(DeltaTime);
         }
 
         public override void Show()
@@ -607,6 +617,8 @@ namespace CerealSquad.Menus
 
         public override void Draw(RenderTarget target, RenderStates states)
         {
+            target.Draw(_BackgroundImage, states);
+
             uint i = 0;
             while (i < PLAYER_COUNT)
             {
