@@ -117,8 +117,8 @@ namespace CerealSquad.Graphics
         /// <summary>
         /// Play animation
         /// </summary>
-        /// <param name="animation">EStateEntity</param>
-        public void PlayAnimation(EStateEntity animation)
+        /// <param name="animation">uint</param>
+        public void PlayAnimation(uint animation)
         {
             if (sprite.Type == ETypeSprite.ANIMATED)
                 ((AnimatedSprite)sprite).PlayAnimation((uint)animation);

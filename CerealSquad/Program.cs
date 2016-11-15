@@ -67,7 +67,8 @@ namespace CerealSquad
             // Initialisation
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R854x480;
+            renderer.Resolution = Renderer.EResolution.R3840x2160;
+            renderer.FullScreen = true;
             renderer.FrameRate = 60;
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);

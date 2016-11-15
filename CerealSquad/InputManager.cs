@@ -347,6 +347,7 @@ namespace CerealSquad.InputManager
                     _current = _KeyMapAxis;
                 if (_current.Keys.Contains(key))
                     return _current[key];
+
                 return -1;
             }
 

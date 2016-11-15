@@ -60,7 +60,7 @@ namespace CerealSquad
             }
         }
 
-        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 0, int id = 1) : base(owner)
+        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 1, int id = 1) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Player;
@@ -108,6 +108,9 @@ namespace CerealSquad
                 case SKeyPlayer.MOVE_RIGHT:
                     MoveStack.Remove(EMovement.Right);
                     break;
+                case SKeyPlayer.PUT_TRAP:
+                    TrapPressed = false;
+                    break;
                 default:
                     break;
             }
@@ -116,9 +119,6 @@ namespace CerealSquad
         private void Input_KeyboardKeyPressed(object source, KeyEventArgs e)
         {
             SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Keyboard, ((int)e.KeyCode));
-
-            System.Diagnostics.Debug.WriteLine(e.KeyCode);
-            System.Diagnostics.Debug.WriteLine(Enum.GetName(typeof(SKeyPlayer), action));
 
             switch (action)
             {
@@ -134,6 +134,9 @@ namespace CerealSquad
                 case SKeyPlayer.MOVE_RIGHT:
                     MoveStack.Add(EMovement.Right);
                     break;
+                case SKeyPlayer.PUT_TRAP:
+                    TrapPressed = true;
+                    break;
                 default:
                     break;
             }
@@ -141,27 +144,67 @@ namespace CerealSquad
 
         private void Input_JoystickDisconnected(object source, InputManager.Joystick.ConnectionEventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private void Input_JoystickConnected(object source, InputManager.Joystick.ConnectionEventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private void Input_JoystickButtonReleased(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            throw new NotImplementedException();
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+
+            switch (action)
+            {
+                case SKeyPlayer.PUT_TRAP:
+                    TrapPressed = false;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void Input_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            throw new NotImplementedException();
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+
+            switch (action)
+            {
+                case SKeyPlayer.PUT_TRAP:
+                    TrapPressed = true;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void Input_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
-            throw new NotImplementedException();
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
+
+            switch (action)
+            {
+                case SKeyPlayer.MOVE_UP:
+                    MoveStack.Remove(EMovement.Up);
+                    MoveStack.Remove(EMovement.Down);
+                    if (e.Position > 30)
+                        MoveStack.Add(EMovement.Down);
+                    else if (e.Position < -30)
+                        MoveStack.Add(EMovement.Up);
+                    break;
+                case SKeyPlayer.MOVE_LEFT:
+                    MoveStack.Remove(EMovement.Left);
+                    MoveStack.Remove(EMovement.Right);
+                    if (e.Position > 30)
+                        MoveStack.Add(EMovement.Right);
+                    else if (e.Position < -30)
+                        MoveStack.Add(EMovement.Left);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public override void move(AWorld world, SFML.System.Time deltaTime)
@@ -218,6 +261,21 @@ namespace CerealSquad
             });
 
             return result || baseResult;
+        }
+
+        public override bool IsCollidingAndDead(AWorld World)
+        {
+            bool result = false;
+            List<AEntity> allEntities = ((WorldEntity)getRootEntity()).GetAllEntities();
+
+            allEntities.ForEach(i =>
+            {
+                if (!i.Equals(this))
+                    if (i.getEntityType() == e_EntityType.Ennemy)
+                        result = true;
+            });
+
+            return result;
         }
     }
 }

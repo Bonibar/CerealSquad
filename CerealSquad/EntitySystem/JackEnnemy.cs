@@ -44,12 +44,12 @@ namespace CerealSquad
             Factories.TextureFactory.Instance.load("JackHunter", "Assets/Character/JackHunter.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_LEFT, "JackHunter", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_RIGHT, "JackHunter", new List<uint> { 6, 7, 8 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, "JackHunter", new List<uint> { 9, 10, 11 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "JackHunter", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_DOWN, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "JackHunter", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "JackHunter", new List<uint> { 6, 7, 8 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "JackHunter", new List<uint> { 9, 10, 11 }, new Vector2u(64, 64));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "JackHunter", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
             Pos = position;
@@ -64,7 +64,7 @@ namespace CerealSquad
             if (Distance > Range)
                 return false;
 
-            Die = true;
+            die();
 
             return true;
         }
@@ -81,31 +81,23 @@ namespace CerealSquad
             int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
 
             if (maxscent == 0)
-                _move = EMovement.None;
+                _move = new List<EMovement> { EMovement.None };
             else if (maxscent == top)
-                _move = EMovement.Up;
+                _move = new List<EMovement> { EMovement.Up };
             else if (maxscent == bottom)
-                _move = EMovement.Down;
+                _move = new List<EMovement> { EMovement.Down };
             else if (maxscent == right)
-                _move = EMovement.Right;
+                _move = new List<EMovement> { EMovement.Right };
             else
-                _move = EMovement.Left;
+                _move = new List<EMovement> { EMovement.Left };
         }
 
         public override void update(Time deltaTime, AWorld world)
         {
             if (Die)
             {
-                if (((AnimatedSprite)ressourcesEntity.sprite).Animation == EStateEntity.DYING)
-                {
-                    if (ressourcesEntity.isFinished())
-                        destroy();
-                }
-                else
-                {
-                    ressourcesEntity.Loop = false;
-                    ressourcesEntity.PlayAnimation(EStateEntity.DYING);
-                }
+                if (ressourcesEntity.isFinished())
+                    destroy();
             }
             else
             {
