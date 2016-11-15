@@ -30,7 +30,7 @@ namespace CerealSquad.Menus
             private Renderer _Renderer;
             private Text _PlayerText;
             private Text _JoinText;
-            private Text[] _SelectionText = new Text[CharacterSelectMenu.SELECTION_COUNT];
+            private Text[] _SelectionText = new Text[CharacterSelectMenu.CHARACTER_COUNT];
 
             private void init(Type type, uint id)
             {
@@ -40,7 +40,7 @@ namespace CerealSquad.Menus
 
                 _Id = id;
 
-                float x_margin = _Renderer.Win.GetView().Size.X / CharacterSelectMenu.SELECTION_COUNT;
+                float x_margin = _Renderer.Win.GetView().Size.X / CharacterSelectMenu.PLAYER_COUNT;
                 float x_padding = x_margin / 2;
                 float y_margin = 0;
                 float y_padding = y_margin / 2;
@@ -48,22 +48,22 @@ namespace CerealSquad.Menus
                 List<String> char_names = new List<string> { "Mike", "Jack", "Orange Hina", "Tchong" };
 
                 uint i = 0;
-                while (i < CharacterSelectMenu.SELECTION_COUNT)
+                while (i < CharacterSelectMenu.CHARACTER_COUNT)
                 {
-                    _SelectionText[i] = new Text(char_names[(int)i], Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+                    _SelectionText[i] = new Text(char_names[(int)i % char_names.Count], Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
 
                     float text_x_offset = (_SelectionText[i].GetLocalBounds().Left + _SelectionText[i].GetLocalBounds().Width) / 2;
                     float text_y_offset = 0;
 
-                    _SelectionText[i].Position = new SFML.System.Vector2f((x_margin * _Id + x_padding) - text_x_offset, 40 + text_y_offset - text_y_offset);
+                    _SelectionText[i].Position = new Vector2f((x_margin * _Id + x_padding) - text_x_offset, 40 + text_y_offset - text_y_offset);
                     i++;
                 }
 
                 _PlayerText = new Text("Player " + (id + 1), Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _PlayerText.Position = new SFML.System.Vector2f((x_margin * _Id + x_padding) - (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2, (y_margin * _Id + y_padding));
+                _PlayerText.Position = new Vector2f((x_margin * _Id + x_padding) - (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2, (y_margin * _Id + y_padding));
 
                 _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _JoinText.Position = new SFML.System.Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 40 + (y_margin * _Id + y_padding));
+                _JoinText.Position = new Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 40 + (y_margin * _Id + y_padding));
                 _JoinText.Color = Color.Green;
             }
 
@@ -92,10 +92,10 @@ namespace CerealSquad.Menus
                     uint checking_counter = 0;
                     while (!prevent_continue)
                     {
-                        if (checking_counter > CharacterSelectMenu.SELECTION_COUNT)
+                        if (checking_counter > CharacterSelectMenu.CHARACTER_COUNT)
                             throw new NotSupportedException("No character left for selection");
                         Selection++;
-                        Selection = Selection % CharacterSelectMenu.SELECTION_COUNT;
+                        Selection = Selection % CharacterSelectMenu.CHARACTER_COUNT;
                         if (!lockedList.Contains(Selection))
                             prevent_continue = true;
                         checking_counter++;
@@ -111,10 +111,10 @@ namespace CerealSquad.Menus
                     uint checking_counter = 0;
                     while (!prevent_continue)
                     {
-                        if (checking_counter > CharacterSelectMenu.SELECTION_COUNT)
+                        if (checking_counter > CharacterSelectMenu.CHARACTER_COUNT)
                             throw new NotSupportedException("No character left for selection");
                         if (Selection == 0)
-                            Selection = CharacterSelectMenu.SELECTION_COUNT;
+                            Selection = CharacterSelectMenu.CHARACTER_COUNT;
                         Selection--;
                         if (!lockedList.Contains(Selection))
                             prevent_continue = true;
@@ -189,7 +189,7 @@ namespace CerealSquad.Menus
             {
                 Factories.TextureFactory.Instance.load("CS_Mike", "Assets/Character/Selection/MikeSelection.png");
 
-                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+                int display_size = (int)renderer.Win.GetView().Size.X / ((int)CharacterSelectMenu.CHARACTER_COUNT + 1);
 
                 _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Mike", new List<uint> { 0 }, new Vector2u(128, 128));
@@ -226,7 +226,7 @@ namespace CerealSquad.Menus
             {
                 Factories.TextureFactory.Instance.load("CS_Jack", "Assets/Character/Selection/JackSelection.png");
 
-                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+                int display_size = (int)renderer.Win.GetView().Size.X / ((int)CharacterSelectMenu.CHARACTER_COUNT + 1);
 
                 _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Jack", new List<uint> { 0 }, new Vector2u(128, 128));
@@ -263,7 +263,7 @@ namespace CerealSquad.Menus
             {
                 Factories.TextureFactory.Instance.load("CS_Hina", "Assets/Character/Selection/HinaSelection.png");
 
-                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+                int display_size = (int)renderer.Win.GetView().Size.X / ((int)CharacterSelectMenu.CHARACTER_COUNT + 1);
 
                 _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Hina", new List<uint> { 0 }, new Vector2u(128, 128));
@@ -300,11 +300,11 @@ namespace CerealSquad.Menus
             {
                 Factories.TextureFactory.Instance.load("CS_Tchong", "Assets/Character/Selection/TchongSelection.png");
 
-                int display_size = (int)renderer.Win.GetView().Size.X / 5;
+                int display_size = (int)renderer.Win.GetView().Size.X / ((int)CharacterSelectMenu.CHARACTER_COUNT + 1);
 
                 _Sprite = new Graphics.AnimatedSprite((uint)display_size, (uint)display_size);
                 _Sprite.addAnimation(Graphics.EStateEntity.IDLE, "CS_Tchong", new List<uint> { 0 }, new Vector2u(128, 128));
-                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Tchong", Enumerable.Range(0, 12).Select<int, uint>(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+                _Sprite.addAnimation(Graphics.EStateEntity.WALKING_DOWN, "CS_Tchong", Enumerable.Range(0, 12).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
                 _Sprite.Position = new Vector2f(display_size * 4, renderer.Win.GetView().Size.Y - display_size);
             }
@@ -332,7 +332,8 @@ namespace CerealSquad.Menus
 
     class CharacterSelectMenu : Menu, Drawable
     {
-        public static uint SELECTION_COUNT = 4;
+        public static uint PLAYER_COUNT = 4;
+        public static uint CHARACTER_COUNT = 4;
 
         public Players.Player[] Players { get; private set; }
 
@@ -354,18 +355,17 @@ namespace CerealSquad.Menus
             _Renderer = renderer;
             _GameManager = gameManager;
 
-            Players = new Players.Player[SELECTION_COUNT];
-            _Characters = new Characters.Character[SELECTION_COUNT];
+            _Characters = new Characters.Character[CHARACTER_COUNT];
             _Characters[0] = new Characters.Mike(_Renderer);
             _Characters[1] = new Characters.Jack(_Renderer);
             _Characters[2] = new Characters.OrangeHina(_Renderer);
             _Characters[3] = new Characters.Tchong(_Renderer);
+
+            Players = new Players.Player[PLAYER_COUNT];
             uint i = 0;
-            while (i < SELECTION_COUNT)
+            while (i < PLAYER_COUNT)
             {
                 Players[i] = new Players.Player(i, _Renderer);
-                //_Characters[i] = new Characters.Mike(_Renderer);
-                //_Characters[i] = new Characters.Character(_Renderer, i);
                 i++;
             }
 
@@ -379,8 +379,8 @@ namespace CerealSquad.Menus
             _StartGameText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
             _StartGameText.Color = Color.Red;
 
-            _StartGameShape = new RectangleShape(new SFML.System.Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 20));
-            _StartGameShape.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameShape.GetLocalBounds().Left + _StartGameShape.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameShape.GetLocalBounds().Top + _StartGameShape.GetLocalBounds().Height) / 2);
+            _StartGameShape = new RectangleShape(new Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 20));
+            _StartGameShape.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameShape.GetLocalBounds().Left + _StartGameShape.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameShape.GetLocalBounds().Top + _StartGameShape.GetLocalBounds().Height) / 2);
             _StartGameShape.FillColor = Color.White;
 
             _InputManager.JoystickButtonPressed += _InputManager_JoystickButtonPressed;
@@ -389,10 +389,10 @@ namespace CerealSquad.Menus
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
         }
 
-        public override void Update(SFML.System.Time DeltaTime)
+        public override void Update(Time DeltaTime)
         {
             uint i = 0;
-            while (i < SELECTION_COUNT)
+            while (i < CHARACTER_COUNT)
             {
                 _Characters[i].Update(DeltaTime);
                 i++;
@@ -402,7 +402,7 @@ namespace CerealSquad.Menus
         public override void Show()
         {
             uint i = 0;
-            while (i < SELECTION_COUNT)
+            while (i < PLAYER_COUNT)
             {
                 if (Players[i].Type != Menus.Players.Type.Undefined)
                     Players[i] = new Players.Player(i, _Renderer);
@@ -425,7 +425,7 @@ namespace CerealSquad.Menus
         {
             List<uint> LockedList = new List<uint>();
             uint locked_i = 0;
-            while (locked_i < SELECTION_COUNT)
+            while (locked_i < PLAYER_COUNT)
             {
                 if (Players[locked_i].Type != Menus.Players.Type.Undefined && Players[locked_i].LockedChoice)
                     LockedList.Add(Players[locked_i].Selection);
@@ -445,7 +445,7 @@ namespace CerealSquad.Menus
         {
             uint i = 0;
             _Characters.ToList().ForEach(x => x.Select(-1));
-            while (i < SELECTION_COUNT)
+            while (i < PLAYER_COUNT)
             {
                 if (Players[i].Type != Menus.Players.Type.Undefined)
                 {
@@ -583,7 +583,7 @@ namespace CerealSquad.Menus
             currentPlayer.LockSelection(true);
             LockedList.Add(currentPlayer.Selection);
             uint i = 0;
-            while (i < SELECTION_COUNT)
+            while (i < PLAYER_COUNT)
             {
                 if (Players[i].Type != Menus.Players.Type.Undefined && Players[i].LockedChoice == false)
                 {
@@ -608,9 +608,14 @@ namespace CerealSquad.Menus
         public override void Draw(RenderTarget target, RenderStates states)
         {
             uint i = 0;
-            while (i < SELECTION_COUNT)
+            while (i < PLAYER_COUNT)
             {
                 target.Draw(Players[i], states);
+                i++;
+            }
+            i = 0;
+            while (i < CHARACTER_COUNT)
+            {
                 target.Draw(_Characters[i], states);
                 i++;
             }
