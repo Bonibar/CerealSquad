@@ -171,11 +171,11 @@ namespace CerealSquad
 
         public bool IsColliding(AWorld World)
         {
-            if (World.IsCollidingWithWall(ressourcesEntity))
-                return true;
-
             if (ressourcesEntity == null)
                 return false;
+
+            if (World.IsCollidingWithWall(ressourcesEntity))
+                return true;
 
             List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
 

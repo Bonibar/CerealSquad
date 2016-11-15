@@ -38,7 +38,7 @@ namespace CerealSquad.GameWorld
             Players.Add(new Jack(WorldEntity, new s_position(5, 6, 1), im));
             //Players.Add(new Tchong(WorldEntity, new s_position(2, 4, 1), im));
             //new Ennemy(WorldEntity, new s_position(10, 10, 1));
-            new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
+            //new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
 
             im.KeyboardKeyPressed += Im_KeyboardKeyPressed;
         }
