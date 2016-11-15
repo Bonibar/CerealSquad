@@ -136,7 +136,7 @@ namespace CerealSquad
 
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
-            if (TrapPressed || !TrapDeliver.IsNotDelivering())
+            if (TrapPressed || TrapDeliver.IsDelivering())
                 _move = EMovement.None;
             else if (MoveStack.Count > 0)
                 _move = MoveStack.ElementAt(MoveStack.Count - 1);

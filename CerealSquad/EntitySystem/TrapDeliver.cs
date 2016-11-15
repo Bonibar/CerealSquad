@@ -29,7 +29,7 @@ namespace CerealSquad.EntitySystem
         //private AnimatedSprite Sprite;
         private APlayer Player;
         private Timer TimerCoolDown = new Timer(Time.FromSeconds(1));
-        //private Timer TimerToPut = new Timer(Time.FromSeconds(3));
+        private Timer TimerToPut = new Timer(Time.FromSeconds(3));
 
         public Time Cooldown { get { return TimerCoolDown.Time; } set { TimerCoolDown.Time = value; } }
 
@@ -48,9 +48,9 @@ namespace CerealSquad.EntitySystem
             IsTargetValid = true;
         }
 
-        public bool IsNotDelivering()
+        public bool IsDelivering()
         {
-            return Step.Equals(EStep.NOTHING);
+            return !Step.Equals(EStep.NOTHING);
         }
 
         public void Update(SFML.System.Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
@@ -109,11 +109,11 @@ namespace CerealSquad.EntitySystem
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
                     Player.addChild(trap);
-                   // TimerToPut.Start();
+                    TimerToPut.Start();
                 }
                 Step = EStep.END_SELECTING;
             }
-            else if (!TrapPressed && Step == EStep.END_SELECTING)// && TimerToPut.IsTimerOver())
+            else if (!TrapPressed && Step == EStep.END_SELECTING && TimerToPut.IsTimerOver())
             {
                 Step = EStep.NOTHING;
                 // Restart timer to launch cooldown
