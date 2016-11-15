@@ -121,7 +121,7 @@ namespace CerealSquad.Graphics
         public void PlayAnimation(uint animation)
         {
             if (sprite.Type == ETypeSprite.ANIMATED)
-                ((AnimatedSprite)sprite).PlayAnimation(animation);
+                ((AnimatedSprite)sprite).PlayAnimation((uint)animation);
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ using CerealSquad.GameWorld;
 using CerealSquad.Factories;
 using SFML.Graphics;
 
+/*
 namespace CerealSquad
 {
     class JackEnnemy : AEnemy
@@ -123,3 +124,4 @@ namespace CerealSquad
         }
     }
 }
+*/

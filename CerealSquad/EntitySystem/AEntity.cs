@@ -32,7 +32,6 @@ namespace CerealSquad
         protected float _inputForce;
         protected EntityResources _ressources;
 
-
         public s_position Pos
         {
             get
@@ -243,6 +242,7 @@ namespace CerealSquad
                 anim = EStateEntity.WALKING_LEFT;
             }
 
+
             if (_move.Contains(EMovement.Up))
             {
                 NewPosition += new s_position(0, -speedMove, 0);
@@ -261,29 +261,6 @@ namespace CerealSquad
             {
                 ((AnimatedSprite)_ressources.sprite).Pause = true;
             }
-
-            /*switch (_move)
-            {
-                case EMovement.Up:
-                    NewPosition += new s_position(0, -speedMove, 0);
-                    anim = EStateEntity.WALKING_UP;
-                    break;
-                case EMovement.Down:
-                    NewPosition += new s_position(0, +speedMove, 0);
-                    anim = EStateEntity.WALKING_DOWN;
-                    break;
-                case EMovement.Right:
-                    NewPosition += new s_position(speedMove, 0, 0);
-                    anim = EStateEntity.WALKING_RIGHT;
-                    break;
-                case EMovement.Left:
-                    NewPosition += new s_position(-speedMove, 0, 0);
-                    anim = EStateEntity.WALKING_LEFT;
-                    break;
-                case EMovement.None:
-                    _ressources.PlayAnimation(EStateEntity.IDLE);
-                    return;
-            }*/
 
             // Set manually the position of entity Resources to check collision
             _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
