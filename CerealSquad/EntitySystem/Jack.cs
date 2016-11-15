@@ -43,12 +43,8 @@ namespace CerealSquad
             ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_UP, "JackWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
             //((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "JackWalking", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
-            Vector2f pos = _ressources.Position;
-            pos.X = position._x * 64;
-            pos.Y = position._y * 64;
-            _ressources.Position = pos;
-
             _ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
+            Pos = position;
         }
 
         public override void AttaqueSpe()
