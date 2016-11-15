@@ -60,12 +60,15 @@ namespace CerealSquad
         {
             List<AEntity> Tmp = new List<AEntity>();
 
+            System.Diagnostics.Debug.Write("Recursive : " + Owner.getChildren().ToList<IEntity>().Count + "\n");
+
             Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                System.Diagnostics.Debug.Write("Recursive : " + i.getEntityType() + "\n");
                 Tmp = Tmp.Concat(GetCollidingEntitiesRecursive(i, Other)).ToList();
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Other))
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Other) && Other != Owner)
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;

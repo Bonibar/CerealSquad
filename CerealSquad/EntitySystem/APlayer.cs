@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CerealSquad.InputManager.Keyboard;
 using CerealSquad.GameWorld;
 using SFML.Graphics;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad
 {
@@ -186,6 +187,11 @@ namespace CerealSquad
             {
                 if (i.getEntityType() == e_EntityType.PlayerTrap)
                     result = true;
+                else if (i.getEntityType() == e_EntityType.Crate)
+                {
+                    TrapInventory = ((Crates)i).Item;
+                    ((Crates)i).pickCrate();
+                }
             });
 
             return result || baseResult;

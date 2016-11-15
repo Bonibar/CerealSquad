@@ -56,11 +56,11 @@ namespace CerealSquad.GameWorld
 
             for (int i = 0; i < 5; i++)
             {
-                s_Pos<int> SpawnPos = new s_Pos<int>(i + 1, i + 1);
+                s_Pos<int> SpawnPos = new s_Pos<int>(Position.X + i + 1, Position.Y + i + 1);
                 SpawnList.Add(SpawnPos);
             }
 
-            new Crates(WorldEntity, SpawnList.ElementAt(4), 0);
+            new Crates(WorldEntity, SpawnList.ElementAt(3), 0);
         }
 
         private void parseRoom()

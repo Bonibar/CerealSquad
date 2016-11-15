@@ -13,16 +13,17 @@ namespace CerealSquad.EntitySystem
 {
     class Crates : AEntity
     {
-        public enum e_TrapType { Bomb, BearTrap }
-
         //s_Pos<int> Position = new s_Pos<int>(0, 0);
-        e_TrapType Item = 0;
+        public e_TrapType Item { get; set; }
+        private bool PickState = false;
+        private bool PickAnimation = false;
 
-        public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item, s_size size = default(s_size)) : base(owner, size)
+        public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item = 0, s_size size = default(s_size)) : base(owner, size)
         {
             Item = _Item;
+            _type = e_EntityType.Crate;
             Factories.TextureFactory.Instance.load("CrateFloating", "Assets/GameplayElement/Crates.png");
-            Factories.TextureFactory.Instance.load("CrateOpening", "Assets/Character/JackHunter.png");
+            Factories.TextureFactory.Instance.load("CrateOpening", "Assets/GameplayElement/CratesOpening.png");
 
             _ressources = new EntityResources();
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
@@ -38,9 +39,22 @@ namespace CerealSquad.EntitySystem
             _ressources.CollisionBox = new FloatRect(new Vector2f(32.0f, 32.0f), new Vector2f(32.0f, 32.0f));
         }
 
+        public void pickCrate()
+        {
+            ((AnimatedSprite)_ressources.sprite).Loop = false;
+            PickState = true;
+        }
+
         public override void update(Time deltaTime, AWorld world)
         {
             _ressources.Update(deltaTime);
+            if (PickState && !PickAnimation)
+            {
+                ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "CrateOpening", new List<uint> { 0, 1 }, new Vector2u(128, 128), 50);
+                PickAnimation = true;
+            }
+            else if (PickState && PickAnimation && ((AnimatedSprite)_ressources.sprite).isFinished())
+                this.destroy();
         }
     }
 }
