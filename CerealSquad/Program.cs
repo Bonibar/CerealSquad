@@ -44,6 +44,8 @@ namespace CerealSquad
 
             awaiter.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Tiles/TestTile.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("JackWalking", "Assets/Character/JackWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/JackWalking.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("MikeWalking", "Assets/Character/MikeWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/MikeWalking.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("OrangeHinaWalking", "Assets/Character/HinaWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/HinaWalking.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("TchongWalking", "Assets/Character/ChongWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/ChongWalking.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/JackHunter.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Orangina.png"), false));
@@ -67,6 +69,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("S_CS_Fork", "Assets/HUD/Fork.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/Fork.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_Knife", "Assets/HUD/Knife.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/Knife.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerOverlay", "Assets/HUD/SelectionPlayerOverlay.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/SelectionPlayerOverlay.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerCursor", "Assets/HUD/SelectionPlayerCursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/SelectionPlayerCursor.png"), false));
 
             // Initialisation
             renderer = new Renderer();

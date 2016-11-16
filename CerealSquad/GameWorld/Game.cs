@@ -50,6 +50,7 @@ namespace CerealSquad.GameWorld
         private void _current_GameStart(object source, Menus.CharacterSelectMenu.CharacterSelectionArgs e)
         {
             CurrentWorld = new AWorld("Maps/TestWorld.txt", worldEntity);
+            Worlds.Add(CurrentWorld);
 
             foreach (Menus.Players.Player player in e.Players.Where(i => i.Type != Menus.Players.Type.Undefined))
             {

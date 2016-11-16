@@ -232,7 +232,7 @@ namespace CerealSquad
                     destroy();
             }
             _ressources.Update(deltaTime);
-            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
+            _children.ToList().ForEach(i => i.update(deltaTime, world));
         }
 
         public abstract void AttaqueSpe();
