@@ -60,7 +60,7 @@ namespace CerealSquad
             }
         }
 
-        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 1, int id = 1) : base(owner)
+        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 0, int id = 1) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Player;
