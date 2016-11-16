@@ -14,7 +14,7 @@ namespace CerealSquad
 {
     class Jack : APlayer
     {
-        public Jack(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input)
+        public Jack(IEntity owner, s_position position, InputManager.InputManager input, int type = 0, int id = 1) : base(owner, position, input, type, id)
         {
             _speed = 5;
             _ressources = new EntityResources();
