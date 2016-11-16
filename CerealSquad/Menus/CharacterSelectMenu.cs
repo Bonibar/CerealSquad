@@ -350,13 +350,29 @@ namespace CerealSquad.Menus
 
     class CharacterSelectMenu : Menu, Drawable
     {
+        public delegate void CharacterSelectionEventHandler(object source, CharacterSelectionArgs e);
+
+        public class CharacterSelectionArgs
+        {
+            public Players.Player[] Players { get; }
+
+            public CharacterSelectionArgs(Players.Player[] players)
+            {
+                Players = players;
+            }
+        }
+
+        /// <summary>
+        /// Event fired when a Game is started
+        /// </summary>
+        public event CharacterSelectionEventHandler GameStart;
+
         public static uint PLAYER_COUNT = 4;
         public static uint CHARACTER_COUNT = 4;
 
         public Players.Player[] Players { get; private set; }
 
         private Renderer _Renderer;
-        private GameWorld.GameManager _GameManager;
         private Text _StartGameText;
         private RectangleShape _StartGameShape;
         private Sounds.JukeBox Jukebox = new Sounds.JukeBox();
@@ -365,15 +381,12 @@ namespace CerealSquad.Menus
 
         private Characters.Character[] _Characters;
 
-        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
+        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager) : base(inputManager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
-            if (gameManager == null)
-                throw new ArgumentNullException("Game Manager cannot be null");
 
             _Renderer = renderer;
-            _GameManager = gameManager;
 
             _Characters = new Characters.Character[CHARACTER_COUNT];
             _Characters[0] = new Characters.Mike(_Renderer);
@@ -628,8 +641,8 @@ namespace CerealSquad.Menus
         {
             if (AllPlayersReady())
             {
-                MenuManager.Instance.Clear();
-                _GameManager.newGame();
+                MenuManager.Instance.RemoveMenu(this);
+                GameStart?.Invoke(this, new CharacterSelectionArgs(Players));
             }
         }
 

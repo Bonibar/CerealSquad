@@ -12,7 +12,7 @@ namespace CerealSquad
 {
     class Orangina : APlayer
     {
-        public Orangina(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input)
+        public Orangina(IEntity owner, s_position position, InputManager.InputManager input, int type = 0, int id = 1) : base(owner, position, input, type, id)
         {
             _speed = 5;
             Factories.TextureFactory.Instance.load("orangina", "Assets/Character/orangina.png");

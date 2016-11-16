@@ -154,7 +154,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonReleased(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
             switch (action)
             {
@@ -168,7 +168,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
             switch (action)
             {
@@ -182,7 +182,7 @@ namespace CerealSquad
 
         private void Input_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
 
             switch (action)
             {
