@@ -30,6 +30,10 @@ namespace CerealSquad.Menus
             private Renderer _Renderer;
             private Text _PlayerText;
             private Text _JoinText;
+            private Graphics.RegularSprite _Fork;
+            private Graphics.RegularSprite _Knife;
+            private Graphics.RegularSprite _Overlay;
+
             private Text[] _SelectionText = new Text[CharacterSelectMenu.CHARACTER_COUNT];
 
             private void init(Type type, uint id)
@@ -43,7 +47,7 @@ namespace CerealSquad.Menus
                 float x_margin = _Renderer.Win.GetView().Size.X / CharacterSelectMenu.PLAYER_COUNT;
                 float x_padding = x_margin / 2;
                 float y_margin = 0;
-                float y_padding = y_margin / 2;
+                float y_padding = y_margin / 2 + 13;
 
                 List<String> char_names = new List<string> { "Mike", "Jack", "Orange Hina", "Tchong" };
 
@@ -53,9 +57,8 @@ namespace CerealSquad.Menus
                     _SelectionText[i] = new Text(char_names[(int)i % char_names.Count], Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
 
                     float text_x_offset = (_SelectionText[i].GetLocalBounds().Left + _SelectionText[i].GetLocalBounds().Width) / 2;
-                    float text_y_offset = 0;
 
-                    _SelectionText[i].Position = new Vector2f((x_margin * _Id + x_padding) - text_x_offset, 40 + text_y_offset - text_y_offset);
+                    _SelectionText[i].Position = new Vector2f((x_margin * _Id + x_padding) - text_x_offset, 57 + (y_margin * _Id + y_padding));
                     i++;
                 }
 
@@ -63,8 +66,20 @@ namespace CerealSquad.Menus
                 _PlayerText.Position = new Vector2f((x_margin * _Id + x_padding) - (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2, (y_margin * _Id + y_padding));
 
                 _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _JoinText.Position = new Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 40 + (y_margin * _Id + y_padding));
+                _JoinText.Position = new Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 57 + (y_margin * _Id + y_padding));
                 _JoinText.Color = Color.Green;
+
+                Factories.TextureFactory.Instance.load("CS_Fork", "Assets/HUD/Fork.png");
+                _Fork = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Fork"), new Vector2i(64, 64), new IntRect(0, 0, 64, 64));
+                _Fork.Position = new Vector2f(_PlayerText.Position.X - _Fork.Size.X, 0);
+
+                Factories.TextureFactory.Instance.load("CS_Knife", "Assets/HUD/Knife.png");
+                _Knife = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Knife"), new Vector2i(64, 64), new IntRect(0, 0, 64, 64));
+                _Knife.Position = new Vector2f(_PlayerText.Position.X + _PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width, 0);
+
+                Factories.TextureFactory.Instance.load("CS_Overlay", "Assets/HUD/SelectionPlayerOverlay.png");
+                _Overlay = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Overlay"), new Vector2i(64 * 6, 19 * 6), new IntRect(0, (19 * (int)_Id), 64, 19));
+                _Overlay.Position = new Vector2f(_PlayerText.Position.X + (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2 - _Overlay.Size.X / 2, 0);
             }
 
             public Player(uint id, Renderer renderer)
@@ -134,7 +149,10 @@ namespace CerealSquad.Menus
 
             public void Draw(RenderTarget target, RenderStates states)
             {
-                target.Draw(_PlayerText);
+                target.Draw(_Overlay, states);
+                target.Draw(_Fork, states);
+                target.Draw(_Knife, states);
+                target.Draw(_PlayerText, states);
                 if (Type == Type.Undefined)
                     target.Draw(_JoinText, states);
                 else

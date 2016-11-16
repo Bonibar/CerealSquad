@@ -64,6 +64,9 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("S_CS_Jack", "Assets/Character/Selection/JackSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/JackSelection.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_Hina", "Assets/Character/Selection/HinaSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/HinaSelection.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_Tchong", "Assets/Character/Selection/TchongSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/TchongSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Fork", "Assets/HUD/Fork.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/Fork.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Knife", "Assets/HUD/Knife.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/Knife.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerOverlay", "Assets/HUD/SelectionPlayerOverlay.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/SelectionPlayerOverlay.png"), false));
 
             // Initialisation
             renderer = new Renderer();
