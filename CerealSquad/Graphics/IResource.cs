@@ -9,9 +9,9 @@ using SFML.System;
 namespace CerealSquad.Graphics
 {
     enum EStateWorld { DEFAULT }
-    enum EStateEntity
+    enum EStateEntity : byte
     {
-        IDLE,
+        IDLE = 0,
         WALKING_UP,
         WALKING_DOWN,
         WALKING_RIGHT,

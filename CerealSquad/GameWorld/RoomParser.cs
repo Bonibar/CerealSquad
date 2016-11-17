@@ -113,7 +113,7 @@ namespace CerealSquad.GameWorld
                 endline++;
 
             if (endline == startline || startline >= lines.Length)
-                return null;
+                return crates;
 
             while (startline < endline)
             {

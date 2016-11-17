@@ -106,6 +106,7 @@
     <Compile Include="GameWorld\WorldParser.cs" />
     <Compile Include="Graphics\EllipseShape.cs" />
     <Compile Include="Graphics\EllipseShapeSprite.cs" />
+    <Compile Include="Menus\Buttons\NewGameButton.cs" />
     <Compile Include="Menus\CharacterSelectMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />

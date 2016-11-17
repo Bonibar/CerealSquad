@@ -117,11 +117,26 @@ namespace CerealSquad.Graphics
         /// <summary>
         /// Play animation
         /// </summary>
-        /// <param name="animation">EStateEntity</param>
-        public void PlayAnimation(EStateEntity animation)
+        /// <param name="animation">uint</param>
+        public void PlayAnimation(uint animation)
         {
             if (sprite.Type == ETypeSprite.ANIMATED)
-                ((AnimatedSprite)sprite).PlayAnimation(animation);
+                ((AnimatedSprite)sprite).PlayAnimation((uint)animation);
+        }
+
+        /// <summary>
+        /// Time is in millisecond
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="Texture"></param>
+        /// <param name="frames"></param>
+        /// <param name="size"></param>
+        /// <param name="time"></param>
+        public void AddAnimation(uint id, string Texture, List<uint> frames, Vector2u size, int time = -1)
+        {
+            if (sprite.Type != ETypeSprite.ANIMATED)
+                return;
+            ((AnimatedSprite)sprite).addAnimation(id, Texture, frames, size, time);
         }
 
         /// <summary>

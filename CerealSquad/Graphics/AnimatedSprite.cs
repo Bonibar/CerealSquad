@@ -13,6 +13,7 @@ namespace CerealSquad.Graphics
         protected Dictionary<uint, Animation> animations = new Dictionary<uint, Animation>();
         protected SpriteAnimator animator = new SpriteAnimator();
 
+        public uint Animation { get; private set; }
         public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
         public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
         public bool Pause { get { return (animator.m_isPaused); } set { animator.m_isPaused = value; } }
@@ -59,12 +60,12 @@ namespace CerealSquad.Graphics
         /// Time is in millisecond
         /// Size is the real size of individual sprite in texture
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">uint</param>
         /// <param name="textureAnimation"></param>
         /// <param name="texturePalette"></param>
         /// <param name="_size"></param>
         /// <param name="time"></param>
-        public void addAnimation(EStateEntity type, String textureAnimation, List<uint> texturePalette, Vector2u _size, int time = -1)
+        public void addAnimation(uint type, String textureAnimation, List<uint> texturePalette, Vector2u _size, int time = -1)
         {
             Animation anim = new Animation();
             PaletteManager.Instance.AddPaletteInformations(textureAnimation, _size.X, _size.Y);
@@ -79,15 +80,19 @@ namespace CerealSquad.Graphics
             animations.Add((uint)type, anim);
 
             if (!animator.HaveAnimation())
+            {
+                Animation = type;
                 animator.setAnimation(anim);
+            }
         }
 
         /// <summary>
         /// Play animation
         /// </summary>
-        /// <param name="animation">EStateEntity</param>
-        public void PlayAnimation(EStateEntity animation)
+        /// <param name="animation">uint</param>
+        public void PlayAnimation(uint animation)
         {
+            Animation = animation;
             animator.Play(animations[(uint)animation]);
         }
 

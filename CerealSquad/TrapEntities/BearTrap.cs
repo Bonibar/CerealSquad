@@ -12,6 +12,12 @@ namespace CerealSquad.TrapEntities
     {
         public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(12, 12, 12, 12);
 
+        enum SStateBearTrap
+        {
+            READY = 0,
+            TRIGGERED
+        }
+
         public BearTrap(IEntity owner) : base(owner, e_DamageType.TRUE_DAMAGE, 0)
         {
             TrapType = e_TrapType.BEAR_TRAP;
@@ -20,13 +26,14 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.IDLE, "BearTrap", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SStateBearTrap.READY, "BearTrap", new List<uint> { 0 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1 }, new Vector2u(128, 128));
             ressourcesEntity.CollisionBox = COLLISION_BOX;
         }
 
         public override void Trigger()
         {
-            throw new NotImplementedException();
+            ressourcesEntity.PlayAnimation((uint)SStateBearTrap.TRIGGERED);
         }
 
         public override void update(Time deltaTime, AWorld world)

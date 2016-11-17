@@ -15,11 +15,13 @@ namespace CerealSquad.EntitySystem
     {
         //s_Pos<int> Position = new s_Pos<int>(0, 0);
         public e_TrapType Item { get; set; }
+        public bool Picked { get; private set; }
         private bool PickState = false;
         private bool PickAnimation = false;
 
         public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item = 0, s_size size = default(s_size)) : base(owner, size)
         {
+            Picked = false;
             Item = _Item;
             _type = e_EntityType.Crate;
             Factories.TextureFactory.Instance.load("CrateFloating", "Assets/GameplayElement/Crates.png");
@@ -35,8 +37,8 @@ namespace CerealSquad.EntitySystem
                 PosFrames.Add(i);
             }
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, "CrateOpening", PosFrames, new Vector2u(128, 128), 50);
+            ((AnimatedSprite)_ressources.sprite).addAnimation(0, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
+            ((AnimatedSprite)_ressources.sprite).addAnimation(1, "CrateOpening", PosFrames, new Vector2u(128, 128), 50);
             _ressources.CollisionBox = new FloatRect(new Vector2f(32.0f, 32.0f), new Vector2f(32.0f, 32.0f));
         }
 
@@ -51,11 +53,14 @@ namespace CerealSquad.EntitySystem
             _ressources.Update(deltaTime);
             if (PickState && !PickAnimation && ((AnimatedSprite)_ressources.sprite).isFinished())
             {
-                ((AnimatedSprite)_ressources.sprite).PlayAnimation(EStateEntity.WALKING_DOWN);
+                ((AnimatedSprite)_ressources.sprite).PlayAnimation(1);
                 PickAnimation = true;
             }
             else if (PickState && PickAnimation && ((AnimatedSprite)_ressources.sprite).isFinished())
-                this.destroy();
+            {
+                Picked = true;
+                destroy();
+            }
         }
     }
 }
