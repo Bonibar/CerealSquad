@@ -44,9 +44,7 @@ namespace CerealSquad
             //((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "ChongWalking", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
             Vector2f pos = _ressources.Position;
-            pos.X = position._x * 64;
-            pos.Y = position._y * 64;
-            _ressources.Position = pos;
+            Pos = Pos;
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(12.0f, -20.0f), new Vector2f(12.0f, 27.0f));
         }

@@ -61,6 +61,7 @@ namespace CerealSquad.GameWorld
             }
 
             new Crates(WorldEntity, SpawnList.ElementAt(4), 0);
+            new JackEnnemy(WorldEntity, new s_position(Position.X + 10, Position.Y + 10), this);
         }
 
         private void parseRoom()
@@ -81,7 +82,12 @@ namespace CerealSquad.GameWorld
             RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
             if (x < Size.Width && y <= Size.Height)
             {
-                cel = Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
+                var t = Cells.FirstOrDefault(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x));
+                if (t.Value == null)
+                    cel = RoomParser.e_CellType.Void;
+                else
+                    cel = t.Value.Type;
+
             }
             return (cel);
         }

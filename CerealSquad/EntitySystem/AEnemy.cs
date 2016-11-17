@@ -1,4 +1,5 @@
 ﻿using CerealSquad.GameWorld;
+using CerealSquad.Global;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,28 @@ namespace CerealSquad
             return (new s_position(x, y));
         }
 
+        protected virtual void moveSameTile(WorldEntity world)
+        {
+            _move = EMovement.None;
+            foreach (IEntity entity in world.getChildren())
+            {
+                if (entity.getEntityType() == e_EntityType.Player)
+                {
+                    if (entity.Pos._x == Pos._x && entity.Pos._y == Pos._y)
+                    {
+                        if (Math.Abs(entity.Pos._trueX - Pos._trueX) > 0.1)
+                            _move = entity.Pos._trueX - Pos._trueX < 0 ? EMovement.Left : EMovement.Right;
+                        else if (Math.Abs(entity.Pos._trueY - Pos._trueY) > 0.1)
+                        {
+                            _move = entity.Pos._trueY - Pos._trueY < 0 ? EMovement.Up : EMovement.Down;
+                        }
+                        else
+                            _move = EMovement.None;
+                    }
+
+                }
+            }
+        }
 
         protected class scentMap
         {
@@ -62,6 +85,16 @@ namespace CerealSquad
                 _y = y;
             }
 
+            protected s_position getCoord(s_position pos, s_Pos<int> room)
+            {
+                double x = pos._x;
+                double y = pos._y;
+
+                x -= room.X;
+                y -= room.Y;
+                return (new s_position(x, y));
+            }
+
             protected void reset(ARoom room)
             {
                 _map = new int[_x][][];
@@ -77,6 +110,13 @@ namespace CerealSquad
                             _map[i][j][1] = 0;
                             _map[i][j][2] = 0;
                             _map[i][j][3] = 0;
+                        }
+                        else
+                        {
+                            _map[i][j][0] = -1;
+                            _map[i][j][1] = -1;
+                            _map[i][j][2] = -1;
+                            _map[i][j][3] = -1;
                         }
                     }
                 }
@@ -105,14 +145,15 @@ namespace CerealSquad
                     if (entity.getEntityType() == e_EntityType.Player)
                     {
                         APlayer p = (APlayer)entity;
-                        propagateHeat(p.Pos._x, p.Pos._y, 100, p.getName(), p.Weight);
+                        s_position pos = getCoord(p.Pos, room.Position);
+                        propagateHeat(pos._x, pos._y, 100, p.getName(), p.Weight);
                     }
                 }
             }
 
             public virtual int getScent(int x, int y)
             {
-                if (x > 0 && x < _x && y > 0 && y < _y)
+                if (x >= 0 && x < _x && y >= 0 && y < _y)
                 {
                     int scent = 0;
                     if (_map[x][y][0] != -1)
