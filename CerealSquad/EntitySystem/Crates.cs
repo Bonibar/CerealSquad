@@ -25,7 +25,6 @@ namespace CerealSquad.EntitySystem
             Item = _Item;
             _type = e_EntityType.Crate;
             Factories.TextureFactory.Instance.load("CrateFloating", "Assets/GameplayElement/Crates.png");
-            Factories.TextureFactory.Instance.load("CrateOpening", "Assets/GameplayElement/CratesOpening.png");
 
             _ressources = new EntityResources();
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
@@ -38,8 +37,7 @@ namespace CerealSquad.EntitySystem
             }
 
             ((AnimatedSprite)_ressources.sprite).addAnimation(0, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
-            ((AnimatedSprite)_ressources.sprite).addAnimation(1, "CrateOpening", PosFrames, new Vector2u(128, 128), 50);
-            _ressources.CollisionBox = new FloatRect(new Vector2f(32.0f, 32.0f), new Vector2f(32.0f, 32.0f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(20.0f, 20.0f), new Vector2f(20.0f, 20.0f));
         }
 
         public void pickCrate()
@@ -51,12 +49,7 @@ namespace CerealSquad.EntitySystem
         public override void update(Time deltaTime, AWorld world)
         {
             _ressources.Update(deltaTime);
-            if (PickState && !PickAnimation && ((AnimatedSprite)_ressources.sprite).isFinished())
-            {
-                ((AnimatedSprite)_ressources.sprite).PlayAnimation(1);
-                PickAnimation = true;
-            }
-            else if (PickState && PickAnimation && ((AnimatedSprite)_ressources.sprite).isFinished())
+            if (PickState)
             {
                 Picked = true;
                 destroy();
