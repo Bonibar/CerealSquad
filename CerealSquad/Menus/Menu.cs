@@ -138,6 +138,8 @@ namespace CerealSquad.Menus
         }
         #endregion
 
+        public virtual void Update(SFML.System.Time DeltaTime) { }
+
         public virtual void Show()
         {
             System.Diagnostics.Debug.WriteLine("SHOWED MENU");
@@ -186,7 +188,7 @@ namespace CerealSquad.Menus
                 firstValid.Button.Selected = true;
         }
             
-        public void Draw(RenderTarget target, RenderStates states)
+        public virtual void Draw(RenderTarget target, RenderStates states)
         {
             if (Displayed)
                 _menuList.ForEach(x => x.Draw(target, states));

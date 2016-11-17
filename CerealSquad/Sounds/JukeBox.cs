@@ -40,6 +40,38 @@ namespace CerealSquad.Sounds
         }
 
         /// <summary>
+        /// Volume between 0 to 100
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="volume"></param>
+        public void SetVolumeSound(int id, float volume)
+        {
+            if (!soundInitializedExist(id))
+                return;
+            if (volume > 100.0f)
+                volume = 100.0f;
+            else if (volume < 0.0f)
+                volume = 0.0f;
+            sounds[id].Volume = volume;
+        }
+
+        /// <summary>
+        /// Volume between 0 to 100
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="volume"></param>
+        public void SetVolumeMusic(int id, float volume)
+        {
+            if (!musicExist(id))
+                return;
+            if (volume > 100.0f)
+                volume = 100.0f;
+            else if (volume < 0.0f)
+                volume = 0.0f;
+            musics[id].Volume = volume;
+        }
+
+        /// <summary>
         /// Check if the music instance exists
         /// </summary>
         /// <param name="id">int</param>

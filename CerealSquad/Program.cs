@@ -23,63 +23,103 @@ namespace CerealSquad
 
             Debug.Time.Instance.StartTimer("Main", Debug.Type.Debug, false);
 
-            // File requirement
-            System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
+            // Downloading Files
             Downloaders.IDownloader ftpDownloader = new Downloaders.FTPDownloader();
-            tasks.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/alts.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("JackWalking", "Assets/Character/JackWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/JackWalking.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("TchongWalking", "Assets/Character/ChongWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/ChongWalking.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/JackHunter.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/Orangina.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Characters/BasicEnnemy.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("F_ReenieBeanie", "Fonts/ReenieBeanie.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/ReenieBeanie.ttf"), false));
-            tasks.Add(ftpDownloader.RequireFile("F_XirodRegular", "Fonts/xirod.regular.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Fonts/xirod.regular.ttf"), false));
-            tasks.Add(ftpDownloader.RequireFile("Bomb", "Assets/Trap/Bomb.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Bomb.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("BombExploding", "Assets/Trap/BombExploading.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/BombExploading.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("BearTrap", "Assets/Trap/Beartrap.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Beartrap.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("Cursor", "Assets/Effects/Cursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Effects/Cursor.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("CS_UnselectedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/select_test.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/unselect_test.png"), false));
-            tasks.Add(ftpDownloader.RequireFile("Crates", "Assets/GameplayElement/Crates.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Crates.png"), false));
+            // File requirement (Downloaded before start)
+            System.Collections.Generic.List<System.Threading.Tasks.Task> tasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
+            tasks.Add(ftpDownloader.RequireFile("IMG_LoadingBackground", "Assets/Loading/loading.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Loading/loading.png"), false));
 
             try
             {
                 System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
-            } catch (System.AggregateException e)
+            }
+            catch (System.AggregateException e)
             {
                 System.Diagnostics.Debug.WriteLine("Downloader error ! " + e.InnerException.Message);
                 return;
             }
 
+            // File downloaded after start
+            Downloaders.TaskAwaiter awaiter = new Downloaders.TaskAwaiter();
+
+            awaiter.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Tiles/TestTile.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("JackWalking", "Assets/Character/JackWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/JackWalking.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("MikeWalking", "Assets/Character/MikeWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/MikeWalking.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("OrangeHinaWalking", "Assets/Character/HinaWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/HinaWalking.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("TchongWalking", "Assets/Character/ChongWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/ChongWalking.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/JackHunter.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Orangina.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("basicEnnemy", "Assets/Character/BasicEnnemy.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/BasicEnnemy.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("F_ReenieBeanie", "Fonts/ReenieBeanie.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Fonts/ReenieBeanie.ttf"), false));
+            awaiter.Add(ftpDownloader.RequireFile("F_XirodRegular", "Fonts/xirod.regular.ttf", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Fonts/xirod.regular.ttf"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Bomb", "Assets/Trap/Bomb.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Trap/Bomb.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("BombExploding", "Assets/Trap/BombExploading.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Trap/BombExploading.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("BearTrap", "Assets/Trap/Beartrap.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Trap/Beartrap.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Cursor", "Assets/Effects/Cursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Effects/Cursor.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("CS_LockedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Debug/select_test.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Debug/unselect_test.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Crates", "Assets/GameplayElement/Crates.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/GameplayElement/Crates.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("CratesOpening", "Assets/GameplayElement/CratesOpening.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/GameplayElement/CratesOpening.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_BackgroundMusic", "Assets/Music/CharacterSelection.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Music/CharacterSelection.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_BackgroundImage", "Assets/Background/CharacterSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Background/CharacterSelectionBackground.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Mike", "Assets/Character/Selection/MikeSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/MikeSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Jack", "Assets/Character/Selection/JackSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/JackSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Hina", "Assets/Character/Selection/HinaSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/HinaSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Tchong", "Assets/Character/Selection/TchongSelection.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/Character/Selection/TchongSelection.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Fork", "Assets/HUD/Fork.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/Fork.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_Knife", "Assets/HUD/Knife.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/Knife.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerOverlay", "Assets/HUD/SelectionPlayerOverlay.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/SelectionPlayerOverlay.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerCursor", "Assets/HUD/SelectionPlayerCursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH_BACKUP + "Assets/HUD/SelectionPlayerCursor.png"), false));
+
+            // Initialisation
             renderer = new Renderer();
             renderer.Initialization();
-            renderer.Resolution = Renderer.EResolution.R1920x1080;
+            renderer.Resolution = Renderer.EResolution.R854x480;
             renderer.FrameRate = 60;
-
-            Factories.TextureFactory.Instance.initTextures();
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
             GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);
 
-            Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.Instance.MainMenu(renderer, manager, gameManager));
+            Downloaders.LoadingScreen _loadingScreen = new Downloaders.LoadingScreen(renderer);
 
             FrameClock clock = new FrameClock();
             while (renderer.isOpen())
             {
                 renderer.DispatchEvents();
                 renderer.Clear(Color.Black);
-                if (Menus.MenuManager.Instance.isDisplayed())
+                if (awaiter != null && awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Running)
+                {
+                    _loadingScreen.update(clock.Restart());
+                    renderer.Draw(_loadingScreen);
+                }
+                else if (Menus.MenuManager.Instance.isDisplayed())
+                {
+                    Menus.MenuManager.Instance.Update(clock.Restart());
                     renderer.Draw(Menus.MenuManager.Instance.CurrentMenu);
+                }
                 else if (gameManager.CurrentGame != null)
                 {
                     gameManager.CurrentGame.Update(clock.Restart());
                     renderer.Draw(gameManager.CurrentGame.CurrentWorld);
                     gameManager.CurrentGame.WorldEntity.draw(renderer);
                 }
+                else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed)
+                {
+                    System.Diagnostics.Debug.WriteLine("DOWNLOAD ENDED");
+                    Debug.Time.Instance.StartTimer("DISPLAYING MAIN MENU", Debug.Type.Critical, true);
+                    Menus.MenuManager.Instance.AddMenu(Menus.Prefabs.Instance.MainMenu(renderer, manager, gameManager));
+                    Debug.Time.Instance.StopTimer("DISPLAYING MAIN MENU");
+                    awaiter.Reset();
+                }
                 else
                     renderer.Win.Close();
+                if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Faulted)
+                {
+                    System.Diagnostics.Debug.Fail("Error: " + awaiter.Exception.InnerException.Message);
+                    renderer.Win.Close();
+                }
                 renderer.Display();
             }
 

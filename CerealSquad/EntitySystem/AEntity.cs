@@ -28,7 +28,8 @@ namespace CerealSquad
         protected s_size _size;
         protected double _speed;
         protected bool _die;
-        protected EMovement _move;
+        protected List<EMovement> _move;
+        protected float _inputForce;
         protected EntityResources _ressources;
 
         public s_position Pos
@@ -44,7 +45,7 @@ namespace CerealSquad
                 setResourceEntityPosition();
             }
         }
-        
+
         public double Speed
         {
             get
@@ -108,8 +109,9 @@ namespace CerealSquad
             _damageType = e_DamageType.NONE;
             _size = size;
             _speed = 0;
+            _inputForce = 1;
             _die = false;
-            _move = EMovement.None;
+            _move = new List<EMovement> { EMovement.None };
             SecondaryResourcesEntities = new List<EntityResources>();
         }
 
@@ -118,13 +120,18 @@ namespace CerealSquad
             _children.Add(child);
         }
 
-        public bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        private bool NotInCircleRange(IEntity Sender, float Range)
         {
             double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
             if (ressourcesEntity != null)
                 Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
 
-            if (Distance > Range)
+            return !(Distance > Range);
+        }
+
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        {
+            if (NotInCircleRange(Sender, Range))
                 return false;
 
             if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
@@ -134,9 +141,29 @@ namespace CerealSquad
             return true;
         }
 
-        public bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        private static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
         {
-            return false;
+            double a = Math.Pow(x - x_el, 2.0f) / Math.Pow(rX, 2.0f);
+            double b = Math.Pow(y - y_el, 2.0f) / Math.Pow(rY, 2.0f);
+
+            return (a + b) <= 1;
+        }
+
+        private bool NotInEllipseRange(IEntity Sender, float RadiusX, float RadiusY)
+        {
+            return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
+        }
+
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        {
+            if (NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
+                return false;
+
+            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+                && !((ATrap)this).Triggered)
+                ((ATrap)this).Trigger();
+
+            return true;
         }
 
         public ICollection<IEntity> getChildren()
@@ -171,11 +198,11 @@ namespace CerealSquad
 
         public bool IsColliding(AWorld World)
         {
-            if (World.IsCollidingWithWall(ressourcesEntity))
-                return true;
-
             if (ressourcesEntity == null)
                 return false;
+
+            if (World.IsCollidingWithWall(ressourcesEntity))
+                return true;
 
             List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
 
@@ -185,53 +212,117 @@ namespace CerealSquad
             return IsCollidingEntity(World, collidingEntities);
         }
 
-        public bool IsCollidingAndDead(AWorld World)
+        public virtual bool IsCollidingAndDead(AWorld World)
         {
             return false;
+        }
+
+        private bool executeRightMove(AWorld world, double speedMove, bool PerformMovement = false)
+        {
+            if (_move.Contains(EMovement.Right))
+            {
+                var OldResourcePosition = _ressources.Position;
+                s_position NewPosition = Pos + new s_position(speedMove, 0, 0);
+                _ressources.PlayAnimation((uint)EStateEntity.WALKING_RIGHT);
+                _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
+                if (IsColliding(world))
+                {
+                    _ressources.Position = OldResourcePosition;
+                    return false;
+                }
+                if (PerformMovement)
+                    Pos = NewPosition;
+            }
+            return true;
+        }
+
+        private bool executeLeftMove(AWorld world, double speedMove, bool PerformMovement = false)
+        {
+            if (_move.Contains(EMovement.Left))
+            {
+                var OldResourcePosition = _ressources.Position;
+                s_position NewPosition = Pos + new s_position(-speedMove, 0, 0);
+                _ressources.PlayAnimation((uint)EStateEntity.WALKING_LEFT);
+                _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
+                if (IsColliding(world))
+                {
+                    _ressources.Position = OldResourcePosition;
+                    return false;
+                }
+                if (PerformMovement)
+                    Pos = NewPosition;
+            }
+            return true;
+        }
+
+        private bool executeDownMove(AWorld world, double speedMove, bool PerformMovement = false)
+        {
+            if (_move.Contains(EMovement.Down))
+            {
+                var OldResourcePosition = _ressources.Position;
+                s_position NewPosition = Pos + new s_position(0, speedMove, 0);
+                _ressources.PlayAnimation((uint)EStateEntity.WALKING_DOWN);
+                _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
+                if (IsColliding(world))
+                {
+                    _ressources.Position = OldResourcePosition;
+                    return false;
+                }
+                if (PerformMovement)
+                    Pos = NewPosition;
+            }
+            return true;
+        }
+
+        private bool executeUpMove(AWorld world, double speedMove, bool PerformMovement = false)
+        {
+            if (_move.Contains(EMovement.Up))
+            {
+                var OldResourcePosition = _ressources.Position;
+                s_position NewPosition = Pos + new s_position(0, -speedMove, 0);
+                _ressources.PlayAnimation((uint)EStateEntity.WALKING_UP);
+                _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
+                if (IsColliding(world))
+                {
+                    _ressources.Position = OldResourcePosition;
+                    return false;
+                }
+                if (PerformMovement)
+                    Pos = NewPosition;
+            }
+            return true;
+        }
+
+        private void executeMove(AWorld world, SFML.System.Time deltaTime, bool DirectDiagonal = true)
+        {
+            double speedMove = (_speed * deltaTime.AsSeconds()) * _inputForce;
+            int failed = 0;
+
+            failed += !executeLeftMove(world, speedMove) ? 1 : 0;
+            failed += !executeRightMove(world, speedMove) ? 1 : 0;
+            failed += !executeUpMove(world, speedMove) ? 1 : 0;
+            failed += !executeDownMove(world, speedMove) ? 1 : 0;
+
+            if (_move.Count == 2 && failed == 0)
+                speedMove *= 1.0f / Math.Sqrt(2.0f);
+
+            executeLeftMove(world, speedMove, true);
+            executeRightMove(world, speedMove, true);
+            executeUpMove(world, speedMove, true);
+            executeDownMove(world, speedMove, true);
+
+            if (_move.Contains(EMovement.None))
+                ((AnimatedSprite)_ressources.sprite).Pause = true;
+
+            if (IsCollidingAndDead(world))
+                die();
         }
 
         // Use this function for moving the entity whitout his action(ex: knockback)
         // Move the entity relative to his actual position
         public virtual void move(AWorld world, SFML.System.Time deltaTime)
         {
-            EStateEntity anim = EStateEntity.IDLE;
-            var OldResourcePosition = _ressources.Position;
-            s_position NewPosition = _pos;
-
-            double speedMove = _speed * deltaTime.AsSeconds();
-
-            switch (_move)
-            {
-                case EMovement.Up:
-                    NewPosition += new s_position(0, -speedMove, 0);
-                    anim = EStateEntity.WALKING_UP;
-                    break;
-                case EMovement.Down:
-                    NewPosition += new s_position(0, +speedMove, 0);
-                    anim = EStateEntity.WALKING_DOWN;
-                    break;
-                case EMovement.Right:
-                    NewPosition += new s_position(speedMove, 0, 0);
-                    anim = EStateEntity.WALKING_RIGHT;
-                    break;
-                case EMovement.Left:
-                    NewPosition += new s_position(-speedMove, 0, 0);
-                    anim = EStateEntity.WALKING_LEFT;
-                    break;
-                case EMovement.None:
-                    _ressources.PlayAnimation(EStateEntity.IDLE);
-                    return;
-            }
-
-            _ressources.PlayAnimation(anim);
-            _ressources.Position = new SFML.System.Vector2f((float)NewPosition._trueX * 64, (float)NewPosition._trueY * 64);
-
-           if (!IsColliding(world))
-                _pos = NewPosition;
-            else
-                _ressources.Position = OldResourcePosition;
-            if (IsCollidingAndDead(world))
-                Die = true;
+            executeMove(world, deltaTime);
         }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);
@@ -239,7 +330,7 @@ namespace CerealSquad
         public void die()
         {
             _die = true;
-            _ressources.PlayAnimation(EStateEntity.DYING);
+            _ressources.PlayAnimation((uint)EStateEntity.DYING);
             _ressources.Loop = false;
         }
 
@@ -260,9 +351,14 @@ namespace CerealSquad
             return parent;
         }
 
+        private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
+        {
+            return new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+        }
+
         private void setResourceEntityPosition()
         {
-            ressourcesEntity.Position = new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+            ressourcesEntity.Position = EntityPositionToResourcesEntityPosition(Pos);
         }
     }
 }

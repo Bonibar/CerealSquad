@@ -7,7 +7,7 @@ using SFML.System;
 using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
 using CerealSquad.Factories;
-
+/*
 namespace CerealSquad
 {
     class Ennemy : AEnemy
@@ -131,3 +131,4 @@ namespace CerealSquad
         }
     }
 }
+*/
