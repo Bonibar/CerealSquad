@@ -36,7 +36,7 @@ namespace CerealSquad.GameWorld
         public s_MapSize Size { get; private set; }
         public RegularSprite _RenderSprite { get; }
         private RenderTexture _RenderTexture = null;
-        private Dictionary<s_Pos<uint>, RoomParser.t_cellcontent> Cells = null;
+        private RoomParser.s_room ParsedRoom = null;
         private EnvironmentResources er = new Graphics.EnvironmentResources();
         private List<s_Pos<int>> SpawnList = new List<s_Pos<int>>();
         public WorldEntity WorldEntity { get; protected set; }
@@ -46,8 +46,8 @@ namespace CerealSquad.GameWorld
             RoomType = Type;
             Position = Pos;
             WorldEntity = worldentity;
-            Cells = RoomParser.ParseRoom(MapFile);
-            Size = new s_MapSize(Cells.Keys.OrderBy(x => x.X).Last().X + 1, Cells.Keys.OrderBy(x => x.Y).Last().Y + 1);
+            ParsedRoom = RoomParser.ParseRoom(MapFile);
+            Size = new s_MapSize(ParsedRoom.Cells.Keys.OrderBy(x => x.X).Last().X + 1, ParsedRoom.Cells.Keys.OrderBy(x => x.Y).Last().Y + 1);
             _RenderTexture = new RenderTexture(Size.Width * TILE_SIZE, Size.Height * TILE_SIZE);
             IntRect rect = new IntRect(0, 0, (int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y);
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
@@ -65,7 +65,7 @@ namespace CerealSquad.GameWorld
 
         private void parseRoom()
         {
-            foreach (var cell in Cells)
+            foreach (var cell in ParsedRoom.Cells)
             {
                 if (!Factories.TextureFactory.Instance.exists(cell.Value.TexturePath))
                 {
@@ -81,7 +81,7 @@ namespace CerealSquad.GameWorld
             RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
             if (x < Size.Width && y <= Size.Height)
             {
-                cel = Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
+                cel = ParsedRoom.Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
             }
             return (cel);
         }
