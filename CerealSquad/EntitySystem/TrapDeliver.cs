@@ -29,7 +29,7 @@ namespace CerealSquad.EntitySystem
         //private AnimatedSprite Sprite;
         private APlayer Player;
         private Timer TimerCoolDown = new Timer(Time.FromSeconds(1));
-        //private Timer TimerToPut = new Timer(Time.FromSeconds(3));
+        private Timer TimerToPut = new Timer(Time.FromSeconds(3));
 
         public Time Cooldown { get { return TimerCoolDown.Time; } set { TimerCoolDown.Time = value; } }
 
@@ -40,17 +40,17 @@ namespace CerealSquad.EntitySystem
             Target = EMovement.Up;
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
             ResourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
-            //Sprite = new AnimatedSprite(64, 64);
-            ((AnimatedSprite)ResourcesEntity.sprite).addAnimation(EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
+
+            ResourcesEntity.AddAnimation((uint)EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
             ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.Green);
             ((AnimatedSprite)ResourcesEntity.sprite).Speed = Time.FromMilliseconds(100);
 
             IsTargetValid = true;
         }
 
-        public bool IsNotDelivering()
+        public bool IsDelivering()
         {
-            return Step.Equals(EStep.NOTHING);
+            return !Step.Equals(EStep.NOTHING);
         }
 
         public void Update(SFML.System.Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
@@ -109,11 +109,11 @@ namespace CerealSquad.EntitySystem
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
                     Player.addChild(trap);
-                   // TimerToPut.Start();
+                    TimerToPut.Start();
                 }
                 Step = EStep.END_SELECTING;
             }
-            else if (!TrapPressed && Step == EStep.END_SELECTING)// && TimerToPut.IsTimerOver())
+            else if (!TrapPressed && Step == EStep.END_SELECTING && TimerToPut.IsTimerOver())
             {
                 Step = EStep.NOTHING;
                 // Restart timer to launch cooldown

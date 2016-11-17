@@ -35,8 +35,8 @@ namespace CerealSquad.EntitySystem
                 PosFrames.Add(i);
             }
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.IDLE, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
-            ((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.WALKING_DOWN, "CrateOpening", PosFrames, new Vector2u(128, 128), 50);
+            ((AnimatedSprite)_ressources.sprite).addAnimation(0, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
+            ((AnimatedSprite)_ressources.sprite).addAnimation(1, "CrateOpening", PosFrames, new Vector2u(128, 128), 50);
             _ressources.CollisionBox = new FloatRect(new Vector2f(32.0f, 32.0f), new Vector2f(32.0f, 32.0f));
         }
 
@@ -51,7 +51,7 @@ namespace CerealSquad.EntitySystem
             _ressources.Update(deltaTime);
             if (PickState && !PickAnimation && ((AnimatedSprite)_ressources.sprite).isFinished())
             {
-                ((AnimatedSprite)_ressources.sprite).PlayAnimation(EStateEntity.WALKING_DOWN);
+                ((AnimatedSprite)_ressources.sprite).PlayAnimation(1);
                 PickAnimation = true;
             }
             else if (PickState && PickAnimation && ((AnimatedSprite)_ressources.sprite).isFinished())

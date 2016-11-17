@@ -26,14 +26,12 @@ namespace CerealSquad.TrapEntities
             TrapType = e_TrapType.BOMB;
             Factories.TextureFactory.Instance.load("Bomb", "Assets/Trap/Bomb.png");
             Factories.TextureFactory.Instance.load("BombExpl", "Assets/Trap/BombExploading.png");
-            Factories.TextureFactory.Instance.load("MegaExpl", "Assets/GameplayElement/BombSphereExploading.png");
 
             ressourcesEntity = new EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
             
-            ((AnimatedSprite)ressourcesEntity.sprite).addAnimation(Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            ((Graphics.AnimatedSprite)_ressources.sprite).addAnimation(Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
-            //((AnimatedSprite)ressourcesEntity.sprite).addAnimation(Graphics.EStateEntity.DYING, "MegaExpl", new List<uint> { 0 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
            
             EntityResources secondary = new EntityResources();
             secondary.sprite = new EllipseShapeSprite(new Vector2f(Range * 64.0f, Range / 2.0f * 64.0f), new Color(219, 176, 10, 100), new Color(219, 130, 10, 255));
@@ -77,7 +75,7 @@ namespace CerealSquad.TrapEntities
         private void StartExplosion()
         {
             TimerDelete.Start();
-            ressourcesEntity.PlayAnimation(Graphics.EStateEntity.DYING);
+            ressourcesEntity.PlayAnimation((uint)Graphics.EStateEntity.DYING);
             ((AnimatedSprite)ressourcesEntity.sprite).SetColor(new Color(255, 255, 255, 200));
 
             SecondaryResourcesEntities.ForEach(i =>
@@ -91,7 +89,7 @@ namespace CerealSquad.TrapEntities
             allEntities.ForEach(i =>
             {
                 if (!i.Equals(this))
-                    i.attemptDamage(this, getDamageType(), Range - (ressourcesEntity.HitBox.Width / 2.0f / 64.0f));
+                    i.attemptDamage(this, getDamageType(), Range, Range / 2.0f);
             });
             state++;
         }

@@ -17,14 +17,15 @@ namespace CerealSquad
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
-            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
+            _children.ToList().ForEach(i => i.update(deltaTime, world));
+            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.HitBox.Top + x.ressourcesEntity.HitBox.Height).ToList();
         }
 
         private void check_death(IEntity i)
         {
             if (i.getEntityType() == e_EntityType.Player && !i.Die)
             {
-                _children.ToList<IEntity>().ForEach(j => check_collision(i, j));
+                _children.ToList().ForEach(j => check_collision(i, j));
             }
         }
 
