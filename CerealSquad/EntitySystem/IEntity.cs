@@ -8,27 +8,28 @@ using System.Threading.Tasks;
 
 namespace CerealSquad
 {
-    enum e_DamageType
+    public enum e_DamageType
     {
         BOMB_DAMAGE,
         TRUE_DAMAGE,
         NONE
     }
 
-    enum e_TrapType
+    public enum e_TrapType
     {
         BOMB,
         BEAR_TRAP,
         NONE
     }
 
-    enum e_EntityType
+    public enum e_EntityType
     {
         Player,
         PlayerTrap,
         Ennemy,
         EnnemyTrap,
-        World
+        World,
+        Crate
     }
 
     public struct s_position

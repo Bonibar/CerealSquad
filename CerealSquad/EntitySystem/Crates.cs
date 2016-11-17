@@ -13,20 +13,22 @@ namespace CerealSquad.EntitySystem
 {
     class Crates : AEntity
     {
-        public enum e_TrapType { Bomb, BearTrap }
+        //s_Pos<int> Position = new s_Pos<int>(0, 0);
+        public e_TrapType Item { get; set; }
+        public bool Picked { get; private set; }
+        private bool PickState = false;
+        private bool PickAnimation = false;
 
-        s_Pos<int> Position = new s_Pos<int>(0, 0);
-        e_TrapType Item = 0;
-
-        public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item, s_size size = default(s_size)) : base(owner, size)
+        public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item = 0, s_size size = default(s_size)) : base(owner, size)
         {
-            Position = _Pos;
+            Picked = false;
             Item = _Item;
+            _type = e_EntityType.Crate;
+            Factories.TextureFactory.Instance.load("CrateFloating", "Assets/GameplayElement/Crates.png");
 
             _ressources = new EntityResources();
-
-            Factories.TextureFactory.Instance.load("CrateFloating", "Assets/GameplayElement/Crates.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
+            Pos = new s_position(_Pos.X, _Pos.Y);
 
             List<uint> PosFrames = new List<uint>();
             for (uint i = 0; i < 30; i++)
@@ -34,15 +36,24 @@ namespace CerealSquad.EntitySystem
                 PosFrames.Add(i);
             }
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
-            //Ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(0, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
+            _ressources.CollisionBox = new FloatRect(new Vector2f(20.0f, 20.0f), new Vector2f(20.0f, 20.0f));
+        }
 
-            _ressources.Position = new Vector2f(Position.X * 64, Position.Y * 64);
+        public void pickCrate()
+        {
+            ((AnimatedSprite)_ressources.sprite).Loop = false;
+            PickState = true;
         }
 
         public override void update(Time deltaTime, AWorld world)
         {
             _ressources.Update(deltaTime);
+            if (PickState)
+            {
+                Picked = true;
+                destroy();
+            }
         }
     }
 }

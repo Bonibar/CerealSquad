@@ -208,6 +208,7 @@ namespace CerealSquad
 
             if (collidingEntities.Count == 0)
                 return false;
+            System.Diagnostics.Debug.Write(collidingEntities.Count + "\n");
 
             return IsCollidingEntity(World, collidingEntities);
         }
