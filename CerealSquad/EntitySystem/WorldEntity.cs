@@ -18,7 +18,7 @@ namespace CerealSquad
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             _children.ToList().ForEach(i => i.update(deltaTime, world));
-            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Width + x.ressourcesEntity.CollisionBox.Left).ToList();
+            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Height + x.ressourcesEntity.CollisionBox.Top).ToList();
         }
 
         private List<AEntity> GetCollidingEntitiesRecursive(IEntity Owner, CircleShape Circle)
