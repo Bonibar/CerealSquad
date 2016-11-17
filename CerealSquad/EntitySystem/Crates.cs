@@ -37,7 +37,7 @@ namespace CerealSquad.EntitySystem
             }
 
             ((AnimatedSprite)_ressources.sprite).addAnimation(0, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
-            _ressources.CollisionBox = new FloatRect(new Vector2f(20.0f, 20.0f), new Vector2f(20.0f, 20.0f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(26.0f, 18.0f), new Vector2f(26.0f, 18.0f));
         }
 
         public void pickCrate()

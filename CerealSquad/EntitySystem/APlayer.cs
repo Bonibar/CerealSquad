@@ -85,9 +85,8 @@ namespace CerealSquad
                 input.JoystickConnected += Input_JoystickConnected;
                 input.JoystickDisconnected += Input_JoystickDisconnected;
             }
-
-            // for test, add Trap to inventory
-            TrapInventory = e_TrapType.BOMB;
+            
+            TrapInventory = e_TrapType.NONE;
             InputManager = input;
         }
 
@@ -210,7 +209,7 @@ namespace CerealSquad
 
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
-            if (TrapPressed || TrapDeliver.IsDelivering())
+            if ((TrapPressed || TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
                 _move = new List<EMovement> { EMovement.None };
             else
                 _move = MoveStack;
