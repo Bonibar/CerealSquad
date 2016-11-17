@@ -58,15 +58,10 @@ namespace CerealSquad.GameWorld
         /// <returns>bool</returns>
         public bool IsCollidingWithWall(SFML.System.Vector2f Position, SFML.Graphics.FloatRect CollisionBox)
         {
-            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(CollisionBox.Width, -CollisionBox.Top);
-            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(-CollisionBox.Left, -CollisionBox.Top);
-            SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(CollisionBox.Width, CollisionBox.Height);
-            SFML.System.Vector2f CollisionPointFour = new SFML.System.Vector2f(-CollisionBox.Left, CollisionBox.Height);
-
-            CollisionPointOne += Position;
-            CollisionPointTwo += Position;
-            CollisionPointThree += Position;
-            CollisionPointFour += Position;
+            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top);
+            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top + CollisionBox.Height);
+            SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top + CollisionBox.Height);
+            SFML.System.Vector2f CollisionPointFour = new SFML.System.Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top);
 
             CollisionPointOne /= 64.0f;
             CollisionPointTwo /= 64.0f;

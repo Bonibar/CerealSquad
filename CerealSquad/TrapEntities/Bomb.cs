@@ -12,7 +12,7 @@ namespace CerealSquad.TrapEntities
 {
     class Bomb : ATrap
     {
-        public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(12, 12, 12, 12);
+        public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(21, 19, 21, 19);
 
         public Time Cooldown { get { return Timer.Time; } set { Timer.Time = value; } }
         private Timer Timer = new Timer(Time.FromSeconds(10));

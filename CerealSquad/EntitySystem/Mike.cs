@@ -26,7 +26,8 @@ namespace CerealSquad
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "MikeWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
             //((AnimatedSprite)_ressources.sprite).addAnimation(EStateEntity.DYING, "JackWalking", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(20.0f, -20.0f), new Vector2f(20.0f, 28.0f));
+            _ressources.HitBox = new FloatRect(new Vector2f(20.0f, 26.0f), new Vector2f(20.0f, 28.0f));
             Pos = position;
         }
 
