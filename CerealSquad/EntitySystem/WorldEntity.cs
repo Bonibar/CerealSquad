@@ -18,23 +18,7 @@ namespace CerealSquad
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             _children.ToList().ForEach(i => i.update(deltaTime, world));
-            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.HitBox.Top + x.ressourcesEntity.HitBox.Height).ToList();
-        }
-
-        private void check_death(IEntity i)
-        {
-            if (i.getEntityType() == e_EntityType.Player && !i.Die)
-            {
-                _children.ToList().ForEach(j => check_collision(i, j));
-            }
-        }
-
-        private void check_collision(IEntity i, IEntity j)
-        {
-            if (j.getEntityType() == e_EntityType.Ennemy && i.Pos._x == j.Pos._x && i.Pos._y == j.Pos._y)
-            {
-                ((APlayer)i).die();
-            }
+            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Width + x.ressourcesEntity.CollisionBox.Left).ToList();
         }
 
         private List<AEntity> GetCollidingEntitiesRecursive(IEntity Owner, CircleShape Circle)
@@ -46,7 +30,7 @@ namespace CerealSquad
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Circle))
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingCollisionBox(Circle))
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;
@@ -61,15 +45,12 @@ namespace CerealSquad
         {
             List<AEntity> Tmp = new List<AEntity>();
 
-            System.Diagnostics.Debug.Write("Recursive : " + Owner.getChildren().ToList<IEntity>().Count + "\n");
-
             Owner.getChildren().ToList<IEntity>().ForEach(i => {
-                System.Diagnostics.Debug.Write("Recursive : " + i.getEntityType() + "\n");
                 Tmp = Tmp.Concat(GetCollidingEntitiesRecursive(i, Other)).ToList();
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Other) && Other != Owner)
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingCollisionBox(Other) && Other != Owner)
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;

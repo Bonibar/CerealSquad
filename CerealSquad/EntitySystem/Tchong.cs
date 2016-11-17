@@ -29,8 +29,9 @@ namespace CerealSquad
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "ChongWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
             //ressourcesEntity.AddAnimation((uint)EStateEntity.DYING, "ChongWalking", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(12.0f, -20.0f), new Vector2f(12.0f, 27.0f));
             Pos = position;
+            _ressources.CollisionBox = new FloatRect(new Vector2f(16.0f, -20.0f), new Vector2f(16.0f, 30.0f));
+            _ressources.HitBox = new FloatRect(new Vector2f(16.0f, 31.0f), new Vector2f(16.0f, 30.0f));
         }
 
         public override void AttaqueSpe()
