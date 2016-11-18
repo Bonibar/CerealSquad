@@ -10,6 +10,7 @@ namespace CerealSquad.GameWorld
 {
     class AWorld : Drawable
     {
+        public ARoom CurrentRoom { get; }
         protected List<ARoom> Rooms = new List<ARoom>();
         public WorldEntity WorldEntity { get; protected set; }
 
@@ -31,6 +32,11 @@ namespace CerealSquad.GameWorld
         {
             if (room != null)
                 Rooms.Add(room);
+        }
+
+        public void ChangeRoom(s_Pos<int> playerCoord)
+        {
+            throw new NotImplementedException("ChangeRoom()");
         }
 
         public void Draw(RenderTarget target, RenderStates states)
