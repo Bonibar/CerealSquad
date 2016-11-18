@@ -69,7 +69,8 @@ namespace CerealSquad
                 Tmp = Tmp.Concat(GetAllEntitiesRecursive(i)).ToList();
             });
 
-           Tmp.Add((AEntity)Owner);
+            if (Owner.getEntityType() != e_EntityType.World)
+                Tmp.Add((AEntity)Owner);
 
             return Tmp;
         }
@@ -79,22 +80,17 @@ namespace CerealSquad
             return GetAllEntitiesRecursive(this);
         }
 
-        private void deepDraw(IEntity owner, Renderer win)
-        {
-            owner.getChildren().ToList<IEntity>().ForEach(i => deepDraw(i, win));
-
-            // This is ugly.. To change !
-            if (owner.getEntityType() == e_EntityType.Player)
-                win.Draw(((APlayer)owner).TrapDeliver);
-
-            owner.SecondaryResourcesEntities.OrderBy(v => v.sprite.Level);
-            owner.SecondaryResourcesEntities.ForEach(i => win.Draw(i));
-            win.Draw(owner.ressourcesEntity);
-        }
-
         public void draw(Renderer win)
         {
-            deepDraw(this, win);
+            // order by hitbox.y position
+            List<AEntity> allEntities = GetAllEntities().OrderBy(entity => entity.ressourcesEntity.HitBox.Height + entity.ressourcesEntity.HitBox.Top).ToList();
+
+            allEntities.ForEach(entity => {
+                if (entity.getEntityType() == e_EntityType.Player)
+                    win.Draw(((APlayer)entity).TrapDeliver);
+                win.Draw(entity.ressourcesEntity);
+            });
+
         }
     }
 }

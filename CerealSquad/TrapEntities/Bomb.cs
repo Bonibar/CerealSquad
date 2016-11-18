@@ -19,6 +19,8 @@ namespace CerealSquad.TrapEntities
         private Timer TimerDelete = new Timer(Time.FromSeconds(0.2f));
         private Timer TimerTrigger = new Timer(Time.FromSeconds(0.2f));
 
+        //public EntityResources SecondaryResourcesEntity { get; set; }
+
         private uint state = 0;
 
         public Bomb(IEntity owner) : base(owner, e_DamageType.BOMB_DAMAGE, 2)
@@ -32,12 +34,9 @@ namespace CerealSquad.TrapEntities
             
             ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
             ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
-           
-            EntityResources secondary = new EntityResources();
-            secondary.sprite = new EllipseShapeSprite(new Vector2f(Range * 64.0f, Range / 2.0f * 64.0f), new Color(219, 176, 10, 100), new Color(219, 130, 10, 255));
-            secondary.sprite.Displayed = false;
 
-            SecondaryResourcesEntities.Add(secondary);
+            ressourcesEntity.secondarySprite.Add(new EllipseShapeSprite(new Vector2f(Range * 64.0f, Range / 2.0f * 64.0f), new Color(219, 176, 10, 100), new Color(219, 130, 10, 255)));
+            ressourcesEntity.secondarySprite.ForEach(i => i.Displayed = false);
 
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             Timer.Start();
@@ -78,11 +77,8 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.PlayAnimation((uint)Graphics.EStateEntity.DYING);
             ((AnimatedSprite)ressourcesEntity.sprite).SetColor(new Color(255, 255, 255, 200));
 
-            SecondaryResourcesEntities.ForEach(i =>
-            {
-                i.sprite.Displayed = true;
-                i.Position = ressourcesEntity.Position;
-            });
+
+            ressourcesEntity.secondarySprite.ForEach(i => i.Displayed = true);
 
             List<AEntity> allEntities = ((WorldEntity)getRootEntity()).GetAllEntities();
 

@@ -72,8 +72,6 @@ namespace CerealSquad
             }
         }
 
-        public List<EntityResources> SecondaryResourcesEntities { get; set; }
-
         public s_size Size
         {
             get
@@ -112,7 +110,6 @@ namespace CerealSquad
             _inputForce = 1;
             _die = false;
             _move = new List<EMovement> { EMovement.None };
-            SecondaryResourcesEntities = new List<EntityResources>();
         }
 
         public void addChild(IEntity child)

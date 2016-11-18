@@ -86,7 +86,7 @@ namespace CerealSquad
                 input.JoystickDisconnected += Input_JoystickDisconnected;
             }
             
-            TrapInventory = e_TrapType.NONE;
+            TrapInventory = e_TrapType.WALL;
             InputManager = input;
         }
 

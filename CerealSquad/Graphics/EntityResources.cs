@@ -11,10 +11,12 @@ namespace CerealSquad.Graphics
     class EntityResources : Transformable, IResource
     {
         public ASprite sprite;
+
+        public List<ASprite> secondarySprite = new List<ASprite>();
         public Sounds.JukeBox JukeBox { get; set; }
 
-        public RectangleShape CollisionBoxRectangle = new RectangleShape();
-        public RectangleShape HitBoxRectangle = new RectangleShape();
+        private RectangleShape CollisionBoxRectangle = new RectangleShape();
+        private RectangleShape HitBoxRectangle = new RectangleShape();
         public bool Debug { get; set; }
 
         public Vector2f Size { get { return sprite.Size; } set { sprite.Size = value; } }
@@ -135,7 +137,7 @@ namespace CerealSquad.Graphics
 
         public bool IsTouchingCollisionBox(EntityResources Other)
         {
-            return HitBox.Intersects(Other.CollisionBox);
+            return CollisionBox.Intersects(Other.CollisionBox);
         }
 
         /// <summary>
@@ -227,6 +229,7 @@ namespace CerealSquad.Graphics
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
+            secondarySprite.ForEach(i => i.Draw(target, states));
             sprite.Draw(target, states);
             if (Debug)
             {
