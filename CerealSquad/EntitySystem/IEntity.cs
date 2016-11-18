@@ -19,6 +19,7 @@ namespace CerealSquad
     {
         BOMB,
         BEAR_TRAP,
+        WALL,
         NONE
     }
 
@@ -99,11 +100,7 @@ namespace CerealSquad
             get;
             set;
         }
-        List<EntityResources> SecondaryResourcesEntities
-        {
-            get;
-            set;
-        }
+
         bool Die
         {
             get;
