@@ -11,7 +11,7 @@ namespace CerealSquad.TrapEntities
 {
     class SugarWall : ATrap
     {
-        public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(25, 12, 25, 32);
+        public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(25, -20, 25, 32);
         public static readonly SFML.Graphics.FloatRect HIT_BOX = new SFML.Graphics.FloatRect(25, 30, 25, 32);
 
         public SugarWall(IEntity owner) : base(owner, e_DamageType.NONE, 0)
