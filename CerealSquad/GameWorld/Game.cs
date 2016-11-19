@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFML.Graphics;
 
 namespace CerealSquad.GameWorld
 {
     /// <summary>
     /// 
     /// </summary>
-    class Game
+    class Game : Drawable
     {
         private AWorld currentWorld = null;
         public AWorld CurrentWorld {
@@ -19,6 +20,7 @@ namespace CerealSquad.GameWorld
         //private HUD HUD;
         private List<AWorld> Worlds = new List<AWorld>();
         private List<IEntity> Players = new List<IEntity>();
+        private List<Graphics.HUD> _HUDs = new List<Graphics.HUD>();
         private WorldEntity worldEntity = new WorldEntity();
         public WorldEntity WorldEntity
         {
@@ -54,36 +56,30 @@ namespace CerealSquad.GameWorld
 
             foreach (Menus.Players.Player player in e.Players.Where(i => i.Type != Menus.Players.Type.Undefined))
             {
+                APlayer _player;
                 switch (player.Selection)
                 {
                     case 0:
-                        Players.Add(new Mike(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId));
+                        _player = new Mike(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 1:
-                        Players.Add(new Jack(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId));
+                        _player = new Jack(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 2:
-                        Players.Add(new Orangina(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId));
+                        _player = new Orangina(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 3:
-                        Players.Add(new Tchong(worldEntity, new s_position(6, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId));
+                        _player = new Tchong(worldEntity, new s_position(6, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
+                        break;
+                    default:
+                        _player = new Mike(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                 }
+                Players.Add(_player);
+                _HUDs.Add(new Graphics.HUD((uint)Players.Count, (uint)e.Players.Where(i => i.Type != Menus.Players.Type.Undefined).Count(), ref _player, renderer));
             }
 
             _InputManager.KeyboardKeyPressed += Im_KeyboardKeyPressed;
-        }
-
-        public void GameLoop(InputManager.InputManager im)
-        {
-            //CurrentWorld = new AWorld("Maps/TestWorld.txt", worldEntity);
-            //Players.Add(new Orangina(WorldEntity, new s_position(2, 2, 1), im));
-            //Players.Add(new Jack(WorldEntity, new s_position(5, 6, 1), im));
-            //Players.Add(new Tchong(WorldEntity, new s_position(2, 4, 1), im));
-            //new Ennemy(WorldEntity, new s_position(10, 10, 1));
-            //new JackEnnemy(WorldEntity, new s_position(2, 10, 1));
-
-            //im.KeyboardKeyPressed += Im_KeyboardKeyPressed;
         }
 
         private void Im_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
@@ -120,9 +116,25 @@ namespace CerealSquad.GameWorld
 
         public void Update(SFML.System.Time deltaTime)
         {
-            currentWorld.Update(deltaTime);
             if (currentWorld != null)
+            {
+                currentWorld.Update(deltaTime);
                 worldEntity.update(deltaTime, currentWorld);
+            }
+        }
+
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            // Draw world
+            if (CurrentWorld != null)
+                target.Draw(CurrentWorld, states);
+
+            // Draw entities
+            if (worldEntity != null)
+                target.Draw(worldEntity, states);
+
+            // Draw HUD
+            _HUDs.ForEach(i => target.Draw(i, states));
         }
     }
 }
