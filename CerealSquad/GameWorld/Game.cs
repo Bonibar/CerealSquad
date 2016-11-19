@@ -120,7 +120,9 @@ namespace CerealSquad.GameWorld
 
         public void Update(SFML.System.Time deltaTime)
         {
-            worldEntity.update(deltaTime, currentWorld);
+            currentWorld.Update(deltaTime);
+            if (currentWorld != null)
+                worldEntity.update(deltaTime, currentWorld);
         }
     }
 }

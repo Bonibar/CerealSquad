@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CerealSquad.InputManager.Keyboard;
 using CerealSquad.GameWorld;
 using SFML.Graphics;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad
 {
@@ -84,9 +85,8 @@ namespace CerealSquad
                 input.JoystickConnected += Input_JoystickConnected;
                 input.JoystickDisconnected += Input_JoystickDisconnected;
             }
-
-            // for test, add Trap to inventory
-            TrapInventory = e_TrapType.BOMB;
+            
+            TrapInventory = e_TrapType.WALL;
             InputManager = input;
         }
 
@@ -209,7 +209,7 @@ namespace CerealSquad
 
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
-            if (TrapPressed || TrapDeliver.IsDelivering())
+            if ((TrapPressed || TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
                 _move = new List<EMovement> { EMovement.None };
             else
                 _move = MoveStack;
@@ -258,6 +258,11 @@ namespace CerealSquad
             {
                 if (i.getEntityType() == e_EntityType.PlayerTrap)
                     result = true;
+                else if (i.getEntityType() == e_EntityType.Crate)
+                {
+                    TrapInventory = ((Crates)i).Item;
+                    ((Crates)i).pickCrate();
+                }
             });
 
             return result || baseResult;

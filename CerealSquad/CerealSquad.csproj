@@ -137,6 +137,7 @@
     <Compile Include="TrapEntities\BearTrap.cs" />
     <Compile Include="TrapEntities\Bomb.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="TrapEntities\SugarWall.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

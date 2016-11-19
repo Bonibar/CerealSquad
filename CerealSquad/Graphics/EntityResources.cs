@@ -11,21 +11,47 @@ namespace CerealSquad.Graphics
     class EntityResources : Transformable, IResource
     {
         public ASprite sprite;
+
+        public List<ASprite> secondarySprite = new List<ASprite>();
         public Sounds.JukeBox JukeBox { get; set; }
+
+        private RectangleShape CollisionBoxRectangle = new RectangleShape();
+        private RectangleShape HitBoxRectangle = new RectangleShape();
+        public bool Debug { get; set; }
 
         public Vector2f Size { get { return sprite.Size; } set { sprite.Size = value; } }
 
         #region Collision
         private bool _CollisionBoxDefault = true;
         private FloatRect _CollisionBox;
-        public FloatRect CollisionBox { get { return geCollisionBox(); } set { _CollisionBox = value; _CollisionBoxDefault = false; } }
+        public FloatRect CollisionBox { get { return geCollisionBox(); } set { _CollisionBox = value; _CollisionBoxDefault = false; UpdateDebug(); } }
         #endregion
 
         #region Hitbox
         private bool _HitBoxDefault = true;
         private FloatRect _HitBox;
-        public FloatRect HitBox { get { return getHitBox(); } set { _HitBox = value; _HitBoxDefault = false; } }
+        public FloatRect HitBox { get { return getHitBox(); } set { _HitBox = value; _HitBoxDefault = false; UpdateDebug(); } }
         #endregion
+
+        public EntityResources()
+        {
+            Debug = true;
+        }
+
+        public void UpdateDebug()
+        {
+            CollisionBoxRectangle.FillColor = new Color(0, 0, 0, 20);
+            CollisionBoxRectangle.OutlineColor = Color.Red;
+            CollisionBoxRectangle.OutlineThickness = 1;
+            CollisionBoxRectangle.Size = new Vector2f(CollisionBox.Width, CollisionBox.Height);
+            CollisionBoxRectangle.Position = new Vector2f(CollisionBox.Left, CollisionBox.Top);
+
+            HitBoxRectangle.FillColor = new Color(0, 0, 0, 0);
+            HitBoxRectangle.OutlineColor = Color.Green;
+            HitBoxRectangle.OutlineThickness = 1;
+            HitBoxRectangle.Size = new Vector2f(HitBox.Width, HitBox.Height);
+            HitBoxRectangle.Position = new Vector2f(HitBox.Left, HitBox.Top);
+        }
 
         public bool Loop {
             get {
@@ -41,18 +67,19 @@ namespace CerealSquad.Graphics
 
         private FloatRect geCollisionBox()
         {
-            if (!_CollisionBoxDefault)
-                return _CollisionBox;
-            return new FloatRect(new Vector2f(Position.X - ((float)sprite.Size.X / 2.0f), Position.Y - ((float)sprite.Size.Y / 2.0f)),
-                new Vector2f(Position.X + ((float)sprite.Size.X / 2.0f), Position.Y + ((float)sprite.Size.Y / 2.0f)));
+            if (_CollisionBoxDefault)
+                return new FloatRect(new Vector2f(Position.X - ((float)sprite.Size.X / 2.0f), Position.Y - ((float)sprite.Size.Y / 2.0f)),
+                    new Vector2f((float)sprite.Size.X, (float)sprite.Size.Y));
+            return new FloatRect(new Vector2f(Position.X - _CollisionBox.Left, Position.Y - _CollisionBox.Top),
+                    new Vector2f(_CollisionBox.Left + _CollisionBox.Width, _CollisionBox.Top + _CollisionBox.Height));
         }
 
         private FloatRect getHitBox()
         {
             if (_HitBoxDefault)
-                return new FloatRect(new Vector2f(Position.X - CollisionBox.Left, Position.Y - CollisionBox.Top),
-                    new Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top + CollisionBox.Height));
-            return _HitBox;
+                return CollisionBox;
+            return new FloatRect(new Vector2f(Position.X - _HitBox.Left, Position.Y - _HitBox.Top),
+                    new Vector2f(_HitBox.Left + _HitBox.Width, _HitBox.Top + _HitBox.Height));
         }
 
         /// <summary>
@@ -84,6 +111,35 @@ namespace CerealSquad.Graphics
             return (cornerDistance_sq <= Math.Pow((Circle.Radius), 2.0f));
         }
 
+        public bool IsTouchingCollisionBox(CircleShape Circle)
+        {
+            FloatRect CenteredRect = new FloatRect(
+                new Vector2f(CollisionBox.Left + CollisionBox.Width / 2.0f, CollisionBox.Top + CollisionBox.Height / 2.0f),
+                new Vector2f(CollisionBox.Width / 2.0f, CollisionBox.Top / 2.0f)
+                );
+            double circleDistanceX = Math.Abs(Circle.Position.X - CenteredRect.Left);
+            double circleDistanceY = Math.Abs(Circle.Position.Y - CenteredRect.Top);
+
+            if (circleDistanceX > (CenteredRect.Width / 2.0f + Circle.Radius))
+                return false;
+            if (circleDistanceY > (CenteredRect.Height / 2.0f + Circle.Radius))
+                return false;
+
+            if (circleDistanceX <= (CenteredRect.Width / 2.0f))
+                return true;
+            if (circleDistanceY <= (CenteredRect.Height / 2.0f))
+                return true;
+
+            double cornerDistance_sq = Math.Pow((circleDistanceX - CenteredRect.Width / 2.0f), 2.0f) + Math.Pow((circleDistanceY - CenteredRect.Height / 2.0f), 2.0f);
+
+            return (cornerDistance_sq <= Math.Pow((Circle.Radius), 2.0f));
+        }
+
+        public bool IsTouchingCollisionBox(EntityResources Other)
+        {
+            return CollisionBox.Intersects(Other.CollisionBox);
+        }
+
         /// <summary>
         /// Check collision with other EntityResources hitBox
         /// </summary>
@@ -102,6 +158,7 @@ namespace CerealSquad.Graphics
         public void InitializationAnimatedSprite(Vector2u Size)
         {
             sprite = new AnimatedSprite(Size);
+            UpdateDebug();
         }
 
         /// <summary>
@@ -112,6 +169,7 @@ namespace CerealSquad.Graphics
         public void InitializationRegularSprite(String Texture, Vector2i Size, IntRect textureRect)
         {
             sprite = new RegularSprite(Factories.TextureFactory.Instance.getTexture(Texture), Size, textureRect);
+            UpdateDebug();
         }
 
         /// <summary>
@@ -171,7 +229,14 @@ namespace CerealSquad.Graphics
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
+            secondarySprite.ForEach(i => i.Draw(target, states));
             sprite.Draw(target, states);
+            if (Debug)
+            {
+                target.Draw(CollisionBoxRectangle);
+                target.Draw(HitBoxRectangle);
+            }
+           
         }
 
         public bool isFinished()
