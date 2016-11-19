@@ -17,7 +17,6 @@ namespace CerealSquad.EntitySystem
         public e_TrapType Item { get; set; }
         public bool Picked { get; private set; }
         private bool PickState = false;
-        private bool PickAnimation = false;
 
         public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item = 0, s_size size = default(s_size)) : base(owner, size)
         {

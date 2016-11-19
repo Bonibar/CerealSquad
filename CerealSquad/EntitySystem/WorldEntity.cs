@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CerealSquad
 {
-    class WorldEntity : AEntity
+    class WorldEntity : AEntity, Drawable
     {
         public WorldEntity() : base(null)
         {
@@ -80,15 +80,15 @@ namespace CerealSquad
             return GetAllEntitiesRecursive(this);
         }
 
-        public void draw(Renderer win)
+        public void Draw(RenderTarget target, RenderStates states)
         {
             // order by hitbox.y position
             List<AEntity> allEntities = GetAllEntities().OrderBy(entity => entity.ressourcesEntity.HitBox.Height + entity.ressourcesEntity.HitBox.Top).ToList();
 
             allEntities.ForEach(entity => {
                 if (entity.getEntityType() == e_EntityType.Player)
-                    win.Draw(((APlayer)entity).TrapDeliver);
-                win.Draw(entity.ressourcesEntity);
+                    target.Draw(((APlayer)entity).TrapDeliver, states);
+                target.Draw(entity.ressourcesEntity, states);
             });
 
         }

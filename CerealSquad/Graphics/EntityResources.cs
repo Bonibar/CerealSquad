@@ -225,6 +225,24 @@ namespace CerealSquad.Graphics
         /// Draw the Sprite
         /// </summary>
         /// <param name="target">RenderTarget</param>
+        public void Draw(RenderTarget target)
+        {
+            RenderStates localStates = new RenderStates(RenderStates.Default);
+            localStates.Transform.Translate(target.Size.X / 2, target.Size.Y / 2);
+            secondarySprite.ForEach(i => i.Draw(target, localStates));
+            sprite.Draw(target, localStates);
+            if (Debug)
+            {
+                target.Draw(CollisionBoxRectangle);
+                target.Draw(HitBoxRectangle);
+            }
+
+        }
+
+        /// <summary>
+        /// Draw the Sprite
+        /// </summary>
+        /// <param name="target">RenderTarget</param>
         /// <param name="states">RenderStates</param>
         public void Draw(RenderTarget target, RenderStates states)
         {
