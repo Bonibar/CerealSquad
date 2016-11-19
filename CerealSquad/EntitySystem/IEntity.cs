@@ -46,9 +46,9 @@ namespace CerealSquad
 
         public s_position(double x = -1, double y = -1, int layer = -1)
         {
-            _x = (int)Math.Round(x);
+            _x = (int)(x);
             _trueX = x;
-            _y = (int)Math.Round(y);
+            _y = (int)(y) + 1;
             _trueY = y;
             _layer = layer;
         }
@@ -57,8 +57,8 @@ namespace CerealSquad
         {
             pos._trueX += other._trueX;
             pos._trueY += other._trueY;
-            pos._x = (int)Math.Round(pos._trueX);
-            pos._y = (int)Math.Round(pos._trueY);
+            pos._x = (int)(pos._trueX);
+            pos._y = (int)(pos._trueY) + 1;
             pos._layer += other._layer;
 
             return (pos);
@@ -85,6 +85,10 @@ namespace CerealSquad
         {
             get;
             set;
+        }
+        s_position HitboxPos
+        {
+            get;
         }
         s_size Size
         {

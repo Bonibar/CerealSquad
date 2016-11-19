@@ -46,6 +46,14 @@ namespace CerealSquad
             }
         }
 
+        public s_position HitboxPos
+        {
+            get
+            {
+                return RessourceEntityPositionToEntityPosition(new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width / 2, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height / 2));
+            }
+        }
+
         public double Speed
         {
             get
@@ -359,6 +367,11 @@ namespace CerealSquad
         private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
         {
             return new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+        }
+
+        private s_position RessourceEntityPositionToEntityPosition(SFML.System.Vector2f pos)
+        {
+            return (new s_position(pos.X  / 64.0f, pos.Y / 64.0f));
         }
 
         private void setResourceEntityPosition()

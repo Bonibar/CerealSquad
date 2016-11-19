@@ -1,5 +1,6 @@
 ﻿using CerealSquad.GameWorld;
 using CerealSquad.Global;
+using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace CerealSquad
             throw new NotImplementedException();
         }
 
-        public abstract void think(AWorld world);
+        public abstract void think(AWorld world, Time deltaTime);
 
         public s_position getCoord(s_position pos)
         {
@@ -37,27 +38,27 @@ namespace CerealSquad
             return (new s_position(x, y));
         }
 
-        protected virtual void moveSameTile(WorldEntity world)
+        protected virtual bool moveSameTile(WorldEntity world)
         {
             _move = new List<EMovement> { EMovement.None };
             foreach (IEntity entity in world.getChildren())
             {
                 if (entity.getEntityType() == e_EntityType.Player)
                 {
-                    if (entity.Pos._x == Pos._x && entity.Pos._y == Pos._y)
+                    double diffWidth = (entity.ressourcesEntity.CollisionBox.Left + entity.ressourcesEntity.CollisionBox.Width / 2 - (ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width / 2)) / 64;
+                    double diffHeight = (entity.ressourcesEntity.CollisionBox.Top + entity.ressourcesEntity.CollisionBox.Height / 2 - (ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height / 2)) / 64;
+                    if (Math.Abs(diffWidth) < 2 && Math.Abs(diffHeight) < 2)
                     {
-                        if (Math.Abs(entity.Pos._trueX - Pos._trueX) > 0.1)
-                            _move = new List<EMovement> { entity.Pos._trueX - Pos._trueX < 0 ? EMovement.Left : EMovement.Right };
-                        else if (Math.Abs(entity.Pos._trueY - Pos._trueY) > 0.1)
+                        if (Math.Abs(diffWidth) > 0.5)
+                            _move = new List<EMovement> { diffWidth < 0 ? EMovement.Left : EMovement.Right };
+                        else if (Math.Abs(diffHeight) > 0.5)
                         {
-                            _move = new List<EMovement> { entity.Pos._trueY - Pos._trueY < 0 ? EMovement.Up : EMovement.Down };
+                            _move = new List<EMovement> { diffHeight < 0 ? EMovement.Up : EMovement.Down };
                         }
-                        else
-                            _move = new List<EMovement> { EMovement.None };
                     }
-
                 }
             }
+            return (!_move.Contains(EMovement.None));
         }
 
         protected class scentMap
@@ -87,8 +88,8 @@ namespace CerealSquad
 
             protected s_position getCoord(s_position pos, s_Pos<int> room)
             {
-                double x = pos._x;
-                double y = pos._y;
+                double x = pos._trueX;
+                double y = pos._trueY;
 
                 x -= room.X;
                 y -= room.Y;
@@ -145,7 +146,7 @@ namespace CerealSquad
                     if (entity.getEntityType() == e_EntityType.Player)
                     {
                         APlayer p = (APlayer)entity;
-                        s_position pos = getCoord(p.Pos, room.Position);
+                        s_position pos = getCoord(p.HitboxPos, room.Position);
                         propagateHeat(pos._x, pos._y, 100, p.getName(), p.Weight);
                     }
                 }

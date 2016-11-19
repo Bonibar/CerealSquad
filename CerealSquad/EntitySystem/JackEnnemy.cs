@@ -48,7 +48,7 @@ namespace CerealSquad
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "JackHunter", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "JackHunter", new List<uint> { 6, 7, 8 }, new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "JackHunter", new List<uint> { 9, 10, 11 }, new Vector2u(64, 64));
-           // ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "JackHunter", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
+            // ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "JackHunter", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
             Pos = position;
@@ -71,43 +71,43 @@ namespace CerealSquad
         //
         // TODO check egality in scent
         //
-        public override void think(AWorld world)
+        public override void think(AWorld world, Time deltaTime)
         {
-            Console.Out.Write(Pos._trueX);
-            Console.Out.Write(" ");
-            Console.Out.Write(Pos._trueY);
-            Console.Out.Write(" ");
-            Console.Out.Write(_ressources.Position.X);
-            Console.Out.Write(" ");
-            Console.Out.Write(_ressources.Position.Y);
-            Console.Out.Write("\n");
-            s_position pos = getCoord(_pos);
+            s_position pos = getCoord(HitboxPos);
             var position = ressourcesEntity.Position;
 
             _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
-            int left = executeLeftMove(world, Speed) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+            int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
             ressourcesEntity.Position = position;
-            int right = executeRightMove(world, Speed) ? _scentMap.getScent(pos._x + 1, pos._y): 0;
+            int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y): 0;
             ressourcesEntity.Position = position;
-            int top = executeUpMove(world, Speed) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+            int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
             ressourcesEntity.Position = position;
-            int bottom = executeDownMove(world, Speed) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+            int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
             ressourcesEntity.Position = position;
             int here = _scentMap.getScent(pos._x, pos._y);
-            int maxscent = Math.Max(here, Math.Max(top, Math.Max(bottom, Math.Max(right, left))));
+            int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
 
-            if (maxscent == 0)
+            if (maxscent == 0 && here == 0)
                 _move = new List<EMovement> { EMovement.None };
+            else if (maxscent <= here && moveSameTile((WorldEntity)_owner))
+            {
+                move(world, deltaTime)
+                #region EmptyStatement
+#pragma warning disable CS0642 // Possible mistaken empty statement
+                ;
+#pragma warning restore CS0642 // Possible mistaken empty statement
+                #endregion
+            }
             else if (maxscent == top)
                 _move = new List<EMovement> { EMovement.Up };
             else if (maxscent == bottom)
                 _move = new List<EMovement> { EMovement.Down };
             else if (maxscent == right)
                 _move = new List<EMovement> { EMovement.Right };
-            else if(maxscent == left)
+            else if (maxscent == left)
                 _move = new List<EMovement> { EMovement.Left };
-            else
-                moveSameTile((WorldEntity)_owner);
+                
         }
 
         public override void update(Time deltaTime, AWorld world)
@@ -120,7 +120,7 @@ namespace CerealSquad
             else
             {
                 _scentMap.update((WorldEntity)_owner, _room);
-                think(world);
+                think(world, deltaTime);
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);
