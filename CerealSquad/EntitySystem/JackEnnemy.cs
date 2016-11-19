@@ -87,12 +87,13 @@ namespace CerealSquad
             ressourcesEntity.Position = position;
             int here = _scentMap.getScent(pos._x, pos._y);
             int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
+            Console.Out.WriteLine("start");
 
             if (maxscent == 0 && here == 0)
                 _move = new List<EMovement> { EMovement.None };
             else if (maxscent <= here && moveSameTile((WorldEntity)_owner))
             {
-                move(world, deltaTime)
+                Console.Out.WriteLine("Move");
                 #region EmptyStatement
 #pragma warning disable CS0642 // Possible mistaken empty statement
                 ;
@@ -135,6 +136,8 @@ namespace CerealSquad
             {
                 if (i.getEntityType() == e_EntityType.PlayerTrap)
                     Die = true;
+                if (i.getEntityType() == e_EntityType.Player)
+                    i.die();
             });
 
 

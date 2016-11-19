@@ -47,11 +47,12 @@ namespace CerealSquad
                 {
                     double diffWidth = (entity.ressourcesEntity.CollisionBox.Left + entity.ressourcesEntity.CollisionBox.Width / 2 - (ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width / 2)) / 64;
                     double diffHeight = (entity.ressourcesEntity.CollisionBox.Top + entity.ressourcesEntity.CollisionBox.Height / 2 - (ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height / 2)) / 64;
+                    Console.Out.WriteLine(diffHeight);
                     if (Math.Abs(diffWidth) < 2 && Math.Abs(diffHeight) < 2)
                     {
-                        if (Math.Abs(diffWidth) > 0.5)
+                        if (Math.Abs(diffWidth) > 0.1)
                             _move = new List<EMovement> { diffWidth < 0 ? EMovement.Left : EMovement.Right };
-                        else if (Math.Abs(diffHeight) > 0.5)
+                        else if (Math.Abs(diffHeight) > 0.1)
                         {
                             _move = new List<EMovement> { diffHeight < 0 ? EMovement.Up : EMovement.Down };
                         }
