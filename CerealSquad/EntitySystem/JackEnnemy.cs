@@ -71,14 +71,28 @@ namespace CerealSquad
         //
         // TODO check egality in scent
         //
-        public override void think()
+        public override void think(AWorld world)
         {
+            Console.Out.Write(Pos._trueX);
+            Console.Out.Write(" ");
+            Console.Out.Write(Pos._trueY);
+            Console.Out.Write(" ");
+            Console.Out.Write(_ressources.Position.X);
+            Console.Out.Write(" ");
+            Console.Out.Write(_ressources.Position.Y);
+            Console.Out.Write("\n");
             s_position pos = getCoord(_pos);
+            var position = ressourcesEntity.Position;
 
-            int left = _scentMap.getScent(pos._x - 1, pos._y);
-            int right = _scentMap.getScent(pos._x + 1, pos._y);
-            int top = _scentMap.getScent(pos._x, pos._y - 1);
-            int bottom = _scentMap.getScent(pos._x, pos._y + 1);
+            _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
+            int left = executeLeftMove(world, Speed) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+            ressourcesEntity.Position = position;
+            int right = executeRightMove(world, Speed) ? _scentMap.getScent(pos._x + 1, pos._y): 0;
+            ressourcesEntity.Position = position;
+            int top = executeUpMove(world, Speed) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+            ressourcesEntity.Position = position;
+            int bottom = executeDownMove(world, Speed) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+            ressourcesEntity.Position = position;
             int here = _scentMap.getScent(pos._x, pos._y);
             int maxscent = Math.Max(here, Math.Max(top, Math.Max(bottom, Math.Max(right, left))));
 
@@ -106,7 +120,7 @@ namespace CerealSquad
             else
             {
                 _scentMap.update((WorldEntity)_owner, _room);
-                think();
+                think(world);
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);

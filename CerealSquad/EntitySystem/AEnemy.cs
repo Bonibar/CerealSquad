@@ -25,7 +25,7 @@ namespace CerealSquad
             throw new NotImplementedException();
         }
 
-        public abstract void think();
+        public abstract void think(AWorld world);
 
         public s_position getCoord(s_position pos)
         {
@@ -39,7 +39,7 @@ namespace CerealSquad
 
         protected virtual void moveSameTile(WorldEntity world)
         {
-            _move = EMovement.None;
+            _move = new List<EMovement> { EMovement.None };
             foreach (IEntity entity in world.getChildren())
             {
                 if (entity.getEntityType() == e_EntityType.Player)
@@ -47,13 +47,13 @@ namespace CerealSquad
                     if (entity.Pos._x == Pos._x && entity.Pos._y == Pos._y)
                     {
                         if (Math.Abs(entity.Pos._trueX - Pos._trueX) > 0.1)
-                            _move = entity.Pos._trueX - Pos._trueX < 0 ? EMovement.Left : EMovement.Right;
+                            _move = new List<EMovement> { entity.Pos._trueX - Pos._trueX < 0 ? EMovement.Left : EMovement.Right };
                         else if (Math.Abs(entity.Pos._trueY - Pos._trueY) > 0.1)
                         {
-                            _move = entity.Pos._trueY - Pos._trueY < 0 ? EMovement.Up : EMovement.Down;
+                            _move = new List<EMovement> { entity.Pos._trueY - Pos._trueY < 0 ? EMovement.Up : EMovement.Down };
                         }
                         else
-                            _move = EMovement.None;
+                            _move = new List<EMovement> { EMovement.None };
                     }
 
                 }

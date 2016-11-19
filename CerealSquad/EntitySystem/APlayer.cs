@@ -111,6 +111,9 @@ namespace CerealSquad
                 case SKeyPlayer.PUT_TRAP:
                     TrapPressed = false;
                     break;
+                case SKeyPlayer.SPATTACK:
+                    _specialActive = false;
+                    break;
                 default:
                     break;
             }
@@ -136,6 +139,9 @@ namespace CerealSquad
                     break;
                 case SKeyPlayer.PUT_TRAP:
                     TrapPressed = true;
+                    break;
+                case SKeyPlayer.SPATTACK:
+                    _specialActive = true;
                     break;
                 default:
                     break;
@@ -271,9 +277,9 @@ namespace CerealSquad
         public override bool IsCollidingAndDead(AWorld World)
         {
             bool result = false;
-            List<AEntity> allEntities = ((WorldEntity)getRootEntity()).GetAllEntities();
+            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
 
-            allEntities.ForEach(i =>
+            collidingEntities.ForEach(i =>
             {
                 if (!i.Equals(this))
                     if (i.getEntityType() == e_EntityType.Ennemy)
