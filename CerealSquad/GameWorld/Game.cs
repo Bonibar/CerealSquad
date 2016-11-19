@@ -121,6 +121,8 @@ namespace CerealSquad.GameWorld
                 currentWorld.Update(deltaTime);
                 worldEntity.update(deltaTime, currentWorld);
             }
+
+            _HUDs.ForEach(i => i.Update(deltaTime));
         }
 
         public void Draw(RenderTarget target, RenderStates states)
