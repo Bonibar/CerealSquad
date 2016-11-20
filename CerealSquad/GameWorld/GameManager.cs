@@ -33,7 +33,6 @@ namespace CerealSquad.GameWorld
         {
             System.Diagnostics.Debug.WriteLine("New GAME");
             CurrentGame = new Game(_Renderer, _InputManager);
-            //CurrentGame.GameLoop(_InputManager);
         }
     }
 }
