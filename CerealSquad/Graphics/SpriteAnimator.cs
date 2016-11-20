@@ -70,9 +70,13 @@ namespace CerealSquad.Graphics
                         m_currentFrame++;
                     } else {
                         // animation has ended
-                        m_currentFrame = 0; // reset to start
+                    
+                       
                         if (!m_isLooped) {
                             m_isPaused = true;
+                        } else
+                        {
+                            m_currentFrame = 0; // reset to start
                         }
                     }
 
