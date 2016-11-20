@@ -42,6 +42,7 @@ namespace CerealSquad.GameWorld
         private List<Crates> _Crates = new List<Crates>();
 
         private Random _Rand = new Random();
+        private Dictionary<int, int> _RespawnCrates = new Dictionary<int, int>();
 
         public ARoom(s_Pos<int> Pos, string MapFile, WorldEntity worldentity, e_RoomType Type = 0)
         {
@@ -55,6 +56,9 @@ namespace CerealSquad.GameWorld
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
+
+            for (int i = 0; i < ParsedRoom.Crates.Count; i++)
+                _RespawnCrates.Add(i, -1);
         }
 
         private void parseRoom()
@@ -80,7 +84,7 @@ namespace CerealSquad.GameWorld
             return (cel);
         }
 
-        private void spawnCrates()
+        private void spawnCrates(SFML.System.Time DeltaTime)
         {
             if (_Crates.Count == 0)
             {
@@ -99,27 +103,39 @@ namespace CerealSquad.GameWorld
             }
             else
             {
-                var _respawnCrates = _Crates.FindAll(x => x.Picked == true);
-                _respawnCrates.ForEach((Crates crate) => {
+                var _cratesToRemove = _Crates.FindAll(x => x.Picked == true);
+                _cratesToRemove.ForEach((Crates crate) =>
+                {
                     int id = _Crates.IndexOf(crate);
                     _Crates.Remove(crate);
-                    RoomParser.s_crate toRespawn = ParsedRoom.Crates.ElementAt(id);
-                    s_Pos<int> spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
-                    bool isColliding = true;
-                    while (isColliding)
-                    {
-                        spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
-                        if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
-                            isColliding = false;
-                    }
-                    _Crates.Insert(id, new Crates(WorldEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
+                    _RespawnCrates[id] = 0;
                 });
+                for (int i = 0; i < _RespawnCrates.Count; i++)
+                {
+                    if (_RespawnCrates[i] >= 0)
+                        _RespawnCrates[i] += DeltaTime.AsMilliseconds();
+                    if (_RespawnCrates[i] >= 3600)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Parsed Rooms Crates : " + ParsedRoom.Crates);
+                        RoomParser.s_crate toRespawn = ParsedRoom.Crates.ElementAt(i);
+                        s_Pos<int> spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
+                        bool isColliding = true;
+                        while (isColliding)
+                        {
+                            spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
+                            if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                                isColliding = false;
+                        }
+                        _Crates.Insert(i, new Crates(WorldEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
+                        _RespawnCrates[i] = -1;
+                    }
+                }
             }
         }
 
         public void Update(SFML.System.Time DeltaTime)
         {
-            spawnCrates();
+            spawnCrates(DeltaTime);
         }
 
         public void Draw(RenderTarget target, RenderStates states)
