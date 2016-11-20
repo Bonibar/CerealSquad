@@ -43,7 +43,7 @@ namespace CerealSquad.EntitySystem
             result &= executeDownMove(world, Speed * deltaTime.AsSeconds());
             result &= executeLeftMove(world, Speed * deltaTime.AsSeconds());
             result &= executeRightMove(world, Speed * deltaTime.AsSeconds());
-            if (canAttack(world))
+            if (canAttack((WorldEntity)_owner))
                  attack();
             if (_r > 0 && result)
                 _r -= 1;

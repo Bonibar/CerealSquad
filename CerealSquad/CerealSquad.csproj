@@ -83,6 +83,7 @@
     <Compile Include="Downloaders\IDownloader.cs" />
     <Compile Include="Downloaders\LoadingScreen.cs" />
     <Compile Include="Downloaders\TaskAwaiter.cs" />
+    <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
@@ -101,7 +102,6 @@
     <Compile Include="EntitySystem\Orangina.cs" />
     <Compile Include="EntitySystem\Tchong.cs" />
     <Compile Include="EntitySystem\WorldEntity.cs" />
-    <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\Crates.cs" />
     <Compile Include="GameWorld\ARoom.cs" />
     <Compile Include="GameWorld\Game.cs" />
@@ -113,6 +113,7 @@
     <Compile Include="Graphics\EllipseShapeSprite.cs" />
     <Compile Include="Menus\Buttons\NewGameButton.cs" />
     <Compile Include="Menus\CharacterSelectMenu.cs" />
+    <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
@@ -130,7 +131,6 @@
     <Compile Include="Menus\Buttons\IButton.cs" />
     <Compile Include="Menus\Buttons\OpenMenuButton.cs" />
     <Compile Include="Menus\MenuManager.cs" />
-    <Compile Include="Menus\Prefabs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer.cs" />
@@ -208,7 +208,7 @@
     <Folder Include="Assets\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

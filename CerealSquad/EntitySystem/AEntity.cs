@@ -123,8 +123,6 @@ namespace CerealSquad
         public void addChild(IEntity child)
         {
             _children.Add(child);
-            if (child.getEntityType() == e_EntityType.)
-            Console.WriteLine("insert");
         }
 
         private bool NotInCircleRange(IEntity Sender, float Range)

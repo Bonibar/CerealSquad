@@ -378,15 +378,19 @@ namespace CerealSquad.Menus
         private Sounds.JukeBox Jukebox = new Sounds.JukeBox();
 
         private Graphics.AnimatedSprite _BackgroundImage;
-
         private Characters.Character[] _Characters;
 
-        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager) : base(inputManager)
+        private InputManager.InputManager _InputManager;
+
+        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
+            if (inputManager == null)
+                throw new ArgumentNullException("InputManager cannot be null");
 
             _Renderer = renderer;
+            _InputManager = inputManager;
 
             _Characters = new Characters.Character[CHARACTER_COUNT];
             _Characters[0] = new Characters.Mike(_Renderer);
@@ -410,10 +414,6 @@ namespace CerealSquad.Menus
             _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
 
             Jukebox.loadMusic(0, "Assets/Music/CharacterSelection.ogg");
-
-            Buttons.IButton returnButton = new Buttons.BackButton("", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, this);
-            MenuItem back_Button = new MenuItem(returnButton, MenuItem.ItemType.KeyBinded, InputManager.Keyboard.Key.Escape);
-            _menuList.Add(back_Button);
 
             _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
             _StartGameText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
@@ -520,7 +520,6 @@ namespace CerealSquad.Menus
                     SelectNextPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1), LockedList);
             }
         }
-
         private void _InputManager_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
             List<uint> LockedList = GetLockedList();
@@ -533,7 +532,6 @@ namespace CerealSquad.Menus
                     SelectPreviousPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
             }
         }
-
         private void _InputManager_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
             if (Displayed)
