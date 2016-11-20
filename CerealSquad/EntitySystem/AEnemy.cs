@@ -40,7 +40,7 @@ namespace CerealSquad
             CollidingEntities.ForEach(i =>
             {
                 if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    _die = true;
+                    die();
                 if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
                     result = true;
                 if (i.getEntityType() == e_EntityType.Player)

@@ -1,22 +1,21 @@
-﻿using System;
+﻿using CerealSquad.Graphics;
+using SFML.Graphics;
+using SFML.System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CerealSquad.GameWorld;
-using SFML.System;
-using CerealSquad.Graphics;
-using SFML.Graphics;
 
 namespace CerealSquad.EntitySystem
 {
-    class MilkGhost : AEnemy
+    class GhostEnemy : AEnemy
     {
         //
         // TODO static scentMap
         //
-        protected static milkyScentMap _scentMap;
-
+        protected milkyScentMap _scentMap;
 
         protected class milkyScentMap : scentMap
         {
@@ -29,24 +28,23 @@ namespace CerealSquad.EntitySystem
             }
         }
 
-        public MilkGhost(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
+        public GhostEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
-            _speed = 1;
+            _speed = 2;
             _scentMap = new milkyScentMap(_room.Size.Height, _room.Size.Width);
-            _ressources = new EntityResources();
-            //
-            // TODO ALPHA Change with the right ressources
-            //
-            Factories.TextureFactory.Instance.load("JackHunter", "Assets/Character/JackHunter.png");
+            ressourcesEntity = new EntityResources();
+            Factories.TextureFactory.Instance.load("MilkyGhost", "Assets/Enemies/Normal/MilkyGhost.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_DOWN, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "JackHunter", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "JackHunter", new List<uint> { 6, 7, 8 }, new Vector2u(64, 64));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "JackHunter", new List<uint> { 9, 10, 11 }, new Vector2u(64, 64));
-            // ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "JackHunter", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, 0.0f), new Vector2f(26.0f, 24.0f));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "MilkyGhost", new List<uint> { 0 }, new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_DOWN, "MilkyGhost", new List<uint> { 0, 1, 2, 3 }, new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "MilkyGhost", new List<uint> { 12, 13, 14, 15 }, new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "MilkyGhost", new List<uint> { 8, 9, 10, 11 }, new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "MilkyGhost", new List<uint> { 4, 5, 6, 7 }, new Vector2u(128, 128), 150);
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "MilkyGhost", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+
+            _ressources.CollisionBox = new FloatRect(new Vector2f(17.0f, 0.0f), new Vector2f(17.0f, 24.0f));
+            _ressources.HitBox = new FloatRect(new Vector2f(17.0f, 24.0f), new Vector2f(17.0f, 24.0f));
             Pos = position;
         }
 
@@ -57,7 +55,7 @@ namespace CerealSquad.EntitySystem
             CollidingEntities.ForEach(i =>
             {
                 if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    _die = true;
+                    die();
                 if (i.getEntityType() == e_EntityType.Player)
                     i.die();
             });

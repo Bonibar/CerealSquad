@@ -123,6 +123,8 @@ namespace CerealSquad
         public void addChild(IEntity child)
         {
             _children.Add(child);
+            if (child.getEntityType() == e_EntityType.)
+            Console.WriteLine("insert");
         }
 
         private bool NotInCircleRange(IEntity Sender, float Range)
@@ -146,7 +148,7 @@ namespace CerealSquad
             return true;
         }
 
-        private static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
+        protected static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
         {
             double a = Math.Pow(x - x_el, 2.0f) / Math.Pow(rX, 2.0f);
             double b = Math.Pow(y - y_el, 2.0f) / Math.Pow(rY, 2.0f);
@@ -222,6 +224,7 @@ namespace CerealSquad
             return false;
         }
 
+        #region Move
         protected bool executeRightMove(AWorld world, double speedMove, bool PerformMovement = false)
         {
             if (_move.Contains(EMovement.Right))
@@ -337,13 +340,17 @@ namespace CerealSquad
         {
             executeMove(world, deltaTime);
         }
+#endregion
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);
 
-        public void die()
+        public virtual void die()
         {
             _die = true;
-            _ressources.PlayAnimation((uint)EStateEntity.DYING);
+            //
+            // TODO add Dying animation
+            //
+            //_ressources.PlayAnimation((uint)EStateEntity.DYING);
             _ressources.Loop = false;
         }
 
