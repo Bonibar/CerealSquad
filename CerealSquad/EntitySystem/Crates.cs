@@ -17,11 +17,15 @@ namespace CerealSquad.EntitySystem
         public e_TrapType Item { get; set; }
         public bool Picked { get; private set; }
         private bool PickState = false;
+        public bool Respawn { get { return Picked && TimeToRespawn <= 0; } }
+        private int TimeToRespawn = -1;
+        private int RespawnTime;
 
-        public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item = 0, s_size size = default(s_size)) : base(owner, size)
+        public Crates(IEntity owner, s_Pos<int> _Pos, e_TrapType _Item = 0, int respawnTime = 3600, s_size size = default(s_size)) : base(owner, size)
         {
             Picked = false;
             Item = _Item;
+            RespawnTime = respawnTime;
             _type = e_EntityType.Crate;
             Factories.TextureFactory.Instance.load("CrateFloating", "Assets/GameplayElement/Crates.png");
 
@@ -47,11 +51,17 @@ namespace CerealSquad.EntitySystem
 
         public override void update(Time deltaTime, AWorld world)
         {
-            _ressources.Update(deltaTime);
-            if (PickState)
+            if (_ressources != null)
+                _ressources.Update(deltaTime);
+            if (TimeToRespawn > -1 && Picked)
+                TimeToRespawn -= deltaTime.AsMilliseconds();
+            else if (PickState && _ressources != null)
             {
                 Picked = true;
+                PickState = false;
                 destroy();
+                _ressources = null;
+                TimeToRespawn = RespawnTime;
             }
         }
     }
