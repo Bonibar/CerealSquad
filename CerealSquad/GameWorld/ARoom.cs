@@ -103,33 +103,23 @@ namespace CerealSquad.GameWorld
             }
             else
             {
-                var _cratesToRemove = _Crates.FindAll(x => x.Picked == true);
-                _cratesToRemove.ForEach((Crates crate) =>
+                _Crates.FindAll(x => x.Picked == true && x.Respawn == false).ForEach(i => i.update(DeltaTime, null));
+                var _respawnCrates = _Crates.FindAll(x => x.Respawn == true);
+                _respawnCrates.ForEach((Crates crate) =>
                 {
                     int id = _Crates.IndexOf(crate);
                     _Crates.Remove(crate);
-                    _RespawnCrates[id] = 0;
-                });
-                for (int i = 0; i < _RespawnCrates.Count; i++)
-                {
-                    if (_RespawnCrates[i] >= 0)
-                        _RespawnCrates[i] += DeltaTime.AsMilliseconds();
-                    if (_RespawnCrates[i] >= 3600)
+                    RoomParser.s_crate toRespawn = ParsedRoom.Crates.ElementAt(id);
+                    s_Pos<int> spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
+                    bool isColliding = true;
+                    while (isColliding)
                     {
-                        System.Diagnostics.Debug.WriteLine("Parsed Rooms Crates : " + ParsedRoom.Crates);
-                        RoomParser.s_crate toRespawn = ParsedRoom.Crates.ElementAt(i);
-                        s_Pos<int> spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
-                        bool isColliding = true;
-                        while (isColliding)
-                        {
-                            spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
-                            if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
-                                isColliding = false;
-                        }
-                        _Crates.Insert(i, new Crates(WorldEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
-                        _RespawnCrates[i] = -1;
+                        spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
+                        if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                            isColliding = false;
                     }
-                }
+                    _Crates.Insert(id, new Crates(WorldEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
+                });
             }
         }
 
