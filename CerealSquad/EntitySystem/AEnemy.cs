@@ -53,7 +53,6 @@ namespace CerealSquad
                 {
                     double diffWidth = (entity.ressourcesEntity.CollisionBox.Left + entity.ressourcesEntity.CollisionBox.Width / 2 - (ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width / 2)) / 64;
                     double diffHeight = (entity.ressourcesEntity.CollisionBox.Top + entity.ressourcesEntity.CollisionBox.Height / 2 - (ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height / 2)) / 64;
-                    Console.Out.WriteLine(diffHeight);
                     if (Math.Abs(diffWidth) < 2 && Math.Abs(diffHeight) < 2)
                     {
                         if (Math.Abs(diffWidth) > 0.1)
@@ -153,6 +152,17 @@ namespace CerealSquad
             public void update(WorldEntity world, ARoom room)
             {
                 reset(room);
+
+                foreach (IEntity entity in world.getChildren())
+                {
+                    if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
+                    {
+                        _map[entity.Pos._x][entity.Pos._y][0] = -1;
+                        _map[entity.Pos._x][entity.Pos._y][1] = -1;
+                        _map[entity.Pos._x][entity.Pos._y][2] = -1;
+                        _map[entity.Pos._x][entity.Pos._y][3] = -1;
+                    }
+                }
                 foreach (IEntity entity in world.getChildren())
                 {
                     if (entity.getEntityType() == e_EntityType.Player)
