@@ -32,6 +32,24 @@ namespace CerealSquad
             throw new NotImplementedException();
         }
 
+        public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
+        {
+            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
+            bool result = false;
+
+            CollidingEntities.ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
+                    _die = true;
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
+                    result = true;
+                if (i.getEntityType() == e_EntityType.Player)
+                    i.die();
+            });
+
+            return result || baseResult;
+        }
+
         public abstract void think(AWorld world, Time deltaTime);
 
         public s_position getCoord(s_position pos)
@@ -149,10 +167,21 @@ namespace CerealSquad
                 }
             }
 
-            public void update(WorldEntity world, ARoom room)
+            protected virtual void check_player(WorldEntity world, ARoom room)
             {
-                reset(room);
+                foreach (IEntity entity in world.getChildren())
+                {
+                    if (entity.getEntityType() == e_EntityType.Player)
+                    {
+                        APlayer p = (APlayer)entity;
+                        s_position pos = getCoord(p.HitboxPos, room.Position);
+                        propagateHeat(pos._x, pos._y, 100, p.getName(), p.Weight);
+                    }
+                }
+            }
 
+            protected virtual void check_obstacle(WorldEntity world)
+            {
                 foreach (IEntity entity in world.getChildren())
                 {
                     if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
@@ -163,15 +192,13 @@ namespace CerealSquad
                         _map[entity.Pos._x][entity.Pos._y][3] = -1;
                     }
                 }
-                foreach (IEntity entity in world.getChildren())
-                {
-                    if (entity.getEntityType() == e_EntityType.Player)
-                    {
-                        APlayer p = (APlayer)entity;
-                        s_position pos = getCoord(p.HitboxPos, room.Position);
-                        propagateHeat(pos._x, pos._y, 100, p.getName(), p.Weight);
-                    }
-                }
+            }
+
+            public void update(WorldEntity world, ARoom room)
+            {
+                reset(room);
+                check_obstacle(world);
+                check_player(world, room);
             }
 
             public virtual int getScent(int x, int y)

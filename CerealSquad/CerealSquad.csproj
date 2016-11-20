@@ -87,6 +87,7 @@
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
     <Compile Include="EntitySystem\ATrap.cs" />
+    <Compile Include="EntitySystem\MilkGhost.cs" />
     <Compile Include="EntitySystem\TrapDeliver.cs" />
     <Compile Include="EntitySystem\Ennemy.cs" />
     <Compile Include="EntitySystem\IEntity.cs" />

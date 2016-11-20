@@ -3,59 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SFML.System;
-using static CerealSquad.APlayer;
-using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
-using CerealSquad.Factories;
+using SFML.System;
+using CerealSquad.Graphics;
 using SFML.Graphics;
 
-
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
-    class JackEnnemy : AEnemy
+    class MilkGhost : AEnemy
     {
-        protected JackEnnemyScentMap _scentMap;
+        //
+        // TODO static scentMap
+        //
+        protected static milkyScentMap _scentMap;
 
-        protected class JackEnnemyScentMap : scentMap
+
+        protected class milkyScentMap : scentMap
         {
-            public JackEnnemyScentMap(uint x, uint y) : base(x, y)
+            public milkyScentMap(uint x, uint y) : base(x, y)
             {
             }
 
-            //public override int getScent(int x, int y)
-            //{
-            //    if (x >= 0 && x < _x && y >= 0 && y < _y)
-            //    {
-            //        int scent = 0;
-            //        if (_map[x][y][(int)EName.Tchong] != -1)
-            //            scent += _map[x][y][(int)EName.Tchong];
-            //        return (scent);
-            //    }
-            //    return (-1);
-            //}
-
-            protected override void check_player(WorldEntity world, ARoom room)
+            protected override void check_obstacle(WorldEntity world)
             {
-                foreach (IEntity entity in world.getChildren())
-                {
-                    if (entity.getEntityType() == e_EntityType.Player && ((APlayer)entity).getName() == EName.Jack)
-                    {
-                        APlayer p = (APlayer)entity;
-                        s_position pos = getCoord(p.HitboxPos, room.Position);
-                        propagateHeat(pos._x, pos._y, 100, p.getName(), p.Weight);
-                    }
-                }
             }
         }
 
-        public JackEnnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
+        public MilkGhost(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 1;
-            _scentMap = new JackEnnemyScentMap(_room.Size.Height, _room.Size.Width);
+            _scentMap = new milkyScentMap(_room.Size.Height, _room.Size.Width);
             _ressources = new EntityResources();
+            //
+            // TODO ALPHA Change with the right ressources
+            //
             Factories.TextureFactory.Instance.load("JackHunter", "Assets/Character/JackHunter.png");
-            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));          
+            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_DOWN, "JackHunter", new List<uint> { 0, 1, 2 }, new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "JackHunter", new List<uint> { 3, 4, 5 }, new Vector2u(64, 64));
@@ -67,20 +50,21 @@ namespace CerealSquad
             Pos = position;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
-            double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
-            if (ressourcesEntity != null)
-                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+            bool result = false;
 
-            if (Distance > Range)
-                return false;
+            CollidingEntities.ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
+                    _die = true;
+                if (i.getEntityType() == e_EntityType.Player)
+                    i.die();
+            });
 
-            die();
-
-            return true;
+            return result;
         }
-        
+
         public override void think(AWorld world, Time deltaTime)
         {
             bool result = true;
@@ -120,7 +104,7 @@ namespace CerealSquad
 #pragma warning disable CS0642 // Possible mistaken empty statement
                     ;
 #pragma warning restore CS0642 // Possible mistaken empty statement
-                    #endregion
+                #endregion
                 else
                 {
                     if (maxscent == top)

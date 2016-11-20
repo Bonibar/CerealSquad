@@ -26,10 +26,7 @@ namespace CerealSquad
             pos.Y = position._y * 64;
             _ressources.Position = pos;
         }
-
-        //
-        // TODO check egality in scent
-        //
+        
         public override void think()
         {
             s_position pos = getCoord(_pos);
