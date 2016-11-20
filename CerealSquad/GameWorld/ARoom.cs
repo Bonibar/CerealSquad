@@ -31,7 +31,7 @@ namespace CerealSquad.GameWorld
         public enum e_RoomType { FightRoom, TransitionRoom };
 
         public e_RoomType RoomType { get; private set; }
-        //protected List<IEntity> Ennemies;
+        protected List<IEntity> Ennemies;
         public s_Pos<int> Position { get; private set; }
         public s_MapSize Size { get; private set; }
         public RegularSprite _RenderSprite { get; }
@@ -56,7 +56,9 @@ namespace CerealSquad.GameWorld
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
-
+            Ennemies = new List<IEntity>();
+            Ennemies.Add(new JackEnnemy(WorldEntity, new s_position(Position.X + 10, Position.Y + 10), this));
+            Ennemies.Add(new MilkGhost(WorldEntity, new s_position(Position.X + 11, Position.Y + 11), this));
             for (int i = 0; i < ParsedRoom.Crates.Count; i++)
                 _RespawnCrates.Add(i, -1);
         }

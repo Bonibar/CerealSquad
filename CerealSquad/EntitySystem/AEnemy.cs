@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CerealSquad.GameWorld;
+using CerealSquad.Global;
+using SFML.System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +12,19 @@ namespace CerealSquad
 {
     abstract class AEnemy : AEntity
     {
+        protected ARoom _room;
 
-        public AEnemy(IEntity owner, s_position position) : base(owner)
+        protected Random _rand;
+
+        protected int _r;
+
+        public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Ennemy;
+            _room = room;
+            _rand = new Random();
+            _r = 0;
         }
 
         public virtual void attack()
@@ -21,7 +32,63 @@ namespace CerealSquad
             throw new NotImplementedException();
         }
 
-        public abstract void think();
+        public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
+        {
+            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
+            bool result = false;
+
+            CollidingEntities.ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
+                    _die = true;
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
+                    result = true;
+                if (i.getEntityType() == e_EntityType.Player)
+                    i.die();
+            });
+
+            return result || baseResult;
+        }
+
+        public abstract void think(AWorld world, Time deltaTime);
+
+        public s_position getCoord(s_position pos)
+        {
+            double x = pos._x;
+            double y = pos._y;
+
+            x -= _room.Position.X;
+            y -= _room.Position.Y;
+            return (new s_position(x, y));
+        }
+
+        protected virtual bool moveSameTile(AWorld zone, WorldEntity world, Time deltaTime)
+        {
+            _move = new List<EMovement> { EMovement.None };
+            foreach (IEntity entity in world.getChildren())
+            {
+                if (entity.getEntityType() == e_EntityType.Player)
+                {
+                    double diffWidth = (entity.ressourcesEntity.CollisionBox.Left + entity.ressourcesEntity.CollisionBox.Width / 2 - (ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width / 2)) / 64;
+                    double diffHeight = (entity.ressourcesEntity.CollisionBox.Top + entity.ressourcesEntity.CollisionBox.Height / 2 - (ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height / 2)) / 64;
+                    if (Math.Abs(diffWidth) < 2 && Math.Abs(diffHeight) < 2)
+                    {
+                        if (Math.Abs(diffWidth) > 0.1)
+                            _move = new List<EMovement> { diffWidth < 0 ? EMovement.Left : EMovement.Right };
+                        else if (Math.Abs(diffHeight) > 0.1)
+                        {
+                            _move = new List<EMovement> { diffHeight < 0 ? EMovement.Up : EMovement.Down };
+                        }
+                    }
+                }
+            }
+            bool result = true;
+            result &= executeLeftMove(zone, Speed * deltaTime.AsSeconds());
+            result &= executeRightMove(zone, Speed * deltaTime.AsSeconds());
+            result &= executeUpMove(zone, Speed * deltaTime.AsSeconds());
+            result &= executeDownMove(zone, Speed * deltaTime.AsSeconds());
+            return (!_move.Contains(EMovement.None) && result);
+        }
 
         protected class scentMap
         {
@@ -48,19 +115,39 @@ namespace CerealSquad
                 _y = y;
             }
 
-            protected void reset()
+            protected s_position getCoord(s_position pos, s_Pos<int> room)
+            {
+                double x = pos._trueX;
+                double y = pos._trueY;
+
+                x -= room.X;
+                y -= room.Y;
+                return (new s_position(x, y));
+            }
+
+            protected void reset(ARoom room)
             {
                 _map = new int[_x][][];
-                for (int i = 0; i < _x; i++)
+                for (uint i = 0; i < _x; i++)
                 {
                     _map[i] = new int[_y][];
-                    for (int j = 0; j < _y; j++)
+                    for (uint j = 0; j < _y; j++)
                     {
                         _map[i][j] = new int[4];
-                        _map[i][j][0] = 0;
-                        _map[i][j][1] = 0;
-                        _map[i][j][2] = 0;
-                        _map[i][j][3] = 0;
+                        if (room.getPosition(i, j) == RoomParser.e_CellType.Normal)
+                        {
+                            _map[i][j][0] = 0;
+                            _map[i][j][1] = 0;
+                            _map[i][j][2] = 0;
+                            _map[i][j][3] = 0;
+                        }
+                        else
+                        {
+                            _map[i][j][0] = -1;
+                            _map[i][j][1] = -1;
+                            _map[i][j][2] = -1;
+                            _map[i][j][3] = -1;
+                        }
                     }
                 }
             }
@@ -80,25 +167,43 @@ namespace CerealSquad
                 }
             }
 
-            //
-            //  TODO Fix later with the true map
-            //
-            public void update(WorldEntity world)
+            protected virtual void check_player(WorldEntity world, ARoom room)
             {
-                reset();
                 foreach (IEntity entity in world.getChildren())
                 {
                     if (entity.getEntityType() == e_EntityType.Player)
                     {
                         APlayer p = (APlayer)entity;
-                        propagateHeat(p.Pos._x, p.Pos._y, 100, p.getName(), p.Weight);
+                        s_position pos = getCoord(p.HitboxPos, room.Position);
+                        propagateHeat(pos._x, pos._y, 100, p.getName(), p.Weight);
                     }
                 }
             }
 
+            protected virtual void check_obstacle(WorldEntity world)
+            {
+                foreach (IEntity entity in world.getChildren())
+                {
+                    if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
+                    {
+                        _map[entity.Pos._x][entity.Pos._y][0] = -1;
+                        _map[entity.Pos._x][entity.Pos._y][1] = -1;
+                        _map[entity.Pos._x][entity.Pos._y][2] = -1;
+                        _map[entity.Pos._x][entity.Pos._y][3] = -1;
+                    }
+                }
+            }
+
+            public void update(WorldEntity world, ARoom room)
+            {
+                reset(room);
+                check_obstacle(world);
+                check_player(world, room);
+            }
+
             public virtual int getScent(int x, int y)
             {
-                if (x > 0 && x < _x && y > 0 && y < _y)
+                if (x >= 0 && x < _x && y >= 0 && y < _y)
                 {
                     int scent = 0;
                     if (_map[x][y][0] != -1)
