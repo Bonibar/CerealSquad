@@ -87,6 +87,11 @@
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
     <Compile Include="EntitySystem\ATrap.cs" />
+    <Compile Include="EntitySystem\CoffeeMachineEnemy.cs" />
+    <Compile Include="EntitySystem\EggEnemy.cs" />
+    <Compile Include="EntitySystem\GhostEnemy.cs" />
+    <Compile Include="EntitySystem\HalfEggEnemy.cs" />
+    <Compile Include="EntitySystem\RiceBowl.cs" />
     <Compile Include="EntitySystem\TrapDeliver.cs" />
     <Compile Include="EntitySystem\Ennemy.cs" />
     <Compile Include="EntitySystem\IEntity.cs" />
