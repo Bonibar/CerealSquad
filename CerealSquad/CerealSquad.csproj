@@ -91,7 +91,8 @@
     <Compile Include="EntitySystem\EggEnemy.cs" />
     <Compile Include="EntitySystem\GhostEnemy.cs" />
     <Compile Include="EntitySystem\HalfEggEnemy.cs" />
-    <Compile Include="EntitySystem\RiceBowl.cs" />
+    <Compile Include="EntitySystem\MilkGhost.cs" />
+    <Compile Include="EntitySystem\RiceBowlEnemy.cs" />
     <Compile Include="EntitySystem\TrapDeliver.cs" />
     <Compile Include="EntitySystem\Ennemy.cs" />
     <Compile Include="EntitySystem\IEntity.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Graphics\EnvironmentResources.cs" />
     <Compile Include="Graphics\IResource.cs" />
     <Compile Include="Sounds\JukeBox.cs" />
+    <Compile Include="Graphics\HUD.cs" />
     <Compile Include="Graphics\PaletteManager.cs" />
     <Compile Include="Graphics\RegularSprite.cs" />
     <Compile Include="Factories\SoundBufferFactory.cs" />
@@ -203,7 +205,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

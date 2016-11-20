@@ -29,7 +29,7 @@ namespace CerealSquad
         protected bool _specialActive;
         protected int _weight;
 
-        public EntitySystem.TrapDeliver TrapDeliver { get; protected set; }
+        public TrapDeliver TrapDeliver { get; protected set; }
         public e_TrapType TrapInventory { get; set; }
 
         public List<EMovement> MoveStack = new List<EMovement>();
@@ -88,7 +88,7 @@ namespace CerealSquad
                 input.JoystickDisconnected += Input_JoystickDisconnected;
             }
             
-            TrapInventory = e_TrapType.WALL;
+            TrapInventory = e_TrapType.NONE;
             InputManager = input;
         }
 
@@ -112,6 +112,9 @@ namespace CerealSquad
                     break;
                 case SKeyPlayer.PUT_TRAP:
                     TrapPressed = false;
+                    break;
+                case SKeyPlayer.SPATTACK:
+                    _specialActive = false;
                     break;
                 default:
                     break;
@@ -138,6 +141,9 @@ namespace CerealSquad
                     break;
                 case SKeyPlayer.PUT_TRAP:
                     TrapPressed = true;
+                    break;
+                case SKeyPlayer.SPATTACK:
+                    _specialActive = true;
                     break;
                 default:
                     break;
@@ -273,9 +279,9 @@ namespace CerealSquad
         public override bool IsCollidingAndDead(AWorld World)
         {
             bool result = false;
-            List<AEntity> allEntities = ((WorldEntity)getRootEntity()).GetAllEntities();
+            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
 
-            allEntities.ForEach(i =>
+            collidingEntities.ForEach(i =>
             {
                 if (!i.Equals(this))
                     if (i.getEntityType() == e_EntityType.Ennemy)

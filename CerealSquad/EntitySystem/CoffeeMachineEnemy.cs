@@ -21,7 +21,7 @@ namespace CerealSquad.EntitySystem
             DYING,
             THROWING_COFFEE,
         }
-        public CoffeeMachineEnemy(IEntity owner, s_position position) : base(owner, position)
+        public CoffeeMachineEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 5;
             ressourcesEntity = new EntityResources();
@@ -59,26 +59,6 @@ namespace CerealSquad.EntitySystem
             return result || baseResult;
         }
 
-         public override void think()
-          {
-              /*            int left = _scentMap.getScent(_pos._x - 1, _pos._y);
-              int right = _scentMap.getScent(_pos._x + 1, _pos._y);
-              int top = _scentMap.getScent(_pos._x, _pos._y - 1);
-              int bottom = _scentMap.getScent(_pos._x, _pos._y + 1);
-              int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
-
-              if (maxscent == 0)
-                  _move = new List<EMovement> { EMovement.None };
-              else if (maxscent == top)
-                  _move = new List<EMovement> { EMovement.Up };
-              else if (maxscent == bottom)
-                  _move = new List<EMovement> { EMovement.Down };
-              else if (maxscent == right)
-                  _move = new List<EMovement> { EMovement.Right };
-              else
-                  _move = new List<EMovement> { EMovement.Left };*/
-          }
-
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             if (Die)
@@ -89,10 +69,15 @@ namespace CerealSquad.EntitySystem
             else
             {
                 // _scentMap.update((WorldEntity)_owner);
-                think();
+                //think();
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);
+        }
+
+        public override void think(AWorld world, SFML.System.Time deltaTime)
+        {
+            throw new NotImplementedException();
         }
     }
 }

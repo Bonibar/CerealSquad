@@ -12,7 +12,7 @@ namespace CerealSquad.EntitySystem
 {
     class GhostEnemy : AEnemy
     {
-        public GhostEnemy(IEntity owner, s_position position) : base(owner, position)
+        public GhostEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 5;
             ressourcesEntity = new EntityResources();
@@ -46,7 +46,7 @@ namespace CerealSquad.EntitySystem
             return result || baseResult;
         }
 
-        public override void think()
+        public override void think(AWorld world, Time deltatime)
         {
             /*            int left = _scentMap.getScent(_pos._x - 1, _pos._y);
             int right = _scentMap.getScent(_pos._x + 1, _pos._y);
@@ -76,7 +76,7 @@ namespace CerealSquad.EntitySystem
             else
             {
                // _scentMap.update((WorldEntity)_owner);
-                think();
+                //think();
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);

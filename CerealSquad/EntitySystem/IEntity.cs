@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//
+// TODO Do a correct namespace
+//
 namespace CerealSquad
 {
     public enum e_DamageType
@@ -43,9 +46,9 @@ namespace CerealSquad
 
         public s_position(double x = -1, double y = -1, int layer = -1)
         {
-            _x = (int)x;
+            _x = (int)(x);
             _trueX = x;
-            _y = (int)y;
+            _y = (int)(y);
             _trueY = y;
             _layer = layer;
         }
@@ -54,10 +57,8 @@ namespace CerealSquad
         {
             pos._trueX += other._trueX;
             pos._trueY += other._trueY;
-            pos._x = (int)pos._trueX;
-            pos._y = (int)pos._trueY;
-            pos._x += other._x;
-            pos._y += other._y;
+            pos._x = (int)(pos._trueX);
+            pos._y = (int)(pos._trueY);
             pos._layer += other._layer;
 
             return (pos);
@@ -84,6 +85,10 @@ namespace CerealSquad
         {
             get;
             set;
+        }
+        s_position HitboxPos
+        {
+            get;
         }
         s_size Size
         {

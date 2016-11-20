@@ -9,9 +9,9 @@ using System;
 
 namespace CerealSquad.EntitySystem
 {
-    class RiceBowl : APlayer
+    class RiceBowlEnemy : AEnemy
     {
-        public RiceBowl(IEntity owner, s_position position, InputManager.InputManager input) : base(owner, position, input, 0, 1)
+        public RiceBowlEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 5;
             ressourcesEntity = new EntityResources();
@@ -28,16 +28,6 @@ namespace CerealSquad.EntitySystem
             _ressources.CollisionBox = new FloatRect(new Vector2f(21.0f, -10.0f), new Vector2f(21.0f, 20.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(21.0f, 20.0f), new Vector2f(21.0f, 20.0f));
             Pos = position;
-        }
-
-        public override void AttaqueSpe()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override EName getName()
-        {
-            throw new NotImplementedException();
         }
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
@@ -57,25 +47,10 @@ namespace CerealSquad.EntitySystem
             return result || baseResult;
         }
 
-      /*  public override void think()
+        public override void think(AWorld world, SFML.System.Time deltaTime)
         {
-            /*            int left = _scentMap.getScent(_pos._x - 1, _pos._y);
-            int right = _scentMap.getScent(_pos._x + 1, _pos._y);
-            int top = _scentMap.getScent(_pos._x, _pos._y - 1);
-            int bottom = _scentMap.getScent(_pos._x, _pos._y + 1);
-            int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
-
-            if (maxscent == 0)
-                _move = new List<EMovement> { EMovement.None };
-            else if (maxscent == top)
-                _move = new List<EMovement> { EMovement.Up };
-            else if (maxscent == bottom)
-                _move = new List<EMovement> { EMovement.Down };
-            else if (maxscent == right)
-                _move = new List<EMovement> { EMovement.Right };
-            else
-                _move = new List<EMovement> { EMovement.Left };
-        }*/
+            throw new NotImplementedException();
+        }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {

@@ -38,7 +38,7 @@ namespace CerealSquad
 
         public override EName getName()
         {
-            return EName.Jack;
+            return EName.Mike;
         }
     }
 }

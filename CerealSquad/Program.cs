@@ -83,6 +83,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("S_CS_Knife", "Assets/HUD/Knife.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/Knife.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerOverlay", "Assets/HUD/SelectionPlayerOverlay.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/SelectionPlayerOverlay.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerCursor", "Assets/HUD/SelectionPlayerCursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/SelectionPlayerCursor.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("HUD_PlayerCharacter", "Assets/HUD/PlayerCharacterHUD.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/PlayerCharacterHUD.png"), false));
 
             // Initialisation
             renderer = new Renderer();
@@ -115,8 +116,7 @@ namespace CerealSquad
                 else if (gameManager.CurrentGame != null)
                 {
                     gameManager.CurrentGame.Update(clock.Restart());
-                    renderer.Draw(gameManager.CurrentGame.CurrentWorld);
-                    gameManager.CurrentGame.WorldEntity.draw(renderer);
+                    renderer.Draw(gameManager.CurrentGame);
                 }
                 else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed)
                 {

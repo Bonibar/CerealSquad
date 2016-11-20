@@ -46,6 +46,14 @@ namespace CerealSquad
             }
         }
 
+        public s_position HitboxPos
+        {
+            get
+            {
+                return RessourceEntityPositionToEntityPosition(new SFML.System.Vector2f(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width / 2, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height / 2));
+            }
+        }
+
         public double Speed
         {
             get
@@ -214,13 +222,12 @@ namespace CerealSquad
             return false;
         }
 
-        private bool executeRightMove(AWorld world, double speedMove, bool PerformMovement = false)
+        protected bool executeRightMove(AWorld world, double speedMove, bool PerformMovement = false)
         {
             if (_move.Contains(EMovement.Right))
             {
                 var OldResourcePosition = _ressources.Position;
                 s_position NewPosition = Pos + new s_position(speedMove, 0, 0);
-                _ressources.PlayAnimation((uint)EStateEntity.WALKING_RIGHT);
                 _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
                 if (IsColliding(world))
                 {
@@ -228,18 +235,20 @@ namespace CerealSquad
                     return false;
                 }
                 if (PerformMovement)
+                {
+                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_RIGHT);
                     Pos = NewPosition;
+                }
             }
             return true;
         }
 
-        private bool executeLeftMove(AWorld world, double speedMove, bool PerformMovement = false)
+        protected bool executeLeftMove(AWorld world, double speedMove, bool PerformMovement = false)
         {
             if (_move.Contains(EMovement.Left))
             {
                 var OldResourcePosition = _ressources.Position;
                 s_position NewPosition = Pos + new s_position(-speedMove, 0, 0);
-                _ressources.PlayAnimation((uint)EStateEntity.WALKING_LEFT);
                 _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
                 if (IsColliding(world))
                 {
@@ -247,18 +256,20 @@ namespace CerealSquad
                     return false;
                 }
                 if (PerformMovement)
+                {
                     Pos = NewPosition;
+                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_LEFT);
+                }
             }
             return true;
         }
 
-        private bool executeDownMove(AWorld world, double speedMove, bool PerformMovement = false)
+        protected bool executeDownMove(AWorld world, double speedMove, bool PerformMovement = false)
         {
             if (_move.Contains(EMovement.Down))
             {
                 var OldResourcePosition = _ressources.Position;
                 s_position NewPosition = Pos + new s_position(0, speedMove, 0);
-                _ressources.PlayAnimation((uint)EStateEntity.WALKING_DOWN);
                 _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
                 if (IsColliding(world))
                 {
@@ -266,18 +277,20 @@ namespace CerealSquad
                     return false;
                 }
                 if (PerformMovement)
+                {
                     Pos = NewPosition;
+                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_DOWN);
+                }
             }
             return true;
         }
 
-        private bool executeUpMove(AWorld world, double speedMove, bool PerformMovement = false)
+        protected bool executeUpMove(AWorld world, double speedMove, bool PerformMovement = false)
         {
             if (_move.Contains(EMovement.Up))
             {
                 var OldResourcePosition = _ressources.Position;
                 s_position NewPosition = Pos + new s_position(0, -speedMove, 0);
-                _ressources.PlayAnimation((uint)EStateEntity.WALKING_UP);
                 _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
                 if (IsColliding(world))
                 {
@@ -285,7 +298,10 @@ namespace CerealSquad
                     return false;
                 }
                 if (PerformMovement)
+                {
                     Pos = NewPosition;
+                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_UP);
+                }
             }
             return true;
         }
@@ -351,6 +367,11 @@ namespace CerealSquad
         private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
         {
             return new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+        }
+
+        private s_position RessourceEntityPositionToEntityPosition(SFML.System.Vector2f pos)
+        {
+            return (new s_position(pos.X  / 64.0f, pos.Y / 64.0f));
         }
 
         private void setResourceEntityPosition()
