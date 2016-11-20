@@ -60,7 +60,7 @@ namespace CerealSquad.EntitySystem
             return !Step.Equals(EStep.NOTHING);
         }
 
-        public void Update(SFML.System.Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
+        public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
             Processing(Input, World, TrapPressed);
             ResourcesEntity.Update(DeltaTime);

@@ -116,6 +116,7 @@
     <Compile Include="Graphics\EnvironmentResources.cs" />
     <Compile Include="Graphics\IResource.cs" />
     <Compile Include="Sounds\JukeBox.cs" />
+    <Compile Include="Graphics\HUD.cs" />
     <Compile Include="Graphics\PaletteManager.cs" />
     <Compile Include="Graphics\RegularSprite.cs" />
     <Compile Include="Factories\SoundBufferFactory.cs" />

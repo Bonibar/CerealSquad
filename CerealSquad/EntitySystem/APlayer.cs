@@ -29,7 +29,7 @@ namespace CerealSquad
         protected bool _specialActive;
         protected int _weight;
 
-        public EntitySystem.TrapDeliver TrapDeliver { get; protected set; }
+        public TrapDeliver TrapDeliver { get; protected set; }
         public e_TrapType TrapInventory { get; set; }
 
         public List<EMovement> MoveStack = new List<EMovement>();
@@ -86,7 +86,7 @@ namespace CerealSquad
                 input.JoystickDisconnected += Input_JoystickDisconnected;
             }
             
-            TrapInventory = e_TrapType.WALL;
+            TrapInventory = e_TrapType.NONE;
             InputManager = input;
         }
 
