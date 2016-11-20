@@ -11,9 +11,15 @@ namespace CerealSquad.EntitySystem
 {
     class HalfEggEnemy : AEnemy
     {
+        protected scentMap _scentMap;
+
+        private double _invuln;
+
         public HalfEggEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
-            _speed = 5;
+            _speed = 4;
+            _invuln = 1; // Invulnerability 1sec for fleeing purpose
+            _scentMap = new scentMap(room.Size.Height, room.Size.Width);
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("HalfEggyWalking", "Assets/Enemies/Normal/HalfEggyWalking.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
@@ -30,30 +36,67 @@ namespace CerealSquad.EntitySystem
             Pos = position;
         }
 
-        public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
-        {
-            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
-            bool result = false;
-
-            CollidingEntities.ForEach(i =>
-            {
-                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    Die = true;
-                else if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    result = true;
-            });
-
-
-            return result || baseResult;
-        }
-
         public override void think(AWorld world, SFML.System.Time deltaTime)
         {
-            throw new NotImplementedException();
+            bool result = true;
+            result &= executeUpMove(world, Speed * deltaTime.AsSeconds());
+            result &= executeDownMove(world, Speed * deltaTime.AsSeconds());
+            result &= executeLeftMove(world, Speed * deltaTime.AsSeconds());
+            result &= executeRightMove(world, Speed * deltaTime.AsSeconds());
+            if (_r > 0 && result)
+                _r -= 1;
+            else
+            {
+                _r = 0;
+                s_position pos = getCoord(HitboxPos);
+                var position = ressourcesEntity.Position;
+
+                _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
+                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+                ressourcesEntity.Position = position;
+                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : 0;
+                ressourcesEntity.Position = position;
+                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+                ressourcesEntity.Position = position;
+                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+                ressourcesEntity.Position = position;
+                int minscent = Math.Min(top, Math.Min(bottom, Math.Min(right, left)));
+                _move = new List<EMovement> { EMovement.None };
+
+                if (minscent == 0)
+                {
+                    _move = new List<EMovement> { EMovement.Down, EMovement.Left, EMovement.Right, EMovement.Up };
+                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    _r = 10;
+                }
+                else
+                {
+                    if (minscent == top)
+                        _move.Add(EMovement.Up);
+                    if (minscent == bottom)
+                        _move.Add(EMovement.Down);
+                    if (minscent == right)
+                        _move.Add(EMovement.Right);
+                    if (minscent == left)
+                        _move.Add(EMovement.Left);
+                    if (_move.Count > 1)
+                        _move.Remove(EMovement.None);
+                    if (_move.Count > 1)
+                        _r = 3;
+                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                }
+            }
+        }
+
+        public override void die()
+        {
+            if (_invuln <= 0)
+                base.die();
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
+            _invuln -= deltaTime.AsSeconds();
             if (Die)
             {
                 if (ressourcesEntity.isFinished())
@@ -61,8 +104,8 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                // _scentMap.update((WorldEntity)_owner);
-                //think();
+                _scentMap.update((WorldEntity)_owner, _room);
+                think(world, deltaTime);
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);

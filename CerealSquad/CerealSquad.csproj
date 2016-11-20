@@ -83,6 +83,7 @@
     <Compile Include="Downloaders\IDownloader.cs" />
     <Compile Include="Downloaders\LoadingScreen.cs" />
     <Compile Include="Downloaders\TaskAwaiter.cs" />
+    <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="EntitySystem\EggEnemy.cs" />
     <Compile Include="EntitySystem\GhostEnemy.cs" />
     <Compile Include="EntitySystem\HalfEggEnemy.cs" />
-    <Compile Include="EntitySystem\MilkGhost.cs" />
     <Compile Include="EntitySystem\RiceBowlEnemy.cs" />
     <Compile Include="EntitySystem\TrapDeliver.cs" />
     <Compile Include="EntitySystem\Ennemy.cs" />
@@ -102,7 +102,6 @@
     <Compile Include="EntitySystem\Orangina.cs" />
     <Compile Include="EntitySystem\Tchong.cs" />
     <Compile Include="EntitySystem\WorldEntity.cs" />
-    <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\Crates.cs" />
     <Compile Include="GameWorld\ARoom.cs" />
     <Compile Include="GameWorld\Game.cs" />
