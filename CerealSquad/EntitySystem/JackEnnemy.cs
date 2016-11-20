@@ -73,42 +73,61 @@ namespace CerealSquad
         //
         public override void think(AWorld world, Time deltaTime)
         {
-            s_position pos = getCoord(HitboxPos);
-            var position = ressourcesEntity.Position;
-
-            _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
-            int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
-            ressourcesEntity.Position = position;
-            int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y): 0;
-            ressourcesEntity.Position = position;
-            int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
-            ressourcesEntity.Position = position;
-            int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
-            ressourcesEntity.Position = position;
-            int here = _scentMap.getScent(pos._x, pos._y);
-            int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
-            Console.Out.WriteLine("start");
-
-            if (maxscent == 0 && here == 0)
-                _move = new List<EMovement> { EMovement.None };
-            else if (maxscent <= here && moveSameTile((WorldEntity)_owner))
+            bool result = true;
+            result &= executeUpMove(world, Speed * deltaTime.AsSeconds());
+            result &= executeDownMove(world, Speed * deltaTime.AsSeconds());
+            result &= executeLeftMove(world, Speed * deltaTime.AsSeconds());
+            result &= executeRightMove(world, Speed * deltaTime.AsSeconds());
+            if (_r > 0 && result)
+                _r -= 1;
+            else
             {
-                Console.Out.WriteLine("Move");
-                #region EmptyStatement
+                _r = 0;
+                s_position pos = getCoord(HitboxPos);
+                var position = ressourcesEntity.Position;
+
+                _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
+                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+                ressourcesEntity.Position = position;
+                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : 0;
+                ressourcesEntity.Position = position;
+                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+                ressourcesEntity.Position = position;
+                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+                ressourcesEntity.Position = position;
+                int here = _scentMap.getScent(pos._x, pos._y);
+                int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
+                _move = new List<EMovement> { EMovement.None };
+
+                if (maxscent == 0 && here == 0)
+                {
+                    _move = new List<EMovement> { EMovement.Down, EMovement.Left, EMovement.Right, EMovement.Up };
+                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    _r = 30;
+                }
+                else if (maxscent <= here && moveSameTile(world, (WorldEntity)_owner, deltaTime))
+                    #region EmptyStatement
 #pragma warning disable CS0642 // Possible mistaken empty statement
-                ;
+                    ;
 #pragma warning restore CS0642 // Possible mistaken empty statement
-                #endregion
+                    #endregion
+                else
+                {
+                    if (maxscent == top)
+                        _move.Add(EMovement.Up);
+                    if (maxscent == bottom)
+                        _move.Add(EMovement.Down);
+                    if (maxscent == right)
+                        _move.Add(EMovement.Right);
+                    if (maxscent == left)
+                        _move.Add(EMovement.Left);
+                    if (_move.Count > 1)
+                        _move.Remove(EMovement.None);
+                    if (_move.Count > 1)
+                        _r = 10;
+                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                }
             }
-            else if (maxscent == top)
-                _move = new List<EMovement> { EMovement.Up };
-            else if (maxscent == bottom)
-                _move = new List<EMovement> { EMovement.Down };
-            else if (maxscent == right)
-                _move = new List<EMovement> { EMovement.Right };
-            else if (maxscent == left)
-                _move = new List<EMovement> { EMovement.Left };
-                
         }
 
         public override void update(Time deltaTime, AWorld world)

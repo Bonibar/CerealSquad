@@ -14,11 +14,17 @@ namespace CerealSquad
     {
         protected ARoom _room;
 
+        protected Random _rand;
+
+        protected int _r;
+
         public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Ennemy;
             _room = room;
+            _rand = new Random();
+            _r = 0;
         }
 
         public virtual void attack()
@@ -38,7 +44,7 @@ namespace CerealSquad
             return (new s_position(x, y));
         }
 
-        protected virtual bool moveSameTile(WorldEntity world)
+        protected virtual bool moveSameTile(AWorld zone, WorldEntity world, Time deltaTime)
         {
             _move = new List<EMovement> { EMovement.None };
             foreach (IEntity entity in world.getChildren())
@@ -59,7 +65,12 @@ namespace CerealSquad
                     }
                 }
             }
-            return (!_move.Contains(EMovement.None));
+            bool result = true;
+            result &= executeLeftMove(zone, Speed * deltaTime.AsSeconds());
+            result &= executeRightMove(zone, Speed * deltaTime.AsSeconds());
+            result &= executeUpMove(zone, Speed * deltaTime.AsSeconds());
+            result &= executeDownMove(zone, Speed * deltaTime.AsSeconds());
+            return (!_move.Contains(EMovement.None) && result);
         }
 
         protected class scentMap
