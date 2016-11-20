@@ -87,7 +87,12 @@
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
     <Compile Include="EntitySystem\ATrap.cs" />
+    <Compile Include="EntitySystem\CoffeeMachineEnemy.cs" />
+    <Compile Include="EntitySystem\EggEnemy.cs" />
+    <Compile Include="EntitySystem\GhostEnemy.cs" />
+    <Compile Include="EntitySystem\HalfEggEnemy.cs" />
     <Compile Include="EntitySystem\MilkGhost.cs" />
+    <Compile Include="EntitySystem\RiceBowlEnemy.cs" />
     <Compile Include="EntitySystem\TrapDeliver.cs" />
     <Compile Include="EntitySystem\Ennemy.cs" />
     <Compile Include="EntitySystem\IEntity.cs" />
@@ -204,7 +209,7 @@
     <Folder Include="Assets\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

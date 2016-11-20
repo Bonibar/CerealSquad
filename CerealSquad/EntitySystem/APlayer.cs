@@ -34,6 +34,8 @@ namespace CerealSquad
 
         public List<EMovement> MoveStack = new List<EMovement>();
         public bool TrapPressed = false;
+        private IEntity owner;
+        private s_position position;
 
         public int TypeInput { get; set; }
         public int Id { get; protected set; }
