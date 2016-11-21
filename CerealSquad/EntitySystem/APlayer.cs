@@ -8,6 +8,7 @@ using CerealSquad.GameWorld;
 using SFML.Graphics;
 using CerealSquad.EntitySystem;
 using CerealSquad.EntitySystem.Projectiles;
+using CerealSquad.Graphics;
 
 namespace CerealSquad
 {
@@ -290,6 +291,12 @@ namespace CerealSquad
             });
 
             return result;
+        }
+
+        public override void die()
+        {
+            base.die();
+            ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
         }
     }
 }

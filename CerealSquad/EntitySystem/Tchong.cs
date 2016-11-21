@@ -20,13 +20,16 @@ namespace CerealSquad
             this._ressources = new EntityResources();
 
             Factories.TextureFactory.Instance.load("ChongWalking", "Assets/Character/ChongWalking.png");
+            Factories.TextureFactory.Instance.load("ChongDying", "Assets/Character/Death/TchongDying.png");
+
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "ChongWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_DOWN, "ChongWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "ChongWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "ChongWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "ChongWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
-            ressourcesEntity.AddAnimation((uint)EStateEntity.DYING, "ChongWalking", new List<uint> { 12, 13, 14 }, new Vector2u(64, 64));
+            ressourcesEntity.AddAnimation((uint)EStateEntity.DYING, "ChongDying", Enumerable.Range(0, 7).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 150);
+
             Vector2f pos = _ressources.Position;
             Pos = Pos;
 
