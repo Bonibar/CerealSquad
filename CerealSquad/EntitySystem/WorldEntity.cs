@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CerealSquad
 {
-    class WorldEntity : AEntity
+    class WorldEntity : AEntity, Drawable
     {
         public WorldEntity() : base(null)
         {
@@ -17,23 +17,8 @@ namespace CerealSquad
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
-            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
-        }
-
-        private void check_death(IEntity i)
-        {
-            if (i.getEntityType() == e_EntityType.Player && !i.Die)
-            {
-                _children.ToList<IEntity>().ForEach(j => check_collision(i, j));
-            }
-        }
-
-        private void check_collision(IEntity i, IEntity j)
-        {
-            if (j.getEntityType() == e_EntityType.Ennemy && i.Pos._x == j.Pos._x && i.Pos._y == j.Pos._y)
-            {
-                ((APlayer)i).die();
-            }
+            _children.ToList().ForEach(i => i.update(deltaTime, world));
+            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Height + x.ressourcesEntity.CollisionBox.Top).ToList();
         }
 
         private List<AEntity> GetCollidingEntitiesRecursive(IEntity Owner, CircleShape Circle)
@@ -45,7 +30,7 @@ namespace CerealSquad
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Circle))
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingCollisionBox(Circle))
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;
@@ -65,7 +50,7 @@ namespace CerealSquad
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Other))
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingCollisionBox(Other) && Other != Owner.ressourcesEntity)
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;
@@ -84,7 +69,8 @@ namespace CerealSquad
                 Tmp = Tmp.Concat(GetAllEntitiesRecursive(i)).ToList();
             });
 
-           Tmp.Add((AEntity)Owner);
+            if (Owner.getEntityType() != e_EntityType.World)
+                Tmp.Add((AEntity)Owner);
 
             return Tmp;
         }
@@ -94,22 +80,17 @@ namespace CerealSquad
             return GetAllEntitiesRecursive(this);
         }
 
-        private void deepDraw(IEntity owner, Renderer win)
+        public void Draw(RenderTarget target, RenderStates states)
         {
-            owner.getChildren().ToList<IEntity>().ForEach(i => deepDraw(i, win));
+            // order by hitbox.y position
+            List<AEntity> allEntities = GetAllEntities().OrderBy(entity => entity.ressourcesEntity.HitBox.Height + entity.ressourcesEntity.HitBox.Top).ToList();
 
-            // This is ugly.. To change !
-            if (owner.getEntityType() == e_EntityType.Player)
-                win.Draw(((APlayer)owner).TrapDeliver);
+            allEntities.ForEach(entity => {
+                if (entity.getEntityType() == e_EntityType.Player)
+                    target.Draw(((APlayer)entity).TrapDeliver, states);
+                target.Draw(entity.ressourcesEntity, states);
+            });
 
-            owner.SecondaryResourcesEntities.OrderBy(v => v.sprite.Level);
-            owner.SecondaryResourcesEntities.ForEach(i => win.Draw(i));
-            win.Draw(owner.ressourcesEntity);
-        }
-
-        public void draw(Renderer win)
-        {
-            deepDraw(this, win);
         }
     }
 }

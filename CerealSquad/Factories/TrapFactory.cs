@@ -19,6 +19,9 @@ namespace CerealSquad.Factories
                 case e_TrapType.BOMB:
                     result = new TrapEntities.Bomb(owner);
                     break;
+                case e_TrapType.WALL:
+                    result = new TrapEntities.SugarWall(owner);
+                    break;
                 default:
                     throw new Exception("Invalid Trap entity requested");
             }
@@ -36,6 +39,9 @@ namespace CerealSquad.Factories
                     break;
                 case e_TrapType.BOMB:
                     result = TrapEntities.Bomb.COLLISION_BOX;
+                    break;
+                case e_TrapType.WALL:
+                    result = TrapEntities.SugarWall.COLLISION_BOX;
                     break;
                 default:
                     throw new Exception("Invalid Trap entity requested");

@@ -42,7 +42,7 @@ namespace CerealSquad.Downloaders
                 System.Net.FtpWebRequest ftpRequest = (System.Net.FtpWebRequest)System.Net.FtpWebRequest.Create(distantPath);
                 ftpRequest.Method = System.Net.WebRequestMethods.Ftp.DownloadFile;
                 
-                ftpRequest.Credentials = new System.Net.NetworkCredential(FTP_USERNAME_BACKUP, FTP_PASSWORD_BACKUP);
+                ftpRequest.Credentials = new System.Net.NetworkCredential(FTP_USERNAME, FTP_PASSWORD);
 
                 System.Net.FtpWebResponse response = (System.Net.FtpWebResponse) await ftpRequest.GetResponseAsync();
 
@@ -65,6 +65,7 @@ namespace CerealSquad.Downloaders
 
                 fileStream.Close();
                 response.Close();
+                ftpRequest.Abort();
             }
             _Files.Add(name, localPath);
         }

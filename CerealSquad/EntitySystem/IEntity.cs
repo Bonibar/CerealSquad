@@ -6,29 +6,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//
+// TODO Do a correct namespace
+//
 namespace CerealSquad
 {
-    enum e_DamageType
+    public enum e_DamageType
     {
         BOMB_DAMAGE,
         TRUE_DAMAGE,
         NONE
     }
 
-    enum e_TrapType
+    public enum e_TrapType
     {
         BOMB,
         BEAR_TRAP,
+        WALL,
         NONE
     }
 
-    enum e_EntityType
+    public enum e_EntityType
     {
         Player,
         PlayerTrap,
         Ennemy,
         EnnemyTrap,
-        World
+        World,
+        Crate,
+        Projectile
+    }
+
+    public enum e_EnnemyType
+    {
+        RiceBowl,
+        Egg,
+        HalfEgg,
+        Ghost
     }
 
     public struct s_position
@@ -41,9 +55,9 @@ namespace CerealSquad
 
         public s_position(double x = -1, double y = -1, int layer = -1)
         {
-            _x = (int)x;
+            _x = (int)(x);
             _trueX = x;
-            _y = (int)y;
+            _y = (int)(y);
             _trueY = y;
             _layer = layer;
         }
@@ -52,10 +66,8 @@ namespace CerealSquad
         {
             pos._trueX += other._trueX;
             pos._trueY += other._trueY;
-            pos._x = (int)pos._trueX;
-            pos._y = (int)pos._trueY;
-            pos._x += other._x;
-            pos._y += other._y;
+            pos._x = (int)(pos._trueX);
+            pos._y = (int)(pos._trueY);
             pos._layer += other._layer;
 
             return (pos);
@@ -83,6 +95,10 @@ namespace CerealSquad
             get;
             set;
         }
+        s_position HitboxPos
+        {
+            get;
+        }
         s_size Size
         {
             get;
@@ -98,11 +114,7 @@ namespace CerealSquad
             get;
             set;
         }
-        List<EntityResources> SecondaryResourcesEntities
-        {
-            get;
-            set;
-        }
+
         bool Die
         {
             get;

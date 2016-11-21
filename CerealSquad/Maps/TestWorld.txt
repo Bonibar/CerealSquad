@@ -2,4 +2,4 @@
 
 #define Rooms
 0:0|Maps/TestRoom.txt|0
-13:0|Maps/TestRoom2.txt|0
+14:0|Maps/TestRoom2.txt|0
