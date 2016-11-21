@@ -39,6 +39,14 @@ namespace CerealSquad.GameWorld
             renderer = _renderer;
             _InputManager = manager;
 
+            Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
+            intro.Ended += Intro_Ended;
+            Menus.MenuManager.Instance.AddMenu(intro);
+        }
+
+        private void Intro_Ended(object source, Menus.IntroCutscene.CutsceneEventArgs e)
+        {
+            Menus.MenuManager.Instance.Clear();
             characterSelection();
         }
 
@@ -114,15 +122,15 @@ namespace CerealSquad.GameWorld
             currentWorld = World;
         }
 
-        public void Update(SFML.System.Time deltaTime)
+        public void Update(SFML.System.Time DeltaTime)
         {
             if (currentWorld != null)
             {
-                currentWorld.Update(deltaTime);
-                worldEntity.update(deltaTime, currentWorld);
+                currentWorld.Update(DeltaTime);
+                worldEntity.update(DeltaTime, currentWorld);
             }
 
-            _HUDs.ForEach(i => i.Update(deltaTime));
+            _HUDs.ForEach(i => i.Update(DeltaTime));
         }
 
         public void Draw(RenderTarget target, RenderStates states)

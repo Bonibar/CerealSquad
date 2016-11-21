@@ -82,7 +82,7 @@ namespace CerealSquad.EntitySystem
                     if (_move.Count > 1)
                         _move.Remove(EMovement.None);
                     if (_move.Count > 1)
-                        _r = 3;
+                        _r = 1;
                     _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                 }
             }
