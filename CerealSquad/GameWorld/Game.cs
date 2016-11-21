@@ -146,6 +146,7 @@ namespace CerealSquad.GameWorld
                 currentWorld.Update(DeltaTime);
                 worldEntity.update(DeltaTime, currentWorld);
             }
+            _HUDs.ForEach(i => i.Update(DeltaTime));
             int NbPlayersDead = Players.FindAll(x => x.Die).Count;
             if (NbPlayersDead > 0 && NbPlayersDead == Players.Count)
             {
@@ -153,7 +154,6 @@ namespace CerealSquad.GameWorld
                 State = GameState.Exit;
                 Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
             }
-            _HUDs.ForEach(i => i.Update(DeltaTime));
         }
 
         public void Draw(RenderTarget target, RenderStates states)
