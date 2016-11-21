@@ -87,7 +87,7 @@ namespace CerealSquad.Menus
                 var listFrame = Enumerable.Range(0 + (int)(_Id * 11), 11).Select(p => (uint)p).ToList();
                 _Cursor.addAnimation(0, "CS_Cursor", listFrame.Concat(listFrame.OrderByDescending(x => x)).ToList(), new Vector2u(64, 64), 50);
                 _Cursor.Loop = true;
-                }
+            }
 
             public Player(uint id, Renderer renderer)
             {
@@ -350,6 +350,7 @@ namespace CerealSquad.Menus
 
     class CharacterSelectMenu : Menu, Drawable
     {
+        #region Event
         public delegate void CharacterSelectionEventHandler(object source, CharacterSelectionArgs e);
 
         public class CharacterSelectionArgs
@@ -366,6 +367,7 @@ namespace CerealSquad.Menus
         /// Event fired when a Game is started
         /// </summary>
         public event CharacterSelectionEventHandler GameStart;
+        #endregion
 
         public static uint PLAYER_COUNT = 4;
         public static uint CHARACTER_COUNT = 4;
