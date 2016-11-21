@@ -9,19 +9,27 @@ namespace CerealSquad.GameWorld
     {
         public class s_room
         {
-            public s_room(Dictionary<s_Pos<uint>, t_cellcontent> cells, List<s_crate> crates)
+            public s_room(Dictionary<s_Pos<uint>, t_cellcontent> cells, List<s_crate> crates, List<s_ennemy> ennemies)
             {
                 Cells = cells;
                 Crates = crates;
+                Ennemies = ennemies;
             }
 
             public Dictionary<s_Pos<uint>, t_cellcontent> Cells;
             public List<s_crate> Crates;
+            public List<s_ennemy> Ennemies;
         }
 
         public class s_crate
         {
             public List<e_TrapType> Types = new List<e_TrapType>();
+            public List<s_Pos<int>> Pos = new List<s_Pos<int>>();
+        }
+
+        public class s_ennemy
+        {
+            public List<e_EnnemyType> Types = new List<e_EnnemyType>();
             public List<s_Pos<int>> Pos = new List<s_Pos<int>>();
         }
 
@@ -60,7 +68,7 @@ namespace CerealSquad.GameWorld
             uint startline = 0;
             uint endline;
 
-            lines.First(x => x.Equals("#define Tiles"));
+            lines.First(x => x.Equals("#define Tiles")); // Mandatory Define
             while (startline < lines.Length && !lines[startline].Equals("#define Tiles"))
                 startline++;
             startline++;
@@ -97,13 +105,58 @@ namespace CerealSquad.GameWorld
             return tiles;
         }
 
+        private static List<s_ennemy> loadEnnemies(string[] lines)
+        {
+            List<s_ennemy> ennemies = new List<s_ennemy>();
+            uint startline = 0;
+            uint endline;
+
+            while (startline < lines.Length && !lines[startline].Equals("#define Ennemies"))
+                startline++;
+            startline++;
+
+            endline = startline;
+            while (endline < lines.Length && !lines[endline].Contains("#define"))
+                endline++;
+
+            if (endline == startline || startline >= lines.Length)
+                return ennemies;
+
+            while (startline < endline)
+            {
+                s_ennemy ennemy = new s_ennemy();
+                string[] columns = lines[startline].Split('|');
+                if (columns.Length != 2)
+                    throw new FormatException("Wrong ennemy declaration");
+                string[] types = columns[0].Split(';');
+                foreach (string type in types)
+                {
+                    ennemy.Types.Add((e_EnnemyType)(int.Parse(type)));
+                }
+                string[] positions = columns[1].Split(';');
+                foreach (string position in positions)
+                {
+                    string[] pos = position.Split(':');
+                    if (pos.Length != 2)
+                        throw new FormatException("Wrong position definition for ennemy declaration");
+                    ennemy.Pos.Add(new s_Pos<int>(int.Parse(pos[0]), int.Parse(pos[1])));
+                }
+                ennemies.Add(ennemy);
+                startline++;
+            }
+
+            if (ennemies.Count <= 0)
+                throw new FormatException("No ennemy defined");
+
+            return ennemies;
+        }
+
         private static List<s_crate> loadCrates(string[] lines)
         {
             List<s_crate> crates = new List<s_crate>();
             uint startline = 0;
             uint endline;
 
-            lines.First(x => x.Equals("#define Crates"));
             while (startline < lines.Length && !lines[startline].Equals("#define Crates"))
                 startline++;
             startline++;
@@ -150,7 +203,7 @@ namespace CerealSquad.GameWorld
             uint startline = 0;
             uint endline;
 
-            lines.First(x => x.Equals("#define Room"));
+            lines.First(x => x.Equals("#define Room")); // Mandatory define
             while (startline < lines.Length && !lines[startline].Equals("#define Room"))
                 startline++;
             startline++;
@@ -214,8 +267,9 @@ namespace CerealSquad.GameWorld
 
             Dictionary<s_Pos<uint>, t_cellcontent> cells = loadRoom(lines, tiles);
             List<s_crate> traps = loadCrates(lines);
+            List<s_ennemy> ennemies = loadEnnemies(lines);
 
-            return new s_room(cells, traps);
+            return new s_room(cells, traps, ennemies);
         }
     }
 }
