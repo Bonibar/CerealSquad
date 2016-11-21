@@ -45,7 +45,7 @@ namespace CerealSquad.EntitySystem
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(17.0f, 0.0f), new Vector2f(17.0f, 24.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(17.0f, 24.0f), new Vector2f(17.0f, 24.0f));
-            Pos = position;
+            Pos = Pos; // very important
         }
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
@@ -131,8 +131,11 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                _scentMap.update((WorldEntity)_owner, _room);
-                think(world, deltaTime);
+                if (active)
+                {
+                    _scentMap.update((WorldEntity)_owner, _room);
+                    think(world, deltaTime);
+                }
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);

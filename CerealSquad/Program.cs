@@ -43,6 +43,7 @@ namespace CerealSquad
             Downloaders.TaskAwaiter awaiter = new Downloaders.TaskAwaiter();
 
             awaiter.Add(ftpDownloader.RequireFile("MainMenuBackground", "Assets/Background/MainMenuBackground.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/MainMenuBackground.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("CutScene", "Assets/Background/cutscene_1024.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/cutscene_1024.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/TestTile.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Tiles_CastleWall", "Assets/Tiles/CastleWall.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/CastleWall.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("JackWalking", "Assets/Character/JackWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/JackWalking.png"), false));

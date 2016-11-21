@@ -33,7 +33,7 @@ namespace CerealSquad.EntitySystem
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(17.0f, -5.0f), new Vector2f(17.0f, 13.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(17.0f, 13.0f), new Vector2f(17.0f, 13.0f));
-            Pos = position;
+            Pos = Pos; // Very important
         }
 
         public override void think(AWorld world, SFML.System.Time deltaTime)
@@ -104,8 +104,11 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                _scentMap.update((WorldEntity)_owner, _room);
-                think(world, deltaTime);
+                if (active)
+                {
+                    _scentMap.update((WorldEntity)_owner, _room);
+                    think(world, deltaTime);
+                }
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);
