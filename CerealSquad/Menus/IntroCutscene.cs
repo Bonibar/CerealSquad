@@ -40,13 +40,14 @@ namespace CerealSquad.Menus
 
         private Graphics.RegularSprite _Cutscene;
         private Text _HelpText;
+        private Sounds.JukeBox _Soundclip;
 
         private Renderer _Renderer;
 
         private State _State = State.Unknow;
         private int _CurrentFrame { get { return _TimeFrame.Count(i => i == -1); } }
         private int _FrameCount { get { return _TimeFrame.Count; } }
-        private List<float> _TimeFrame = new List<float> { 3600, 3600, 3600, 3600 };
+        private List<float> _TimeFrame = new List<float> { 5600, 5600, 31600, 28600 };
         private float _StartingSpeed = .01f;
         private float _MinSpeed = .01f;
         private float _MaxSpeed = 10f;
@@ -79,6 +80,10 @@ namespace CerealSquad.Menus
             _HelpText.Position = new Vector2f(_Renderer.Win.GetView().Size.X - (_HelpText.GetLocalBounds().Left + _HelpText.GetLocalBounds().Width) - 10,
                 _Renderer.Win.GetView().Size.Y - (_HelpText.GetLocalBounds().Top + _HelpText.GetLocalBounds().Height) - 10);
 
+            _Soundclip = new Sounds.JukeBox();
+            _Soundclip.loadMusic(0, "Assets/Music/intro_soundclip.ogg");
+            _Soundclip.PlayMusic(0, false);
+
             _State = State.Waiting;
         }
 
@@ -110,6 +115,7 @@ namespace CerealSquad.Menus
             {
                 _CancelTimer.Stop();
                 _State = State.Cancelled;
+                _Soundclip.StopMusic(0);
                 Ended?.Invoke(this, new CutsceneEventArgs(_State));
             }
         }
@@ -119,6 +125,7 @@ namespace CerealSquad.Menus
         {
             if (_State == State.Finished)
             {
+                _Soundclip.StopMusic(0);
                 Ended?.Invoke(this, new CutsceneEventArgs(_State));
                 _State = State.Unknow;
             }
