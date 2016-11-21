@@ -42,6 +42,38 @@ namespace CerealSquad.Menus
         private bool _displayed = false;
         public bool Displayed { get { return _displayed; } }
 
+        protected InputManager.InputManager _InputManager;
+
+        public Menu(InputManager.InputManager inputManager)
+        {
+            if (inputManager == null)
+                throw new ArgumentNullException("Input Manager cannot be null");
+
+            _InputManager = inputManager;
+
+            _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
+            _InputManager.KeyboardKeyReleased += _InputManager_KeyboardKeyReleased;
+        }
+
+        private void _InputManager_KeyboardKeyReleased(object source, InputManager.Keyboard.KeyEventArgs e)
+        {
+            if (Displayed)
+            {
+                List<MenuItem> validItems = _menuList.FindAll(x => x.Type == MenuItem.ItemType.KeyBinded && x.KeyboardKey == e.KeyCode);
+
+                validItems.ForEach(i => i.Select(false));
+            }
+        }
+        private void _InputManager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
+        {
+            if (Displayed)
+            {
+                List<MenuItem> validItems = _menuList.FindAll(x => x.Type == MenuItem.ItemType.KeyBinded && x.KeyboardKey == e.KeyCode);
+
+                validItems.ForEach(i => i.Select(true));
+            }
+        }
+
         protected List<MenuItem> _menuList = new List<MenuItem>();
 
         protected void nextMenu()

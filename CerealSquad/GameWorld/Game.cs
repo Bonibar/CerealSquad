@@ -12,6 +12,14 @@ namespace CerealSquad.GameWorld
     /// </summary>
     class Game : Drawable
     {
+        public enum GameState
+        {
+            Running,
+            Exit
+        }
+
+        public GameState State { get; private set; }
+
         private AWorld currentWorld = null;
         public AWorld CurrentWorld {
             get { return currentWorld; }
@@ -39,6 +47,8 @@ namespace CerealSquad.GameWorld
             renderer = _renderer;
             _InputManager = manager;
 
+            State = GameState.Running;
+
             Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
             intro.Ended += Intro_Ended;
             Menus.MenuManager.Instance.AddMenu(intro);
@@ -55,8 +65,15 @@ namespace CerealSquad.GameWorld
             Menus.CharacterSelectMenu _current = new Menus.CharacterSelectMenu(renderer, _InputManager);
             Menus.MenuManager.Instance.AddMenu(_current);
             _current.GameStart += _current_GameStart;
+            _current.MenuExit += _current_MenuExit;
         }
 
+        private void _current_MenuExit(object source, Menus.CharacterSelectMenu.CharacterSelectionArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("RECIEVED FIRE");
+            Menus.MenuManager.Instance.RemoveMenu((Menus.Menu)source);
+            State = GameState.Exit;
+        }
         private void _current_GameStart(object source, Menus.CharacterSelectMenu.CharacterSelectionArgs e)
         {
             CurrentWorld = new AWorld("Maps/TestWorld.txt", worldEntity);
@@ -132,8 +149,8 @@ namespace CerealSquad.GameWorld
             int NbPlayersDead = Players.FindAll(x => x.Die).Count;
             if (NbPlayersDead > 0 && NbPlayersDead == Players.Count)
             {
-                System.Threading.Thread.Sleep(1000);
-                
+                System.Threading.Thread.Sleep(500);
+                State = GameState.Exit;
                 Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
             }
             _HUDs.ForEach(i => i.Update(DeltaTime));

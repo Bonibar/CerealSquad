@@ -13,7 +13,6 @@ namespace CerealSquad.Menus
     class GameOverMenu : Menu
     {
         private Renderer _Renderer;
-        private InputManager.InputManager _InputManager;
         private Text _GameOverText;
         //private GameWorld.GameManager _GameManager;
 
@@ -61,16 +60,14 @@ namespace CerealSquad.Menus
             ReturnToMainMenu = 0
         }
 
-        public GameOverMenu(Renderer renderer, InputManager.InputManager inputManager/*, GameWorld.GameManager gameManager*/)
+        public GameOverMenu(Renderer renderer, InputManager.InputManager inputmanager) : base (inputmanager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
-            if (inputManager == null)
+            if (_InputManager == null)
                 throw new ArgumentNullException("InputManager cannot be null");
 
             _Renderer = renderer;
-            _InputManager = inputManager;
-            //_GameManager = gameManager;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
             _InputManager.KeyboardKeyReleased += _InputManager_KeyboardKeyReleased;
