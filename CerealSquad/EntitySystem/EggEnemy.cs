@@ -103,9 +103,10 @@ namespace CerealSquad.EntitySystem
 
         public override void die()
         {
-            _die = true;
-            _ressources.PlayAnimation((uint)EStateEntity.DYING);
-            _ressources.Loop = false;
+            if (!_die)
+            {
+                _die = true;
+            }
         }
 
         public override void update(Time deltaTime, AWorld world)
@@ -119,6 +120,8 @@ namespace CerealSquad.EntitySystem
                         destroy();
                     _child -= 1;
                 }
+                _ressources.PlayAnimation((uint)EStateEntity.DYING);
+                _ressources.Loop = false;
             }
             else
             {
