@@ -37,6 +37,14 @@ namespace CerealSquad
         Projectile
     }
 
+    public enum e_EnnemyType
+    {
+        RiceBowl,
+        Egg,
+        HalfEgg,
+        Ghost
+    }
+
     public struct s_position
     {
         public int _x;

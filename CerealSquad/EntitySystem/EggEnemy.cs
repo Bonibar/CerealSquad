@@ -23,7 +23,7 @@ namespace CerealSquad.EntitySystem
         public EggEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _child = 1;
-            _speed = 3;
+            _speed = 1.7f;
             _scentMap = new scentMap(_room.Size.Height, _room.Size.Width);
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("EggWalking", "Assets/Enemies/Normal/EggyWalking.png");
@@ -39,7 +39,7 @@ namespace CerealSquad.EntitySystem
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(26.0f, 0.0f), new Vector2f(26.0f, 26.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(26.0f, 26.0f), new Vector2f(26.0f, 26.0f));
-            Pos = position;
+            Pos = Pos; //very important
         }
 
         public override void think(AWorld world, Time deltaTime)
@@ -115,7 +115,7 @@ namespace CerealSquad.EntitySystem
             {
                 if (ressourcesEntity.isFinished())
                 {
-                    _owner.addChild(new HalfEggEnemy(_owner, Pos, _room));
+                    _owner.addChild(new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room));
                     if (_child == 0)
                         destroy();
                     _child -= 1;
@@ -125,8 +125,11 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                _scentMap.update((WorldEntity)_owner, _room);
-                think(world, deltaTime);
+                if (active)
+                {
+                    _scentMap.update((WorldEntity)_owner, _room);
+                    think(world, deltaTime);
+                }
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);
