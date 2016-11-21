@@ -86,13 +86,11 @@ namespace CerealSquad.Menus
         }
 
         private Renderer _Renderer;
-        private InputManager.InputManager _InputManager;
         private GameWorld.GameManager _GameManager;
 
         private Graphics.AnimatedSprite _BackgroundImage;
 
-        private MainMenu() { }
-        public MainMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager)
+        public MainMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
@@ -102,7 +100,6 @@ namespace CerealSquad.Menus
                 throw new ArgumentNullException("Game Manager cannot be null");
 
             _Renderer = renderer;
-            _InputManager = inputManager;
             _GameManager = gameManager;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
