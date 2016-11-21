@@ -201,12 +201,17 @@ namespace CerealSquad
             return false;
         }
 
+        public virtual bool IsCollidingWithWall(AWorld World, EntityResources Res)
+        {
+            return World.IsCollidingWithWall(ressourcesEntity);
+        }
+
         public bool IsColliding(AWorld World)
         {
             if (ressourcesEntity == null)
                 return false;
 
-            if (World.IsCollidingWithWall(ressourcesEntity))
+            if (IsCollidingWithWall(World, ressourcesEntity))
                 return true;
 
             List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
