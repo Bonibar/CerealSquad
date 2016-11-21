@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using CerealSquad.InputManager.Keyboard;
 using CerealSquad.GameWorld;
 using SFML.Graphics;
+using CerealSquad.EntitySystem;
+using CerealSquad.EntitySystem.Projectiles;
+using CerealSquad.Graphics;
 
 namespace CerealSquad
 {
@@ -28,11 +31,13 @@ namespace CerealSquad
         protected bool _specialActive;
         protected int _weight;
 
-        public EntitySystem.TrapDeliver TrapDeliver { get; protected set; }
+        public TrapDeliver TrapDeliver { get; protected set; }
         public e_TrapType TrapInventory { get; set; }
 
         public List<EMovement> MoveStack = new List<EMovement>();
         public bool TrapPressed = false;
+        private IEntity owner;
+        private s_position position;
 
         public int TypeInput { get; set; }
         public int Id { get; protected set; }
@@ -60,7 +65,7 @@ namespace CerealSquad
             }
         }
 
-        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 1, int id = 1) : base(owner)
+        public APlayer(IEntity owner, s_position position, InputManager.InputManager input, int type = 0, int id = 1) : base(owner)
         {
             _pos = position;
             _type = e_EntityType.Player;
@@ -84,9 +89,8 @@ namespace CerealSquad
                 input.JoystickConnected += Input_JoystickConnected;
                 input.JoystickDisconnected += Input_JoystickDisconnected;
             }
-
-            // for test, add Trap to inventory
-            TrapInventory = e_TrapType.BOMB;
+            
+            TrapInventory = e_TrapType.NONE;
             InputManager = input;
         }
 
@@ -110,6 +114,9 @@ namespace CerealSquad
                     break;
                 case SKeyPlayer.PUT_TRAP:
                     TrapPressed = false;
+                    break;
+                case SKeyPlayer.SPATTACK:
+                    _specialActive = false;
                     break;
                 default:
                     break;
@@ -137,6 +144,9 @@ namespace CerealSquad
                 case SKeyPlayer.PUT_TRAP:
                     TrapPressed = true;
                     break;
+                case SKeyPlayer.SPATTACK:
+                    _specialActive = true;
+                    break;
                 default:
                     break;
             }
@@ -154,7 +164,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonReleased(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
             switch (action)
             {
@@ -168,7 +178,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
             switch (action)
             {
@@ -182,7 +192,7 @@ namespace CerealSquad
 
         private void Input_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction((int)e.JoystickId, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
+            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
 
             switch (action)
             {
@@ -209,7 +219,7 @@ namespace CerealSquad
 
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
-            if (TrapPressed || TrapDeliver.IsDelivering())
+            if ((TrapPressed || TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
                 _move = new List<EMovement> { EMovement.None };
             else
                 _move = MoveStack;
@@ -232,7 +242,7 @@ namespace CerealSquad
                     destroy();
             }
             _ressources.Update(deltaTime);
-            _children.ToList<IEntity>().ForEach(i => i.update(deltaTime, world));
+            _children.ToList().ForEach(i => i.update(deltaTime, world));
         }
 
         public abstract void AttaqueSpe();
@@ -258,6 +268,11 @@ namespace CerealSquad
             {
                 if (i.getEntityType() == e_EntityType.PlayerTrap)
                     result = true;
+                else if (i.getEntityType() == e_EntityType.Crate)
+                {
+                    TrapInventory = ((Crates)i).Item;
+                    ((Crates)i).pickCrate();
+                }
             });
 
             return result || baseResult;
@@ -266,9 +281,9 @@ namespace CerealSquad
         public override bool IsCollidingAndDead(AWorld World)
         {
             bool result = false;
-            List<AEntity> allEntities = ((WorldEntity)getRootEntity()).GetAllEntities();
+            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
 
-            allEntities.ForEach(i =>
+            collidingEntities.ForEach(i =>
             {
                 if (!i.Equals(this))
                     if (i.getEntityType() == e_EntityType.Ennemy)
@@ -276,6 +291,12 @@ namespace CerealSquad
             });
 
             return result;
+        }
+
+        public override void die()
+        {
+            base.die();
+            ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
         }
     }
 }

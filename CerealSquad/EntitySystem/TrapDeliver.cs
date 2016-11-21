@@ -20,16 +20,22 @@ namespace CerealSquad.EntitySystem
             DELIVER             = 4
         }
 
+        private enum EAnimation
+        {
+            CURSOR = 0,
+            CONSTRUCTION
+        }
+
         public EStep Step { get; private set; }
         public EMovement Target { get; private set; }
         public bool IsTargetValid { get; private set; }
 
 
         private EntityResources ResourcesEntity = new EntityResources();
-        //private AnimatedSprite Sprite;
+
         private APlayer Player;
-        private Timer TimerCoolDown = new Timer(Time.FromSeconds(1));
-        private Timer TimerToPut = new Timer(Time.FromSeconds(3));
+        private Timer TimerCoolDown = new Timer(Time.FromSeconds(0.1f));
+        private Timer TimerToPut = new Timer(Time.FromSeconds(1f));
 
         public Time Cooldown { get { return TimerCoolDown.Time; } set { TimerCoolDown.Time = value; } }
 
@@ -39,11 +45,12 @@ namespace CerealSquad.EntitySystem
             Step = EStep.NOTHING;
             Target = EMovement.Up;
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
+            Factories.TextureFactory.Instance.load("ConstructionCloud", "Assets/GameplayElement/ConstructionCloud.png");
+
             ResourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ResourcesEntity.AddAnimation((uint)EStateEntity.IDLE, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
-            ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.Green);
-            ((AnimatedSprite)ResourcesEntity.sprite).Speed = Time.FromMilliseconds(100);
+            ResourcesEntity.AddAnimation((uint)EAnimation.CURSOR, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
+            ResourcesEntity.AddAnimation((uint)EAnimation.CONSTRUCTION, "ConstructionCloud", new List<uint> { 0, 1, 2, 3 }, new Vector2u(128, 128), 100);
 
             IsTargetValid = true;
         }
@@ -53,7 +60,7 @@ namespace CerealSquad.EntitySystem
             return !Step.Equals(EStep.NOTHING);
         }
 
-        public void Update(SFML.System.Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
+        public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
             Processing(Input, World, TrapPressed);
             ResourcesEntity.Update(DeltaTime);
@@ -68,7 +75,10 @@ namespace CerealSquad.EntitySystem
             ResourcesEntity.CollisionBox = Factories.TrapFactory.GetCollisionBox(Player.TrapInventory);
 
             if (TrapPressed && Step == EStep.NOTHING)
+            {
+                ResourcesEntity.PlayAnimation((uint)EAnimation.CURSOR);
                 Step = EStep.START_SELECTING;
+            }
 
             if (Step == EStep.START_SELECTING)
             {
@@ -106,15 +116,20 @@ namespace CerealSquad.EntitySystem
             {
                 if (IsTargetValid)
                 {
-                    ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
-                    trap.setPosition(Target);
-                    Player.addChild(trap);
+                    ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.White);
+                    ResourcesEntity.PlayAnimation((uint)EAnimation.CONSTRUCTION);
                     TimerToPut.Start();
                 }
                 Step = EStep.END_SELECTING;
             }
             else if (!TrapPressed && Step == EStep.END_SELECTING && TimerToPut.IsTimerOver())
             {
+                if (IsTargetValid)
+                {
+                    ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
+                    trap.setPosition(Target);
+                    Player.addChild(trap);
+                }
                 Step = EStep.NOTHING;
                 // Restart timer to launch cooldown
                 if (IsTargetValid)

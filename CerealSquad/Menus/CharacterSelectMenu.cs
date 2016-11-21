@@ -30,6 +30,11 @@ namespace CerealSquad.Menus
             private Renderer _Renderer;
             private Text _PlayerText;
             private Text _JoinText;
+            private Graphics.RegularSprite _Fork;
+            private Graphics.RegularSprite _Knife;
+            private Graphics.RegularSprite _Overlay;
+            private Graphics.AnimatedSprite _Cursor;
+
             private Text[] _SelectionText = new Text[CharacterSelectMenu.CHARACTER_COUNT];
 
             private void init(Type type, uint id)
@@ -43,7 +48,7 @@ namespace CerealSquad.Menus
                 float x_margin = _Renderer.Win.GetView().Size.X / CharacterSelectMenu.PLAYER_COUNT;
                 float x_padding = x_margin / 2;
                 float y_margin = 0;
-                float y_padding = y_margin / 2;
+                float y_padding = y_margin / 2 + 13;
 
                 List<String> char_names = new List<string> { "Mike", "Jack", "Orange Hina", "Tchong" };
 
@@ -53,9 +58,8 @@ namespace CerealSquad.Menus
                     _SelectionText[i] = new Text(char_names[(int)i % char_names.Count], Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
 
                     float text_x_offset = (_SelectionText[i].GetLocalBounds().Left + _SelectionText[i].GetLocalBounds().Width) / 2;
-                    float text_y_offset = 0;
 
-                    _SelectionText[i].Position = new Vector2f((x_margin * _Id + x_padding) - text_x_offset, 40 + text_y_offset - text_y_offset);
+                    _SelectionText[i].Position = new Vector2f((x_margin * _Id + x_padding) - text_x_offset, 57 + (y_margin * _Id + y_padding));
                     i++;
                 }
 
@@ -63,8 +67,26 @@ namespace CerealSquad.Menus
                 _PlayerText.Position = new Vector2f((x_margin * _Id + x_padding) - (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2, (y_margin * _Id + y_padding));
 
                 _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _JoinText.Position = new Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 40 + (y_margin * _Id + y_padding));
+                _JoinText.Position = new Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 57 + (y_margin * _Id + y_padding));
                 _JoinText.Color = Color.Green;
+
+                Factories.TextureFactory.Instance.load("CS_Fork", "Assets/HUD/Fork.png");
+                _Fork = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Fork"), new Vector2i(64, 64), new IntRect(0, 0, 64, 64));
+                _Fork.Position = new Vector2f(_PlayerText.Position.X - _Fork.Size.X, 0);
+
+                Factories.TextureFactory.Instance.load("CS_Knife", "Assets/HUD/Knife.png");
+                _Knife = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Knife"), new Vector2i(64, 64), new IntRect(0, 0, 64, 64));
+                _Knife.Position = new Vector2f(_PlayerText.Position.X + _PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width, 0);
+
+                Factories.TextureFactory.Instance.load("CS_Overlay", "Assets/HUD/SelectionPlayerOverlay.png");
+                _Overlay = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Overlay"), new Vector2i(64 * 6, 19 * 6), new IntRect(0, (19 * (int)_Id), 64, 19));
+                _Overlay.Position = new Vector2f(_PlayerText.Position.X + (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2 - _Overlay.Size.X / 2, 0);
+
+                Factories.TextureFactory.Instance.load("CS_Cursor", "Assets/HUD/SelectionPlayerCursor.png");
+                _Cursor = new Graphics.AnimatedSprite(64 * 3, 64 * 3);
+                var listFrame = Enumerable.Range(0 + (int)(_Id * 11), 11).Select(p => (uint)p).ToList();
+                _Cursor.addAnimation(0, "CS_Cursor", listFrame.Concat(listFrame.OrderByDescending(x => x)).ToList(), new Vector2u(64, 64), 50);
+                _Cursor.Loop = true;
             }
 
             public Player(uint id, Renderer renderer)
@@ -134,11 +156,27 @@ namespace CerealSquad.Menus
 
             public void Draw(RenderTarget target, RenderStates states)
             {
-                target.Draw(_PlayerText);
+                
+                target.Draw(_Overlay, states);
+                target.Draw(_Fork, states);
+                target.Draw(_Knife, states);
+                target.Draw(_PlayerText, states);
                 if (Type == Type.Undefined)
                     target.Draw(_JoinText, states);
                 else
+                {
+                    target.Draw(_Cursor, states);
                     target.Draw(_SelectionText[Selection], states);
+                }
+            }
+
+            public void Update(Time DeltaTime, List<Vector2f> cursorPositions)
+            {
+                if (_Cursor != null)
+                {
+                    _Cursor.Position = cursorPositions.ElementAt((int)Selection);
+                    _Cursor.Update(DeltaTime);
+                }
             }
         }
 
@@ -168,23 +206,41 @@ namespace CerealSquad.Menus
             public int id_on_it { get; private set; }
             public bool id_locked { get; private set; }
 
+            protected Graphics.AnimatedSprite _Sprite;
+            public Vector2f _CursorPosition { get; private set; }
+
             public Character(Renderer renderer)
             {
                 id_on_it = -1;
                 id_locked = false;
             }
 
-            public virtual void Select(int id) { id_on_it = id; }
+            protected virtual void initCursor()
+            {
+                _CursorPosition = new Vector2f(_Sprite.Position.X, _Sprite.Position.Y - _Sprite.Size.Y / 2 - 64 * 3 / 2);
+            }
+
+            public virtual void Select(int id)
+            {
+                id_on_it = id;
+            }
             public virtual void Lock(bool isLocked) { id_locked = true; }
 
-            public abstract void Draw(RenderTarget target, RenderStates states);
-            public abstract void Update(Time DeltaTime);
+            public virtual void Draw(RenderTarget target, RenderStates states)
+            {
+                if (_Sprite != null)
+                    target.Draw(_Sprite, states);
+            }
+
+            public virtual void Update(Time DeltaTime)
+            {
+                if (_Sprite != null)
+                    _Sprite.Update(DeltaTime);
+            }
         }
 
         class Mike : Character
         {
-            Graphics.AnimatedSprite _Sprite;
-
             public Mike(Renderer renderer) : base(renderer)
             {
                 Factories.TextureFactory.Instance.load("CS_Mike", "Assets/Character/Selection/MikeSelection.png");
@@ -196,11 +252,8 @@ namespace CerealSquad.Menus
                 _Sprite.addAnimation((uint)Graphics.EStateEntity.WALKING_DOWN, "CS_Mike", Enumerable.Range(0, 5).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
                 _Sprite.Position = new Vector2f(display_size, renderer.Win.GetView().Size.Y - display_size / 2);
-            }
 
-            public override void Draw(RenderTarget target, RenderStates states)
-            {
-                target.Draw(_Sprite, states);
+                initCursor();
             }
 
             public override void Lock(bool isLocked)
@@ -211,17 +264,10 @@ namespace CerealSquad.Menus
                 else
                     _Sprite.PlayAnimation((uint)Graphics.EStateEntity.IDLE);
             }
-
-            public override void Update(Time DeltaTime)
-            {
-                _Sprite.Update(DeltaTime);
-            }
         }
 
         class Jack : Character
         {
-            Graphics.AnimatedSprite _Sprite;
-
             public Jack(Renderer renderer) : base(renderer)
             {
                 Factories.TextureFactory.Instance.load("CS_Jack", "Assets/Character/Selection/JackSelection.png");
@@ -233,11 +279,8 @@ namespace CerealSquad.Menus
                 _Sprite.addAnimation((uint)Graphics.EStateEntity.WALKING_DOWN, "CS_Jack", Enumerable.Range(0, 12).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
                 _Sprite.Position = new Vector2f(display_size * 2, renderer.Win.GetView().Size.Y - display_size / 2);
-            }
 
-            public override void Draw(RenderTarget target, RenderStates states)
-            {
-                target.Draw(_Sprite, states);
+                initCursor();
             }
 
             public override void Lock(bool isLocked)
@@ -248,17 +291,10 @@ namespace CerealSquad.Menus
                 else
                     _Sprite.PlayAnimation((uint)Graphics.EStateEntity.IDLE);
             }
-
-            public override void Update(Time DeltaTime)
-            {
-                _Sprite.Update(DeltaTime);
-            }
         }
 
         class OrangeHina : Character
         {
-            Graphics.AnimatedSprite _Sprite;
-
             public OrangeHina(Renderer renderer) : base(renderer)
             {
                 Factories.TextureFactory.Instance.load("CS_Hina", "Assets/Character/Selection/HinaSelection.png");
@@ -270,13 +306,10 @@ namespace CerealSquad.Menus
                 _Sprite.addAnimation((uint)Graphics.EStateEntity.WALKING_DOWN, "CS_Hina", Enumerable.Range(0, 9).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
                 _Sprite.Position = new Vector2f(display_size * 3, renderer.Win.GetView().Size.Y - display_size / 2);
-            }
 
-            public override void Draw(RenderTarget target, RenderStates states)
-            {
-                target.Draw(_Sprite, states);
+                initCursor();
             }
-
+            
             public override void Lock(bool isLocked)
             {
                 base.Lock(isLocked);
@@ -285,17 +318,10 @@ namespace CerealSquad.Menus
                 else
                     _Sprite.PlayAnimation((uint)Graphics.EStateEntity.IDLE);
             }
-
-            public override void Update(Time DeltaTime)
-            {
-                _Sprite.Update(DeltaTime);
-            }
         }
 
         class Tchong : Character
         {
-            Graphics.AnimatedSprite _Sprite;
-
             public Tchong(Renderer renderer) : base(renderer)
             {
                 Factories.TextureFactory.Instance.load("CS_Tchong", "Assets/Character/Selection/TchongSelection.png");
@@ -307,13 +333,10 @@ namespace CerealSquad.Menus
                 _Sprite.addAnimation((uint)Graphics.EStateEntity.WALKING_DOWN, "CS_Tchong", Enumerable.Range(0, 12).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
                 _Sprite.Loop = false;
                 _Sprite.Position = new Vector2f(display_size * 4, renderer.Win.GetView().Size.Y - display_size / 2);
-            }
 
-            public override void Draw(RenderTarget target, RenderStates states)
-            {
-                target.Draw(_Sprite, states);
+                initCursor();
             }
-
+            
             public override void Lock(bool isLocked)
             {
                 base.Lock(isLocked);
@@ -322,40 +345,54 @@ namespace CerealSquad.Menus
                 else
                     _Sprite.PlayAnimation((uint)Graphics.EStateEntity.IDLE);
             }
-
-            public override void Update(Time DeltaTime)
-            {
-                _Sprite.Update(DeltaTime);
-            }
         }
     }
 
     class CharacterSelectMenu : Menu, Drawable
     {
+        #region Event
+        public delegate void CharacterSelectionEventHandler(object source, CharacterSelectionArgs e);
+
+        public class CharacterSelectionArgs
+        {
+            public Players.Player[] Players { get; }
+
+            public CharacterSelectionArgs(Players.Player[] players)
+            {
+                Players = players;
+            }
+        }
+
+        /// <summary>
+        /// Event fired when a Game is started
+        /// </summary>
+        public event CharacterSelectionEventHandler GameStart;
+        #endregion
+
         public static uint PLAYER_COUNT = 4;
         public static uint CHARACTER_COUNT = 4;
 
         public Players.Player[] Players { get; private set; }
 
         private Renderer _Renderer;
-        private GameWorld.GameManager _GameManager;
         private Text _StartGameText;
         private RectangleShape _StartGameShape;
         private Sounds.JukeBox Jukebox = new Sounds.JukeBox();
 
         private Graphics.AnimatedSprite _BackgroundImage;
-
         private Characters.Character[] _Characters;
 
-        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
+        private InputManager.InputManager _InputManager;
+
+        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
-            if (gameManager == null)
-                throw new ArgumentNullException("Game Manager cannot be null");
+            if (inputManager == null)
+                throw new ArgumentNullException("InputManager cannot be null");
 
             _Renderer = renderer;
-            _GameManager = gameManager;
+            _InputManager = inputManager;
 
             _Characters = new Characters.Character[CHARACTER_COUNT];
             _Characters[0] = new Characters.Mike(_Renderer);
@@ -380,10 +417,6 @@ namespace CerealSquad.Menus
 
             Jukebox.loadMusic(0, "Assets/Music/CharacterSelection.ogg");
 
-            Buttons.IButton returnButton = new Buttons.BackButton("", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie), 0, this);
-            MenuItem back_Button = new MenuItem(returnButton, MenuItem.ItemType.KeyBinded, InputManager.Keyboard.Key.Escape);
-            _menuList.Add(back_Button);
-
             _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
             _StartGameText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
             _StartGameText.Color = Color.Red;
@@ -400,10 +433,19 @@ namespace CerealSquad.Menus
 
         public override void Update(Time DeltaTime)
         {
+            List<Vector2f> cursorPositions = new List<Vector2f>();
+
             uint i = 0;
             while (i < CHARACTER_COUNT)
             {
                 _Characters[i].Update(DeltaTime);
+                cursorPositions.Add(_Characters[i]._CursorPosition);
+                i++;
+            }
+            i = 0;
+            while (i < PLAYER_COUNT)
+            {
+                Players[i].Update(DeltaTime, cursorPositions);
                 i++;
             }
             _BackgroundImage.Update(DeltaTime);
@@ -451,21 +493,6 @@ namespace CerealSquad.Menus
             return Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined && x.LockedChoice != true) == null && Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined) != null;
         }
 
-        private void UpdateEffects()
-        {
-            uint i = 0;
-            _Characters.ToList().ForEach(x => x.Select(-1));
-            while (i < PLAYER_COUNT)
-            {
-                if (Players[i].Type != Menus.Players.Type.Undefined)
-                {
-                    _Characters[Players[i].Selection].Select((int)i);
-                    _Characters[Players[i].Selection].Lock(Players[i].LockedChoice);
-                }
-                i++;
-            }
-        }
-
         private void _InputManager_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
         {
             if (Displayed)
@@ -481,7 +508,7 @@ namespace CerealSquad.Menus
                     else
                     {
                         Players.Player currentPlayer = Players.First(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1);
-                        if (!currentPlayer.LockedChoice)
+                        if (!currentPlayer.LockedChoice || e.KeyCode == InputManager.Keyboard.Key.Z)
                             ValidatePlayer(currentPlayer, LockedList);
                         else
                             ReturnPlayer(currentPlayer);
@@ -495,7 +522,6 @@ namespace CerealSquad.Menus
                     SelectNextPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Keyboard && x.KeyboardId == 1), LockedList);
             }
         }
-
         private void _InputManager_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
             List<uint> LockedList = GetLockedList();
@@ -508,7 +534,6 @@ namespace CerealSquad.Menus
                     SelectPreviousPlayer(Players.FirstOrDefault(x => x.Type == Menus.Players.Type.Controller && x.ControllerId == e.JoystickId), LockedList);
             }
         }
-
         private void _InputManager_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
             if (Displayed)
@@ -543,8 +568,6 @@ namespace CerealSquad.Menus
                 System.Diagnostics.Debug.WriteLine("NEW PLAYER JOINED");
                 Players[i] = new Players.ControllerPlayer(e.JoystickId, i, _Renderer, LockedList);
             }
-
-            UpdateEffects();
         }
         private void JoinKeyboardPlayer(object source, InputManager.Keyboard.KeyEventArgs e, uint keyboardId, List<uint> LockedList)
         {
@@ -556,23 +579,27 @@ namespace CerealSquad.Menus
                 System.Diagnostics.Debug.WriteLine("NEW PLAYER JOINED");
                 Players[i] = new Players.KeyboardPlayer(keyboardId, i, _Renderer, LockedList);
             }
-
-            UpdateEffects();
         }
 
         private void SelectPreviousPlayer(Players.Player currentPlayer, List<uint> LockedList)
         {
             if (currentPlayer != null)
+            {
+                uint old_selection = currentPlayer.Selection;
                 currentPlayer.SelectPrevious(LockedList);
-
-            UpdateEffects();
+                _Characters[currentPlayer.Selection].Select(Players.ToList().IndexOf(currentPlayer));
+                _Characters[old_selection].Select(Players.ToList().IndexOf(Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined && x.Selection == old_selection)));
+            }
         }
         private void SelectNextPlayer(Players.Player currentPlayer, List<uint> LockedList)
         {
             if (currentPlayer != null)
+            {
+                uint old_selection = currentPlayer.Selection;
                 currentPlayer.SelectNext(LockedList);
-
-            UpdateEffects();
+                _Characters[currentPlayer.Selection].Select(Players.ToList().IndexOf(currentPlayer));
+                _Characters[old_selection].Select(Players.ToList().IndexOf(Players.FirstOrDefault(x => x.Type != Menus.Players.Type.Undefined && x.Selection == old_selection)));
+            }
         }
 
         private void ReturnPlayer(Players.Player currentPlayer)
@@ -581,37 +608,41 @@ namespace CerealSquad.Menus
             if (id != -1 && Players[id].Type != Menus.Players.Type.Undefined)
             {
                 if (Players[id].LockedChoice == true)
+                {
                     Players[id].LockSelection(false);
+                    _Characters[Players[id].Selection].Lock(false);
+                }
                 else
                     Players[id] = new Players.Player((uint)id, _Renderer);
             }
-
-            UpdateEffects();
         }
         private void ValidatePlayer(Players.Player currentPlayer, List<uint> LockedList)
         {
-            currentPlayer.LockSelection(true);
-            LockedList.Add(currentPlayer.Selection);
-            uint i = 0;
-            while (i < PLAYER_COUNT)
+            if (!currentPlayer.LockedChoice)
             {
-                if (Players[i].Type != Menus.Players.Type.Undefined && Players[i].LockedChoice == false)
+                currentPlayer.LockSelection(true);
+                LockedList.Add(currentPlayer.Selection);
+                _Characters[currentPlayer.Selection].Select(Array.IndexOf(Players, currentPlayer));
+                _Characters[currentPlayer.Selection].Lock(true);
+                uint i = 0;
+                while (i < PLAYER_COUNT)
                 {
-                    while (LockedList.Contains(Players[i].Selection))
-                        Players[i].SelectNext(LockedList);
+                    if (Players[i].Type != Menus.Players.Type.Undefined && Players[i].LockedChoice == false)
+                    {
+                        while (LockedList.Contains(Players[i].Selection))
+                            Players[i].SelectNext(LockedList);
+                    }
+                    i++;
                 }
-                i++;
             }
-
-            UpdateEffects();
         }
 
         private void StartGame()
         {
             if (AllPlayersReady())
             {
-                MenuManager.Instance.Clear();
-                _GameManager.newGame();
+                MenuManager.Instance.RemoveMenu(this);
+                GameStart?.Invoke(this, new CharacterSelectionArgs(Players));
             }
         }
 

@@ -10,6 +10,7 @@ namespace CerealSquad.GameWorld
 {
     class AWorld : Drawable
     {
+        public ARoom CurrentRoom { get; }
         protected List<ARoom> Rooms = new List<ARoom>();
         public WorldEntity WorldEntity { get; protected set; }
 
@@ -31,6 +32,11 @@ namespace CerealSquad.GameWorld
         {
             if (room != null)
                 Rooms.Add(room);
+        }
+
+        public void ChangeRoom(s_Pos<int> playerCoord)
+        {
+            throw new NotImplementedException("ChangeRoom()");
         }
 
         public void Draw(RenderTarget target, RenderStates states)
@@ -58,15 +64,10 @@ namespace CerealSquad.GameWorld
         /// <returns>bool</returns>
         public bool IsCollidingWithWall(SFML.System.Vector2f Position, SFML.Graphics.FloatRect CollisionBox)
         {
-            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(CollisionBox.Width, -CollisionBox.Top);
-            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(-CollisionBox.Left, -CollisionBox.Top);
-            SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(CollisionBox.Width, CollisionBox.Height);
-            SFML.System.Vector2f CollisionPointFour = new SFML.System.Vector2f(-CollisionBox.Left, CollisionBox.Height);
-
-            CollisionPointOne += Position;
-            CollisionPointTwo += Position;
-            CollisionPointThree += Position;
-            CollisionPointFour += Position;
+            SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top);
+            SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top + CollisionBox.Height);
+            SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top + CollisionBox.Height);
+            SFML.System.Vector2f CollisionPointFour = new SFML.System.Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top);
 
             CollisionPointOne /= 64.0f;
             CollisionPointTwo /= 64.0f;
@@ -89,6 +90,11 @@ namespace CerealSquad.GameWorld
         public bool IsCollidingWithWall(Graphics.EntityResources Res)
         {
             return IsCollidingWithWall(Res.Position, Res.CollisionBox);
+        }
+
+        public void Update(SFML.System.Time DeltaTime)
+        {
+            Rooms.ForEach(x => x.Update(DeltaTime));
         }
     }
 }
