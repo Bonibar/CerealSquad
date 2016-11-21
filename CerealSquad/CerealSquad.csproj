@@ -83,6 +83,8 @@
     <Compile Include="Downloaders\IDownloader.cs" />
     <Compile Include="Downloaders\LoadingScreen.cs" />
     <Compile Include="Downloaders\TaskAwaiter.cs" />
+    <Compile Include="EntitySystem\Projectiles\AProjectile.cs" />
+    <Compile Include="EntitySystem\Projectiles\RiceProjectile.cs" />
     <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />
     <Compile Include="EntitySystem\AEntity.cs" />

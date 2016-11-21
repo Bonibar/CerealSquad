@@ -50,7 +50,7 @@ namespace CerealSquad
             });
 
             if (Owner.getEntityType() != e_EntityType.World)
-                if (((AEntity)Owner).ressourcesEntity.IsTouchingCollisionBox(Other) && Other != Owner)
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingCollisionBox(Other) && Other != Owner.ressourcesEntity)
                     Tmp.Add((AEntity)Owner);
 
             return Tmp;
