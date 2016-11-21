@@ -18,13 +18,16 @@ namespace CerealSquad
 
         protected int _r;
 
+        public bool active { get; set; }
+
         public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {
-            _pos = position;
+            _pos = position + new s_position(room.Position.X, room.Position.Y);
             _type = e_EntityType.Ennemy;
             _room = room;
             _rand = new Random();
             _r = 0;
+            active = true;
         }
 
         public virtual void attack()
