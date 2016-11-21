@@ -15,6 +15,7 @@ namespace CerealSquad.Menus
         private Renderer _Renderer;
         private InputManager.InputManager _InputManager;
         private Text _GameOverText;
+        //private GameWorld.GameManager _GameManager;
 
         public abstract class GameOverMenuItem : MenuItem
         {
@@ -60,7 +61,7 @@ namespace CerealSquad.Menus
             ReturnToMainMenu = 0
         }
 
-        public GameOverMenu(Renderer renderer, InputManager.InputManager inputManager)
+        public GameOverMenu(Renderer renderer, InputManager.InputManager inputManager/*, GameWorld.GameManager gameManager*/)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
@@ -69,6 +70,13 @@ namespace CerealSquad.Menus
 
             _Renderer = renderer;
             _InputManager = inputManager;
+            //_GameManager = gameManager;
+
+            _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
+            _InputManager.KeyboardKeyReleased += _InputManager_KeyboardKeyReleased;
+            _InputManager.JoystickButtonPressed += _InputManager_JoystickButtonPressed;
+            _InputManager.JoystickButtonReleased += _InputManager_JoystickButtonReleased;
+            _InputManager.JoystickMoved += _InputManager_JoystickMoved;
 
             _menuList.Add(new ReturnMenuItem(_Renderer));
             nextMenu();
@@ -77,5 +85,102 @@ namespace CerealSquad.Menus
             _GameOverText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_GameOverText.GetLocalBounds().Top + _GameOverText.GetLocalBounds().Height) / 2);
             _GameOverText.Color = Color.Red;
         }
+
+        private void _ExecuteAction()
+        {
+            GameOverMenuItem _current = (GameOverMenuItem)_menuList.FirstOrDefault(i => i.Selected);
+
+            if (_current != null)
+            {
+                switch (_current.Action)
+                {
+                    case GameOverAction.ReturnToMainMenu:
+                        MenuManager.Instance.Clear();
+                        //_GameManager.endGame();
+                        break;
+                }
+            }
+        }
+
+        #region 
+        private Key _KeyPressed = Key.Unknown;
+        private void _InputManager_KeyboardKeyReleased(object source, KeyEventArgs e)
+        {
+            if (Displayed)
+            {
+                if (e.KeyCode == _KeyPressed)
+                {
+                    switch (e.KeyCode)
+                    {
+                        case Key.Return:
+                            _ExecuteAction();
+                            break;
+                    }
+                }
+                _KeyPressed = Key.Unknown;
+            }
+        }
+        private void _InputManager_KeyboardKeyPressed(object source, KeyEventArgs e)
+        {
+            if (Displayed)
+            {
+                _KeyPressed = e.KeyCode;
+                switch (_KeyPressed)
+                {
+                    case Key.Return:
+
+                        break;
+                    case Key.Down:
+                        nextMenu();
+                        break;
+                    case Key.Up:
+                        previousMenu();
+                        break;
+                }
+            }
+        }
+
+        private float lastYAxis = 0;
+        private int lastJoyButton = -1;
+        private void _InputManager_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
+        {
+            if (Displayed)
+            {
+                if (e.Axis == InputManager.Joystick.Axis.Y)
+                {
+                    if (e.Position > 90 && e.Position > lastYAxis)
+                    {
+                        nextMenu();
+                        lastYAxis = 150;
+                    }
+                    else if (e.Position < -90 && e.Position < lastYAxis)
+                    {
+                        previousMenu();
+                        lastYAxis = -150;
+                    }
+                    else
+                        lastYAxis = e.Position;
+                }
+            }
+        }
+        private void _InputManager_JoystickButtonReleased(object source, InputManager.Joystick.ButtonEventArgs e)
+        {
+            if (Displayed)
+            {
+                if ((int)e.Button == lastJoyButton)
+                {
+                    if (e.Button == 0)
+                        _ExecuteAction();
+                }
+            }
+        }
+        private void _InputManager_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
+        {
+            if (Displayed)
+            {
+                lastJoyButton = (int)e.Button;
+            }
+        }
+        #endregion
     }
 }
