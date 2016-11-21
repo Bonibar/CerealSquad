@@ -115,6 +115,7 @@
     <Compile Include="Graphics\EllipseShapeSprite.cs" />
     <Compile Include="Menus\Buttons\NewGameButton.cs" />
     <Compile Include="Menus\CharacterSelectMenu.cs" />
+    <Compile Include="Menus\GameOverMenu.cs" />
     <Compile Include="Menus\IntroCutscene.cs" />
     <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />

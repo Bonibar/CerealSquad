@@ -129,7 +129,8 @@ namespace CerealSquad.GameWorld
                 currentWorld.Update(DeltaTime);
                 worldEntity.update(DeltaTime, currentWorld);
             }
-
+            if (Players.Count == 0)
+                Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
             _HUDs.ForEach(i => i.Update(DeltaTime));
         }
 
