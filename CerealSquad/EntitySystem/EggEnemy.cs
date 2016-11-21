@@ -23,7 +23,7 @@ namespace CerealSquad.EntitySystem
         public EggEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _child = 1;
-            _speed = 3;
+            _speed = 1.7f;
             _scentMap = new scentMap(_room.Size.Height, _room.Size.Width);
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("EggWalking", "Assets/Enemies/Normal/EggyWalking.png");
