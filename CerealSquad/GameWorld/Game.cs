@@ -131,7 +131,11 @@ namespace CerealSquad.GameWorld
             }
             int NbPlayersDead = Players.FindAll(x => x.Die).Count;
             if (NbPlayersDead > 0 && NbPlayersDead == Players.Count)
+            {
+                System.Threading.Thread.Sleep(1000);
+                
                 Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
+            }
             _HUDs.ForEach(i => i.Update(DeltaTime));
         }
 

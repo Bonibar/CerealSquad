@@ -35,7 +35,7 @@ namespace CerealSquad.Menus
             {
                 _Text = new Text("Return to Main Menu", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
                 _Text.CharacterSize = 80;
-                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, 500);
+                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2);
             }
 
             public override void Select(bool select)
@@ -81,8 +81,8 @@ namespace CerealSquad.Menus
             _menuList.Add(new ReturnMenuItem(_Renderer));
             nextMenu();
 
-            _GameOverText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
-            _GameOverText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_GameOverText.GetLocalBounds().Top + _GameOverText.GetLocalBounds().Height) / 2);
+            _GameOverText = new Text("Game Over", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
+            _GameOverText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2.75f);
             _GameOverText.Color = Color.Red;
         }
 
@@ -96,7 +96,6 @@ namespace CerealSquad.Menus
                 {
                     case GameOverAction.ReturnToMainMenu:
                         MenuManager.Instance.Clear();
-                        //_GameManager.endGame();
                         break;
                 }
             }
@@ -182,5 +181,11 @@ namespace CerealSquad.Menus
             }
         }
         #endregion
+
+        public override void Draw(RenderTarget target, RenderStates states)
+        {
+            target.Draw(_GameOverText, states);
+            base.Draw(target, states);
+        }
     }
 }
