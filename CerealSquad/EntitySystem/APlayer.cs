@@ -7,6 +7,7 @@ using CerealSquad.InputManager.Keyboard;
 using CerealSquad.GameWorld;
 using SFML.Graphics;
 using CerealSquad.EntitySystem;
+using CerealSquad.EntitySystem.Projectiles;
 
 namespace CerealSquad
 {
