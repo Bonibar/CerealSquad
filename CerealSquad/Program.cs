@@ -117,12 +117,12 @@ namespace CerealSquad
                 }
                 else if (gameManager.CurrentGame != null)
                 {
-                    gameManager.CurrentGame.Update(clock.Restart());
-                    renderer.Draw(gameManager.CurrentGame);
+                    gameManager.Update(clock.Restart());
+                    if (gameManager.CurrentGame != null)
+                        renderer.Draw(gameManager.CurrentGame);
                 }
-                else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed)
+                else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed || awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Empty)
                 {
-                    System.Diagnostics.Debug.WriteLine("DOWNLOAD ENDED");
                     Debug.Time.Instance.StartTimer("DISPLAYING MAIN MENU", Debug.Type.Critical, true);
                     Menus.MenuManager.Instance.AddMenu(new Menus.MainMenu(renderer, manager, gameManager));
                     Debug.Time.Instance.StopTimer("DISPLAYING MAIN MENU");

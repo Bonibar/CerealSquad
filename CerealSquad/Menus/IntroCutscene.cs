@@ -42,7 +42,6 @@ namespace CerealSquad.Menus
         private Text _HelpText;
 
         private Renderer _Renderer;
-        private InputManager.InputManager _InputManager;
 
         private State _State = State.Unknow;
         private int _CurrentFrame { get { return _TimeFrame.Count(i => i == -1); } }
@@ -55,7 +54,7 @@ namespace CerealSquad.Menus
         private float _CurrentSpeed;
         private float _FrameOffset = 0;
 
-        public IntroCutscene(Renderer renderer, InputManager.InputManager inputManager)
+        public IntroCutscene(Renderer renderer, InputManager.InputManager inputManager) : base(inputManager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
@@ -63,7 +62,6 @@ namespace CerealSquad.Menus
                 throw new ArgumentNullException("Input Manager cannot be null");
 
             _Renderer = renderer;
-            _InputManager = inputManager;
 
             Factories.TextureFactory.Instance.load("CUTSCENE_intro", "Assets/Background/cutscene_1024.png");
             _Cutscene = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CUTSCENE_intro"),
