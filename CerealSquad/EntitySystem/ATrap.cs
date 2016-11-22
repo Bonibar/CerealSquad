@@ -15,7 +15,9 @@ namespace CerealSquad
         public bool Triggered { get; protected set; }
         public Time Cooldown { get; protected set; }
 
-        public abstract void Trigger();
+        public virtual void Trigger(bool delay = false)
+        {
+        }
 
         public ATrap(IEntity owner, e_DamageType damage, float range = 0) : base(owner)
         {

@@ -35,11 +35,6 @@ namespace CerealSquad.TrapEntities
             Timer.Start();
         }
 
-        public override void Trigger()
-        {
-            return;
-        }
-
         public override void update(Time deltaTime, AWorld world)
         {
             if (Timer.IsTimerOver() && !Die) {
