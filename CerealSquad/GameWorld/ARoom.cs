@@ -172,8 +172,9 @@ namespace CerealSquad.GameWorld
                     State = e_RoomState.Started;
                 }
             }
-            else if (State == e_RoomState.Started && _Ennemies.Count == 0)
+            else if (State == e_RoomState.Started && _Ennemies.Count(i => i.Die == false) == 0)
             {
+                _Ennemies.Clear();
                 _Doors.ForEach(i => i.Die = true);
                 _Doors.Clear();
                 State = e_RoomState.Finished;
