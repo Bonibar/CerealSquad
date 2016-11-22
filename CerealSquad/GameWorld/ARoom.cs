@@ -62,7 +62,6 @@ namespace CerealSquad.GameWorld
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
-            RoomType = ParsedRoom.Type;
             State = e_RoomState.Idle;
 
             foreach (var crate in ParsedRoom.Crates)
@@ -140,7 +139,7 @@ namespace CerealSquad.GameWorld
 
         private void spawnDoors()
         {
-            _Doors.Add(new RoomDoor(WorldEntity, new s_position(0, 7), this));
+            ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(WorldEntity, new s_position(i.Key.X, i.Key.Y), this)));
         }
 
         private void spawnEnnemies()

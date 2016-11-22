@@ -1,5 +1,5 @@
 ﻿6bdec4937a3e3762c6ad9c59038aac089742cacbf332b94bcdc779d39ddf8e53
 
 #define Rooms
-0:0|Maps/TestRoom.txt|0
+0:0|Maps/TestRoom.txt|1
 14:0|Maps/TestRoom2.txt|0

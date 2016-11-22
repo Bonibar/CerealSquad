@@ -47,7 +47,7 @@ namespace CerealSquad.GameWorld
             });
         }
 
-        public RoomParser.e_CellType getPosition(int x, int y)
+        public RoomParser.e_CellType getCellType(int x, int y)
         {
             foreach(ARoom room in Rooms)
             {
@@ -63,12 +63,17 @@ namespace CerealSquad.GameWorld
         }
 
         /// <summary>
-        /// Check 4 points from position and collision box return true if one of them is inside a wall/void
+        /// Check 4 points from position and collision box return true if one of them is inside a considered wall
         /// </summary>
         /// <param name="Res">Graphics.EntityResource</param>
         /// <returns>bool</returns>
-        public bool IsCollidingWithWall(SFML.System.Vector2f Position, SFML.Graphics.FloatRect CollisionBox)
+        public bool IsCollidingWithWall(SFML.System.Vector2f Position, FloatRect CollisionBox)
         {
+            List<RoomParser.e_CellType> wallTypes = new List<RoomParser.e_CellType> {
+                RoomParser.e_CellType.Wall,
+                RoomParser.e_CellType.Void
+            };
+
             SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top);
             SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top + CollisionBox.Height);
             SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top + CollisionBox.Height);
@@ -79,10 +84,10 @@ namespace CerealSquad.GameWorld
             CollisionPointThree /= 64.0f;
             CollisionPointFour /= 64.0f;
 
-            if (getPosition((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)) != RoomParser.e_CellType.Normal
-                || getPosition((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)) != RoomParser.e_CellType.Normal
-                || getPosition((int)(CollisionPointThree.X), (int)(CollisionPointThree.Y)) != RoomParser.e_CellType.Normal
-                || getPosition((int)(CollisionPointFour.X), (int)(CollisionPointFour.Y)) != RoomParser.e_CellType.Normal)
+            if (wallTypes.Contains(getCellType((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)))
+                || wallTypes.Contains(getCellType((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)))
+                || wallTypes.Contains(getCellType((int)(CollisionPointThree.X), (int)(CollisionPointThree.Y)))
+                || wallTypes.Contains(getCellType((int)(CollisionPointFour.X), (int)(CollisionPointFour.Y))))
                 return true;
             return false;
         }
