@@ -97,7 +97,6 @@ namespace CerealSquad.EntitySystem
                 }
             }
         }
-
         public override void die()
         {
             if (_invuln <= 0)
@@ -114,7 +113,7 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                if (active)
+                if (Active)
                 {
                     _scentMap.update((WorldEntity)_owner, _room);
                     think(world, deltaTime);

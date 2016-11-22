@@ -50,6 +50,7 @@ namespace CerealSquad.EntitySystem
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
+            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
             bool result = false;
 
             CollidingEntities.ForEach(i =>
@@ -60,7 +61,7 @@ namespace CerealSquad.EntitySystem
                     i.die();
             });
 
-            return result;
+            return result || baseResult;
         }
 
         public override void think(AWorld world, Time deltaTime)
@@ -136,14 +137,16 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                if (active)
                 {
-                    _scentMap.update((WorldEntity)_owner, _room);
-                    think(world, deltaTime);
+                    if (Active)
+                    {
+                        _scentMap.update((WorldEntity)_owner, _room);
+                        think(world, deltaTime);
+                    }
+                    move(world, deltaTime);
                 }
-                move(world, deltaTime);
+                _ressources.Update(deltaTime);
             }
-            _ressources.Update(deltaTime);
         }
     }
 }

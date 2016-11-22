@@ -200,7 +200,14 @@ namespace CerealSquad
 
         public virtual bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
-            return false;
+            bool result = false;
+
+            CollidingEntities.ForEach(ent =>
+            {
+                if (ent.getEntityType() == e_EntityType.Room)
+                    result = true;
+            });
+            return result;
         }
 
         public virtual bool IsCollidingWithWall(AWorld World, EntityResources Res)

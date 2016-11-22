@@ -29,6 +29,7 @@ namespace CerealSquad.GameWorld
         }
 
         public enum e_RoomType { FightRoom, TransitionRoom };
+        public enum e_RoomState { Idle, Starting, Started, Finished }
 
         public WorldEntity WorldEntity { get; protected set; }
 
@@ -36,12 +37,15 @@ namespace CerealSquad.GameWorld
         public s_Pos<int> Position { get; private set; }
         public s_MapSize Size { get; private set; }
         public RegularSprite _RenderSprite { get; }
+        public e_RoomState State { get; private set; }
 
         private RenderTexture _RenderTexture = null;
+        private float TimeSpawning = 1500;
         private RoomParser.s_room ParsedRoom = null;
         private EnvironmentResources er = new EnvironmentResources();
         private List<Crates> _Crates = new List<Crates>();
-        private List<IEntity> _Ennemies = new List<IEntity>();
+        private List<AEnemy> _Ennemies = new List<AEnemy>();
+        private List<RoomDoor> _Doors = new List<RoomDoor>();
 
         private Random _Rand = new Random();
         private Dictionary<int, int> _RespawnCrates = new Dictionary<int, int>();
@@ -57,10 +61,23 @@ namespace CerealSquad.GameWorld
             IntRect rect = new IntRect(0, 0, (int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y);
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
-            parseRoom();    
-            for (int i = 0; i < ParsedRoom.Crates.Count; i++)
-                _RespawnCrates.Add(i, -1);
-            spawnEnnemies();
+            parseRoom();
+            State = e_RoomState.Idle;
+
+            foreach (var crate in ParsedRoom.Crates)
+            {
+                s_Pos<int> spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
+                bool isColliding = true;
+                while (isColliding)
+                {
+                    spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
+                    if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                        isColliding = false;
+                }
+                _Crates.Add(new Crates(WorldEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
+            }
+            if (RoomType == e_RoomType.FightRoom)
+                spawnEnnemies();
         }
 
         private void parseRoom()
@@ -76,6 +93,16 @@ namespace CerealSquad.GameWorld
             }
         }
 
+        public void Start()
+        {
+            if (State == e_RoomState.Idle)
+            {
+                State = e_RoomState.Starting;
+                if (RoomType == e_RoomType.FightRoom)
+                    spawnDoors();
+            }
+        }
+
         public RoomParser.e_CellType getPosition(uint x, uint y)
         {
             RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
@@ -88,22 +115,7 @@ namespace CerealSquad.GameWorld
 
         private void spawnCrates(SFML.System.Time DeltaTime)
         {
-            if (_Crates.Count == 0)
-            {
-                foreach (var crate in ParsedRoom.Crates)
-                {
-                    s_Pos<int> spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
-                    bool isColliding = true;
-                    while (isColliding)
-                    {
-                        spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
-                        if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
-                            isColliding = false;
-                    }
-                    _Crates.Add(new Crates(WorldEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
-                }
-            }
-            else
+            if (_Crates.Count > 0)
             {
                 _Crates.FindAll(x => x.Picked == true && x.Respawn == false).ForEach(i => i.update(DeltaTime, null));
                 var _respawnCrates = _Crates.FindAll(x => x.Respawn == true);
@@ -125,6 +137,11 @@ namespace CerealSquad.GameWorld
             }
         }
 
+        private void spawnDoors()
+        {
+            ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(WorldEntity, new s_position(i.Key.X, i.Key.Y), this)));
+        }
+
         private void spawnEnnemies()
         {
             foreach (var ennemy in ParsedRoom.Ennemies)
@@ -144,6 +161,23 @@ namespace CerealSquad.GameWorld
         public void Update(SFML.System.Time DeltaTime)
         {
             spawnCrates(DeltaTime);
+            if (State == e_RoomState.Starting)
+            {
+                if (TimeSpawning> 0)
+                    TimeSpawning -= DeltaTime.AsMilliseconds();
+                else
+                {
+                    _Ennemies.ForEach(i => i.Active = true);
+                    State = e_RoomState.Started;
+                }
+            }
+            else if (State == e_RoomState.Started && _Ennemies.Count(i => i.Die == false) == 0)
+            {
+                _Ennemies.Clear();
+                _Doors.ForEach(i => i.Die = true);
+                _Doors.Clear();
+                State = e_RoomState.Finished;
+            }
         }
 
         public void Draw(RenderTarget target, RenderStates states)

@@ -89,6 +89,7 @@ namespace CerealSquad.Menus
         private GameWorld.GameManager _GameManager;
 
         private Graphics.AnimatedSprite _BackgroundImage;
+        private Graphics.RegularSprite _Rafiki;
 
         public MainMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
         {
@@ -118,6 +119,10 @@ namespace CerealSquad.Menus
             _BackgroundImage.addAnimation((uint)Graphics.EStateEntity.IDLE, "MainMenuBackgroundImage", Enumerable.Range(0, 5).Select(s => (uint)s).ToList(), new Vector2u(800, 450), 200);
             _BackgroundImage.Loop = true;
             _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
+
+            Factories.TextureFactory.Instance.load("MainMenuRafiki", "Assets/Background/RafikiBlack.png");
+            _Rafiki = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("MainMenuRafiki"), new Vector2i(128, 128), new IntRect(0, 0, 512, 512));
+            _Rafiki.Position = new Vector2f(2 * _BackgroundImage.Size.X / 3 - 80, 2 * _BackgroundImage.Size.Y / 5);
         }
 
         private void _ExecuteAction()
@@ -230,6 +235,7 @@ namespace CerealSquad.Menus
         public override void Draw(RenderTarget target, RenderStates states)
         {
             target.Draw(_BackgroundImage, states);
+            target.Draw(_Rafiki, states);
             base.Draw(target, states);
         }
     }

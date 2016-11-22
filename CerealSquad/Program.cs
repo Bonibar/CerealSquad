@@ -16,10 +16,12 @@ namespace CerealSquad
         static void Main()
         {
             // Debug Clock Watcher
+#if DEBUG
             Debug.Time.Instance.DebugMode(Debug.Type.Info, true);
             Debug.Time.Instance.DebugMode(Debug.Type.Warning, true);
             Debug.Time.Instance.DebugMode(Debug.Type.Critical, true);
             Debug.Time.Instance.DebugMode(Debug.Type.Debug, true);
+#endif
 
             Debug.Time.Instance.StartTimer("Main", Debug.Type.Debug, false);
 
@@ -43,6 +45,7 @@ namespace CerealSquad
             Downloaders.TaskAwaiter awaiter = new Downloaders.TaskAwaiter();
             
             awaiter.Add(ftpDownloader.RequireFile("MainMenuBackground", "Assets/Background/MainMenuBackground.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/MainMenuBackground.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("MainMenuRafiki", "Assets/Background/RafikiBlack.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/RafikiBlack.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CutScene", "Assets/Background/cutscene_1024.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/cutscene_1024.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CutScene_Soundclip", "Assets/Music/intro_soundclip.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Music/intro_soundclip.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/TestTile.png"), false));
@@ -78,6 +81,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("SugarWall", "Assets/Trap/SugarWall.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Trap/SugarWall.png"), false));
 
             awaiter.Add(ftpDownloader.RequireFile("BearTrap", "Assets/Trap/Beartrap.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Trap/Beartrap.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("BlockRoom", "Assets/GameplayElement/Fire.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Fire.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Cursor", "Assets/Effects/Cursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Effects/Cursor.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CS_LockedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/select_test.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/unselect_test.png"), false));
