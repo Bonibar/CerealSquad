@@ -29,6 +29,7 @@ namespace CerealSquad.GameWorld
         }
 
         public enum e_RoomType { FightRoom, TransitionRoom };
+        public enum e_RoomState { Idle, Starting, Started, Finished }
 
         public WorldEntity WorldEntity { get; protected set; }
 
@@ -36,13 +37,15 @@ namespace CerealSquad.GameWorld
         public s_Pos<int> Position { get; private set; }
         public s_MapSize Size { get; private set; }
         public RegularSprite _RenderSprite { get; }
-        public bool HasSpawn { get; private set; }
+        public e_RoomState State { get; private set; }
 
         private RenderTexture _RenderTexture = null;
+        private float TimeSpawning = 1500;
         private RoomParser.s_room ParsedRoom = null;
         private EnvironmentResources er = new EnvironmentResources();
         private List<Crates> _Crates = new List<Crates>();
         private List<AEnemy> _Ennemies = new List<AEnemy>();
+        private List<RoomDoor> _Doors = new List<RoomDoor>();
 
         private Random _Rand = new Random();
         private Dictionary<int, int> _RespawnCrates = new Dictionary<int, int>();
@@ -60,7 +63,22 @@ namespace CerealSquad.GameWorld
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
             RoomType = ParsedRoom.Type;
-            HasSpawn = false;
+            State = e_RoomState.Idle;
+
+            foreach (var crate in ParsedRoom.Crates)
+            {
+                s_Pos<int> spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
+                bool isColliding = true;
+                while (isColliding)
+                {
+                    spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
+                    if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                        isColliding = false;
+                }
+                _Crates.Add(new Crates(WorldEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
+            }
+            if (RoomType == e_RoomType.FightRoom)
+                spawnEnnemies();
         }
 
         private void parseRoom()
@@ -78,24 +96,11 @@ namespace CerealSquad.GameWorld
 
         public void Start()
         {
-            if (!HasSpawn)
+            if (State == e_RoomState.Idle)
             {
-                foreach (var crate in ParsedRoom.Crates)
-                {
-                    s_Pos<int> spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
-                    bool isColliding = true;
-                    while (isColliding)
-                    {
-                        spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
-                        if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
-                            isColliding = false;
-                    }
-                    _Crates.Add(new Crates(WorldEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
-                }
+                State = e_RoomState.Starting;
                 if (RoomType == e_RoomType.FightRoom)
-                    spawnEnnemies();
-                _Ennemies.ForEach(i => i.Active = true);
-                HasSpawn = true;
+                    spawnDoors();
             }
         }
 
@@ -133,6 +138,11 @@ namespace CerealSquad.GameWorld
             }
         }
 
+        private void spawnDoors()
+        {
+            _Doors.Add(new RoomDoor(WorldEntity, new s_position(0, 7), this));
+        }
+
         private void spawnEnnemies()
         {
             foreach (var ennemy in ParsedRoom.Ennemies)
@@ -152,6 +162,22 @@ namespace CerealSquad.GameWorld
         public void Update(SFML.System.Time DeltaTime)
         {
             spawnCrates(DeltaTime);
+            if (State == e_RoomState.Starting)
+            {
+                if (TimeSpawning> 0)
+                    TimeSpawning -= DeltaTime.AsMilliseconds();
+                else
+                {
+                    _Ennemies.ForEach(i => i.Active = true);
+                    State = e_RoomState.Started;
+                }
+            }
+            else if (State == e_RoomState.Started && _Ennemies.Count == 0)
+            {
+                _Doors.ForEach(i => i.Die = true);
+                _Doors.Clear();
+                State = e_RoomState.Finished;
+            }
         }
 
         public void Draw(RenderTarget target, RenderStates states)

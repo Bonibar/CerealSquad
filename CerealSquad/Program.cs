@@ -77,6 +77,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("BombExploding", "Assets/Trap/BombExploading.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Trap/BombExploading.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("SugarWall", "Assets/Trap/SugarWall.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Trap/SugarWall.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("BearTrap", "Assets/Trap/Beartrap.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Trap/Beartrap.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("BlockRoom", "Assets/GameplayElement/Fire.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/GameplayElement/Fire.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Cursor", "Assets/Effects/Cursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Effects/Cursor.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CS_LockedChar", "Assets/Debug/select_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/select_test.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CS_SelectedChar", "Assets/Debug/unselect_test.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Debug/unselect_test.png"), false));
