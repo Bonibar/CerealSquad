@@ -108,6 +108,7 @@ namespace CerealSquad
             renderer.FrameRate = 60;
 
             InputManager.InputManager manager = new InputManager.InputManager(renderer);
+            manager.ResetKeyMaps();
             manager.KeyboardKeyPressed += Manager_KeyboardKeyPressed;
 
             GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);

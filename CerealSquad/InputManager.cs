@@ -438,6 +438,10 @@ namespace CerealSquad.InputManager
         {
             _KeyMaps.ForEach(x => x.LoadKeyMap());
         }
+        public void ResetKeyMaps()
+        {
+            _KeyMaps.ForEach(x => x.ResetKeyMap());
+        }
         public void SetAssociateFunction(int id, Player.Type type, int key, int function, bool isAxis = false)
         {
             Player.Player _current = _KeyMaps.Find(x => x.Type == type && x.Id == id);

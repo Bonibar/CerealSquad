@@ -50,9 +50,8 @@ namespace CerealSquad.TrapEntities
                 Trigger();
             else if (TimerDelete.Started && TimerDelete.IsTimerOver())
             {
-                // SHOULD BE GONE
-                getOwner().removeChild(this);
                 Die = true;
+                destroy();
             }
 
             if (Triggered)
