@@ -9,18 +9,16 @@ namespace CerealSquad.GameWorld
     {
         public class s_room
         {
-            public s_room(ARoom.e_RoomType type, Dictionary<s_Pos<uint>, t_cellcontent> cells, List<s_crate> crates, List<s_ennemy> ennemies)
+            public s_room(Dictionary<s_Pos<uint>, t_cellcontent> cells, List<s_crate> crates, List<s_ennemy> ennemies)
             {
-                Type = type;
                 Cells = cells;
                 Crates = crates;
                 Ennemies = ennemies;
             }
 
-            public ARoom.e_RoomType Type;
-            public Dictionary<s_Pos<uint>, t_cellcontent> Cells;
-            public List<s_crate> Crates;
-            public List<s_ennemy> Ennemies;
+            public Dictionary<s_Pos<uint>, t_cellcontent> Cells { get; }
+            public List<s_crate> Crates { get; }
+            public List<s_ennemy> Ennemies { get; }
         }
 
         public class s_crate
@@ -54,7 +52,8 @@ namespace CerealSquad.GameWorld
         {
             Normal = 0,
             Wall = 1,
-            Void = 2
+            Void = 2,
+            Door = 3
         }
 
         private static string FILE_HASHEDKEY = "58672f161bdbe31526fd8384909d4aa22b8fd91da8fce113ea083fbd6022e73e";
@@ -62,53 +61,6 @@ namespace CerealSquad.GameWorld
         private static bool checkHash(string line)
         {
             return line.Equals(FILE_HASHEDKEY);
-        }
-
-        private static ARoom.e_RoomType loadType(string[] lines)
-        {
-            ARoom.e_RoomType result = ARoom.e_RoomType.TransitionRoom;
-            uint startline = 0;
-            uint endline;
-
-            while (startline < lines.Length && !lines[startline].Equals("#define Infos"))
-                startline++;
-            startline++;
-
-            endline = startline;
-            while (endline < lines.Length && !lines[endline].Contains("#define"))
-                endline++;
-
-            if (endline == startline || startline >= lines.Length)
-                throw new FormatException("No informations defined");
-
-            uint findedLines = 0;
-            while (startline < endline)
-            {
-                if (lines[startline].Contains("Type:"))
-                {
-                    findedLines++;
-                    string[] _values = lines[startline].Split(':');
-                    if (_values.Length != 2)
-                        throw new FormatException("Wrong type info declaration");
-                    switch (_values[1].Trim())
-                    {
-                        case "Fighting Room":
-                            result = ARoom.e_RoomType.FightRoom;
-                            break;
-                        case "Transition Room":
-                            result = ARoom.e_RoomType.TransitionRoom;
-                            break;
-                    }
-                }
-                startline++;
-            }
-
-            if (findedLines < 1)
-                throw new FormatException("At least one type must be defined");
-            else if (findedLines > 1)
-                throw new FormatException("Only one type must be defined");
-
-            return result;
         }
 
         private static Dictionary<int, string> loadTiles(string[] lines)
@@ -315,9 +267,8 @@ namespace CerealSquad.GameWorld
             Dictionary<s_Pos<uint>, t_cellcontent> cells = loadRoom(lines, tiles);
             List<s_crate> traps = loadCrates(lines);
             List<s_ennemy> ennemies = loadEnnemies(lines);
-            ARoom.e_RoomType type = loadType(lines);
 
-            return new s_room(type, cells, traps, ennemies);
+            return new s_room(cells, traps, ennemies);
         }
     }
 }
