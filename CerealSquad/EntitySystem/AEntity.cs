@@ -127,7 +127,7 @@ namespace CerealSquad
             _children.Add(child);
         }
 
-        private bool NotInCircleRange(IEntity Sender, float Range)
+        protected bool NotInCircleRange(IEntity Sender, float Range)
         {
             double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
             if (ressourcesEntity != null)
@@ -156,7 +156,7 @@ namespace CerealSquad
             return (a + b) <= 1;
         }
 
-        private bool NotInEllipseRange(IEntity Sender, float RadiusX, float RadiusY)
+        protected bool NotInEllipseRange(IEntity Sender, float RadiusX, float RadiusY)
         {
             return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
         }
@@ -165,10 +165,6 @@ namespace CerealSquad
         {
             if (NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
                 return false;
-
-            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
-                && !((ATrap)this).Triggered)
-                ((ATrap)this).Trigger();
 
             return true;
         }

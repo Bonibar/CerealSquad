@@ -300,6 +300,7 @@ namespace CerealSquad.InputManager
                     _KeyMap.Add((int)Keyboard.Key.Q, 3);
                     _KeyMap.Add((int)Keyboard.Key.Space, 4);
                     _KeyMap.Add((int)Keyboard.Key.Escape, 6);
+                    _KeyMap.Add((int)Keyboard.Key.C, 7);
                 } else if (Type == Type.Keyboard && Id == 2)
                 {
                     _KeyMap.Add((int)Keyboard.Key.Numpad5, 0);
@@ -309,6 +310,7 @@ namespace CerealSquad.InputManager
                 } else if (Type == Type.Controller)
                 {
                     _KeyMap.Add(0, 4);
+                    _KeyMap.Add(1, 7);
                     _KeyMapAxis.Add((int)Joystick.Axis.X, 3);
                     _KeyMapAxis.Add((int)Joystick.Axis.Y, 0);
                 }

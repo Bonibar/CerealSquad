@@ -28,17 +28,20 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ressourcesEntity.AddAnimation((uint)SStateBearTrap.READY, "BearTrap", new List<uint> { 0 }, new Vector2u(128, 128));
-            ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1, 1, 1, 1 }, new Vector2u(128, 128));
             ressourcesEntity.CollisionBox = COLLISION_BOX;
         }
 
-        public override void Trigger()
+        public override void Trigger(bool delay = false)
         {
             ressourcesEntity.PlayAnimation((uint)SStateBearTrap.TRIGGERED);
+            Die = true;
         }
 
         public override void update(Time deltaTime, AWorld world)
         {
+            if (Die && !ressourcesEntity.Pause)
+                destroy();
             ressourcesEntity.Update(deltaTime);
         }
     }

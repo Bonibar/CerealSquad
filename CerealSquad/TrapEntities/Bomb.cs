@@ -57,7 +57,7 @@ namespace CerealSquad.TrapEntities
 
             if (Triggered)
             {
-                if (TimerTrigger.IsTimerOver())
+                if (TimerTrigger.IsTimerOver() || !TimerTrigger.Started)
                 {
                     if (state == 0)
                         StartExplosion();
@@ -92,10 +92,22 @@ namespace CerealSquad.TrapEntities
             state++;
         }
 
-        public override void Trigger()
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        {
+            if (base.NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
+                return false;
+
+            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+                && !Triggered)
+                Trigger(true);
+
+            return true;
+        }
+
+        public override void Trigger(bool delay = false)
         {
             Triggered = true;
-            if (!TimerTrigger.Started)
+            if (delay && !TimerTrigger.Started)
                 TimerTrigger.Start();
         }
     }
