@@ -50,20 +50,26 @@ namespace CerealSquad.EntitySystem
                 _r = 0;
                 s_position pos = getCoord(HitboxPos);
                 var position = ressourcesEntity.Position;
-
+                EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
-                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : -1;
+                left = left == -1 ? 1000 : left;
                 ressourcesEntity.Position = position;
-                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : 0;
+                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : -1;
+                right = right == -1 ? 1000 : right;
                 ressourcesEntity.Position = position;
-                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : -1;
+                top = top == -1 ? 1000 : top;
                 ressourcesEntity.Position = position;
-                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : -1;
+                bottom = bottom == -1 ? 1000 : bottom;
                 ressourcesEntity.Position = position;
+                int here = _scentMap.getScent(pos._x, pos._y);
+                here = here == -1 ? 1000 : here;
                 int minscent = Math.Min(top, Math.Min(bottom, Math.Min(right, left)));
                 _move = new List<EMovement> { EMovement.None };
 
-                if (minscent == 0)
+                if (minscent == 1000 || here <= minscent)
                 {
                     _move = new List<EMovement> { EMovement.Down, EMovement.Left, EMovement.Right, EMovement.Up };
                     _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
@@ -71,6 +77,7 @@ namespace CerealSquad.EntitySystem
                 }
                 else
                 {
+                    _move.Remove(EMovement.None);
                     if (minscent == top)
                         _move.Add(EMovement.Up);
                     if (minscent == bottom)
@@ -79,15 +86,17 @@ namespace CerealSquad.EntitySystem
                         _move.Add(EMovement.Right);
                     if (minscent == left)
                         _move.Add(EMovement.Left);
-                    if (_move.Count > 1)
-                        _move.Remove(EMovement.None);
-                    if (_move.Count > 1)
-                        _r = 1;
-                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    if (_move.Contains(lastMove))
+                    {
+                        _move = new List<EMovement> { lastMove };
+                    }
+                    else
+                    {
+                        _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    }
                 }
             }
         }
-
         public override void die()
         {
             if (_invuln <= 0)

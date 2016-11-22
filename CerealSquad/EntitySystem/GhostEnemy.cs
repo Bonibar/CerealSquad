@@ -50,6 +50,7 @@ namespace CerealSquad.EntitySystem
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
+            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
             bool result = false;
 
             CollidingEntities.ForEach(i =>
@@ -60,7 +61,7 @@ namespace CerealSquad.EntitySystem
                     i.die();
             });
 
-            return result;
+            return result || baseResult;
         }
 
         public override void think(AWorld world, Time deltaTime)
@@ -77,7 +78,7 @@ namespace CerealSquad.EntitySystem
                 _r = 0;
                 s_position pos = getCoord(HitboxPos);
                 var position = ressourcesEntity.Position;
-
+                EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
                 int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
                 ressourcesEntity.Position = position;
@@ -113,11 +114,16 @@ namespace CerealSquad.EntitySystem
                         _move.Add(EMovement.Right);
                     if (maxscent == left)
                         _move.Add(EMovement.Left);
-                    if (_move.Count > 1)
-                        _move.Remove(EMovement.None);
-                    if (_move.Count > 1)
+                    _move.Remove(EMovement.None);
+                    if (_move.Contains(lastMove))
+                    {
+                        _move = new List<EMovement> { lastMove };
+                    }
+                    else
+                    {
+                        _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                         _r = 10;
-                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    }
                 }
             }
         }
@@ -131,14 +137,16 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                if (Active)
                 {
-                    _scentMap.update((WorldEntity)_owner, _room);
-                    think(world, deltaTime);
+                    if (Active)
+                    {
+                        _scentMap.update((WorldEntity)_owner, _room);
+                        think(world, deltaTime);
+                    }
+                    move(world, deltaTime);
                 }
-                move(world, deltaTime);
+                _ressources.Update(deltaTime);
             }
-            _ressources.Update(deltaTime);
         }
     }
 }

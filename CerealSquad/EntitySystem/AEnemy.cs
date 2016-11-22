@@ -30,11 +30,6 @@ namespace CerealSquad
             Active = false;
         }
 
-        public virtual void attack()
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
@@ -52,7 +47,7 @@ namespace CerealSquad
 
             return result || baseResult;
         }
-
+        
         public abstract void think(AWorld world, Time deltaTime);
 
         public s_position getCoord(s_position pos)
@@ -90,7 +85,16 @@ namespace CerealSquad
             result &= executeRightMove(zone, Speed * deltaTime.AsSeconds());
             result &= executeUpMove(zone, Speed * deltaTime.AsSeconds());
             result &= executeDownMove(zone, Speed * deltaTime.AsSeconds());
+            if (!result)
+                _move = new List<EMovement> { EMovement.None };
             return (!_move.Contains(EMovement.None) && result);
+        }
+
+        public override bool inRoom(s_position pos)
+        {
+            bool result = pos._trueX < _room.Position.X + _room.Size.Width && pos._trueX >= _room.Position.X
+                && pos._trueY < _room.Position.Y + _room.Size.Width && pos._trueY >= _room.Position.Y;
+            return result;
         }
 
         protected class scentMap
@@ -209,14 +213,12 @@ namespace CerealSquad
                 if (x >= 0 && x < _x && y >= 0 && y < _y)
                 {
                     int scent = 0;
-                    if (_map[x][y][0] != -1)
-                        scent += _map[x][y][0];
-                    if (_map[x][y][1] != -1)
-                        scent += _map[x][y][1];
-                    if (_map[x][y][2] != -1)
-                        scent += _map[x][y][2];
-                    if (_map[x][y][3] != -1)
-                        scent += _map[x][y][3];
+                    scent += _map[x][y][0];
+                    scent += _map[x][y][1];
+                    scent += _map[x][y][2];
+                    scent += _map[x][y][3];
+                    if (scent < 0)
+                        scent = -1;
                     return (scent);
                 }
                 return (-1);

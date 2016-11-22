@@ -41,14 +41,7 @@ namespace CerealSquad
 
         public override void AttaqueSpe()
         {
-            Console.Out.Write(Pos._trueX);
-            Console.Out.Write(" ");
-            Console.Out.Write(Pos._trueY);
-            Console.Out.Write(" ");
-            Console.Out.Write(_ressources.Position.X);
-            Console.Out.Write(" ");
-            Console.Out.Write(_ressources.Position.Y);
-            Console.Out.Write("\n");
+            m_debug = !m_debug;
         }
 
         public override EName getName()

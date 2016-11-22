@@ -6,6 +6,7 @@ using SFML.System;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using CerealSquad.EntitySystem.Projectiles;
 
 namespace CerealSquad.EntitySystem
 {
@@ -52,7 +53,8 @@ namespace CerealSquad.EntitySystem
                 _r = 0;
                 s_position pos = getCoord(HitboxPos);
                 var position = ressourcesEntity.Position;
-
+                
+                EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
                 int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
                 ressourcesEntity.Position = position;
@@ -88,11 +90,16 @@ namespace CerealSquad.EntitySystem
                         _move.Add(EMovement.Right);
                     if (maxscent == left)
                         _move.Add(EMovement.Left);
-                    if (_move.Count > 1)
-                        _move.Remove(EMovement.None);
-                    if (_move.Count > 1)
+                    _move.Remove(EMovement.None);
+                    if (_move.Contains(lastMove))
+                    {
+                        _move = new List<EMovement> { lastMove };
+                    }
+                    else
+                    {
+                        _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                         _r = 10;
-                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    }
                 }
             }
         }
@@ -103,6 +110,10 @@ namespace CerealSquad.EntitySystem
             double deltaY = 0;
             bool result = false;
             bool end = false;
+            s_position pos = getCoord(Pos);
+
+            if (_attackCoolDown > 0)
+                return (false);
 
             switch (_move[0])
             {
@@ -119,24 +130,29 @@ namespace CerealSquad.EntitySystem
                     deltaX = -0.5;
                     break;
             }
-            for (int i = 0; i < 30; i += 1)
+            world.GetAllEntities().ForEach(ent =>
             {
-                world.GetAllEntities().ForEach(ent =>
+                if (ent.getEntityType() == e_EntityType.Player)
                 {
-                    if (IsInEllipse(Pos._trueX + deltaX * i, Pos._trueY + deltaY * i, ent.Pos._trueX, ent.Pos._trueY, 0.5, 0.5))
-                        result = true;
-                    if (_room.getPosition((uint)(Pos._trueX + deltaX * i), (uint)(Pos._trueY + deltaY * i)) == RoomParser.e_CellType.Wall)
-                        end = true;
-                });
-                if (result || end)
-                    break;
-            }
-            return (false);
+                    for (int i = 0; i < 15; i += 1)
+                    {
+                        if (IsInEllipse(Pos._trueX + deltaX * i, Pos._trueY + deltaY * i, ent.HitboxPos._trueX, ent.Pos._trueY, 0.2, 0.2))
+                            result = true;
+                        if (_room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Wall
+                        || _room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Void)
+                            end = true;
+                        if (result || end)
+                            break;
+                    }
+                }
+            });
+            return (result);
         }
-
-        public override void attack()
+        
+        protected void attack()
         {
             _attackCoolDown = 5;
+            new RiceProjectile(_owner, _move[0], HitboxPos);
             //
             // TODO Alpha implement
             //

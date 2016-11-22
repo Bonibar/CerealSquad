@@ -83,8 +83,8 @@ namespace CerealSquad.EntitySystem
             }
             _ressources.Update(deltaTime);
         }
-
-        public override void attack()
+        
+        protected void attack()
         {
             _attackCoolDown = 5;
             _attackCoolDownUltime = 30;
@@ -107,7 +107,7 @@ namespace CerealSquad.EntitySystem
                 _r = 0;
                 s_position pos = getCoord(HitboxPos);
                 var position = ressourcesEntity.Position;
-
+                EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
                 int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
                 ressourcesEntity.Position = position;
@@ -142,11 +142,16 @@ namespace CerealSquad.EntitySystem
                         _move.Add(EMovement.Right);
                     if (maxscent == left)
                         _move.Add(EMovement.Left);
-                    if (_move.Count > 1)
-                        _move.Remove(EMovement.None);
-                    if (_move.Count > 1)
+                    _move.Remove(EMovement.None);
+                    if (_move.Contains(lastMove))
+                    {
+                        _move = new List<EMovement> { lastMove };
+                    }
+                    else
+                    {
+                        _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                         _r = 10;
-                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    }
                 }
             }
             if (_attackCoolDownUltime <= 0)
