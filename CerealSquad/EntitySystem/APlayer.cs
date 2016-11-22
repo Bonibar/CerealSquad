@@ -46,6 +46,7 @@ namespace CerealSquad
         private bool _center;
         private bool _moveTo;
         private s_position _moveToPos;
+        public bool FinishedMovement;
 
         protected enum ETrapPuting
         {
@@ -76,6 +77,7 @@ namespace CerealSquad
             _type = e_EntityType.Player;
             _center = false;
             _moveTo = false;
+            FinishedMovement = true;
 
             _specialActive = false;
             _weight = 1;
@@ -255,6 +257,7 @@ namespace CerealSquad
             _speed = 3;
             _center = true;
             _moveToPos = pos;
+            FinishedMovement = false;
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
@@ -323,6 +326,7 @@ namespace CerealSquad
                     _moveTo = false;
                     BlockInputs = false;
                     MoveStack.Clear();
+                    FinishedMovement = true;
                     _speed = 5;
                 }
                 else
