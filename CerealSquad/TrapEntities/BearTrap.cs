@@ -21,6 +21,7 @@ namespace CerealSquad.TrapEntities
         public BearTrap(IEntity owner) : base(owner, e_DamageType.TRUE_DAMAGE, 0)
         {
             TrapType = e_TrapType.BEAR_TRAP;
+            Cooldown = Time.FromSeconds(0.2f);
             Factories.TextureFactory.Instance.load("BearTrap", "Assets/Trap/Beartrap.png");
 
             ressourcesEntity = new Graphics.EntityResources();
