@@ -13,9 +13,9 @@ namespace CerealSquad.EntitySystem.Projectiles
 {
     class RiceProjectile : AProjectile
     {
-        public RiceProjectile(IEntity owner, EMovement direction) : base(owner, direction)
+        public RiceProjectile(IEntity owner, EMovement direction, s_position pos) : base(owner, direction)
         {
-            Speed = 5;
+            Speed = 10;
             Factories.TextureFactory.Instance.load("RiceProjectile", "Assets/Enemies/Normal/Rice.png");
             ressourcesEntity = new Graphics.EntityResources();
             _ressources.InitializationAnimatedSprite(new Vector2u(10, 10));
@@ -24,8 +24,10 @@ namespace CerealSquad.EntitySystem.Projectiles
             _ressources.AddAnimation(1, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
             _ressources.AddAnimation(2, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
             _ressources.AddAnimation(3, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
+            _ressources.AddAnimation(4, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(5f, 5f), new Vector2f(5f, 5f));
+            Pos = pos;
         }
 
         public override void update(Time deltaTime, AWorld world)
@@ -60,8 +62,10 @@ namespace CerealSquad.EntitySystem.Projectiles
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() != e_EntityType.Player)
+                if (i.getEntityType() != e_EntityType.EnnemyTrap && i.getEntityType() != e_EntityType.Ennemy)
                     result = true;
+                if (i.getEntityType() == e_EntityType.Player)
+                    i.die();
             });
 
             if (baseResult || result)

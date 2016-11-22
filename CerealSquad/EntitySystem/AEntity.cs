@@ -357,10 +357,6 @@ namespace CerealSquad
         public virtual void die()
         {
             _die = true;
-            //
-            // TODO add Dying animation
-            //
-            //_ressources.PlayAnimation((uint)EStateEntity.DYING);
             _ressources.Loop = false;
         }
 

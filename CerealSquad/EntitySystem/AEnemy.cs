@@ -47,7 +47,7 @@ namespace CerealSquad
 
             return result || baseResult;
         }
-
+        
         public abstract void think(AWorld world, Time deltaTime);
 
         public s_position getCoord(s_position pos)
