@@ -76,7 +76,7 @@ namespace CerealSquad
 
 
         private Dictionary<EResolution, SResolution> resolutionContext = new Dictionary<EResolution, SResolution>();
-        private View currentView;
+        public View currentView { get; private set; }
         #endregion
 
         #region Event
