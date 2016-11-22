@@ -29,15 +29,14 @@ namespace CerealSquad.EntitySystem
         public EStep Step { get; private set; }
         public EMovement Target { get; private set; }
         public bool IsTargetValid { get; private set; }
-
+        public float MaxCooldownTrap { get { return TimerCoolDown.Time.AsMilliseconds(); } }
+        public float CurrentCooldownTrap { get { return TimerCoolDown.Current.AsMilliseconds(); } }
 
         private EntityResources ResourcesEntity = new EntityResources();
 
         private APlayer Player;
-        private Timer TimerCoolDown = new Timer(Time.FromSeconds(0.1f));
-        private Timer TimerToPut = new Timer(Time.FromSeconds(1f));
-
-        public Time Cooldown { get { return TimerCoolDown.Time; } set { TimerCoolDown.Time = value; } }
+        private Timer TimerCoolDown = new Timer(Time.Zero);
+        private Timer TimerToPut;
 
         public TrapDeliver(APlayer player)
         {
@@ -62,6 +61,8 @@ namespace CerealSquad.EntitySystem
 
         public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
+            if (TimerToPut == null)
+                TimerToPut = new Timer(Time.FromSeconds(0.4f * World.WorldEntity.PlayerNumber));
             Processing(Input, World, TrapPressed);
             ResourcesEntity.Update(DeltaTime);
         }
@@ -71,6 +72,7 @@ namespace CerealSquad.EntitySystem
             // Player have nothing to put on map.
             if (Player.TrapInventory.Equals(e_TrapType.NONE))
                 return;
+
 
             ResourcesEntity.CollisionBox = Factories.TrapFactory.GetCollisionBox(Player.TrapInventory);
 
@@ -129,11 +131,10 @@ namespace CerealSquad.EntitySystem
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
                     Player.addChild(trap);
+                    TimerCoolDown = new Timer(trap.Cooldown);
+                    TimerCoolDown.Start();
                 }
                 Step = EStep.NOTHING;
-                // Restart timer to launch cooldown
-                if (IsTargetValid)
-                    TimerCoolDown.Start();
             }
         }
 

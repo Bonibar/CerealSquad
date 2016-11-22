@@ -10,6 +10,13 @@ namespace CerealSquad
     class Timer
     {
         public Time Time { get; set; }
+        public Time Current {  get {
+                if (_Start && TimerClock.ElapsedTime + _PausedTime <= Time)
+                        return TimerClock.ElapsedTime + _PausedTime;
+                if (TimerClock.ElapsedTime + _PausedTime >= Time)
+                    return Time;
+                return Time.Zero;
+            } }
 
         private Clock TimerClock = new Clock();
         private bool _Start = false;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFML.System;
 
 namespace CerealSquad
 {
@@ -12,6 +13,7 @@ namespace CerealSquad
         public e_TrapType TrapType { get; protected set; }
         public float Range { get; protected set; }
         public bool Triggered { get; protected set; }
+        public Time Cooldown { get; protected set; }
 
         public abstract void Trigger();
 

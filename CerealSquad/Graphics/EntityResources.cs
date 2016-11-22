@@ -65,6 +65,21 @@ namespace CerealSquad.Graphics
             }
         }
 
+        public bool Pause
+        {
+            get
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                    return (((AnimatedSprite)sprite).Pause);
+                return (false);
+            }
+            set
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                    ((AnimatedSprite)sprite).Pause = value;
+            }
+        }
+
         private FloatRect geCollisionBox()
         {
             if (_CollisionBoxDefault)

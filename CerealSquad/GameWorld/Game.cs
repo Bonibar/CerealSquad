@@ -111,6 +111,7 @@ namespace CerealSquad.GameWorld
             }
 
             _InputManager.KeyboardKeyPressed += Im_KeyboardKeyPressed;
+            WorldEntity.PlayerNumber = Players.Count;
         }
 
         private void Im_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
