@@ -58,9 +58,11 @@ namespace CerealSquad.GameWorld
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
             _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
             parseRoom();
+            RoomType = ParsedRoom.Type;
             for (int i = 0; i < ParsedRoom.Crates.Count; i++)
                 _RespawnCrates.Add(i, -1);
-            spawnEnnemies();
+            if (RoomType == e_RoomType.FightRoom)
+                spawnEnnemies();
         }
 
         private void parseRoom()
