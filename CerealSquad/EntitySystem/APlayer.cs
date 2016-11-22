@@ -43,6 +43,9 @@ namespace CerealSquad
         public int Id { get; protected set; }
 
         public bool BlockInputs = false;
+        private bool _center;
+        private bool _moveTo;
+        private s_position _moveToPos;
 
         protected enum ETrapPuting
         {
@@ -71,6 +74,8 @@ namespace CerealSquad
         {
             _pos = position;
             _type = e_EntityType.Player;
+            _center = false;
+            _moveTo = false;
 
             _specialActive = false;
             _weight = 1;
@@ -98,59 +103,65 @@ namespace CerealSquad
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Keyboard, ((int)e.KeyCode));
-
-            switch (action)
+            if (!BlockInputs)
             {
-                case SKeyPlayer.MOVE_UP:
-                    MoveStack.Remove(EMovement.Up);
-                    break;
-                case SKeyPlayer.MOVE_DOWN:
-                    MoveStack.Remove(EMovement.Down);
-                    break;
-                case SKeyPlayer.MOVE_LEFT:
-                    MoveStack.Remove(EMovement.Left);
-                    break;
-                case SKeyPlayer.MOVE_RIGHT:
-                    MoveStack.Remove(EMovement.Right);
-                    break;
-                case SKeyPlayer.PUT_TRAP:
-                    TrapPressed = false;
-                    break;
-                case SKeyPlayer.SPATTACK:
-                    _specialActive = false;
-                    break;
-                default:
-                    break;
+                SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Keyboard, ((int)e.KeyCode));
+
+                switch (action)
+                {
+                    case SKeyPlayer.MOVE_UP:
+                        MoveStack.Remove(EMovement.Up);
+                        break;
+                    case SKeyPlayer.MOVE_DOWN:
+                        MoveStack.Remove(EMovement.Down);
+                        break;
+                    case SKeyPlayer.MOVE_LEFT:
+                        MoveStack.Remove(EMovement.Left);
+                        break;
+                    case SKeyPlayer.MOVE_RIGHT:
+                        MoveStack.Remove(EMovement.Right);
+                        break;
+                    case SKeyPlayer.PUT_TRAP:
+                        TrapPressed = false;
+                        break;
+                    case SKeyPlayer.SPATTACK:
+                        _specialActive = false;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         private void Input_KeyboardKeyPressed(object source, KeyEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Keyboard, ((int)e.KeyCode));
-
-            switch (action)
+            if (!BlockInputs)
             {
-                case SKeyPlayer.MOVE_UP:
-                    MoveStack.Add(EMovement.Up);
-                    break;
-                case SKeyPlayer.MOVE_DOWN:
-                    MoveStack.Add(EMovement.Down);
-                    break;
-                case SKeyPlayer.MOVE_LEFT:
-                    MoveStack.Add(EMovement.Left);
-                    break;
-                case SKeyPlayer.MOVE_RIGHT:
-                    MoveStack.Add(EMovement.Right);
-                    break;
-                case SKeyPlayer.PUT_TRAP:
-                    TrapPressed = true;
-                    break;
-                case SKeyPlayer.SPATTACK:
-                    _specialActive = true;
-                    break;
-                default:
-                    break;
+                SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Keyboard, ((int)e.KeyCode));
+
+                switch (action)
+                {
+                    case SKeyPlayer.MOVE_UP:
+                        MoveStack.Add(EMovement.Up);
+                        break;
+                    case SKeyPlayer.MOVE_DOWN:
+                        MoveStack.Add(EMovement.Down);
+                        break;
+                    case SKeyPlayer.MOVE_LEFT:
+                        MoveStack.Add(EMovement.Left);
+                        break;
+                    case SKeyPlayer.MOVE_RIGHT:
+                        MoveStack.Add(EMovement.Right);
+                        break;
+                    case SKeyPlayer.PUT_TRAP:
+                        TrapPressed = true;
+                        break;
+                    case SKeyPlayer.SPATTACK:
+                        _specialActive = true;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -166,56 +177,65 @@ namespace CerealSquad
 
         private void Input_JoystickButtonReleased(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
-
-            switch (action)
+            if (!BlockInputs)
             {
-                case SKeyPlayer.PUT_TRAP:
-                    TrapPressed = false;
-                    break;
-                default:
-                    break;
+                SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+
+                switch (action)
+                {
+                    case SKeyPlayer.PUT_TRAP:
+                        TrapPressed = false;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         private void Input_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
-
-            switch (action)
+            if (!BlockInputs)
             {
-                case SKeyPlayer.PUT_TRAP:
-                    TrapPressed = true;
-                    break;
-                default:
-                    break;
+                SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
+
+                switch (action)
+                {
+                    case SKeyPlayer.PUT_TRAP:
+                        TrapPressed = true;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         private void Input_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
-            SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
-
-            switch (action)
+            if (!BlockInputs)
             {
-                case SKeyPlayer.MOVE_UP:
-                    MoveStack.Remove(EMovement.Up);
-                    MoveStack.Remove(EMovement.Down);
-                    if (e.Position > 30)
-                        MoveStack.Add(EMovement.Down);
-                    else if (e.Position < -30)
-                        MoveStack.Add(EMovement.Up);
-                    break;
-                case SKeyPlayer.MOVE_LEFT:
-                    MoveStack.Remove(EMovement.Left);
-                    MoveStack.Remove(EMovement.Right);
-                    if (e.Position > 30)
-                        MoveStack.Add(EMovement.Right);
-                    else if (e.Position < -30)
-                        MoveStack.Add(EMovement.Left);
-                    break;
-                default:
-                    break;
+                SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
+
+                switch (action)
+                {
+                    case SKeyPlayer.MOVE_UP:
+                        MoveStack.Remove(EMovement.Up);
+                        MoveStack.Remove(EMovement.Down);
+                        if (e.Position > 30)
+                            MoveStack.Add(EMovement.Down);
+                        else if (e.Position < -30)
+                            MoveStack.Add(EMovement.Up);
+                        break;
+                    case SKeyPlayer.MOVE_LEFT:
+                        MoveStack.Remove(EMovement.Left);
+                        MoveStack.Remove(EMovement.Right);
+                        if (e.Position > 30)
+                            MoveStack.Add(EMovement.Right);
+                        else if (e.Position < -30)
+                            MoveStack.Add(EMovement.Left);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -229,12 +249,24 @@ namespace CerealSquad
             base.move(world, deltaTime);
         }
 
+        public void moveTo(s_position pos)
+        {
+            BlockInputs = true;
+            _speed = 3;
+            _center = true;
+            _moveToPos = pos;
+        }
+
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             if (!_die)
             {
                 if (_specialActive)
                     AttaqueSpe();
+                if (_center)
+                    center();
+                if (_moveTo)
+                    moveToPos();
                 move(world, deltaTime);
                 TrapDeliver.Update(deltaTime, world, MoveStack, TrapPressed);
             }
@@ -245,6 +277,86 @@ namespace CerealSquad
             }
             _ressources.Update(deltaTime);
             _children.ToList().ForEach(i => i.update(deltaTime, world));
+        }
+
+        private void center()
+        {
+            if (Math.Abs(_pos._trueX - _pos._x) < 0.1 && Math.Abs(_pos._trueY - _pos._y) < 0.1)
+            {
+                _center = false;
+                _moveTo = true;
+            }
+            else if (Math.Abs(_pos._trueX - _pos._x) > 0.1)
+            {
+                if (_pos._trueX - _pos._x < 0)
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Right);
+                }
+                else
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Left);
+                }
+            }
+            else
+            {
+                if (_pos._trueY - _pos._y < 0)
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Down);
+                }
+                else
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Up);
+                }
+            }
+        }
+
+        private void moveToPos()
+        {
+            if (Math.Abs(_pos._x - _moveToPos._x) == 0 && Math.Abs(_pos._y - _moveToPos._y) == 0)
+            {
+                if (Math.Abs(_pos._trueX - _pos._x) < 0.1 && Math.Abs(_pos._trueY - _pos._y) < 0.1)
+                {
+                    _moveTo = false;
+                    BlockInputs = false;
+                    MoveStack.Clear();
+                    _speed = 5;
+                }
+                else
+                {
+                    _center = true;
+                    _moveTo = false;
+                }
+            }
+            else if (Math.Abs(_pos._x - _moveToPos._x) != 0)
+            {
+                if (_pos._trueX - _moveToPos._x < 0)
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Right);
+                }
+                else
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Left);
+                }
+            }
+            else
+            {
+                if (_pos._trueY - _moveToPos._y < 0)
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Down);
+                }
+                else
+                {
+                    MoveStack.Clear();
+                    MoveStack.Add(EMovement.Up);
+                }
+            }
         }
 
         public abstract void AttaqueSpe();

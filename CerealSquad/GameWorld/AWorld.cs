@@ -36,7 +36,7 @@ namespace CerealSquad.GameWorld
 
         public void ChangeRoom(ARoom room)
         {
-            CurrentRoom = room=
+            CurrentRoom = room;
             room.Start();
         }
 
