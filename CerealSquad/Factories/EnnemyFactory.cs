@@ -9,9 +9,9 @@ namespace CerealSquad.Factories
 {
     static class EnnemyFactory
     {
-        public static IEntity CreateEnnemy(IEntity owner, s_Pos<int> pos, GameWorld.ARoom room, e_EnnemyType type)
+        public static AEnemy CreateEnnemy(IEntity owner, s_Pos<int> pos, GameWorld.ARoom room, e_EnnemyType type)
         {
-            IEntity result = null;
+            AEnemy result = null;
             switch (type)
             {
                 case e_EnnemyType.Egg:

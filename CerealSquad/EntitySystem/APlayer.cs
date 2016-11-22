@@ -42,6 +42,8 @@ namespace CerealSquad
         public int TypeInput { get; set; }
         public int Id { get; protected set; }
 
+        public bool BlockInputs = false;
+
         protected enum ETrapPuting
         {
             NO_PUTTING = 0,
@@ -72,7 +74,7 @@ namespace CerealSquad
 
             _specialActive = false;
             _weight = 1;
-            TrapDeliver = new EntitySystem.TrapDeliver(this);
+            TrapDeliver = new TrapDeliver(this);
 
             TypeInput = type;
             Id = id;

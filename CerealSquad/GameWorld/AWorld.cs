@@ -10,7 +10,7 @@ namespace CerealSquad.GameWorld
 {
     class AWorld : Drawable
     {
-        public ARoom CurrentRoom { get; }
+        public ARoom CurrentRoom { get; protected set; }
         protected List<ARoom> Rooms = new List<ARoom>();
         public WorldEntity WorldEntity { get; protected set; }
 
@@ -34,9 +34,10 @@ namespace CerealSquad.GameWorld
                 Rooms.Add(room);
         }
 
-        public void ChangeRoom(s_Pos<int> playerCoord)
+        public void ChangeRoom(ARoom room)
         {
-            throw new NotImplementedException("ChangeRoom()");
+            CurrentRoom = room;
+            room.Start();
         }
 
         public void Draw(RenderTarget target, RenderStates states)
@@ -52,7 +53,11 @@ namespace CerealSquad.GameWorld
             {
                 if (x >= room.Position.X && x < room.Position.X + room.Size.Width &&
                 y >= room.Position.Y && y < room.Position.Y + room.Size.Height)
+                {
+                    if (room != CurrentRoom)
+                        ChangeRoom(room);
                     return room.getPosition((uint)(x - room.Position.X), (uint)(y - room.Position.Y));
+                }
             }
             return (RoomParser.e_CellType.Void);
         }

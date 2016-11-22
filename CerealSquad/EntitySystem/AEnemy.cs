@@ -18,7 +18,7 @@ namespace CerealSquad
 
         protected int _r;
 
-        public bool active { get; set; }
+        public bool Active { get; set; }
 
         public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {
@@ -27,7 +27,7 @@ namespace CerealSquad
             _room = room;
             _rand = new Random();
             _r = 0;
-            active = true;
+            Active = false;
         }
 
         public virtual void attack()

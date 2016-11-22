@@ -34,7 +34,8 @@ namespace CerealSquad
         EnnemyTrap,
         World,
         Crate,
-        Projectile
+        Projectile,
+        Room
     }
 
     public enum e_EnnemyType
