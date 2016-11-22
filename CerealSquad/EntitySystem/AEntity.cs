@@ -32,6 +32,8 @@ namespace CerealSquad
         protected float _inputForce;
         protected EntityResources _ressources;
 
+        protected static bool m_debug = false; // Capitain obvious: use for the debug with breakpoint
+
         public s_position Pos
         {
             get
@@ -222,6 +224,11 @@ namespace CerealSquad
             return false;
         }
 
+        public virtual bool inRoom(s_position pos)
+        {
+            return true;
+        }
+
         #region Move
         protected bool executeRightMove(AWorld world, double speedMove, bool PerformMovement = false)
         {
@@ -230,7 +237,7 @@ namespace CerealSquad
                 var OldResourcePosition = _ressources.Position;
                 s_position NewPosition = Pos + new s_position(speedMove, 0, 0);
                 _ressources.Position = EntityPositionToResourcesEntityPosition(NewPosition);
-                if (IsColliding(world))
+                if (IsColliding(world) || !inRoom(NewPosition))
                 {
                     _ressources.Position = OldResourcePosition;
                     return false;
