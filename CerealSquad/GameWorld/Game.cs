@@ -50,9 +50,13 @@ namespace CerealSquad.GameWorld
 
             State = GameState.Running;
 
+#if !DEBUG
             Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
             intro.Ended += Intro_Ended;
             Menus.MenuManager.Instance.AddMenu(intro);
+#else
+            characterSelection();
+#endif
             _GameOverTimer.Elapsed += _GameOverTimer_Elapsed;
         }
 
