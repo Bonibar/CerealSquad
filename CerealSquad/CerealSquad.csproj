@@ -83,7 +83,6 @@
     <Compile Include="Downloaders\IDownloader.cs" />
     <Compile Include="Downloaders\LoadingScreen.cs" />
     <Compile Include="Downloaders\TaskAwaiter.cs" />
-    <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />
     <Compile Include="EntitySystem\AEntity.cs" />
     <Compile Include="EntitySystem\APlayer.cs" />
@@ -100,9 +99,13 @@
     <Compile Include="EntitySystem\JackEnnemy.cs" />
     <Compile Include="EntitySystem\Mike.cs" />
     <Compile Include="EntitySystem\Orangina.cs" />
+    <Compile Include="EntitySystem\Projectiles\AProjectile.cs" />
+    <Compile Include="EntitySystem\Projectiles\RiceProjectile.cs" />
     <Compile Include="EntitySystem\Tchong.cs" />
     <Compile Include="EntitySystem\WorldEntity.cs" />
     <Compile Include="EntitySystem\Crates.cs" />
+    <Compile Include="Factories\TrapFactory.cs" />
+    <Compile Include="Factories\EnnemyFactory.cs" />
     <Compile Include="GameWorld\ARoom.cs" />
     <Compile Include="GameWorld\Game.cs" />
     <Compile Include="GameWorld\AWorld.cs" />
@@ -115,6 +118,8 @@
     <Compile Include="Menus\CharacterSelectMenu.cs" />
     <Compile Include="Menus\MainMenu.cs" />
     <Compile Include="Menus\Menu.cs" />
+    <Compile Include="Menus\GameOverMenu.cs" />
+    <Compile Include="Menus\IntroCutscene.cs" />
     <Compile Include="Factories\FontFactory.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
     <Compile Include="Graphics\EntityResources.cs" />

@@ -67,7 +67,7 @@ namespace CerealSquad.Graphics
                         _Trap.Position = new SFML.System.Vector2f(_Character.Position.X + 163, _Character.Position.Y + 38);
                         break;
                     case e_TrapType.WALL:
-                        _Trap = new RegularSprite(Factories.TextureFactory.Instance.getTexture("HUD_ICON_Wall"), new SFML.System.Vector2i(50, 50), new IntRect(0, 0, 128, 128));
+                        _Trap = new RegularSprite(Factories.TextureFactory.Instance.getTexture("HUD_ICON_Wall"), new SFML.System.Vector2i(50, 50), new IntRect(64 * 6, 0, 64, 64));
                         _Trap.Position = new SFML.System.Vector2f(_Character.Position.X + 163, _Character.Position.Y + 38);
                         break;
                     default:

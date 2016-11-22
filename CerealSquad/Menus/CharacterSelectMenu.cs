@@ -87,7 +87,7 @@ namespace CerealSquad.Menus
                 var listFrame = Enumerable.Range(0 + (int)(_Id * 11), 11).Select(p => (uint)p).ToList();
                 _Cursor.addAnimation(0, "CS_Cursor", listFrame.Concat(listFrame.OrderByDescending(x => x)).ToList(), new Vector2u(64, 64), 50);
                 _Cursor.Loop = true;
-                }
+            }
 
             public Player(uint id, Renderer renderer)
             {
@@ -350,6 +350,7 @@ namespace CerealSquad.Menus
 
     class CharacterSelectMenu : Menu, Drawable
     {
+        #region Event
         public delegate void CharacterSelectionEventHandler(object source, CharacterSelectionArgs e);
 
         public class CharacterSelectionArgs
@@ -363,9 +364,40 @@ namespace CerealSquad.Menus
         }
 
         /// <summary>
-        /// Event fired when a Game is started
+        /// Event fired when Character Selection is completed
         /// </summary>
         public event CharacterSelectionEventHandler GameStart;
+        /// <summary>
+        /// Event fired when Character Selection is cancelled
+        /// </summary>
+        public event CharacterSelectionEventHandler MenuExit;
+        #endregion
+
+        class ExitCharacterSelectMenu : MenuItem
+        {
+            private Action _ExitEventAction;
+
+            public ExitCharacterSelectMenu(Action exitEventAction) : base(ItemType.KeyBinded, InputManager.Keyboard.Key.Escape, 1)
+            {
+                if (exitEventAction == null)
+                    throw new ArgumentNullException("Fire Exit Event cannot be null");
+
+                _ExitEventAction = exitEventAction;
+            }
+
+            public override void Select(bool select)
+            {
+                base.Select(select);
+                if (select == false)
+                {
+                    _ExitEventAction();
+                }
+            }
+
+            public override void Draw(RenderTarget target, RenderStates states)
+            {
+            }
+        }
 
         public static uint PLAYER_COUNT = 4;
         public static uint CHARACTER_COUNT = 4;
@@ -380,9 +412,7 @@ namespace CerealSquad.Menus
         private Graphics.AnimatedSprite _BackgroundImage;
         private Characters.Character[] _Characters;
 
-        private InputManager.InputManager _InputManager;
-
-        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager)
+        public CharacterSelectMenu(Renderer renderer, InputManager.InputManager inputManager): base(inputManager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
@@ -390,7 +420,6 @@ namespace CerealSquad.Menus
                 throw new ArgumentNullException("InputManager cannot be null");
 
             _Renderer = renderer;
-            _InputManager = inputManager;
 
             _Characters = new Characters.Character[CHARACTER_COUNT];
             _Characters[0] = new Characters.Mike(_Renderer);
@@ -427,6 +456,8 @@ namespace CerealSquad.Menus
             _InputManager.JoystickMoved += _InputManager_JoystickMoved;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
+
+            _menuList.Add(new ExitCharacterSelectMenu(() => MenuExit?.Invoke(this, new CharacterSelectionArgs(null))));
         }
 
         public override void Update(Time DeltaTime)

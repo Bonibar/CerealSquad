@@ -18,13 +18,16 @@ namespace CerealSquad
 
         protected int _r;
 
+        public bool active { get; set; }
+
         public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {
-            _pos = position;
+            _pos = position + new s_position(room.Position.X, room.Position.Y);
             _type = e_EntityType.Ennemy;
             _room = room;
             _rand = new Random();
             _r = 0;
+            active = true;
         }
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
@@ -89,8 +92,8 @@ namespace CerealSquad
 
         public override bool inRoom(s_position pos)
         {
-            bool result = pos._x < _room.Position.X + _room.Size.Width && pos._x >= _room.Position.X
-                && pos._y < _room.Position.Y + _room.Size.Width && pos._y >= _room.Position.Y;
+            bool result = pos._trueX < _room.Position.X + _room.Size.Width && pos._trueX >= _room.Position.X
+                && pos._trueY < _room.Position.Y + _room.Size.Width && pos._trueY >= _room.Position.Y;
             return result;
         }
 

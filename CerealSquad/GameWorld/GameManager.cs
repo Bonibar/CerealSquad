@@ -34,5 +34,19 @@ namespace CerealSquad.GameWorld
             System.Diagnostics.Debug.WriteLine("New GAME");
             CurrentGame = new Game(_Renderer, _InputManager);
         }
+
+        public void Update(SFML.System.Time DeltaTime)
+        {
+            if (CurrentGame != null)
+            {
+                if (CurrentGame.State == Game.GameState.Running)
+                    CurrentGame.Update(DeltaTime);
+                else if (CurrentGame.State == Game.GameState.Exit)
+                {
+                    //CurrentGame.WorldEntity.destroy();
+                    CurrentGame = null;
+                }
+            }
+        }
     }
 }

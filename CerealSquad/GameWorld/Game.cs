@@ -12,6 +12,14 @@ namespace CerealSquad.GameWorld
     /// </summary>
     class Game : Drawable
     {
+        public enum GameState
+        {
+            Running,
+            Exit
+        }
+
+        public GameState State { get; private set; }
+
         private AWorld currentWorld = null;
         public AWorld CurrentWorld {
             get { return currentWorld; }
@@ -28,6 +36,7 @@ namespace CerealSquad.GameWorld
         }
         private Renderer renderer = null;
         private InputManager.InputManager _InputManager = null;
+        private System.Timers.Timer _GameOverTimer = new System.Timers.Timer(1000);
 
         public Game(Renderer _renderer, InputManager.InputManager manager)
         {
@@ -39,6 +48,17 @@ namespace CerealSquad.GameWorld
             renderer = _renderer;
             _InputManager = manager;
 
+            State = GameState.Running;
+
+            Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
+            intro.Ended += Intro_Ended;
+            Menus.MenuManager.Instance.AddMenu(intro);
+            _GameOverTimer.Elapsed += _GameOverTimer_Elapsed;
+        }
+
+        private void Intro_Ended(object source, Menus.IntroCutscene.CutsceneEventArgs e)
+        {
+            Menus.MenuManager.Instance.Clear();
             characterSelection();
         }
 
@@ -47,8 +67,15 @@ namespace CerealSquad.GameWorld
             Menus.CharacterSelectMenu _current = new Menus.CharacterSelectMenu(renderer, _InputManager);
             Menus.MenuManager.Instance.AddMenu(_current);
             _current.GameStart += _current_GameStart;
+            _current.MenuExit += _current_MenuExit;
         }
 
+        private void _current_MenuExit(object source, Menus.CharacterSelectMenu.CharacterSelectionArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("RECIEVED FIRE");
+            Menus.MenuManager.Instance.RemoveMenu((Menus.Menu)source);
+            State = GameState.Exit;
+        }
         private void _current_GameStart(object source, Menus.CharacterSelectMenu.CharacterSelectionArgs e)
         {
             CurrentWorld = new AWorld("Maps/TestWorld.txt", worldEntity);
@@ -114,15 +141,24 @@ namespace CerealSquad.GameWorld
             currentWorld = World;
         }
 
-        public void Update(SFML.System.Time deltaTime)
+        private void _GameOverTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            _GameOverTimer.Stop();
+            State = GameState.Exit;
+            Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
+        }
+
+        public void Update(SFML.System.Time DeltaTime)
         {
             if (currentWorld != null)
             {
-                currentWorld.Update(deltaTime);
-                worldEntity.update(deltaTime, currentWorld);
+                currentWorld.Update(DeltaTime);
+                worldEntity.update(DeltaTime, currentWorld);
             }
-
-            _HUDs.ForEach(i => i.Update(deltaTime));
+            _HUDs.ForEach(i => i.Update(DeltaTime));
+            int NbPlayersDead = Players.FindAll(x => x.Die).Count;
+            if (NbPlayersDead > 0 && NbPlayersDead == Players.Count)
+                _GameOverTimer.Start();
         }
 
         public void Draw(RenderTarget target, RenderStates states)

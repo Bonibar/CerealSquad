@@ -1,37 +1,40 @@
-﻿using System;
+﻿using CerealSquad.InputManager.Keyboard;
+using SFML.Graphics;
+using SFML.System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CerealSquad.InputManager.Keyboard;
-using SFML.Graphics;
-using SFML.System;
 
 namespace CerealSquad.Menus
 {
-    class MainMenu : Menu
+    class GameOverMenu : Menu
     {
-        #region Items
-        public abstract class MainMenuItem : MenuItem
+        private Renderer _Renderer;
+        private Text _GameOverText;
+        //private GameWorld.GameManager _GameManager;
+
+        public abstract class GameOverMenuItem : MenuItem
         {
-            public MainMenuItem(ItemAction action, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(type, keyboardKey, joystickKey)
+            public GameOverMenuItem(GameOverAction action, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(type, keyboardKey, joystickKey)
             {
                 Action = action;
             }
 
-            public ItemAction Action { get; protected set; }
+            public GameOverAction Action { get; protected set; }
         }
 
-        public class NewGameItem : MainMenuItem
+        public class ReturnMenuItem : GameOverMenuItem
         {
             Text _Text;
 
-            public NewGameItem(Renderer renderer, ItemAction action = ItemAction.NewGame, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
+            public ReturnMenuItem(Renderer renderer, GameOverAction action = GameOverAction.ReturnToMainMenu, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
             {
-                _Text = new Text("New Game", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
+                _Text = new Text("Return to Main Menu", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
                 _Text.CharacterSize = 80;
-                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, 400);
+                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2);
             }
 
             public override void Select(bool select)
@@ -48,59 +51,23 @@ namespace CerealSquad.Menus
                 target.Draw(_Text, states);
             }
         }
-        public class ExitItem : MainMenuItem
-        {
-            Text _Text;
 
-            public ExitItem(Renderer renderer, ItemAction action = ItemAction.Exit, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
-            {
-                _Text = new Text("Exit", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
-                _Text.CharacterSize = 80;
-                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, 500);
-            }
-
-            public override void Select(bool select)
-            {
-                base.Select(select);
-                if (Selected)
-                    _Text.Color = Color.Green;
-                else
-                    _Text.Color = Color.White;
-            }
-
-            public override void Draw(RenderTarget target, RenderStates states)
-            {
-                target.Draw(_Text, states);
-            }
-        }
-        #endregion
-
-        public enum ItemAction
+        public enum GameOverAction
         {
             [Description("Empty")]
             Empty = -1,
-            [Description("New Game")]
-            NewGame = 0,
-            [Description("Exit")]
-            Exit = 1
+            [Description("Return to Main Menu")]
+            ReturnToMainMenu = 0
         }
 
-        private Renderer _Renderer;
-        private GameWorld.GameManager _GameManager;
-
-        private Graphics.AnimatedSprite _BackgroundImage;
-
-        public MainMenu(Renderer renderer, InputManager.InputManager inputManager, GameWorld.GameManager gameManager) : base(inputManager)
+        public GameOverMenu(Renderer renderer, InputManager.InputManager inputmanager) : base (inputmanager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
-            if (inputManager == null)
-                throw new ArgumentNullException("Input Manager cannot be null");
-            if (gameManager == null)
-                throw new ArgumentNullException("Game Manager cannot be null");
+            if (_InputManager == null)
+                throw new ArgumentNullException("InputManager cannot be null");
 
             _Renderer = renderer;
-            _GameManager = gameManager;
 
             _InputManager.KeyboardKeyPressed += _InputManager_KeyboardKeyPressed;
             _InputManager.KeyboardKeyReleased += _InputManager_KeyboardKeyReleased;
@@ -108,33 +75,24 @@ namespace CerealSquad.Menus
             _InputManager.JoystickButtonReleased += _InputManager_JoystickButtonReleased;
             _InputManager.JoystickMoved += _InputManager_JoystickMoved;
 
-            _menuList.Add(new NewGameItem(_Renderer));
-            _menuList.Add(new ExitItem(_Renderer));
+            _menuList.Add(new ReturnMenuItem(_Renderer));
             nextMenu();
 
-            Factories.TextureFactory.Instance.load("MainMenuBackgroundImage", "Assets/Background/MainMenuBackground.png");
-
-            _BackgroundImage = new Graphics.AnimatedSprite(new Vector2u((uint)_Renderer.Win.GetView().Size.X, (uint)_Renderer.Win.GetView().Size.Y));
-            _BackgroundImage.addAnimation((uint)Graphics.EStateEntity.IDLE, "MainMenuBackgroundImage", Enumerable.Range(0, 5).Select(s => (uint)s).ToList(), new Vector2u(800, 450), 200);
-            _BackgroundImage.Loop = true;
-            _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
+            _GameOverText = new Text("Game Over", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
+            _GameOverText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2.75f);
+            _GameOverText.Color = Color.Red;
         }
 
         private void _ExecuteAction()
         {
-            MainMenuItem _current = (MainMenuItem)_menuList.FirstOrDefault(i => i.Selected);
+            GameOverMenuItem _current = (GameOverMenuItem)_menuList.FirstOrDefault(i => i.Selected);
 
             if (_current != null)
             {
                 switch (_current.Action)
                 {
-                    case ItemAction.NewGame:
+                    case GameOverAction.ReturnToMainMenu:
                         MenuManager.Instance.Clear();
-                        _GameManager.newGame();
-                        break;
-                    case ItemAction.Exit:
-                        MenuManager.Instance.Clear();
-                        _Renderer.Win.Close();
                         break;
                 }
             }
@@ -221,15 +179,9 @@ namespace CerealSquad.Menus
         }
         #endregion
 
-        public override void Update(Time DeltaTime)
-        {
-            _BackgroundImage.Update(DeltaTime);
-            base.Update(DeltaTime);
-        }
-
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            target.Draw(_BackgroundImage, states);
+            target.Draw(_GameOverText, states);
             base.Draw(target, states);
         }
     }

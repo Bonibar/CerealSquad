@@ -43,6 +43,8 @@ namespace CerealSquad
             Downloaders.TaskAwaiter awaiter = new Downloaders.TaskAwaiter();
 
             awaiter.Add(ftpDownloader.RequireFile("MainMenuBackground", "Assets/Background/MainMenuBackground.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/MainMenuBackground.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("CutScene", "Assets/Background/cutscene_1024.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/cutscene_1024.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("CutScene_Soundclip", "Assets/Music/intro_soundclip.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Music/intro_soundclip.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/TestTile.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Tiles_CastleWall", "Assets/Tiles/CastleWall.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/CastleWall.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("JackWalking", "Assets/Character/JackWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/JackWalking.png"), false));
@@ -58,6 +60,12 @@ namespace CerealSquad
 
             awaiter.Add(ftpDownloader.RequireFile("CoffeeMachineWalking", "Assets/Enemies/Boss/CoffeeMachineWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/CoffeeMachineWalking.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CoffeeMachineThrowing", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Rice", "Assets/Enemies/Normal/Rice.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Normal/Rice.png"), false));
+
+            awaiter.Add(ftpDownloader.RequireFile("Death_Hina", "Assets/Character/Death/HinaDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/HinaDying.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Death_Jack", "Assets/Character/Death/JackDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/JackDying.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Death_Mike", "Assets/Character/Death/MikeDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/MikeDying.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Death_Tchong", "Assets/Character/Death/TchongDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/TchongDying.png"), false));
 
             awaiter.Add(ftpDownloader.RequireFile("jackHunter", "Assets/Character/JackHunter.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/JackHunter.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("orangina", "Assets/Character/Orangina.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Orangina.png"), false));
@@ -116,12 +124,12 @@ namespace CerealSquad
                 }
                 else if (gameManager.CurrentGame != null)
                 {
-                    gameManager.CurrentGame.Update(clock.Restart());
-                    renderer.Draw(gameManager.CurrentGame);
+                    gameManager.Update(clock.Restart());
+                    if (gameManager.CurrentGame != null)
+                        renderer.Draw(gameManager.CurrentGame);
                 }
-                else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed)
+                else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed || awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Empty)
                 {
-                    System.Diagnostics.Debug.WriteLine("DOWNLOAD ENDED");
                     Debug.Time.Instance.StartTimer("DISPLAYING MAIN MENU", Debug.Type.Critical, true);
                     Menus.MenuManager.Instance.AddMenu(new Menus.MainMenu(renderer, manager, gameManager));
                     Debug.Time.Instance.StopTimer("DISPLAYING MAIN MENU");
