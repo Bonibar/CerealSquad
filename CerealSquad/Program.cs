@@ -16,10 +16,12 @@ namespace CerealSquad
         static void Main()
         {
             // Debug Clock Watcher
+#if DEBUG
             Debug.Time.Instance.DebugMode(Debug.Type.Info, true);
             Debug.Time.Instance.DebugMode(Debug.Type.Warning, true);
             Debug.Time.Instance.DebugMode(Debug.Type.Critical, true);
             Debug.Time.Instance.DebugMode(Debug.Type.Debug, true);
+#endif
 
             Debug.Time.Instance.StartTimer("Main", Debug.Type.Debug, false);
 
