@@ -36,8 +36,13 @@ namespace CerealSquad.GameWorld
 
         public void ChangeRoom(ARoom room)
         {
+            List<APlayer> _players = WorldEntity.GetAllEntities().Where(i => i.getEntityType() == e_EntityType.Player).Select(i => (APlayer)i).ToList();
+            if (CurrentRoom != room && _players.Count(i => i.FinishedMovement == false) == 0)
+            {
+                _players.ForEach(i => i.CancelTrapDelivery());
+                room.Start(_players);
+            }
             CurrentRoom = room;
-            room.Start(WorldEntity.GetAllEntities().Where(i => i.getEntityType() == e_EntityType.Player).Select(i => (APlayer)i).ToList());
         }
 
         public void Draw(RenderTarget target, RenderStates states)
@@ -102,9 +107,21 @@ namespace CerealSquad.GameWorld
             return IsCollidingWithWall(Res.Position, Res.CollisionBox);
         }
 
-        public void Update(SFML.System.Time DeltaTime)
+        public RoomParser.e_CellType getPosition(int x, int y)
         {
-            Rooms.ForEach(x => x.Update(DeltaTime));
+            RoomParser.e_CellType ret = RoomParser.e_CellType.Void;
+            Rooms.ForEach(r =>
+            {
+                if (r.Position.X <= x && r.Position.X + r.Size.Width > x
+                && r.Position.Y <= y && r.Position.Y + r.Size.Height > y)
+                    ret = r.getPosition((uint)(x - r.Position.X), (uint)(y - r.Position.Y));
+            });
+            return (ret);
+        }
+
+        public void Update(SFML.System.Time DeltaTime, List<APlayer> players)
+        {
+            Rooms.ForEach(x => x.Update(DeltaTime, players));
         }
     }
 }

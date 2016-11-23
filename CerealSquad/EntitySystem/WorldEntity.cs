@@ -109,7 +109,7 @@ namespace CerealSquad
 
         public void Draw(RenderTarget target, RenderStates states)
         {
-            allEntities.ForEach(entity => {
+            allEntities?.ForEach(entity => {
                 if (entity.getEntityType() == e_EntityType.Player)
                     target.Draw(((APlayer)entity).TrapDeliver, states);
                 target.Draw(entity.ressourcesEntity, states);

@@ -208,10 +208,13 @@ namespace CerealSquad
                 {
                     if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
                     {
-                        _map[entity.Pos._x][entity.Pos._y][0] = -1;
-                        _map[entity.Pos._x][entity.Pos._y][1] = -1;
-                        _map[entity.Pos._x][entity.Pos._y][2] = -1;
-                        _map[entity.Pos._x][entity.Pos._y][3] = -1;
+                        try
+                        {
+                            _map[entity.Pos._x][entity.Pos._y][0] = -1;
+                            _map[entity.Pos._x][entity.Pos._y][1] = -1;
+                            _map[entity.Pos._x][entity.Pos._y][2] = -1;
+                            _map[entity.Pos._x][entity.Pos._y][3] = -1;
+                        } catch (Exception e) { }
                     }
                 }
             }
