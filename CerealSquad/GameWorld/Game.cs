@@ -92,16 +92,16 @@ namespace CerealSquad.GameWorld
                         _player = new Mike(worldEntity, new s_position(1, 5, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 1:
-                        _player = new Jack(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
+                        _player = new Jack(worldEntity, new s_position(1, 5, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 2:
-                        _player = new Orangina(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
+                        _player = new Orangina(worldEntity, new s_position(1, 5, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 3:
-                        _player = new Tchong(worldEntity, new s_position(6, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
+                        _player = new Tchong(worldEntity, new s_position(1, 5, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     default:
-                        _player = new Mike(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
+                        _player = new Mike(worldEntity, new s_position(1, 5, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                 }
                 Players.Add(_player);

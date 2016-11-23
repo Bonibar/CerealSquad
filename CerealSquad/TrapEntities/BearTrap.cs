@@ -41,13 +41,12 @@ namespace CerealSquad.TrapEntities
 
         public override bool attemptDamage(IEntity Sender, e_DamageType damage)
         {
-            if ((getEntityType() == e_EntityType.EnnemyTrap
-                || getEntityType() == e_EntityType.PlayerTrap)
-                && !Triggered)
-                Trigger(true);
+            if (!Triggered) {
+                if (damage == e_DamageType.BOMB_DAMAGE || damage == e_DamageType.ENEMY_DAMAGE)
+                    Trigger(false);
 
-            Sender.attemptDamage(this, e_DamageType.TRUE_DAMAGE);
-
+                Sender.attemptDamage(this, e_DamageType.TRUE_DAMAGE);
+            }
             return true;
         }
 
@@ -66,8 +65,14 @@ namespace CerealSquad.TrapEntities
         public override void update(Time deltaTime, AWorld world)
         {
             if (Die && ressourcesEntity.Pause)
+            {
                 destroy();
-            ressourcesEntity.Update(deltaTime);
+            }
+            else
+            {
+                ressourcesEntity.Update(deltaTime);
+            }
+           
         }
     }
 }

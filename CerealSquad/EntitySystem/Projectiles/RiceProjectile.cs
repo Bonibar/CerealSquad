@@ -26,7 +26,7 @@ namespace CerealSquad.EntitySystem.Projectiles
             _ressources.AddAnimation(3, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
             _ressources.AddAnimation(4, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(15f, 15f), new Vector2f(15f, 15f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(5f, 5f), new Vector2f(5f, 5f));
             _type = e_EntityType.ProjectileEnemy;
             _damageType = e_DamageType.PROJECTILE_ENEMY_DAMAGE;
 

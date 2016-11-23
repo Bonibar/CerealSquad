@@ -16,6 +16,7 @@ namespace CerealSquad.EntitySystem
         private double _attackCoolDown;
         private int _hp;
         private double _invuln;
+        private bool _takingDamage;
 
         protected scentMap _scentMap;
 
@@ -26,41 +27,46 @@ namespace CerealSquad.EntitySystem
             WALKING_DOWN,
             WALKING_RIGHT,
             WALKING_LEFT,
+            FULL_TO_MID,
+            MID_TO_EMPTY,
             DYING,
             THROWING_COFFEE,
         }
 
         public CoffeeMachineEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
-            _speed = 1;
+            _speed = 2;
             _invuln = 0;
             _hp = 3;
+            _takingDamage = false;
             _scentMap = new scentMap(room.Size.Height, room.Size.Width);
             _attackCoolDown = 1; // 1 sec
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("CoffeeMachineEmptyWalking", "Assets/Enemies/Boss/CoffeeMachineEmptyWalking.png");
             Factories.TextureFactory.Instance.load("CoffeeMachineMidWalking", "Assets/Enemies/Boss/CoffeeMachineMidWalking.png");
             Factories.TextureFactory.Instance.load("CoffeeMachineWalking", "Assets/Enemies/Boss/CoffeeMachineWalking.png");
-            Factories.TextureFactory.Instance.load("CoffeeMachineThrowing", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png");
 
             Factories.TextureFactory.Instance.load("CoffeeMachineDying", "Assets/Enemies/Boss/CoffeeMachineDying.png");
             Factories.TextureFactory.Instance.load("CoffeeMachineToEmpty", "Assets/Enemies/Boss/CoffeeMachineToEmpty.png");
             Factories.TextureFactory.Instance.load("CoffeeMachineToMid", "Assets/Enemies/Boss/CoffeeMachineToMid.png");
 
-            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
+            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(128, 128));
 
-
+            ressourcesEntity.sprite.Size = new Vector2f(128, 128);
             ressourcesEntity.AddAnimation((uint)SCoffeeState.IDLE, "CoffeeMachineWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
 
             ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_DOWN, "CoffeeMachineWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
             ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_LEFT, "CoffeeMachineWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
             ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_RIGHT, "CoffeeMachineWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
             ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_UP, "CoffeeMachineWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
-            ressourcesEntity.AddAnimation((uint)SCoffeeState.THROWING_COFFEE, "CoffeeMachineThrowing", Enumerable.Range(0, 10).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
-            ressourcesEntity.AddAnimation((uint)SCoffeeState.DYING, "CoffeeMachineDying", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.DYING, "CoffeeMachineDying", Enumerable.Range(0, 36).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 65);
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(19.0f, -10.0f), new Vector2f(19.0f, 24.0f));
-            _ressources.HitBox = new FloatRect(new Vector2f(19.0f, 25.0f), new Vector2f(19.0f, 24.0f));
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.MID_TO_EMPTY, "CoffeeMachineToEmpty", Enumerable.Range(0, 12).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.FULL_TO_MID, "CoffeeMachineToMid", Enumerable.Range(0, 12).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 100);
+
+
+            _ressources.CollisionBox = new FloatRect(new Vector2f(38.0f, -0f), new Vector2f(38.0f, 48.0f));
+            _ressources.HitBox = new FloatRect(new Vector2f(38.0f, 50.0f), new Vector2f(38.0f, 48.0f));
             Pos = Pos;
         }
 
@@ -71,9 +77,7 @@ namespace CerealSquad.EntitySystem
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    Die = true;
-                else if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
                     result = true;
             });
 
@@ -83,8 +87,13 @@ namespace CerealSquad.EntitySystem
 
         public override void die()
         {
-            if (_invuln <= 0)
+            if (!Die)
+            {
                 base.die();
+                ressourcesEntity.PlayAnimation((uint)SCoffeeState.DYING);
+                ressourcesEntity.Loop = false;
+                _children.ToList().ForEach(i => ((AEntity)i).die());
+            }
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
@@ -95,19 +104,40 @@ namespace CerealSquad.EntitySystem
                 _attackCoolDown -= deltaTime.AsSeconds();
             if (Die)
             {
-                if (ressourcesEntity.isFinished())
-                    destroy();
+                if (ressourcesEntity.Animation != (uint)SCoffeeState.DYING)
+                    ressourcesEntity.PlayAnimation((uint)SCoffeeState.DYING);
+                else if (ressourcesEntity.Pause)
+                    if (_children.Count == 0)
+                        destroy();
             }
             else
             {
-                if (Active)
+                if (_takingDamage && ressourcesEntity.Animation != (uint)SCoffeeState.FULL_TO_MID && ressourcesEntity.Animation != (uint)SCoffeeState.MID_TO_EMPTY)
                 {
-                    _scentMap.update((WorldEntity)_owner, _room);
-                    think(world, deltaTime);
+                    if (_hp == 2)
+                        ressourcesEntity.PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
+                    else if (_hp == 1)
+                        ressourcesEntity.PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
                 }
-                move(world, deltaTime);
+                else if (_takingDamage && ressourcesEntity.Pause)
+                {
+                    ressourcesEntity.Loop = true;
+                    ressourcesEntity.PlayAnimation((uint)SCoffeeState.IDLE);
+                    _takingDamage = false;
+                }
+                else if (!_takingDamage)
+                {
+                    if (Active)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Think");
+                        _scentMap.update((WorldEntity)_owner, _room);
+                        think(world, deltaTime);
+                    }
+                    move(world, deltaTime);
+                }
             }
             _ressources.Update(deltaTime);
+            _children.ToList().ForEach(i => i.update(deltaTime, world));
         }
 
         private bool canAttack(WorldEntity world)
@@ -157,14 +187,14 @@ namespace CerealSquad.EntitySystem
 
         protected void attack()
         {
-            _attackCoolDown = 1;
+            _attackCoolDown = 0.5f;
             new CoffeeProjectile(_owner, _move[0], HitboxPos);
         }
 
         public override bool attemptDamage(IEntity Sender, e_DamageType damage)
         {
             bool result = false;
-            if (_invuln <= 0)
+            if (_invuln <= 0 && !_takingDamage)
                 switch (damage)
                 {
                     case e_DamageType.BOMB_DAMAGE:
@@ -198,10 +228,14 @@ namespace CerealSquad.EntitySystem
         private void receiveDamage()
         {
             _invuln = 3;
-            new CoffeePool(_owner, new s_position(Pos._trueX + 1, Pos._trueY));
-            new CoffeePool(_owner, new s_position(Pos._trueX - 1, Pos._trueY));
-            new CoffeePool(_owner, new s_position(Pos._trueX, Pos._trueY + 1));
-            new CoffeePool(_owner, new s_position(Pos._trueX, Pos._trueY - 1));
+            new CoffeePool(this, new s_position(Pos._trueX, Pos._trueY));
+            ressourcesEntity.Loop = false;
+            System.Diagnostics.Debug.WriteLine("HP : " + _hp);
+            if (_hp == 2)
+                ressourcesEntity.PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
+            else if (_hp == 1)
+                ressourcesEntity.PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
+            _takingDamage = true;
         }
 
         public override void think(AWorld world, SFML.System.Time deltaTime)

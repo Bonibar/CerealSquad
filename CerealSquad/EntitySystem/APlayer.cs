@@ -106,6 +106,7 @@ namespace CerealSquad
             InputManager = input;
             _CollidingType.Add(e_EntityType.Ennemy);
             _CollidingType.Add(e_EntityType.ProjectileEnemy);
+            _CollidingType.Add(e_EntityType.EnnemyTrap);
         }
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
@@ -117,16 +118,20 @@ namespace CerealSquad
                 switch (action)
                 {
                     case SKeyPlayer.MOVE_UP:
-                        MoveStack.Remove(EMovement.Up);
+                        while (MoveStack.Contains(EMovement.Up))
+                            MoveStack.Remove(EMovement.Up);
                         break;
                     case SKeyPlayer.MOVE_DOWN:
-                        MoveStack.Remove(EMovement.Down);
+                        while (MoveStack.Contains(EMovement.Down))
+                            MoveStack.Remove(EMovement.Down);
                         break;
                     case SKeyPlayer.MOVE_LEFT:
-                        MoveStack.Remove(EMovement.Left);
+                        while (MoveStack.Contains(EMovement.Left))
+                            MoveStack.Remove(EMovement.Left);
                         break;
                     case SKeyPlayer.MOVE_RIGHT:
-                        MoveStack.Remove(EMovement.Right);
+                        while (MoveStack.Contains(EMovement.Right))
+                            MoveStack.Remove(EMovement.Right);
                         break;
                     case SKeyPlayer.PUT_TRAP:
                         TrapPressed = false;
