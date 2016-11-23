@@ -30,6 +30,20 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.AddAnimation((uint)SStateBearTrap.READY, "BearTrap", new List<uint> { 0 }, new Vector2u(128, 128));
             ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1, 1 }, new Vector2u(128, 128));
             ressourcesEntity.CollisionBox = COLLISION_BOX;
+
+            _CollidingType.Add(e_EntityType.Ennemy);
+        }
+
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            if ((getEntityType() == e_EntityType.EnnemyTrap
+                || getEntityType() == e_EntityType.PlayerTrap)
+                && !Triggered)
+                Trigger(true);
+
+            Sender.attemptDamage(this, e_DamageType.TRUE_DAMAGE);
+
+            return true;
         }
 
         public override void Trigger(bool delay = false)

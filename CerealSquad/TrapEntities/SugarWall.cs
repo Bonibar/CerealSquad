@@ -33,6 +33,9 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             ressourcesEntity.HitBox = HIT_BOX;
             Timer.Start();
+
+            _CollidingType.Add(e_EntityType.Player);
+            _CollidingType.Add(e_EntityType.Ennemy);
         }
 
         public override void update(Time deltaTime, AWorld world)

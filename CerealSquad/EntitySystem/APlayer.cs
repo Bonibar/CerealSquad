@@ -103,6 +103,7 @@ namespace CerealSquad
             
             TrapInventory = e_TrapType.NONE;
             InputManager = input;
+            _CollidingType.Add(e_EntityType.Ennemy);
         }
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
@@ -291,6 +292,7 @@ namespace CerealSquad
             }
             else
             {
+                die();
                 if (_ressources.isFinished())
                     destroy();
             }
@@ -407,39 +409,43 @@ namespace CerealSquad
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
             bool result = false;
+
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap)
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
                     result = true;
                 else if (i.getEntityType() == e_EntityType.Crate)
                 {
                     TrapInventory = ((Crates)i).Item;
                     ((Crates)i).pickCrate();
                 }
+                i.attemptDamage(this, _damageType);
             });
 
             return result || baseResult;
-        }
-
-        public override bool IsCollidingAndDead(AWorld World)
-        {
-            bool result = false;
-            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
-
-            collidingEntities.ForEach(i =>
-            {
-                if (!i.Equals(this))
-                    if (i.getEntityType() == e_EntityType.Ennemy)
-                        result = true;
-            });
-
-            return result;
         }
 
         public override void die()
         {
             base.die();
             ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+        }
+
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            bool result = false;
+
+            switch(damage)
+            {
+                case e_DamageType.ENEMY_DAMAGE:
+                case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
+                    die();
+                    result = true;
+                    break;
+                   
+            }
+
+            return result;
         }
     }
 }

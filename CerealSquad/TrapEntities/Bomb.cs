@@ -91,14 +91,15 @@ namespace CerealSquad.TrapEntities
             state++;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
         {
-            if (base.NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
-                return false;
-
-            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+            if ((getEntityType() == e_EntityType.EnnemyTrap 
+                || getEntityType() == e_EntityType.PlayerTrap)
                 && !Triggered)
                 Trigger(true);
+            else if (getEntityType() == e_EntityType.Player 
+                && !Triggered)
+                Trigger(false);
 
             return true;
         }

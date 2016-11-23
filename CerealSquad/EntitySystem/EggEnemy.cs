@@ -37,7 +37,7 @@ namespace CerealSquad.EntitySystem
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "EggWalking", new List<uint> { 12, 13, 14, 15 }, new Vector2u(128, 128), 150);
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "EggWalking", new List<uint> { 8, 9, 10, 11 }, new Vector2u(128, 128), 150);
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "EggWalking", new List<uint> { 4, 5, 6, 7 }, new Vector2u(128, 128), 150);
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "EggBreaking", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 45);
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "EggBreaking", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(26.0f, 0.0f), new Vector2f(26.0f, 26.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(26.0f, 26.0f), new Vector2f(26.0f, 26.0f));
@@ -111,9 +111,11 @@ namespace CerealSquad.EntitySystem
 
         public override void die()
         {
-            if (!_die)
+            if (!Die)
             {
-                _die = true;
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.Loop = false;
             }
         }
 
@@ -121,15 +123,13 @@ namespace CerealSquad.EntitySystem
         {
             if (Die)
             {
-                if (ressourcesEntity.isFinished())
+                if (ressourcesEntity.Pause)
                 {
                     _owner.addChild(new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room));
                     if (_child == 0)
                         destroy();
                     _child -= 1;
                 }
-                _ressources.PlayAnimation((uint)EStateEntity.DYING);
-                _ressources.Loop = false;
             }
             else
             {
@@ -140,7 +140,7 @@ namespace CerealSquad.EntitySystem
                 }
                 move(world, deltaTime);
             }
-            _ressources.Update(deltaTime);
+            ressourcesEntity.Update(deltaTime);
         }
     }
 }
