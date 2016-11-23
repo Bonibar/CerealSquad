@@ -27,7 +27,7 @@ namespace CerealSquad.GameWorld
         }
         //private HUD HUD;
         private List<AWorld> Worlds = new List<AWorld>();
-        private List<IEntity> Players = new List<IEntity>();
+        private List<APlayer> Players = new List<APlayer>();
         private List<Graphics.HUD> _HUDs = new List<Graphics.HUD>();
         private WorldEntity worldEntity = new WorldEntity();
         public WorldEntity WorldEntity
@@ -50,7 +50,7 @@ namespace CerealSquad.GameWorld
 
             State = GameState.Running;
 
-#if !DEBUG
+#if DEBUG
             Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
             intro.Ended += Intro_Ended;
             Menus.MenuManager.Instance.AddMenu(intro);
@@ -162,7 +162,7 @@ namespace CerealSquad.GameWorld
                     State = GameState.Exit;
                     Menus.MenuManager.Instance.AddMenu(new Menus.VictoryMenu(renderer, _InputManager));
                 }
-                currentWorld.Update(DeltaTime);
+                currentWorld.Update(DeltaTime, Players);
                 worldEntity.update(DeltaTime, currentWorld);
             }
             _HUDs.ForEach(i => i.Update(DeltaTime));

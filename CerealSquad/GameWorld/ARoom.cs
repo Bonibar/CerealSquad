@@ -27,7 +27,12 @@ namespace CerealSquad.GameWorld
         }
 
         #region Events
+        public delegate void RoomCinematicEventHandler(object sender, RoomCinematicEventArg e);
 
+        public class RoomCinematicEventArg {}
+
+        public event RoomCinematicEventHandler RoomCinematicStart;
+        public event RoomCinematicEventHandler RoomCinematicEnd;
         #endregion
 
         public enum e_RoomType { FightRoom, TransitionRoom, StartRoom, VictoryRoom };
@@ -104,7 +109,7 @@ namespace CerealSquad.GameWorld
             {
                 if (_Doors.Count > 0)
                 {
-                    s_position pos = new s_position(_Doors.First().Pos._x, _Doors.First().Pos._y);
+                    s_position pos = new s_position(_Doors.First().Pos._x + 2, _Doors.First().Pos._y);
                     _players.ForEach(i => i.moveTo(pos));
                 }
                 State = e_RoomState.Starting;
@@ -151,6 +156,7 @@ namespace CerealSquad.GameWorld
         {
             ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(WorldEntity, new s_position(i.Key.X, i.Key.Y), this)));
             _Doors.ForEach(i => i.ressourcesEntity.EnableCollision = false);
+            _Doors.ForEach(i => i.ressourcesEntity.sprite.Displayed = false);
         }
 
         private void spawnEnnemies()
@@ -169,16 +175,16 @@ namespace CerealSquad.GameWorld
             }
         }
 
-        public void Update(SFML.System.Time DeltaTime)
+        public void Update(SFML.System.Time DeltaTime, List<APlayer> players)
         {
             spawnCrates(DeltaTime);
             if (State == e_RoomState.Starting)
             {
-                if (0 != 0)
-                    return;
-                else
+                if (players.Count(i => i.FinishedMovement == true) == players.Count)
                 {
                     _Ennemies.ForEach(i => i.Active = true);
+                    _Doors.ForEach(i => i.ressourcesEntity.EnableCollision = true);
+                    _Doors.ForEach(i => i.ressourcesEntity.sprite.Displayed = true);
                     State = e_RoomState.Started;
                 }
             }

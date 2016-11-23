@@ -102,9 +102,21 @@ namespace CerealSquad.GameWorld
             return IsCollidingWithWall(Res.Position, Res.CollisionBox);
         }
 
-        public void Update(SFML.System.Time DeltaTime)
+        public RoomParser.e_CellType getPosition(int x, int y)
         {
-            Rooms.ForEach(x => x.Update(DeltaTime));
+            RoomParser.e_CellType ret = RoomParser.e_CellType.Void;
+            Rooms.ForEach(r =>
+            {
+                if (r.Position.X <= x && r.Position.X + r.Size.Width > x
+                && r.Position.Y <= y && r.Position.Y + r.Size.Height > y)
+                    ret = r.getPosition((uint)(x - r.Position.X), (uint)(y - r.Position.Y));
+            });
+            return (ret);
+        }
+
+        public void Update(SFML.System.Time DeltaTime, List<APlayer> players)
+        {
+            Rooms.ForEach(x => x.Update(DeltaTime, players));
         }
     }
 }
