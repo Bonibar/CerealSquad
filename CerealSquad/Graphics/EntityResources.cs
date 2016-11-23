@@ -13,10 +13,11 @@ namespace CerealSquad.Graphics
         public ASprite sprite;
 
         public List<ASprite> secondarySprite = new List<ASprite>();
-        public Sounds.JukeBox JukeBox { get; set; }
+        public Sounds.JukeBox JukeBox = Sounds.JukeBox.Instance;
 
         private RectangleShape CollisionBoxRectangle = new RectangleShape();
         private RectangleShape HitBoxRectangle = new RectangleShape();
+
         public bool Debug { get; set; }
         public bool EnableCollision { get; set; }
 
@@ -64,6 +65,15 @@ namespace CerealSquad.Graphics
             set {
                 if (sprite.Type == ETypeSprite.ANIMATED)
                     ((AnimatedSprite)sprite).Loop = value;
+            }
+        }
+
+        public uint Animation {
+            get
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                    return (((AnimatedSprite)sprite).Animation);
+                throw new Exception("Invalid use");
             }
         }
 

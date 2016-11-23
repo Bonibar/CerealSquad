@@ -105,6 +105,18 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerCursor", "Assets/HUD/SelectionPlayerCursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/SelectionPlayerCursor.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("HUD_PlayerCharacter", "Assets/HUD/PlayerCharacterHUD.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/PlayerCharacterHUD.png"), false));
 
+            //Sounds
+            awaiter.Add(ftpDownloader.RequireFile("Sound_BearTrap", "Assets/Sound/BearTrap.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/BearTrap.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Sound_Construction", "Assets/Sound/Construction.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/Construction.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Sound_Explosion", "Assets/Sound/Explosion.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/Explosion.ogg"), false));
+
+            awaiter.Add(ftpDownloader.RequireFile("Sound_CrackingEggs", "Assets/Sound/CrackingEggs.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/CrackingEggs.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Sound_ghost", "Assets/Sound/ghost.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/ghost.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Sound_SugarWallSound", "Assets/Sound/SugarWallLowSound.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/SugarWallLowSound.ogg"), false));
+
+            Factories.SoundBufferFactory.Instance.initSoundBuffer();
+
+
             // Initialisation
             renderer = new Renderer();
             renderer.Initialization();

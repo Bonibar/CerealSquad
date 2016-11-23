@@ -35,8 +35,13 @@ namespace CerealSquad.Factories
             _SoundBuffers = new Dictionary<String, SoundBuffer>();
             if (_SoundBuffers == null)
                 throw new OutOfMemoryException("Failed to load sound buffers");
-
-            // use load(name, filename) ...
+            // TMP
+            Factories.SoundBufferFactory.Instance.load("BearTrap", "Assets/Sound/Beartrap.ogg");
+            Factories.SoundBufferFactory.Instance.load("Construction", "Assets/Sound/Construction.ogg");
+            Factories.SoundBufferFactory.Instance.load("Explosion", "Assets/Sound/Explosion.ogg");
+            Factories.SoundBufferFactory.Instance.load("CrackingEggs", "Assets/Sound/CrackingEggs.ogg");
+            Factories.SoundBufferFactory.Instance.load("Ghost", "Assets/Sound/ghost.ogg");
+            Factories.SoundBufferFactory.Instance.load("SugarWall", "Assets/Sound/SugarWallLowSound.ogg");
         }
 
         /// <summary>

@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
 using CerealSquad.GameWorld;
+using CerealSquad.Sounds;
 
 namespace CerealSquad.TrapEntities
 {
     class BearTrap : ATrap
     {
         public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(21, 12, 21, 12);
+        public bool Triggered { get; private set; }
 
         enum SStateBearTrap
         {
@@ -22,9 +24,12 @@ namespace CerealSquad.TrapEntities
         {
             TrapType = e_TrapType.BEAR_TRAP;
             Cooldown = Time.FromSeconds(0.2f);
+            Triggered = false;
             Factories.TextureFactory.Instance.load("BearTrap", "Assets/Trap/Beartrap.png");
 
             ressourcesEntity = new Graphics.EntityResources();
+            ressourcesEntity.JukeBox.loadSound("BearTrap", "BearTrap");
+
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ressourcesEntity.AddAnimation((uint)SStateBearTrap.READY, "BearTrap", new List<uint> { 0 }, new Vector2u(128, 128));
@@ -48,9 +53,14 @@ namespace CerealSquad.TrapEntities
 
         public override void Trigger(bool delay = false)
         {
-            ressourcesEntity.PlayAnimation((uint)SStateBearTrap.TRIGGERED);
-            ressourcesEntity.Loop = false;
-            Die = true;
+            if (!Triggered)
+            {
+                Triggered = true;
+                ressourcesEntity.JukeBox.PlaySound("BearTrap");
+                ressourcesEntity.PlayAnimation((uint)SStateBearTrap.TRIGGERED);
+                ressourcesEntity.Loop = false;
+                Die = true;
+            }
         }
 
         public override void update(Time deltaTime, AWorld world)
