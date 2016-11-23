@@ -102,9 +102,9 @@ namespace CerealSquad.GameWorld
             return IsCollidingWithWall(Res.Position, Res.CollisionBox);
         }
 
-        public void Update(SFML.System.Time DeltaTime)
+        public void Update(SFML.System.Time DeltaTime, List<APlayer> players)
         {
-            Rooms.ForEach(x => x.Update(DeltaTime));
+            Rooms.ForEach(x => x.Update(DeltaTime, players));
         }
     }
 }

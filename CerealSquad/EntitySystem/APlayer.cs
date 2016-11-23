@@ -268,7 +268,7 @@ namespace CerealSquad
         public void moveTo(s_position pos)
         {
             BlockInputs = true;
-            _speed = 1;
+            _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
             _moveTo = true;
             _moveToPos = pos;
             FinishedMovement = false;
