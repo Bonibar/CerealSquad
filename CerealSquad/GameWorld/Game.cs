@@ -89,7 +89,7 @@ namespace CerealSquad.GameWorld
                 switch (player.Selection)
                 {
                     case 0:
-                        _player = new Mike(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
+                        _player = new Mike(worldEntity, new s_position(1, 5, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 1:
                         _player = new Jack(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
@@ -148,6 +148,11 @@ namespace CerealSquad.GameWorld
         {
             if (currentWorld != null)
             {
+                if (currentWorld.CurrentRoom != null && currentWorld.CurrentRoom.RoomType == ARoom.e_RoomType.VictoryRoom)
+                {
+                    State = GameState.Exit;
+                    Menus.MenuManager.Instance.AddMenu(new Menus.VictoryMenu(renderer, _InputManager));
+                }
                 currentWorld.Update(DeltaTime, Players);
                 worldEntity.update(DeltaTime, currentWorld);
                 if (currentWorld.CurrentRoom != null)

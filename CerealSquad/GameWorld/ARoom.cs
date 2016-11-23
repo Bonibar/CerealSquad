@@ -26,7 +26,7 @@ namespace CerealSquad.GameWorld
             }
         }
 
-        public enum e_RoomType { FightRoom, TransitionRoom };
+        public enum e_RoomType { FightRoom, TransitionRoom, StartRoom, VictoryRoom };
         public enum e_RoomState { Idle, Starting, Started, Finished }
 
         public WorldEntity WorldEntity { get; protected set; }
@@ -71,6 +71,8 @@ namespace CerealSquad.GameWorld
                     if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
                         isColliding = false;
                 }
+                spawnPoint.X += Position.X;
+                spawnPoint.Y += Position.Y;
                 _Crates.Add(new Crates(WorldEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
             }
             if (RoomType == e_RoomType.FightRoom)
@@ -174,6 +176,8 @@ namespace CerealSquad.GameWorld
                         if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
                             isColliding = false;
                     }
+                    spawnPoint.X += Position.X;
+                    spawnPoint.Y += Position.Y;
                     _Crates.Insert(id, new Crates(WorldEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
                 });
             }

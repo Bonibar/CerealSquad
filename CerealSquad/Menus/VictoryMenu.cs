@@ -10,27 +10,27 @@ using System.Threading.Tasks;
 
 namespace CerealSquad.Menus
 {
-    class GameOverMenu : Menu
+    class VictoryMenu : Menu
     {
         private Renderer _Renderer;
-        private Text _GameOverText;
+        private Text _VictoryText;
         //private GameWorld.GameManager _GameManager;
 
-        public abstract class GameOverMenuItem : MenuItem
+        public abstract class VictoryMenuItem : MenuItem
         {
-            public GameOverMenuItem(GameOverAction action, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(type, keyboardKey, joystickKey)
+            public VictoryMenuItem(VictoryAction action, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(type, keyboardKey, joystickKey)
             {
                 Action = action;
             }
 
-            public GameOverAction Action { get; protected set; }
+            public VictoryAction Action { get; protected set; }
         }
 
-        public class ReturnMenuItem : GameOverMenuItem
+        public class ReturnMenuItem : VictoryMenuItem
         {
             Text _Text;
 
-            public ReturnMenuItem(Renderer renderer, GameOverAction action = GameOverAction.ReturnToMainMenu, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
+            public ReturnMenuItem(Renderer renderer, VictoryAction action = VictoryAction.ReturnToMainMenu, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
             {
                 _Text = new Text("Return to Main Menu", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
                 _Text.CharacterSize = 80 * (uint)renderer.Win.GetView().Size.X / 1980;
@@ -52,7 +52,7 @@ namespace CerealSquad.Menus
             }
         }
 
-        public enum GameOverAction
+        public enum VictoryAction
         {
             [Description("Empty")]
             Empty = -1,
@@ -60,7 +60,7 @@ namespace CerealSquad.Menus
             ReturnToMainMenu = 0
         }
 
-        public GameOverMenu(Renderer renderer, InputManager.InputManager inputmanager) : base (inputmanager)
+        public VictoryMenu(Renderer renderer, InputManager.InputManager inputmanager) : base(inputmanager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
@@ -78,20 +78,20 @@ namespace CerealSquad.Menus
             _menuList.Add(new ReturnMenuItem(_Renderer));
             nextMenu();
 
-            _GameOverText = new Text("Game Over", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80 * (uint)renderer.Win.GetView().Size.X / 1980);
-            _GameOverText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2.75f);
-            _GameOverText.Color = Color.Red;
+            _VictoryText = new Text("Victory!", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80 * (uint)renderer.Win.GetView().Size.X / 1980);
+            _VictoryText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_VictoryText.GetLocalBounds().Left + _VictoryText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2.75f);
+            _VictoryText.Color = Color.Green;
         }
 
         private void _ExecuteAction()
         {
-            GameOverMenuItem _current = (GameOverMenuItem)_menuList.FirstOrDefault(i => i.Selected);
+            VictoryMenuItem _current = (VictoryMenuItem)_menuList.FirstOrDefault(i => i.Selected);
 
             if (_current != null)
             {
                 switch (_current.Action)
                 {
-                    case GameOverAction.ReturnToMainMenu:
+                    case VictoryAction.ReturnToMainMenu:
                         MenuManager.Instance.Clear();
                         break;
                 }
@@ -181,7 +181,7 @@ namespace CerealSquad.Menus
 
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            target.Draw(_GameOverText, states);
+            target.Draw(_VictoryText, states);
             base.Draw(target, states);
         }
     }

@@ -425,15 +425,6 @@ namespace CerealSquad
             return result || baseResult;
         }
 
-        public override void die()
-        {
-            if (!Die)
-            {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
-            }
-        }
-
         public override bool attemptDamage(IEntity Sender, e_DamageType damage)
         {
             bool result = false;
@@ -560,7 +551,6 @@ namespace CerealSquad
                 }
                 Console.Out.Write('\n');
             }
-
         }
     }
 }
