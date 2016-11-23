@@ -43,6 +43,9 @@ namespace CerealSquad.Factories
                 case e_TrapType.WALL:
                     result = TrapEntities.SugarWall.COLLISION_BOX;
                     break;
+                case e_TrapType.COFFE:
+                    result = TrapEntities.CoffeePool.COLLISION_BOX;
+                    break;
                 default:
                     throw new Exception("Invalid Trap entity requested");
             }

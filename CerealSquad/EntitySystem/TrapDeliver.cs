@@ -138,7 +138,6 @@ namespace CerealSquad.EntitySystem
                 {
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
-                    Player.addChild(trap);
                     TimerCoolDown = new Timer(trap.Cooldown);
                     TimerCoolDown.Start();
                     ResourcesEntity.JukeBox.StopSound("Construction");

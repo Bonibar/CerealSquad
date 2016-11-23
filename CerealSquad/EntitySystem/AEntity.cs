@@ -1,4 +1,5 @@
 ﻿using CerealSquad.GameWorld;
+using CerealSquad.Global;
 using CerealSquad.Graphics;
 using System;
 using System.Collections.Generic;
@@ -148,7 +149,31 @@ namespace CerealSquad
 
         protected bool NotInEllipseRange(IEntity Sender, float RadiusX, float RadiusY)
         {
-            return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
+            if (ressourcesEntity == null)
+                return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
+
+            s_Pos<double> posOne = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top);
+            s_Pos<double> posTwo = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height);
+            s_Pos<double> posThree = new s_Pos<double>(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height);
+            s_Pos<double> posFour = new s_Pos<double>(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Top);
+
+            posOne = new s_Pos<double>(posOne.X / 64.0f, posOne.Y / 64.0f);
+            posTwo = new s_Pos<double>(posTwo.X / 64.0f, posTwo.Y / 64.0f);
+            posThree = new s_Pos<double>(posThree.X / 64.0f, posThree.Y / 64.0f);
+            posFour = new s_Pos<double>(posFour.X / 64.0f, posFour.Y / 64.0f);
+
+            int tested = 0;
+
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posOne.X, posOne.Y, RadiusX, RadiusY))
+                tested++;
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posTwo.X, posTwo.Y, RadiusX, RadiusY))
+                tested++;
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posThree.X, posThree.Y, RadiusX, RadiusY))
+                tested++;
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posFour.X, posFour.Y, RadiusX, RadiusY))
+                tested++;
+
+            return tested == 0;
         }
         #endregion
 

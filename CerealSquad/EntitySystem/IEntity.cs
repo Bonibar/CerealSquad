@@ -26,7 +26,7 @@ namespace CerealSquad
         BOMB,
         BEAR_TRAP,
         WALL,
-        COFFEE,
+        COFFE,
         NONE
     }
 
