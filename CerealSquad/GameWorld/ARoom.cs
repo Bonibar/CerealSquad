@@ -128,11 +128,13 @@ namespace CerealSquad.GameWorld
 
         public void Start(List<APlayer> _players)
         {
-            if (State == e_RoomState.Idle)
+            if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
             {
-                if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
+                List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs(i.Pos._x / 64 - (Position.X + Size.Width) / 2) + Math.Abs(i.Pos._y / 64 - (Position.Y + Size.Height))).ToList();
+                if (_valuablePlayers.Count > 0)
                 {
-                    s_Pos<int> playerLocalPos = getLocalPos(_players.First());
+                    System.Diagnostics.Debug.WriteLine(_valuablePlayers.Count);
+                    s_Pos<int> playerLocalPos = getLocalPos(_valuablePlayers.First());
                     if (playerLocalPos.X != -1 && playerLocalPos.Y != -1)
                     {
                         s_Pos<uint> cellPos = ParsedRoom.Cells
@@ -143,6 +145,10 @@ namespace CerealSquad.GameWorld
                         _players.ForEach(i => i.moveTo(pos));
                     }
                 }
+            }
+            if (State == e_RoomState.Idle)
+            {
+                
                 State = e_RoomState.Starting;
             }
         }
