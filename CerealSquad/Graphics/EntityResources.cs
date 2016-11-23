@@ -18,6 +18,7 @@ namespace CerealSquad.Graphics
         private RectangleShape CollisionBoxRectangle = new RectangleShape();
         private RectangleShape HitBoxRectangle = new RectangleShape();
         public bool Debug { get; set; }
+        public bool EnableCollision { get; set; }
 
         public Vector2f Size { get { return sprite.Size; } set { sprite.Size = value; } }
 
@@ -36,6 +37,7 @@ namespace CerealSquad.Graphics
         public EntityResources()
         {
             Debug = true;
+            EnableCollision = true;
         }
 
         public void UpdateDebug()
@@ -104,6 +106,9 @@ namespace CerealSquad.Graphics
         /// <returns></returns>
         public bool IsTouchingHitBox(CircleShape Circle)
         {
+            if (!EnableCollision)
+                return false;
+
             FloatRect CenteredRect = new FloatRect(
                 new Vector2f(HitBox.Left + HitBox.Width / 2.0f, HitBox.Top + HitBox.Height / 2.0f),
                 new Vector2f(HitBox.Width / 2.0f, HitBox.Top / 2.0f)
@@ -128,6 +133,9 @@ namespace CerealSquad.Graphics
 
         public bool IsTouchingCollisionBox(CircleShape Circle)
         {
+            if (!EnableCollision)
+                return false;
+
             FloatRect CenteredRect = new FloatRect(
                 new Vector2f(CollisionBox.Left + CollisionBox.Width / 2.0f, CollisionBox.Top + CollisionBox.Height / 2.0f),
                 new Vector2f(CollisionBox.Width / 2.0f, CollisionBox.Top / 2.0f)
@@ -152,6 +160,9 @@ namespace CerealSquad.Graphics
 
         public bool IsTouchingCollisionBox(EntityResources Other)
         {
+            if (!EnableCollision)
+                return false;
+
             return CollisionBox.Intersects(Other.CollisionBox);
         }
 
@@ -162,6 +173,9 @@ namespace CerealSquad.Graphics
         /// <returns></returns>
         public bool IsTouchingHitBox(EntityResources Other)
         {
+            if (!EnableCollision)
+                return false;
+
             return HitBox.Intersects(Other.HitBox);
         }
 
