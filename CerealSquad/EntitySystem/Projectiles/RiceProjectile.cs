@@ -77,7 +77,7 @@ namespace CerealSquad.EntitySystem.Projectiles
                 i.attemptDamage(this, _damageType);
             });
         }
-
+        
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
