@@ -161,6 +161,7 @@ namespace CerealSquad.GameWorld
                 worldEntity.update(DeltaTime, currentWorld);
                 if (currentWorld.CurrentRoom != null)
                 {
+                    APlayer _target = Players.First();
                     SFML.System.Vector2f screenSize = renderer.Win.GetView().Size;
                     SFML.System.Vector2f cameraOrigin = renderer.Win.MapPixelToCoords(new SFML.System.Vector2i(0, 0));
                     float xToTranslate = (currentWorld.CurrentRoom.Position.X * 64 - screenSize.X / 2 + currentWorld.CurrentRoom.Size.Width * 32 - cameraOrigin.X) / (currentWorld.CurrentRoom.Size.Width * 7);

@@ -101,15 +101,47 @@ namespace CerealSquad.GameWorld
             }
         }
 
+        private s_Pos<int> getLocalPos(IEntity entity)
+        {
+            s_Pos<int> result = new s_Pos<int>(-1, -1);
+
+            int xEntity = entity.Pos._x / 64;
+            int yEntity = entity.Pos._y / 64;
+
+
+            if (xEntity < Position.X)
+                result.X = 0;
+            else if (xEntity >= Position.X + Size.Width)
+                result.X = Position.X + (int)Size.Width - 1;
+            else
+                result.X = xEntity - Position.X;
+
+            if (yEntity < Position.Y)
+                result.Y = 0;
+            else if (yEntity >= Position.Y + Size.Height)
+                result.Y = Position.Y + (int)Size.Height - 1;
+            else
+                result.Y = yEntity - Position.Y;
+
+            return result;
+        }
+
         public void Start(List<APlayer> _players)
         {
             if (State == e_RoomState.Idle)
             {
-                if (_Doors.Count > 0)
+                if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
                 {
-                    RoomCinematicStart?.Invoke(this, new RoomCinematicEventArg());
-                    s_position pos = new s_position(_Doors.First().Pos._x + 2, _Doors.First().Pos._y);
-                    _players.ForEach(i => i.moveTo(pos));
+                    s_Pos<int> playerLocalPos = getLocalPos(_players.First());
+                    if (playerLocalPos.X != -1 && playerLocalPos.Y != -1)
+                    {
+                        s_Pos<uint> cellPos = ParsedRoom.Cells
+                            .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
+
+                        RoomCinematicStart?.Invoke(this, new RoomCinematicEventArg());
+                        s_position pos = new s_position((cellPos.X + Position.X) - 1, (cellPos.Y + Position.Y) - 1);
+                        _players.ForEach(i => i.moveTo(pos));
+                    }
                 }
                 State = e_RoomState.Starting;
             }
