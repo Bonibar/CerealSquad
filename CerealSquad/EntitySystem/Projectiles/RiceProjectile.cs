@@ -26,7 +26,12 @@ namespace CerealSquad.EntitySystem.Projectiles
             _ressources.AddAnimation(3, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
             _ressources.AddAnimation(4, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(5f, 5f), new Vector2f(5f, 5f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(15f, 15f), new Vector2f(15f, 15f));
+            _type = e_EntityType.ProjectileEnemy;
+            _damageType = e_DamageType.PROJECTILE_ENEMY_DAMAGE;
+
+            _CollidingType.Add(e_EntityType.Player);
+
             Pos = pos;
         }
 
@@ -70,9 +75,9 @@ namespace CerealSquad.EntitySystem.Projectiles
             touchingEntities.ForEach(i =>
             {
                  if (i.getEntityType() == e_EntityType.Player)
-                {
                     attemptDamage(i, i.getDamageType());
-                }
+                 else if (i.getEntityType() == e_EntityType.PlayerTrap)
+                    attemptDamage(i, i.getDamageType());
 
                 i.attemptDamage(this, _damageType);
             });
@@ -86,18 +91,22 @@ namespace CerealSquad.EntitySystem.Projectiles
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.Ennemy
-                    && i.getEntityType() == e_EntityType.EnnemyTrap)
-                    result = true;
-                else if (i.getEntityType() == e_EntityType.Player)
-                { 
-                    result = true;
-                    attemptDamage(i, i.getDamageType());
+                switch (i.getEntityType())
+                {
+                    case e_EntityType.Ennemy:
+                    case e_EntityType.EnnemyTrap:
+                    case e_EntityType.Player:
+                    case e_EntityType.PlayerTrap:
+                        result = true;
+                        break;
                 }
 
                 i.attemptDamage(this, _damageType);
             });
-            
+
+            if (result)
+                attemptDamage(this, e_DamageType.NONE);
+
             return baseResult || result;
         }
     }

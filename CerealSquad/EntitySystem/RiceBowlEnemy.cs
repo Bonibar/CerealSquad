@@ -162,7 +162,7 @@ namespace CerealSquad.EntitySystem
         
         protected void attack()
         {
-            _attackCoolDown = 5;
+            _attackCoolDown = 1;
             new RiceProjectile(_owner, _move[0], HitboxPos);
             //
             // TODO Alpha implement

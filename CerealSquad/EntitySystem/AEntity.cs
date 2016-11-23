@@ -154,7 +154,7 @@ namespace CerealSquad
 
         public virtual bool attemptDamage(IEntity Sender, e_DamageType damage)
         {
-            return Sender.attemptDamage(this, _damageType);
+            return false;
         }
 
         public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
@@ -234,11 +234,6 @@ namespace CerealSquad
 
             return IsCollidingEntity(World, collidingEntities);
         }
-
-        /*public virtual bool IsCollidingAndDead(AWorld World)
-        {
-            return false;
-        }*/
         
         public virtual bool inRoom(s_position pos)
         {
@@ -394,6 +389,7 @@ namespace CerealSquad
         public void destroy()
         {
             _owner.removeChild(this);
+            _children.ToList().ForEach(i => _owner.addChild(i));            
         }
 
         public IEntity getRootEntity()
