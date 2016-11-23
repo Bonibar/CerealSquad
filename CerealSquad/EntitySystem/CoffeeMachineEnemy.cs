@@ -26,6 +26,7 @@ namespace CerealSquad.EntitySystem
             DYING,
             THROWING_COFFEE,
         }
+
         public CoffeeMachineEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 5;
@@ -33,17 +34,25 @@ namespace CerealSquad.EntitySystem
             _attackCoolDown = 5; // 5 sec
             _attackCoolDown = 30; // 30 sec
             ressourcesEntity = new EntityResources();
+            Factories.TextureFactory.Instance.load("CoffeeMachineEmptyWalking", "Assets/Enemies/Boss/CoffeeMachineEmptyWalking.png");
+            Factories.TextureFactory.Instance.load("CoffeeMachineMidWalking", "Assets/Enemies/Boss/CoffeeMachineMidWalking.png");
             Factories.TextureFactory.Instance.load("CoffeeMachineWalking", "Assets/Enemies/Boss/CoffeeMachineWalking.png");
-            Factories.TextureFactory.Instance.load("CoffeeMachineThrowing", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png");
-            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)SCoffeeState.IDLE, "CoffeeMachineWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)SCoffeeState.WALKING_DOWN, "CoffeeMachineWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)SCoffeeState.WALKING_LEFT, "CoffeeMachineWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)SCoffeeState.WALKING_RIGHT, "CoffeeMachineWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)SCoffeeState.WALKING_UP, "CoffeeMachineWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)SCoffeeState.THROWING_COFFEE, "CoffeeMachineThrowing", Enumerable.Range(0, 10).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
-            //  ((AnimatedSprite)_ressources.sprite).addAnimation((uint)SCoffeeState.DYING, "CoffeeMachineDying", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            Factories.TextureFactory.Instance.load("CoffeeMachineDying", "Assets/Enemies/Boss/CoffeeMachineDying.png");
+            Factories.TextureFactory.Instance.load("CoffeeMachineToEmpty", "Assets/Enemies/Boss/CoffeeMachineToEmpty.png");
+            Factories.TextureFactory.Instance.load("CoffeeMachineToMid", "Assets/Enemies/Boss/CoffeeMachineToMid.png");
+
+            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
+
+
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.IDLE, "CoffeeMachineWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_DOWN, "CoffeeMachineWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_LEFT, "CoffeeMachineWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_RIGHT, "CoffeeMachineWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.WALKING_UP, "CoffeeMachineWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.THROWING_COFFEE, "CoffeeMachineThrowing", Enumerable.Range(0, 10).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SCoffeeState.DYING, "CoffeeMachineDying", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(19.0f, -10.0f), new Vector2f(19.0f, 24.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(19.0f, 25.0f), new Vector2f(19.0f, 24.0f));

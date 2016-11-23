@@ -17,6 +17,7 @@ namespace CerealSquad
         TRUE_DAMAGE,
         ENEMY_DAMAGE,
         PROJECTILE_ENEMY_DAMAGE,
+        COFFE_DAMAGE,
         NONE
     }
 
