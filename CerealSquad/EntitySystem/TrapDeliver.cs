@@ -59,6 +59,11 @@ namespace CerealSquad.EntitySystem
             return !Step.Equals(EStep.NOTHING);
         }
 
+        public void Cancel()
+        {
+            Step = EStep.NOTHING;
+        }
+
         public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
             if (TimerToPut == null)

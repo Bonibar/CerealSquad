@@ -142,16 +142,14 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
+                if (Active)
                 {
-                    if (Active)
-                    {
-                        _scentMap.update((WorldEntity)_owner, _room);
-                        think(world, deltaTime);
-                    }
-                    move(world, deltaTime);
+                    _scentMap.update((WorldEntity)_owner, _room);
+                    think(world, deltaTime);
                 }
-                _ressources.Update(deltaTime);
+                move(world, deltaTime);
             }
+            _ressources.Update(deltaTime);
         }
     }
 }

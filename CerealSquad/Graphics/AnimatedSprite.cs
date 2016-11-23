@@ -17,6 +17,7 @@ namespace CerealSquad.Graphics
         public Time Speed { set { animator.m_frameTime = value; } get { return animator.m_frameTime; } }
         public bool Loop { get { return (animator.m_isLooped); } set { animator.m_isLooped = value; } }
         public bool Pause { get { return (animator.m_isPaused); } set { animator.m_isPaused = value; } }
+        public int CurrentFrame { get { return animator.m_currentFrame; } set { animator.m_currentFrame = value; } }
 
         public AnimatedSprite(Vector2u _Size)
         {
@@ -77,6 +78,8 @@ namespace CerealSquad.Graphics
                 KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
                 anim.addFrame(Size.X, Size.Y, palette.Key);
             });
+            if (animations.ContainsKey((uint)type))
+                animations.Remove((uint)type);
             animations.Add((uint)type, anim);
 
             if (!animator.HaveAnimation())

@@ -36,7 +36,6 @@ namespace CerealSquad.GameWorld
         }
         private Renderer renderer = null;
         private InputManager.InputManager _InputManager = null;
-        private System.Timers.Timer _GameOverTimer = new System.Timers.Timer(1000);
 
         public Game(Renderer _renderer, InputManager.InputManager manager)
         {
@@ -50,14 +49,13 @@ namespace CerealSquad.GameWorld
 
             State = GameState.Running;
 
-#if DEBUG
+#if !DEBUG
             Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
             intro.Ended += Intro_Ended;
             Menus.MenuManager.Instance.AddMenu(intro);
 #else
             characterSelection();
 #endif
-            _GameOverTimer.Elapsed += _GameOverTimer_Elapsed;
         }
 
         private void Intro_Ended(object source, Menus.IntroCutscene.CutsceneEventArgs e)
@@ -91,7 +89,7 @@ namespace CerealSquad.GameWorld
                 switch (player.Selection)
                 {
                     case 0:
-                        _player = new Mike(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
+                        _player = new Mike(worldEntity, new s_position(1, 5, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
                         break;
                     case 1:
                         _player = new Jack(worldEntity, new s_position(5, 6, 1), _InputManager, (int)player.Type, player.Type == 0 ? (int)player.KeyboardId : (int)player.ControllerId);
@@ -146,13 +144,6 @@ namespace CerealSquad.GameWorld
             currentWorld = World;
         }
 
-        private void _GameOverTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            _GameOverTimer.Stop();
-            State = GameState.Exit;
-            Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
-        }
-
         public void Update(SFML.System.Time DeltaTime)
         {
             if (currentWorld != null)
@@ -164,11 +155,32 @@ namespace CerealSquad.GameWorld
                 }
                 currentWorld.Update(DeltaTime, Players);
                 worldEntity.update(DeltaTime, currentWorld);
+                if (currentWorld.CurrentRoom != null)
+                {
+                    APlayer _target = Players.First();
+                    SFML.System.Vector2f screenSize = renderer.Win.GetView().Size;
+                    SFML.System.Vector2f cameraOrigin = renderer.Win.MapPixelToCoords(new SFML.System.Vector2i(0, 0));
+                    float xToTranslate = (currentWorld.CurrentRoom.Position.X * 64 - screenSize.X / 2 + currentWorld.CurrentRoom.Size.Width * 32 - cameraOrigin.X) / (currentWorld.CurrentRoom.Size.Width * 7);
+                    float yToTranslate = (currentWorld.CurrentRoom.Position.Y * 64 - screenSize.Y / 2 + currentWorld.CurrentRoom.Size.Height * 32 - cameraOrigin.Y) / (currentWorld.CurrentRoom.Size.Height * 7);
+                    if (xToTranslate != 0)
+                        renderer.Move(xToTranslate, 0);
+                    if (yToTranslate != 0)
+                        renderer.Move(0, yToTranslate);
+                }
             }
             _HUDs.ForEach(i => i.Update(DeltaTime));
-            int NbPlayersDead = Players.FindAll(x => x.Die).Count;
+            int NbPlayersDead = Players.Count(x => x.Die);
             if (NbPlayersDead > 0 && NbPlayersDead == Players.Count)
-                _GameOverTimer.Start();
+            {
+                List<Graphics.AnimatedSprite> _deathAnimations = Players.Where(i => i.ressourcesEntity.sprite.Type == Graphics.ETypeSprite.ANIMATED).
+                    Select(i => (Graphics.AnimatedSprite)i.ressourcesEntity.sprite)
+                    .ToList();
+                if (_deathAnimations.Count(i => i.isFinished()) == _deathAnimations.Count)
+                {
+                    State = GameState.Exit;
+                    Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
+                }
+            }
         }
 
         public void Draw(RenderTarget target, RenderStates states)

@@ -84,6 +84,7 @@
     <Compile Include="Downloaders\LoadingScreen.cs" />
     <Compile Include="Downloaders\TaskAwaiter.cs" />
     <Compile Include="EntitySystem\Projectiles\AProjectile.cs" />
+    <Compile Include="EntitySystem\Projectiles\CoffeeProjectile.cs" />
     <Compile Include="EntitySystem\Projectiles\RiceProjectile.cs" />
     <Compile Include="EntitySystem\RoomDoor.cs" />
     <Compile Include="Factories\EnnemyFactory.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="TrapEntities\BearTrap.cs" />
     <Compile Include="TrapEntities\Bomb.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="TrapEntities\CoffeePool.cs" />
     <Compile Include="TrapEntities\SugarWall.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

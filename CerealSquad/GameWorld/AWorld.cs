@@ -36,8 +36,13 @@ namespace CerealSquad.GameWorld
 
         public void ChangeRoom(ARoom room)
         {
+            List<APlayer> _players = WorldEntity.GetAllEntities().Where(i => i.getEntityType() == e_EntityType.Player).Select(i => (APlayer)i).ToList();
+            if (CurrentRoom != room && _players.Count(i => i.FinishedMovement == false) == 0)
+            {
+                _players.ForEach(i => i.CancelTrapDelivery());
+                room.Start(_players);
+            }
             CurrentRoom = room;
-            room.Start(WorldEntity.GetAllEntities().Where(i => i.getEntityType() == e_EntityType.Player).Select(i => (APlayer)i).ToList());
         }
 
         public void Draw(RenderTarget target, RenderStates states)

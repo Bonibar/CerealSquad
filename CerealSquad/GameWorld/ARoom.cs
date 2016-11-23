@@ -26,15 +26,6 @@ namespace CerealSquad.GameWorld
             }
         }
 
-        #region Events
-        public delegate void RoomCinematicEventHandler(object sender, RoomCinematicEventArg e);
-
-        public class RoomCinematicEventArg {}
-
-        public event RoomCinematicEventHandler RoomCinematicStart;
-        public event RoomCinematicEventHandler RoomCinematicEnd;
-        #endregion
-
         public enum e_RoomType { FightRoom, TransitionRoom, StartRoom, VictoryRoom };
         public enum e_RoomState { Idle, Starting, Started, Finished }
 
@@ -103,15 +94,55 @@ namespace CerealSquad.GameWorld
             }
         }
 
+        private s_Pos<int> getLocalPos(IEntity entity)
+        {
+            s_Pos<int> result = new s_Pos<int>(-1, -1);
+
+            int xEntity = entity.Pos._x / 64;
+            int yEntity = entity.Pos._y / 64;
+
+
+            if (xEntity < Position.X)
+                result.X = 0;
+            else if (xEntity >= Position.X + Size.Width)
+                result.X = Position.X + (int)Size.Width - 1;
+            else
+                result.X = xEntity - Position.X;
+
+            if (yEntity < Position.Y)
+                result.Y = 0;
+            else if (yEntity >= Position.Y + Size.Height)
+                result.Y = Position.Y + (int)Size.Height - 1;
+            else
+                result.Y = yEntity - Position.Y;
+
+            return result;
+        }
+
         public void Start(List<APlayer> _players)
         {
+            if (State == e_RoomState.Idle || State == e_RoomState.Finished)
+            {
+                if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
+                {
+                    List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs(i.Pos._x / 64 - (Position.X + Size.Width) / 2) + Math.Abs(i.Pos._y / 64 - (Position.Y + Size.Height))).ToList();
+                    if (_valuablePlayers.Count > 0)
+                    {
+                        System.Diagnostics.Debug.WriteLine(_valuablePlayers.Count);
+                        s_Pos<int> playerLocalPos = getLocalPos(_valuablePlayers.First());
+                        if (playerLocalPos.X != -1 && playerLocalPos.Y != -1)
+                        {
+                            s_Pos<uint> cellPos = ParsedRoom.Cells
+                                .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
+
+                            s_position pos = new s_position((cellPos.X + Position.X) + 0.5, (cellPos.Y + Position.Y) + 0.5);
+                            _players.ForEach(i => i.moveTo(pos));
+                        }
+                    }
+                }
+            }
             if (State == e_RoomState.Idle)
             {
-                if (_Doors.Count > 0)
-                {
-                    s_position pos = new s_position(_Doors.First().Pos._x + 2, _Doors.First().Pos._y);
-                    _players.ForEach(i => i.moveTo(pos));
-                }
                 State = e_RoomState.Starting;
             }
         }

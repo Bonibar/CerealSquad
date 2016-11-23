@@ -48,6 +48,7 @@ namespace CerealSquad
         private bool _moveTo;
         private s_position _moveToPos;
         public bool FinishedMovement;
+        private bool _center;
         private scentMap _scentMap;
 
         protected enum ETrapPuting
@@ -79,6 +80,7 @@ namespace CerealSquad
             _type = e_EntityType.Player;
             _moveTo = false;
             FinishedMovement = true;
+            _center = false;
 
             _specialActive = false;
             _weight = 1;
@@ -188,7 +190,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonReleased(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            if (!BlockInputs)
+            if (!BlockInputs && e.JoystickId == Id)
             {
                 SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
@@ -208,7 +210,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            if (!BlockInputs)
+            if (!BlockInputs && e.JoystickId == Id)
             {
                 SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
@@ -228,7 +230,7 @@ namespace CerealSquad
 
         private void Input_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
-            if (!BlockInputs)
+            if (!BlockInputs && e.JoystickId == Id)
             {
                 SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
 
@@ -256,6 +258,12 @@ namespace CerealSquad
             }
         }
 
+        public void CancelTrapDelivery()
+        {
+            TrapPressed = false;
+            TrapDeliver.Cancel();
+        }
+
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
             if ((TrapPressed || TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
@@ -268,41 +276,76 @@ namespace CerealSquad
 
         public void moveTo(s_position pos)
         {
-            BlockInputs = true;
-            _speed = 1; // Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
-            _moveTo = true;
-            _moveToPos = pos;
-            _scentMap = new scentMap(40, 40, this);
-            FinishedMovement = false;
+            if (!_moveTo)
+            {
+                BlockInputs = true;
+                _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
+                _moveTo = true;
+                _moveToPos = pos;
+                _scentMap = new scentMap(40, 40, this);
+                FinishedMovement = false;
+            }
         }
 
         public void moveToPos(AWorld world, SFML.System.Time deltaTime)
         {
-            _scentMap.update((WorldEntity)_owner, world, _moveToPos);
-            double speedMove = _speed * deltaTime.AsSeconds();
-            _move = new List<EMovement> { EMovement.Right, EMovement.Left, EMovement.Down, EMovement.Up };
-            int top = executeUpMove(world, speedMove) ? _scentMap.getScent(20, 19) : -1;
-            int bottom = executeDownMove(world, speedMove) ? _scentMap.getScent(20, 21) : -1;
-            int right = executeRightMove(world, speedMove) ? _scentMap.getScent(21, 20) : -1;
-            int left = executeLeftMove(world, speedMove) ? _scentMap.getScent(19, 20) : -1;
-            int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
-            MoveStack.Clear();
-
-            if (top == bottom && left == right && top == left)
+            if (_center == true)
             {
-                _moveTo = false;
-                BlockInputs = false;
-                FinishedMovement = true;
-                _speed = 5;
+                if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) < 0.1 && Math.Abs(HitboxPos._trueY - _moveToPos._trueY) < 0.1)
+                {
+                    MoveStack.Clear();
+                    _moveTo = false;
+                    _center = false;
+                    BlockInputs = false;
+                    FinishedMovement = true;
+                    _speed = 5;
+                    _ressources.PlayAnimation(0);
+                }
+                else
+                {
+                    MoveStack.Clear();
+                    if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) >= 0.1)
+                    {
+                        if (HitboxPos._trueX - _moveToPos._trueX > 0)
+                            MoveStack.Add(EMovement.Left);
+                        else
+                            MoveStack.Add(EMovement.Right);
+                    }
+                    else
+                    {
+                        if (HitboxPos._trueY - _moveToPos._trueY > 0)
+                            MoveStack.Add(EMovement.Up);
+                        else
+                            MoveStack.Add(EMovement.Down);
+                    }
+
+                }
             }
-            else if (max == top)
-                MoveStack.Add(EMovement.Up);
-            else if (max == bottom)
-                MoveStack.Add(EMovement.Down);
-            else if (max == right)
-                MoveStack.Add(EMovement.Right);
-            else if (max == left)
-                MoveStack.Add(EMovement.Left);
+            else
+            {
+                _scentMap.update((WorldEntity)_owner, world, _moveToPos);
+                double speedMove = _speed * deltaTime.AsSeconds();
+                _move = new List<EMovement> { EMovement.Right, EMovement.Left, EMovement.Down, EMovement.Up };
+                int top = executeUpMove(world, speedMove) ? _scentMap.getScent(20, 19) : -1;
+                int bottom = executeDownMove(world, speedMove) ? _scentMap.getScent(20, 21) : -1;
+                int right = executeRightMove(world, speedMove) ? _scentMap.getScent(21, 20) : -1;
+                int left = executeLeftMove(world, speedMove) ? _scentMap.getScent(19, 20) : -1;
+                int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
+                MoveStack.Clear();
+
+                if (top == bottom && left == right && top == left)
+                {
+                    _center = true;
+                }
+                else if (max == top)
+                    MoveStack.Add(EMovement.Up);
+                else if (max == bottom)
+                    MoveStack.Add(EMovement.Down);
+                else if (max == right)
+                    MoveStack.Add(EMovement.Right);
+                else if (max == left)
+                    MoveStack.Add(EMovement.Left);
+            }
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
@@ -320,7 +363,6 @@ namespace CerealSquad
             }
             else
             {
-                die();
                 if (_ressources.isFinished())
                     destroy();
             }
@@ -391,6 +433,7 @@ namespace CerealSquad
             {
                 case e_DamageType.ENEMY_DAMAGE:
                 case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
+                case e_DamageType.COFFE_DAMAGE:
                     die();
                     result = true;
                     break;
@@ -398,12 +441,6 @@ namespace CerealSquad
             }
 
             return result;
-        }
-
-        public override void die()
-        {
-            base.die();
-            ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
         }
 
         private class scentMap
@@ -443,7 +480,7 @@ namespace CerealSquad
                     _map[i] = new int[_y];
                     for (int j = 0; j < _y; j++)
                     {
-                        if (world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Normal || world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Door)
+                        if (world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Normal || world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Door || world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Spawn)
                         {
                             _map[i][j] = 0;
                         }
@@ -486,7 +523,6 @@ namespace CerealSquad
                 reset(world);
                 check_obstacle(worldEntity);
                 propagateHeat(20 - _player.HitboxPos._x + moveToPos._x, 20 - _player.HitboxPos._y + moveToPos._y, 200);
-                //dump();
             }
 
             public virtual int getScent(int x, int y)
@@ -515,7 +551,6 @@ namespace CerealSquad
                 }
                 Console.Out.Write('\n');
             }
-
         }
     }
 }
