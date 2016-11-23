@@ -139,7 +139,7 @@ namespace CerealSquad.GameWorld
                             .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
 
                         RoomCinematicStart?.Invoke(this, new RoomCinematicEventArg());
-                        s_position pos = new s_position((cellPos.X + Position.X) - 1, (cellPos.Y + Position.Y) - 1);
+                        s_position pos = new s_position((cellPos.X + Position.X) + 0.5, (cellPos.Y + Position.Y) + 0.5);
                         _players.ForEach(i => i.moveTo(pos));
                     }
                 }

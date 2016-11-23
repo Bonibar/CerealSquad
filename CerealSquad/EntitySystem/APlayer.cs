@@ -48,6 +48,7 @@ namespace CerealSquad
         private bool _moveTo;
         private s_position _moveToPos;
         public bool FinishedMovement;
+        private bool _center;
         private scentMap _scentMap;
 
         protected enum ETrapPuting
@@ -79,6 +80,7 @@ namespace CerealSquad
             _type = e_EntityType.Player;
             _moveTo = false;
             FinishedMovement = true;
+            _center = false;
 
             _specialActive = false;
             _weight = 1;
@@ -267,7 +269,7 @@ namespace CerealSquad
         public void moveTo(s_position pos)
         {
             BlockInputs = true;
-            _speed = 1; // Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
+            _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
             _moveTo = true;
             _moveToPos = pos;
             _scentMap = new scentMap(40, 40, this);
@@ -276,31 +278,63 @@ namespace CerealSquad
 
         public void moveToPos(AWorld world, SFML.System.Time deltaTime)
         {
-            _scentMap.update((WorldEntity)_owner, world, _moveToPos);
-            double speedMove = _speed * deltaTime.AsSeconds();
-            _move = new List<EMovement> { EMovement.Right, EMovement.Left, EMovement.Down, EMovement.Up };
-            int top = executeUpMove(world, speedMove) ? _scentMap.getScent(20, 19) : -1;
-            int bottom = executeDownMove(world, speedMove) ? _scentMap.getScent(20, 21) : -1;
-            int right = executeRightMove(world, speedMove) ? _scentMap.getScent(21, 20) : -1;
-            int left = executeLeftMove(world, speedMove) ? _scentMap.getScent(19, 20) : -1;
-            int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
-            MoveStack.Clear();
-
-            if (top == bottom && left == right && top == left)
+            if (_center == true)
             {
-                _moveTo = false;
-                BlockInputs = false;
-                FinishedMovement = true;
-                _speed = 5;
+                if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) < 0.1 && Math.Abs(HitboxPos._trueY - _moveToPos._trueY) < 0.1)
+                {
+                    MoveStack.Clear();
+                    _moveTo = false;
+                    _center = false;
+                    BlockInputs = false;
+                    FinishedMovement = true;
+                    _speed = 5;
+                    _ressources.PlayAnimation(0);
+                }
+                else
+                {
+                    MoveStack.Clear();
+                    if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) >= 0.1)
+                    {
+                        if (HitboxPos._trueX - _moveToPos._trueX > 0)
+                            MoveStack.Add(EMovement.Left);
+                        else
+                            MoveStack.Add(EMovement.Right);
+                    }
+                    else
+                    {
+                        if (HitboxPos._trueY - _moveToPos._trueY > 0)
+                            MoveStack.Add(EMovement.Up);
+                        else
+                            MoveStack.Add(EMovement.Down);
+                    }
+
+                }
             }
-            else if (max == top)
-                MoveStack.Add(EMovement.Up);
-            else if (max == bottom)
-                MoveStack.Add(EMovement.Down);
-            else if (max == right)
-                MoveStack.Add(EMovement.Right);
-            else if (max == left)
-                MoveStack.Add(EMovement.Left);
+            else
+            {
+                _scentMap.update((WorldEntity)_owner, world, _moveToPos);
+                double speedMove = _speed * deltaTime.AsSeconds();
+                _move = new List<EMovement> { EMovement.Right, EMovement.Left, EMovement.Down, EMovement.Up };
+                int top = executeUpMove(world, speedMove) ? _scentMap.getScent(20, 19) : -1;
+                int bottom = executeDownMove(world, speedMove) ? _scentMap.getScent(20, 21) : -1;
+                int right = executeRightMove(world, speedMove) ? _scentMap.getScent(21, 20) : -1;
+                int left = executeLeftMove(world, speedMove) ? _scentMap.getScent(19, 20) : -1;
+                int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
+                MoveStack.Clear();
+
+                if (top == bottom && left == right && top == left)
+                {
+                    _center = true;
+                }
+                else if (max == top)
+                    MoveStack.Add(EMovement.Up);
+                else if (max == bottom)
+                    MoveStack.Add(EMovement.Down);
+                else if (max == right)
+                    MoveStack.Add(EMovement.Right);
+                else if (max == left)
+                    MoveStack.Add(EMovement.Left);
+            }
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
@@ -425,7 +459,7 @@ namespace CerealSquad
                     _map[i] = new int[_y];
                     for (int j = 0; j < _y; j++)
                     {
-                        if (world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Normal || world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Door)
+                        if (world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Normal || world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Door || world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Spawn)
                         {
                             _map[i][j] = 0;
                         }
@@ -468,7 +502,6 @@ namespace CerealSquad
                 reset(world);
                 check_obstacle(worldEntity);
                 propagateHeat(20 - _player.HitboxPos._x + moveToPos._x, 20 - _player.HitboxPos._y + moveToPos._y, 200);
-                //dump();
             }
 
             public virtual int getScent(int x, int y)
