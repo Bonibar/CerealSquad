@@ -28,26 +28,41 @@ namespace CerealSquad
             _rand = new Random();
             _r = 0;
             Active = false;
+            _damageType = e_DamageType.ENEMY_DAMAGE;
+            _CollidingType.Add(e_EntityType.Player);
         }
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
             bool result = false;
-
+            
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    die();
                 if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
                     result = true;
-                if (i.getEntityType() == e_EntityType.Player)
-                    i.die();
+                i.attemptDamage(this, _damageType);
             });
 
             return result || baseResult;
         }
-        
+
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            bool result = false;
+
+            switch (damage)
+            {
+                case e_DamageType.BOMB_DAMAGE:
+                case e_DamageType.TRUE_DAMAGE:
+                    die();
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
+
         public abstract void think(AWorld world, Time deltaTime);
 
         public s_position getCoord(s_position pos)

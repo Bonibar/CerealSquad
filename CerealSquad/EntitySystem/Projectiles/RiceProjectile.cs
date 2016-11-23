@@ -54,6 +54,17 @@ namespace CerealSquad.EntitySystem.Projectiles
             return baseResult;
         }
 
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            if (damage == e_DamageType.NONE)
+            {
+                die();
+                return true;
+            }
+
+            return false;
+        }
+
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
@@ -62,15 +73,18 @@ namespace CerealSquad.EntitySystem.Projectiles
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() != e_EntityType.EnnemyTrap && i.getEntityType() != e_EntityType.Ennemy)
+                if (i.getEntityType() != e_EntityType.Ennemy)
                     result = true;
-                if (i.getEntityType() == e_EntityType.Player)
-                    i.die();
+                else if (i.getEntityType() != e_EntityType.EnnemyTrap
+                    && i.getEntityType() == e_EntityType.Player)
+                {
+                    result = true;
+                    i.attemptDamage(this, _damageType);
+                    attemptDamage(i, i.getDamageType());
+                }
+                    
             });
-
-            if (baseResult || result)
-                Die = true;
-
+            
             return baseResult || result;
         }
     }
