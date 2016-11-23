@@ -33,7 +33,7 @@ namespace CerealSquad.Menus
             public ReturnMenuItem(Renderer renderer, VictoryAction action = VictoryAction.ReturnToMainMenu, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
             {
                 _Text = new Text("Return to Main Menu", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
-                _Text.CharacterSize = 80;
+                _Text.CharacterSize = 80 * (uint)renderer.Win.GetView().Size.X / 1980;
                 _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2);
             }
 
@@ -78,7 +78,7 @@ namespace CerealSquad.Menus
             _menuList.Add(new ReturnMenuItem(_Renderer));
             nextMenu();
 
-            _VictoryText = new Text("Victory!", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
+            _VictoryText = new Text("Victory!", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80 * (uint)renderer.Win.GetView().Size.X / 1980);
             _VictoryText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_VictoryText.GetLocalBounds().Left + _VictoryText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2.75f);
             _VictoryText.Color = Color.Green;
         }
