@@ -164,9 +164,6 @@ namespace CerealSquad.EntitySystem
         {
             _attackCoolDown = 1;
             new RiceProjectile(_owner, _move[0], HitboxPos);
-            //
-            // TODO Alpha implement
-            //
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
