@@ -104,6 +104,8 @@ namespace CerealSquad
 
             TrapInventory = e_TrapType.NONE;
             InputManager = input;
+            _CollidingType.Add(e_EntityType.Ennemy);
+            _CollidingType.Add(e_EntityType.ProjectileEnemy);
         }
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
@@ -188,7 +190,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonReleased(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            if (!BlockInputs)
+            if (!BlockInputs && e.JoystickId == Id)
             {
                 SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
@@ -208,7 +210,7 @@ namespace CerealSquad
 
         private void Input_JoystickButtonPressed(object source, InputManager.Joystick.ButtonEventArgs e)
         {
-            if (!BlockInputs)
+            if (!BlockInputs && e.JoystickId == Id)
             {
                 SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Button), false);
 
@@ -228,7 +230,7 @@ namespace CerealSquad
 
         private void Input_JoystickMoved(object source, InputManager.Joystick.MoveEventArgs e)
         {
-            if (!BlockInputs)
+            if (!BlockInputs && e.JoystickId == Id)
             {
                 SKeyPlayer action = (SKeyPlayer)InputManager.GetAssociateFunction(Id, CerealSquad.InputManager.Player.Type.Controller, ((int)e.Axis), true);
 
@@ -392,43 +394,61 @@ namespace CerealSquad
 
         public abstract EName getName();
 
+        protected override void IsTouchingHitBoxEntities(AWorld world, List<AEntity> touchingEntities)
+        {
+            touchingEntities.ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.ProjectileEnemy)
+                    attemptDamage(i, i.getDamageType());
+                i.attemptDamage(this, _damageType);
+            });
+        }
+
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
             bool result = false;
+
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap)
+                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
                     result = true;
                 else if (i.getEntityType() == e_EntityType.Crate)
                 {
                     TrapInventory = ((Crates)i).Item;
                     ((Crates)i).pickCrate();
-                }
+                } else if (i.getEntityType() == e_EntityType.ProjectileEnemy)
+                    attemptDamage(i, i.getDamageType());
+                i.attemptDamage(this, _damageType);
             });
 
             return result || baseResult;
         }
 
-        public override bool IsCollidingAndDead(AWorld World)
-        {
-            bool result = false;
-            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
-
-            collidingEntities.ForEach(i =>
-            {
-                if (!i.Equals(this))
-                    if (i.getEntityType() == e_EntityType.Ennemy)
-                        result = true;
-            });
-
-            return result;
-        }
-
         public override void die()
         {
-            base.die();
-            ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+            if (!Die)
+            {
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+            }
+        }
+
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            bool result = false;
+
+            switch(damage)
+            {
+                case e_DamageType.ENEMY_DAMAGE:
+                case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
+                    die();
+                    result = true;
+                    break;
+                   
+            }
+
+            return result;
         }
 
         private class scentMap

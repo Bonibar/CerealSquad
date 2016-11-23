@@ -111,9 +111,11 @@ namespace CerealSquad.EntitySystem
 
         public override void die()
         {
-            if (!_die)
+            if (!Die)
             {
-                _die = true;
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.Loop = false;
             }
         }
 
@@ -123,13 +125,12 @@ namespace CerealSquad.EntitySystem
             {
                 if (ressourcesEntity.isFinished())
                 {
-                    _owner.addChild(new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room));
+                    HalfEggEnemy egg = new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room);
+                    egg.Active = true;
                     if (_child == 0)
                         destroy();
                     _child -= 1;
                 }
-                _ressources.PlayAnimation((uint)EStateEntity.DYING);
-                _ressources.Loop = false;
             }
             else
             {
@@ -140,7 +141,7 @@ namespace CerealSquad.EntitySystem
                 }
                 move(world, deltaTime);
             }
-            _ressources.Update(deltaTime);
+            ressourcesEntity.Update(deltaTime);
         }
     }
 }

@@ -63,9 +63,29 @@ namespace CerealSquad
             return Tmp;
         }
 
+        private List<AEntity> GetTouchingEntitiesRecursive(IEntity Owner, EntityResources Other)
+        {
+            List<AEntity> Tmp = new List<AEntity>();
+
+            Owner.getChildren().ToList<IEntity>().ForEach(i => {
+                Tmp = Tmp.Concat(GetTouchingEntitiesRecursive(i, Other)).ToList();
+            });
+
+            if (Owner.getEntityType() != e_EntityType.World)
+                if (((AEntity)Owner).ressourcesEntity.IsTouchingHitBox(Other) && Other != Owner.ressourcesEntity)
+                    Tmp.Add((AEntity)Owner);
+
+            return Tmp;
+        }
+
         public List<AEntity> GetCollidingEntities(EntityResources Other)
         {
             return GetCollidingEntitiesRecursive(this, Other);
+        }
+
+        public List<AEntity> GetTouchingEntities(EntityResources Other)
+        {
+            return GetTouchingEntitiesRecursive(this, Other);
         }
 
         private List<AEntity> GetAllEntitiesRecursive(IEntity Owner)

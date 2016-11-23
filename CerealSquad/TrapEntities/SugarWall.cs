@@ -33,6 +33,10 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             ressourcesEntity.HitBox = HIT_BOX;
             Timer.Start();
+
+            _CollidingType.Add(e_EntityType.Player);
+            _CollidingType.Add(e_EntityType.Ennemy);
+            _CollidingType.Add(e_EntityType.ProjectileEnemy);
         }
 
         public override void update(Time deltaTime, AWorld world)
@@ -50,6 +54,19 @@ namespace CerealSquad.TrapEntities
             }
 
             ressourcesEntity.Update(deltaTime);
+        }
+
+        public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
+        {
+            bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
+
+
+            CollidingEntities.ForEach(i =>
+            {
+                i.attemptDamage(this, _damageType);
+            });
+
+            return baseResult;
         }
     }
 }

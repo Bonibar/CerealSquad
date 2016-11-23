@@ -26,7 +26,12 @@ namespace CerealSquad.EntitySystem.Projectiles
             _ressources.AddAnimation(3, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
             _ressources.AddAnimation(4, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(5f, 5f), new Vector2f(5f, 5f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(15f, 15f), new Vector2f(15f, 15f));
+            _type = e_EntityType.ProjectileEnemy;
+            _damageType = e_DamageType.PROJECTILE_ENEMY_DAMAGE;
+
+            _CollidingType.Add(e_EntityType.Player);
+
             Pos = pos;
         }
 
@@ -49,11 +54,35 @@ namespace CerealSquad.EntitySystem.Projectiles
             bool baseResult = base.IsCollidingWithWall(World, Res);
 
             if (baseResult)
-                Die = true;
+                die();
 
             return baseResult;
         }
 
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            if (damage == e_DamageType.NONE)
+            {
+                die();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected override void IsTouchingHitBoxEntities(AWorld world, List<AEntity> touchingEntities)
+        {
+            touchingEntities.ForEach(i =>
+            {
+                 if (i.getEntityType() == e_EntityType.Player)
+                    attemptDamage(i, i.getDamageType());
+                 else if (i.getEntityType() == e_EntityType.PlayerTrap)
+                    attemptDamage(i, i.getDamageType());
+
+                i.attemptDamage(this, _damageType);
+            });
+        }
+        
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
@@ -62,14 +91,21 @@ namespace CerealSquad.EntitySystem.Projectiles
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() != e_EntityType.EnnemyTrap && i.getEntityType() != e_EntityType.Ennemy)
-                    result = true;
-                if (i.getEntityType() == e_EntityType.Player)
-                    i.die();
+                switch (i.getEntityType())
+                {
+                    case e_EntityType.Ennemy:
+                    case e_EntityType.EnnemyTrap:
+                    case e_EntityType.Player:
+                    case e_EntityType.PlayerTrap:
+                        result = true;
+                        break;
+                }
+
+                i.attemptDamage(this, _damageType);
             });
 
-            if (baseResult || result)
-                Die = true;
+            if (result)
+                attemptDamage(this, e_DamageType.NONE);
 
             return baseResult || result;
         }

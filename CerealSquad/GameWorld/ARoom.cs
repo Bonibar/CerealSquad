@@ -26,15 +26,6 @@ namespace CerealSquad.GameWorld
             }
         }
 
-        #region Events
-        public delegate void RoomCinematicEventHandler(object sender, RoomCinematicEventArg e);
-
-        public class RoomCinematicEventArg {}
-
-        public event RoomCinematicEventHandler RoomCinematicStart;
-        public event RoomCinematicEventHandler RoomCinematicEnd;
-        #endregion
-
         public enum e_RoomType { FightRoom, TransitionRoom };
         public enum e_RoomState { Idle, Starting, Started, Finished }
 
@@ -142,7 +133,6 @@ namespace CerealSquad.GameWorld
                             s_Pos<uint> cellPos = ParsedRoom.Cells
                                 .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
 
-                            RoomCinematicStart?.Invoke(this, new RoomCinematicEventArg());
                             s_position pos = new s_position((cellPos.X + Position.X) + 0.5, (cellPos.Y + Position.Y) + 0.5);
                             _players.ForEach(i => i.moveTo(pos));
                         }
@@ -151,7 +141,6 @@ namespace CerealSquad.GameWorld
             }
             if (State == e_RoomState.Idle)
             {
-                
                 State = e_RoomState.Starting;
             }
         }
@@ -224,7 +213,6 @@ namespace CerealSquad.GameWorld
                     _Doors.ForEach(i => i.ressourcesEntity.EnableCollision = true);
                     _Doors.ForEach(i => i.ressourcesEntity.sprite.Displayed = true);
                     State = e_RoomState.Started;
-                    RoomCinematicEnd?.Invoke(this, new RoomCinematicEventArg());
                 }
             }
             else if (State == e_RoomState.Started && _Ennemies.Count(i => i.Die == false) == 0)
