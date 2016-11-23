@@ -268,12 +268,15 @@ namespace CerealSquad
 
         public void moveTo(s_position pos)
         {
-            BlockInputs = true;
-            _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
-            _moveTo = true;
-            _moveToPos = pos;
-            _scentMap = new scentMap(40, 40, this);
-            FinishedMovement = false;
+            if (!_moveTo)
+            {
+                BlockInputs = true;
+                _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
+                _moveTo = true;
+                _moveToPos = pos;
+                _scentMap = new scentMap(40, 40, this);
+                FinishedMovement = false;
+            }
         }
 
         public void moveToPos(AWorld world, SFML.System.Time deltaTime)
