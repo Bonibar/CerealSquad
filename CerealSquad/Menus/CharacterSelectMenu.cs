@@ -450,6 +450,7 @@ namespace CerealSquad.Menus
             _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
 
             Jukebox.loadMusic("CharacterSelection", "Assets/Music/CharacterSelection.ogg");
+            Jukebox.SetVolumeMusic("CharacterSelection", 5f);
 
             _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80 * (uint)renderer.Win.GetView().Size.X / 1980);
             _StartGameText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);

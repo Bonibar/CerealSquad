@@ -114,6 +114,9 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("HUD_PlayerCharacter", "Assets/HUD/PlayerCharacterHUD.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/PlayerCharacterHUD.png"), false));
 
             //Sounds
+            awaiter.Add(ftpDownloader.RequireFile("Sound_StoryBegin", "Assets/Sound/And_so_the_story_begins.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/And_so_the_story_begins.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Sound_CerealsHelp", "Assets/Sound/Cereals_might_help_you.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/Cereals_might_help_you.ogg"), false));
+            
             awaiter.Add(ftpDownloader.RequireFile("Sound_BearTrap", "Assets/Sound/BearTrap.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/BearTrap.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("Sound_Construction", "Assets/Sound/Construction.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/Construction.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("Sound_Explosion", "Assets/Sound/Explosion.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/Explosion.ogg"), false));

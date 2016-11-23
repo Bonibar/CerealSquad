@@ -61,6 +61,9 @@ namespace CerealSquad.GameWorld
             parseRoom();
             State = e_RoomState.Idle;
 
+            Sounds.JukeBox.Instance.loadSound("StoryBegins", "StoryBegins");
+            Sounds.JukeBox.Instance.loadSound("CerealsHelp", "CerealsHelp");
+
             foreach (var crate in ParsedRoom.Crates)
             {
                 s_Pos<int> spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
@@ -143,6 +146,10 @@ namespace CerealSquad.GameWorld
             }
             if (State == e_RoomState.Idle)
             {
+                if (RoomType == e_RoomType.StartRoom)
+                    Sounds.JukeBox.Instance.PlaySound("StoryBegins", false);
+                else if (RoomType == e_RoomType.TransitionRoom)
+                    Sounds.JukeBox.Instance.PlaySound("CerealsHelp", false);
                 State = e_RoomState.Starting;
             }
         }
