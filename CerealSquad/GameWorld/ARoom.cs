@@ -14,8 +14,6 @@ namespace CerealSquad.GameWorld
     {
         public static readonly uint TILE_SIZE = 64;
 
-        private static readonly SFML.System.Vector2f GROUND_TRANSFORM = new SFML.System.Vector2f(1f, 1f);
-
         public struct s_MapSize
         {
             public uint Width { get; }
@@ -27,6 +25,10 @@ namespace CerealSquad.GameWorld
                 Height = height;
             }
         }
+
+        #region Events
+
+        #endregion
 
         public enum e_RoomType { FightRoom, TransitionRoom };
         public enum e_RoomState { Idle, Starting, Started, Finished }
@@ -40,7 +42,6 @@ namespace CerealSquad.GameWorld
         public e_RoomState State { get; private set; }
 
         private RenderTexture _RenderTexture = null;
-        private float TimeSpawning = 1500;
         private RoomParser.s_room ParsedRoom = null;
         private EnvironmentResources er = new EnvironmentResources();
         private List<Crates> _Crates = new List<Crates>();
@@ -60,7 +61,7 @@ namespace CerealSquad.GameWorld
             _RenderTexture = new RenderTexture(Size.Width * TILE_SIZE, Size.Height * TILE_SIZE);
             IntRect rect = new IntRect(0, 0, (int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y);
             _RenderSprite = new RegularSprite(_RenderTexture.Texture, new SFML.System.Vector2i((int)_RenderTexture.Size.X, (int)_RenderTexture.Size.Y), rect);
-            _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE * GROUND_TRANSFORM.X, Position.Y * TILE_SIZE * GROUND_TRANSFORM.Y);
+            _RenderSprite.Position = new SFML.System.Vector2f(Position.X * TILE_SIZE, Position.Y * TILE_SIZE);
             parseRoom();
             State = e_RoomState.Idle;
 
@@ -78,6 +79,8 @@ namespace CerealSquad.GameWorld
             }
             if (RoomType == e_RoomType.FightRoom)
                 spawnEnnemies();
+            if (RoomType == e_RoomType.FightRoom)
+                spawnDoors();
         }
 
         private void parseRoom()
@@ -93,13 +96,16 @@ namespace CerealSquad.GameWorld
             }
         }
 
-        public void Start()
+        public void Start(List<APlayer> _players)
         {
             if (State == e_RoomState.Idle)
             {
+                if (_Doors.Count > 0)
+                {
+                    s_position pos = new s_position(_Doors.First().Pos._x, _Doors.First().Pos._y);
+                    _players.ForEach(i => i.moveTo(pos));
+                }
                 State = e_RoomState.Starting;
-                if (RoomType == e_RoomType.FightRoom)
-                    spawnDoors();
             }
         }
 
@@ -140,6 +146,7 @@ namespace CerealSquad.GameWorld
         private void spawnDoors()
         {
             ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(WorldEntity, new s_position(i.Key.X, i.Key.Y), this)));
+            _Doors.ForEach(i => i.ressourcesEntity.EnableCollision = false);
         }
 
         private void spawnEnnemies()
@@ -163,8 +170,8 @@ namespace CerealSquad.GameWorld
             spawnCrates(DeltaTime);
             if (State == e_RoomState.Starting)
             {
-                if (TimeSpawning> 0)
-                    TimeSpawning -= DeltaTime.AsMilliseconds();
+                if (0 != 0)
+                    return;
                 else
                 {
                     _Ennemies.ForEach(i => i.Active = true);

@@ -123,9 +123,10 @@ namespace CerealSquad.EntitySystem
         {
             if (Die)
             {
-                if (ressourcesEntity.Pause)
+                if (ressourcesEntity.isFinished())
                 {
-                    _owner.addChild(new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room));
+                    HalfEggEnemy egg = new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room);
+                    egg.Active = true;
                     if (_child == 0)
                         destroy();
                     _child -= 1;
