@@ -165,9 +165,6 @@ namespace CerealSquad.GameWorld
                     SFML.System.Vector2f cameraOrigin = renderer.Win.MapPixelToCoords(new SFML.System.Vector2i(0, 0));
                     float xToTranslate = (currentWorld.CurrentRoom.Position.X * 64 - screenSize.X / 2 + currentWorld.CurrentRoom.Size.Width * 32 - cameraOrigin.X) / (currentWorld.CurrentRoom.Size.Width * 7);
                     float yToTranslate = (currentWorld.CurrentRoom.Position.Y * 64 - screenSize.Y / 2 + currentWorld.CurrentRoom.Size.Height * 32 - cameraOrigin.Y) / (currentWorld.CurrentRoom.Size.Height * 7);
-                    System.Diagnostics.Debug.WriteLine("X:" + currentWorld.CurrentRoom.Position.X + " Y:" + currentWorld.CurrentRoom.Position.Y);
-                    System.Diagnostics.Debug.WriteLine("vX:" + cameraOrigin.X + " vY:" + cameraOrigin.Y);
-                    System.Diagnostics.Debug.WriteLine("tX:" + xToTranslate + " tY:" + yToTranslate);
                     if (xToTranslate != 0)
                         renderer.Move(xToTranslate, 0);
                     if (yToTranslate != 0)
