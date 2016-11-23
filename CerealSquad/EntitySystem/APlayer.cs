@@ -23,7 +23,8 @@ namespace CerealSquad
             MOVE_LEFT,
             PUT_TRAP,
             SPATTACK,
-            MENU
+            MENU,
+            TRIGGER_TRAP,
         };
 
         protected InputManager.InputManager InputManager;
@@ -36,6 +37,7 @@ namespace CerealSquad
 
         public List<EMovement> MoveStack = new List<EMovement>();
         public bool TrapPressed = false;
+        public bool TrapTrigger = false;
         private IEntity owner;
         private s_position position;
 
@@ -129,6 +131,9 @@ namespace CerealSquad
                     case SKeyPlayer.SPATTACK:
                         _specialActive = false;
                         break;
+                    case SKeyPlayer.TRIGGER_TRAP:
+                        TrapTrigger = false;
+                        break;
                     default:
                         break;
                 }
@@ -161,6 +166,9 @@ namespace CerealSquad
                     case SKeyPlayer.SPATTACK:
                         _specialActive = true;
                         break;
+                    case SKeyPlayer.TRIGGER_TRAP:
+                        TrapTrigger = true;
+                        break;
                     default:
                         break;
                 }
@@ -188,6 +196,9 @@ namespace CerealSquad
                     case SKeyPlayer.PUT_TRAP:
                         TrapPressed = false;
                         break;
+                    case SKeyPlayer.TRIGGER_TRAP:
+                        TrapTrigger = false;
+                        break;
                     default:
                         break;
                 }
@@ -204,6 +215,9 @@ namespace CerealSquad
                 {
                     case SKeyPlayer.PUT_TRAP:
                         TrapPressed = true;
+                        break;
+                    case SKeyPlayer.TRIGGER_TRAP:
+                        TrapTrigger = true;
                         break;
                     default:
                         break;
@@ -270,6 +284,8 @@ namespace CerealSquad
                     center();
                 if (_moveTo)
                     moveToPos();
+                if (TrapTrigger)
+                    triggerTrap();
                 move(world, deltaTime);
                 TrapDeliver.Update(deltaTime, world, MoveStack, TrapPressed);
             }
@@ -364,6 +380,15 @@ namespace CerealSquad
         }
 
         public abstract void AttaqueSpe();
+
+        private void triggerTrap()
+        {
+            _children.ToList().ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.PlayerTrap)
+                    ((ATrap)i).Trigger();
+            });
+        }
 
         //
         // EName must be consecutive int start at 0 for using inside a list

@@ -21,23 +21,28 @@ namespace CerealSquad.TrapEntities
         public BearTrap(IEntity owner) : base(owner, e_DamageType.TRUE_DAMAGE, 0)
         {
             TrapType = e_TrapType.BEAR_TRAP;
+            Cooldown = Time.FromSeconds(0.2f);
             Factories.TextureFactory.Instance.load("BearTrap", "Assets/Trap/Beartrap.png");
 
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ressourcesEntity.AddAnimation((uint)SStateBearTrap.READY, "BearTrap", new List<uint> { 0 }, new Vector2u(128, 128));
-            ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1, 1 }, new Vector2u(128, 128));
             ressourcesEntity.CollisionBox = COLLISION_BOX;
         }
 
-        public override void Trigger()
+        public override void Trigger(bool delay = false)
         {
             ressourcesEntity.PlayAnimation((uint)SStateBearTrap.TRIGGERED);
+            ressourcesEntity.Loop = false;
+            Die = true;
         }
 
         public override void update(Time deltaTime, AWorld world)
         {
+            if (Die && ressourcesEntity.Pause)
+                destroy();
             ressourcesEntity.Update(deltaTime);
         }
     }

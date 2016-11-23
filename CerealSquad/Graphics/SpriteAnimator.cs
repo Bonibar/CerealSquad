@@ -74,8 +74,7 @@ namespace CerealSquad.Graphics
                        
                         if (!m_isLooped) {
                             m_isPaused = true;
-                        } else
-                        {
+                        } else{
                             m_currentFrame = 0; // reset to start
                         }
                     }

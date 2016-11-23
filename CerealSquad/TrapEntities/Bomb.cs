@@ -14,7 +14,8 @@ namespace CerealSquad.TrapEntities
     {
         public static readonly SFML.Graphics.FloatRect COLLISION_BOX = new SFML.Graphics.FloatRect(21, 19, 21, 19);
 
-        public Time Cooldown { get { return Timer.Time; } set { Timer.Time = value; } }
+        public Time TimeRemaining { get { return Timer.Time; } set { Timer.Time = value; } }
+
         private Timer Timer = new Timer(Time.FromSeconds(10));
         private Timer TimerDelete = new Timer(Time.FromSeconds(0.2f));
         private Timer TimerTrigger = new Timer(Time.FromSeconds(0.2f));
@@ -26,6 +27,7 @@ namespace CerealSquad.TrapEntities
         public Bomb(IEntity owner) : base(owner, e_DamageType.BOMB_DAMAGE, 2)
         {
             TrapType = e_TrapType.BOMB;
+            Cooldown = Time.FromSeconds(0.5f);
             Factories.TextureFactory.Instance.load("Bomb", "Assets/Trap/Bomb.png");
             Factories.TextureFactory.Instance.load("BombExpl", "Assets/Trap/BombExploading.png");
 
@@ -48,14 +50,13 @@ namespace CerealSquad.TrapEntities
                 Trigger();
             else if (TimerDelete.Started && TimerDelete.IsTimerOver())
             {
-                // SHOULD BE GONE
-                getOwner().removeChild(this);
                 Die = true;
+                destroy();
             }
 
             if (Triggered)
             {
-                if (TimerTrigger.IsTimerOver())
+                if (TimerTrigger.IsTimerOver() || !TimerTrigger.Started)
                 {
                     if (state == 0)
                         StartExplosion();
@@ -90,10 +91,22 @@ namespace CerealSquad.TrapEntities
             state++;
         }
 
-        public override void Trigger()
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        {
+            if (base.NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
+                return false;
+
+            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
+                && !Triggered)
+                Trigger(true);
+
+            return true;
+        }
+
+        public override void Trigger(bool delay = false)
         {
             Triggered = true;
-            if (!TimerTrigger.Started)
+            if (delay && !TimerTrigger.Started)
                 TimerTrigger.Start();
         }
     }

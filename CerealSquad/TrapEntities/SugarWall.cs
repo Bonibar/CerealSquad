@@ -15,27 +15,40 @@ namespace CerealSquad.TrapEntities
         public static readonly FloatRect COLLISION_BOX = new FloatRect(25, 0, 25, 32);
         public static readonly FloatRect HIT_BOX = new FloatRect(25, 30, 25, 32);
 
+        private Timer Timer = new Timer(Time.FromSeconds(10));
+
         public SugarWall(IEntity owner) : base(owner, e_DamageType.NONE, 0)
         {
-            TrapType = e_TrapType.WALL;
             Factories.TextureFactory.Instance.load("SugarWall", "Assets/Trap/SugarWall.png");
 
-            ressourcesEntity = new Graphics.EntityResources();
-            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
+            TrapType = e_TrapType.WALL;
+            Cooldown = Time.FromSeconds(0.5f);
 
+            ressourcesEntity = new EntityResources();
+            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
             ressourcesEntity.AddAnimation(0, "SugarWall", new List<uint> { 0, 1, 2, 3, 4, 5, 6 }, new Vector2u(64, 64));
-            ((AnimatedSprite)ressourcesEntity.sprite).Loop = false;
+            ressourcesEntity.AddAnimation(1, "SugarWall", new List<uint> { 6, 5, 4, 3, 2, 1, 0 }, new Vector2u(64, 64));
+            ressourcesEntity.Loop = false;
+
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             ressourcesEntity.HitBox = HIT_BOX;
-        }
-
-        public override void Trigger()
-        {
-            return;
+            Timer.Start();
         }
 
         public override void update(Time deltaTime, AWorld world)
         {
+            if (Timer.IsTimerOver() && !Die) {
+                Die = true;
+                ressourcesEntity.PlayAnimation(1);
+                ressourcesEntity.Loop = false;
+            }
+
+            if (Die)
+            {
+                if (ressourcesEntity.Pause == true)
+                    destroy();
+            }
+
             ressourcesEntity.Update(deltaTime);
         }
     }
