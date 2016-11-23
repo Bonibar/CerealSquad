@@ -37,7 +37,7 @@ namespace CerealSquad.GameWorld
         public void ChangeRoom(ARoom room)
         {
             CurrentRoom = room;
-            room.Start();
+            room.Start(WorldEntity.GetAllEntities().Where(i => i.getEntityType() == e_EntityType.Player).Select(i => (APlayer)i).ToList());
         }
 
         public void Draw(RenderTarget target, RenderStates states)

@@ -268,8 +268,8 @@ namespace CerealSquad
         public void moveTo(s_position pos)
         {
             BlockInputs = true;
-            _speed = 3;
-            _center = true;
+            _speed = 1;
+            _moveTo = true;
             _moveToPos = pos;
             FinishedMovement = false;
         }
@@ -300,14 +300,18 @@ namespace CerealSquad
 
         private void center()
         {
-            if (Math.Abs(_pos._trueX - _pos._x) < 0.1 && Math.Abs(_pos._trueY - _pos._y) < 0.1)
+            if (Math.Abs(HitboxPos._trueX - _moveToPos._x - 0.5) < 0.1 && Math.Abs(HitboxPos._trueY - _moveToPos._y - 0.5) < 0.1)
             {
                 _center = false;
-                _moveTo = true;
+                BlockInputs = false;
+                MoveStack.Clear();
+                _ressources.PlayAnimation((uint)EStateEntity.IDLE);
+                FinishedMovement = true;
+                _speed = 5;
             }
-            else if (Math.Abs(_pos._trueX - _pos._x) > 0.1)
+            else if (Math.Abs(HitboxPos._trueX - _moveToPos._x - 0.5) > 0.1)
             {
-                if (_pos._trueX - _pos._x < 0)
+                if (HitboxPos._trueX - _moveToPos._x - 0.5 < 0)
                 {
                     MoveStack.Clear();
                     MoveStack.Add(EMovement.Right);
@@ -320,7 +324,7 @@ namespace CerealSquad
             }
             else
             {
-                if (_pos._trueY - _pos._y < 0)
+                if (HitboxPos._trueY - _moveToPos._y - 0.5 < 0)
                 {
                     MoveStack.Clear();
                     MoveStack.Add(EMovement.Down);
@@ -335,25 +339,14 @@ namespace CerealSquad
 
         private void moveToPos()
         {
-            if (Math.Abs(_pos._x - _moveToPos._x) == 0 && Math.Abs(_pos._y - _moveToPos._y) == 0)
+            if (Math.Abs(HitboxPos._x - _moveToPos._x) == 0 && Math.Abs(HitboxPos._y - _moveToPos._y) == 0)
             {
-                if (Math.Abs(_pos._trueX - _pos._x) < 0.1 && Math.Abs(_pos._trueY - _pos._y) < 0.1)
-                {
                     _moveTo = false;
-                    BlockInputs = false;
-                    MoveStack.Clear();
-                    FinishedMovement = true;
-                    _speed = 5;
-                }
-                else
-                {
                     _center = true;
-                    _moveTo = false;
-                }
             }
-            else if (Math.Abs(_pos._x - _moveToPos._x) != 0)
+            else if (Math.Abs(HitboxPos._x - _moveToPos._x) != 0)
             {
-                if (_pos._trueX - _moveToPos._x < 0)
+                if (HitboxPos._trueX - _moveToPos._x < 0)
                 {
                     MoveStack.Clear();
                     MoveStack.Add(EMovement.Right);
@@ -366,7 +359,7 @@ namespace CerealSquad
             }
             else
             {
-                if (_pos._trueY - _moveToPos._y < 0)
+                if (HitboxPos._trueY - _moveToPos._y < 0)
                 {
                     MoveStack.Clear();
                     MoveStack.Add(EMovement.Down);
