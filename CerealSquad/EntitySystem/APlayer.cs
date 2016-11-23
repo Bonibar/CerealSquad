@@ -269,7 +269,7 @@ namespace CerealSquad
         public void moveTo(s_position pos)
         {
             BlockInputs = true;
-            _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
+            _speed = 1; // Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
             _moveTo = true;
             _moveToPos = pos;
             _scentMap = new scentMap(40, 40, this);
@@ -288,21 +288,21 @@ namespace CerealSquad
             int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
             MoveStack.Clear();
 
-            if (max == top)
-                MoveStack.Add(EMovement.Up);
-            if (max == bottom)
-                MoveStack.Add(EMovement.Down);
-            if (max == right)
-                MoveStack.Add(EMovement.Right);
-            if (max == left)
-                MoveStack.Add(EMovement.Left);
-            if (Pos._x == _moveToPos._x && Pos._y == _moveToPos._y)
+            if (top == bottom && left == right && top == left)
             {
                 _moveTo = false;
                 BlockInputs = false;
                 FinishedMovement = true;
                 _speed = 5;
             }
+            else if (max == top)
+                MoveStack.Add(EMovement.Up);
+            else if (max == bottom)
+                MoveStack.Add(EMovement.Down);
+            else if (max == right)
+                MoveStack.Add(EMovement.Right);
+            else if (max == left)
+                MoveStack.Add(EMovement.Left);
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
@@ -485,7 +485,8 @@ namespace CerealSquad
             {
                 reset(world);
                 check_obstacle(worldEntity);
-                propagateHeat(20 + moveToPos._x - _player.HitboxPos._x, 20 + moveToPos._y - _player.HitboxPos._y, 200);
+                propagateHeat(20 - _player.HitboxPos._x + moveToPos._x, 20 - _player.HitboxPos._y + moveToPos._y, 200);
+                //dump();
             }
 
             public virtual int getScent(int x, int y)
