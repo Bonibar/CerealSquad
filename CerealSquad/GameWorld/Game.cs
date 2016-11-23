@@ -157,6 +157,11 @@ namespace CerealSquad.GameWorld
         {
             if (currentWorld != null)
             {
+                if (currentWorld.CurrentRoom != null && currentWorld.CurrentRoom.RoomType == ARoom.e_RoomType.VictoryRoom)
+                {
+                    State = GameState.Exit;
+                    Menus.MenuManager.Instance.AddMenu(new Menus.VictoryMenu(renderer, _InputManager));
+                }
                 currentWorld.Update(DeltaTime);
                 worldEntity.update(DeltaTime, currentWorld);
             }

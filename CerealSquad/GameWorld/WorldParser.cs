@@ -23,7 +23,9 @@ namespace CerealSquad.GameWorld
         public enum e_RoomType
         {
             Fighting = 0,
-            Transition = 1
+            Transition = 1,
+            Start = 2,
+            Victory = 3
         }
 
         private static string FILE_HASHEDKEY = "6bdec4937a3e3762c6ad9c59038aac089742cacbf332b94bcdc779d39ddf8e53";
