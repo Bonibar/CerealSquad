@@ -32,6 +32,7 @@ namespace CerealSquad.EntitySystem
             Factories.TextureFactory.Instance.load("EggBreaking", "Assets/Enemies/Normal/EggyBreaking.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
+            ressourcesEntity.JukeBox.loadSound("CrackingEggs", "CrackingEggs");
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "EggWalking", new List<uint> { 0 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_DOWN, "EggWalking", new List<uint> { 0, 1, 2, 3 }, new Vector2u(128, 128), 150);
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "EggWalking", new List<uint> { 12, 13, 14, 15 }, new Vector2u(128, 128), 150);
@@ -115,7 +116,7 @@ namespace CerealSquad.EntitySystem
             {
                 base.die();
                 ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
-                ressourcesEntity.Loop = false;
+                ressourcesEntity.JukeBox.PlaySound("CrackingEggs");
             }
         }
 
@@ -123,7 +124,9 @@ namespace CerealSquad.EntitySystem
         {
             if (Die)
             {
-                if (ressourcesEntity.isFinished())
+                if (ressourcesEntity.Animation != (uint)EStateEntity.DYING)
+                    ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                if (ressourcesEntity.Pause)
                 {
                     HalfEggEnemy egg = new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room);
                     egg.Active = true;

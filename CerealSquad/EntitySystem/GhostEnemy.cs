@@ -35,6 +35,8 @@ namespace CerealSquad.EntitySystem
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("MilkyGhost", "Assets/Enemies/Normal/MilkyGhost.png");
             Factories.TextureFactory.Instance.load("MilkyGhostDying", "Assets/Enemies/Normal/Death/MilkyGhostDying.png");
+            ressourcesEntity.JukeBox.loadSound("Ghost", "Ghost");
+
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "MilkyGhost", new List<uint> { 0 }, new Vector2u(128, 128));
@@ -65,6 +67,7 @@ namespace CerealSquad.EntitySystem
             {
                 base.die();
                 ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.JukeBox.PlaySound("Ghost");
                 ressourcesEntity.Loop = false;
             }
         }

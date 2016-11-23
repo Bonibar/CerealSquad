@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CerealSquad.InputManager;
 using SFML.Graphics;
 using SFML.System;
+using CerealSquad.Sounds;
 
 namespace CerealSquad.Menus
 {
@@ -407,7 +408,7 @@ namespace CerealSquad.Menus
         private Renderer _Renderer;
         private Text _StartGameText;
         private RectangleShape _StartGameShape;
-        private Sounds.JukeBox Jukebox = new Sounds.JukeBox();
+        private Sounds.JukeBox Jukebox = Sounds.JukeBox.Instance;
 
         private Graphics.AnimatedSprite _BackgroundImage;
         private Characters.Character[] _Characters;
@@ -442,7 +443,7 @@ namespace CerealSquad.Menus
             _BackgroundImage.Loop = true;
             _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
 
-            Jukebox.loadMusic(0, "Assets/Music/CharacterSelection.ogg");
+            Jukebox.loadMusic("CharacterSelection", "Assets/Music/CharacterSelection.ogg");
 
             _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
             _StartGameText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
@@ -490,14 +491,14 @@ namespace CerealSquad.Menus
                 i++;
             }
 
-            Jukebox.PlayMusic(0, true);
+            Jukebox.PlayMusic("CharacterSelection", true);
 
             base.Show();
         }
 
         public override void Hide()
         {
-            Jukebox.StopMusic(0);
+            Jukebox.StopMusic("CharacterSelection");
 
             base.Hide();
         }
