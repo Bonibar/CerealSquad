@@ -17,6 +17,7 @@ namespace CerealSquad
         TRUE_DAMAGE,
         ENEMY_DAMAGE,
         PROJECTILE_ENEMY_DAMAGE,
+        COFFE_DAMAGE,
         NONE
     }
 
@@ -25,6 +26,7 @@ namespace CerealSquad
         BOMB,
         BEAR_TRAP,
         WALL,
+        COFFEE,
         NONE
     }
 
@@ -46,7 +48,8 @@ namespace CerealSquad
         RiceBowl,
         Egg,
         HalfEgg,
-        Ghost
+        Ghost,
+        CoffeeMachine
     }
 
     public struct s_position

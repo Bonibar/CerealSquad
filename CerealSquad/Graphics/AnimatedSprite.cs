@@ -78,6 +78,8 @@ namespace CerealSquad.Graphics
                 KeyValuePair<IntRect, Texture> palette = PaletteManager.Instance.GetInfoFromPalette(textureAnimation, i);
                 anim.addFrame(Size.X, Size.Y, palette.Key);
             });
+            if (animations.ContainsKey((uint)type))
+                animations.Remove((uint)type);
             animations.Add((uint)type, anim);
 
             if (!animator.HaveAnimation())

@@ -447,6 +447,7 @@ namespace CerealSquad
             {
                 case e_DamageType.ENEMY_DAMAGE:
                 case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
+                case e_DamageType.COFFE_DAMAGE:
                     die();
                     result = true;
                     break;
