@@ -106,6 +106,7 @@ namespace CerealSquad.EntitySystem
             {
                 base.die();
                 ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.JukeBox.PlaySound("CrackingEggs");
                 ressourcesEntity.Loop = false;
             }
         }

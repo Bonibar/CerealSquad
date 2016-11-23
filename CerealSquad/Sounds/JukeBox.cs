@@ -9,19 +9,30 @@ namespace CerealSquad.Sounds
 {
     class JukeBox
     {
-        private Dictionary<int, Sound> sounds;
-        private Dictionary<int, Music> musics;
+        #region Singleton
+        public static JukeBox Instance { get { return Nested.instance; } }
+
+        private class Nested
+        {
+            static Nested() { }
+
+            internal static readonly JukeBox instance = new JukeBox();
+        }
+        #endregion
+
+        private Dictionary<string, Sound> sounds;
+        private Dictionary<string, Music> musics;
         private Factories.SoundBufferFactory buffers;
 
         public int LimitSound { get; set; }
         public int LimitMusic { get; set; }
 
-        public JukeBox()
+        private JukeBox()
         {
             LimitMusic = 1;
             LimitSound = 200;
-            sounds = new Dictionary<int, Sound>();
-            musics = new Dictionary<int, Music>();
+            sounds = new Dictionary<string, Sound>();
+            musics = new Dictionary<string, Music>();
             buffers = Factories.SoundBufferFactory.Instance;
         }
 
@@ -30,7 +41,7 @@ namespace CerealSquad.Sounds
         /// </summary>
         /// <param name="id"></param>
         /// <returns>bool</returns>
-        private bool soundInitializedExist(int id)
+        private bool soundInitializedExist(string id)
         {
             if (!sounds.ContainsKey(id))
                 return false;
@@ -44,7 +55,7 @@ namespace CerealSquad.Sounds
         /// </summary>
         /// <param name="id"></param>
         /// <param name="volume"></param>
-        public void SetVolumeSound(int id, float volume)
+        public void SetVolumeSound(string id, float volume)
         {
             if (!soundInitializedExist(id))
                 return;
@@ -60,7 +71,7 @@ namespace CerealSquad.Sounds
         /// </summary>
         /// <param name="id"></param>
         /// <param name="volume"></param>
-        public void SetVolumeMusic(int id, float volume)
+        public void SetVolumeMusic(string id, float volume)
         {
             if (!musicExist(id))
                 return;
@@ -76,7 +87,7 @@ namespace CerealSquad.Sounds
         /// </summary>
         /// <param name="id">int</param>
         /// <returns>bool</returns>
-        private bool musicExist(int id)
+        private bool musicExist(string id)
         {
            return musics.ContainsKey(id);
         }
@@ -89,7 +100,7 @@ namespace CerealSquad.Sounds
         {
             int nbSoundPlaying = 0;
 
-            foreach (KeyValuePair<int, Sound> entry in sounds)
+            foreach (KeyValuePair<string, Sound> entry in sounds)
             {
                 if (entry.Value.Status == SoundStatus.Playing)
                     nbSoundPlaying++;
@@ -106,7 +117,7 @@ namespace CerealSquad.Sounds
         {
             int nbMusicPlaying = 0;
 
-            foreach (KeyValuePair<int, Music> entry in musics)
+            foreach (KeyValuePair<string, Music> entry in musics)
             {
                 if (entry.Value.Status == SoundStatus.Playing)
                     nbMusicPlaying++;
@@ -121,8 +132,10 @@ namespace CerealSquad.Sounds
         /// </summary>
         /// <param name="id">int</param>
         /// <param name="name">String</param>
-        public void loadSound(int id, string name)
+        public void loadSound(string id, string name)
         {
+            if (soundInitializedExist(id))
+                return;
             Sound s = new Sound(buffers.getBuffer(name));
             sounds[id] = s;
         }
@@ -132,8 +145,10 @@ namespace CerealSquad.Sounds
         /// </summary>
         /// <param name="id">int</param>
         /// <param name="name">string</param>
-        public void loadMusic(int id, string name)
+        public void loadMusic(string id, string name)
         {
+            if (musicExist(id))
+                return;
             musics[id] = new Music(name);
         }
 
@@ -142,7 +157,7 @@ namespace CerealSquad.Sounds
         /// </summary>
         /// <param name="id">int</param>
         /// <param name="loop">bool</param>
-        public void PlaySound(int id, bool loop = false)
+        public void PlaySound(string id, bool loop = false)
         {
             if (!soundInitializedExist(id))
                 throw new Exception("Sound " + id + " not know");
@@ -155,11 +170,23 @@ namespace CerealSquad.Sounds
         }
 
         /// <summary>
+        /// Play sound 
+        /// </summary>
+        /// <param name="id">int</param>
+        public void StopSound(string id)
+        {
+            if (!soundInitializedExist(id))
+                throw new Exception("Sound " + id + " not know");
+
+            sounds[id].Stop();
+        }
+
+        /// <summary>
         /// Play music
         /// </summary>
         /// <param name="id">int</param>
         /// <param name="loop">bool</param>
-        public void PlayMusic(int id, bool loop = true)
+        public void PlayMusic(string id, bool loop = true)
         {
             if (!musicExist(id))
                 throw new Exception("Music " + id + " not know");
@@ -174,7 +201,7 @@ namespace CerealSquad.Sounds
         /// Pause the music
         /// </summary>
         /// <param name="id">int</param>
-        public void PauseMusic(int id)
+        public void PauseMusic(string id)
         {
             if (!musicExist(id))
                 throw new Exception("Music " + id + " not know");
@@ -185,7 +212,7 @@ namespace CerealSquad.Sounds
         /// Stop the music
         /// </summary>
         /// <param name="id">int</param>
-        public void StopMusic(int id)
+        public void StopMusic(string id)
         {
             if (!musicExist(id))
                 throw new Exception("Music " + id + " not know");
