@@ -128,21 +128,24 @@ namespace CerealSquad.GameWorld
 
         public void Start(List<APlayer> _players)
         {
-            if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
+            if (State == e_RoomState.Idle || State == e_RoomState.Finished)
             {
-                List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs(i.Pos._x / 64 - (Position.X + Size.Width) / 2) + Math.Abs(i.Pos._y / 64 - (Position.Y + Size.Height))).ToList();
-                if (_valuablePlayers.Count > 0)
+                if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine(_valuablePlayers.Count);
-                    s_Pos<int> playerLocalPos = getLocalPos(_valuablePlayers.First());
-                    if (playerLocalPos.X != -1 && playerLocalPos.Y != -1)
+                    List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs(i.Pos._x / 64 - (Position.X + Size.Width) / 2) + Math.Abs(i.Pos._y / 64 - (Position.Y + Size.Height))).ToList();
+                    if (_valuablePlayers.Count > 0)
                     {
-                        s_Pos<uint> cellPos = ParsedRoom.Cells
-                            .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
+                        System.Diagnostics.Debug.WriteLine(_valuablePlayers.Count);
+                        s_Pos<int> playerLocalPos = getLocalPos(_valuablePlayers.First());
+                        if (playerLocalPos.X != -1 && playerLocalPos.Y != -1)
+                        {
+                            s_Pos<uint> cellPos = ParsedRoom.Cells
+                                .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
 
-                        RoomCinematicStart?.Invoke(this, new RoomCinematicEventArg());
-                        s_position pos = new s_position((cellPos.X + Position.X) + 0.5, (cellPos.Y + Position.Y) + 0.5);
-                        _players.ForEach(i => i.moveTo(pos));
+                            RoomCinematicStart?.Invoke(this, new RoomCinematicEventArg());
+                            s_position pos = new s_position((cellPos.X + Position.X) + 0.5, (cellPos.Y + Position.Y) + 0.5);
+                            _players.ForEach(i => i.moveTo(pos));
+                        }
                     }
                 }
             }

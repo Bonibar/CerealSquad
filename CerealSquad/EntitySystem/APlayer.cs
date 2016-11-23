@@ -256,6 +256,12 @@ namespace CerealSquad
             }
         }
 
+        public void CancelTrapDelivery()
+        {
+            TrapPressed = false;
+            TrapDeliver.Cancel();
+        }
+
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
             if ((TrapPressed || TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
