@@ -67,6 +67,21 @@ namespace CerealSquad.Graphics
             }
         }
 
+        public int CurrentFrame
+        {
+            get
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                    return (((AnimatedSprite)sprite).CurrentFrame);
+                return (-1);
+            }
+            set
+            {
+                if (sprite.Type == ETypeSprite.ANIMATED)
+                    ((AnimatedSprite)sprite).CurrentFrame = value;
+            }
+        }
+
         public bool Pause
         {
             get
