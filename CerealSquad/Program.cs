@@ -122,7 +122,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("Sound_ghost", "Assets/Sound/ghost.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/ghost.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("Sound_SugarWallSound", "Assets/Sound/SugarWallLowSound.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/SugarWallLowSound.ogg"), false));
 
-            Factories.SoundBufferFactory.Instance.initSoundBuffer();
+            
 
 
             // Initialisation
@@ -162,6 +162,8 @@ namespace CerealSquad
                 }
                 else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed || awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Empty)
                 {
+                    if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed)
+                        Factories.SoundBufferFactory.Instance.initSoundBuffer();
                     Debug.Time.Instance.StartTimer("DISPLAYING MAIN MENU", Debug.Type.Critical, true);
                     Menus.MenuManager.Instance.AddMenu(new Menus.MainMenu(renderer, manager, gameManager));
                     Debug.Time.Instance.StopTimer("DISPLAYING MAIN MENU");
