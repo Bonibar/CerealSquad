@@ -107,6 +107,7 @@ namespace CerealSquad.GameWorld
             {
                 if (_Doors.Count > 0)
                 {
+                    RoomCinematicStart?.Invoke(this, new RoomCinematicEventArg());
                     s_position pos = new s_position(_Doors.First().Pos._x + 2, _Doors.First().Pos._y);
                     _players.ForEach(i => i.moveTo(pos));
                 }
@@ -182,6 +183,7 @@ namespace CerealSquad.GameWorld
                     _Doors.ForEach(i => i.ressourcesEntity.EnableCollision = true);
                     _Doors.ForEach(i => i.ressourcesEntity.sprite.Displayed = true);
                     State = e_RoomState.Started;
+                    RoomCinematicEnd?.Invoke(this, new RoomCinematicEventArg());
                 }
             }
             else if (State == e_RoomState.Started && _Ennemies.Count(i => i.Die == false) == 0)
