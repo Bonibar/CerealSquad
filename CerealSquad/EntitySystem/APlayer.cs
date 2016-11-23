@@ -104,6 +104,7 @@ namespace CerealSquad
             TrapInventory = e_TrapType.NONE;
             InputManager = input;
             _CollidingType.Add(e_EntityType.Ennemy);
+            _CollidingType.Add(e_EntityType.ProjectileEnemy);
         }
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
@@ -398,6 +399,16 @@ namespace CerealSquad
 
         public abstract EName getName();
 
+        protected override void IsTouchingHitBoxEntities(AWorld world, List<AEntity> touchingEntities)
+        {
+            touchingEntities.ForEach(i =>
+            {
+                if (i.getEntityType() == e_EntityType.ProjectileEnemy)
+                    attemptDamage(i, i.getDamageType());
+                i.attemptDamage(this, _damageType);
+            });
+        }
+
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
@@ -411,7 +422,8 @@ namespace CerealSquad
                 {
                     TrapInventory = ((Crates)i).Item;
                     ((Crates)i).pickCrate();
-                }
+                } else if (i.getEntityType() == e_EntityType.ProjectileEnemy)
+                    attemptDamage(i, i.getDamageType());
                 i.attemptDamage(this, _damageType);
             });
 
@@ -420,8 +432,11 @@ namespace CerealSquad
 
         public override void die()
         {
-            base.die();
-            ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+            if (!Die)
+            {
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+            }
         }
 
         public override bool attemptDamage(IEntity Sender, e_DamageType damage)

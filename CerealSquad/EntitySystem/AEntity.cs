@@ -350,6 +350,8 @@ namespace CerealSquad
 
             if (_move.Contains(EMovement.None))
                 ((AnimatedSprite)_ressources.sprite).Pause = true;
+
+            CheckHitBoxCollision(world);
         }
 
         // Use this function for moving the entity whitout his action(ex: knockback)
@@ -359,6 +361,25 @@ namespace CerealSquad
             executeMove(world, deltaTime);
         }
 #endregion
+
+        protected virtual void IsTouchingHitBoxEntities(AWorld world, List<AEntity> touchingEntities)
+        {
+        }
+
+        private void CheckHitBoxCollision(AWorld world)
+        {
+            if (ressourcesEntity == null)
+                return;
+            List<AEntity> HitboxCollidingEntities = ((WorldEntity)getRootEntity())
+                .GetTouchingEntities(ressourcesEntity)
+                .Where(i => i.collideWithType(_type))
+                .ToList();
+
+            if (HitboxCollidingEntities.Count == 0)
+                return;
+
+            IsTouchingHitBoxEntities(world, HitboxCollidingEntities);
+        }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);
 

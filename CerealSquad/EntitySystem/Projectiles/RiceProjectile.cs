@@ -49,7 +49,7 @@ namespace CerealSquad.EntitySystem.Projectiles
             bool baseResult = base.IsCollidingWithWall(World, Res);
 
             if (baseResult)
-                Die = true;
+                die();
 
             return baseResult;
         }
@@ -65,6 +65,19 @@ namespace CerealSquad.EntitySystem.Projectiles
             return false;
         }
 
+        protected override void IsTouchingHitBoxEntities(AWorld world, List<AEntity> touchingEntities)
+        {
+            touchingEntities.ForEach(i =>
+            {
+                 if (i.getEntityType() == e_EntityType.Player)
+                {
+                    attemptDamage(i, i.getDamageType());
+                }
+
+                i.attemptDamage(this, _damageType);
+            });
+        }
+        
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
@@ -73,16 +86,16 @@ namespace CerealSquad.EntitySystem.Projectiles
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() != e_EntityType.Ennemy)
+                if (i.getEntityType() == e_EntityType.Ennemy
+                    && i.getEntityType() == e_EntityType.EnnemyTrap)
                     result = true;
-                else if (i.getEntityType() != e_EntityType.EnnemyTrap
-                    && i.getEntityType() == e_EntityType.Player)
-                {
+                else if (i.getEntityType() == e_EntityType.Player)
+                { 
                     result = true;
-                    i.attemptDamage(this, _damageType);
                     attemptDamage(i, i.getDamageType());
                 }
-                    
+
+                i.attemptDamage(this, _damageType);
             });
             
             return baseResult || result;
