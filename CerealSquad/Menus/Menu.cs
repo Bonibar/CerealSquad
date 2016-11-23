@@ -35,6 +35,7 @@ namespace CerealSquad.Menus
         public bool Selected { get; protected set; }
 
         public abstract void Draw(RenderTarget target, RenderStates states);
+        public abstract void Update(SFML.System.Time DeltaTime);
     }
 
     public abstract class Menu : Drawable
@@ -113,7 +114,7 @@ namespace CerealSquad.Menus
             }
         }
 
-        public virtual void Update(SFML.System.Time DeltaTime) { }
+        public virtual void Update(SFML.System.Time DeltaTime) { _menuList.ForEach(i => i.Update(DeltaTime)); }
 
         public virtual void Show()
         {

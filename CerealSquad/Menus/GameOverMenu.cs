@@ -28,10 +28,16 @@ namespace CerealSquad.Menus
 
         public class ReturnMenuItem : GameOverMenuItem
         {
-            Text _Text;
+            private Text _Text;
+            private Renderer _Renderer;
 
             public ReturnMenuItem(Renderer renderer, GameOverAction action = GameOverAction.ReturnToMainMenu, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
             {
+                if (renderer == null)
+                    throw new ArgumentNullException("Renderer cannot be null");
+
+                _Renderer = renderer;
+
                 _Text = new Text("Return to Main Menu", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
                 _Text.CharacterSize = 80 * (uint)renderer.Win.GetView().Size.X / 1980;
                 _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2);
@@ -44,6 +50,13 @@ namespace CerealSquad.Menus
                     _Text.Color = Color.Green;
                 else
                     _Text.Color = Color.White;
+            }
+
+            public override void Update(Time DeltaTime)
+            {
+                Vector2f cameraOrigin = _Renderer.Win.MapPixelToCoords(new Vector2i(0, 0));
+
+                _Text.Position = new Vector2f(_Renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2 + cameraOrigin.X, _Renderer.Win.GetView().Size.Y / 2 + cameraOrigin.Y);
             }
 
             public override void Draw(RenderTarget target, RenderStates states)
@@ -178,6 +191,13 @@ namespace CerealSquad.Menus
             }
         }
         #endregion
+
+        public override void Update(Time DeltaTime)
+        {
+            Vector2f cameraOrigin = _Renderer.Win.MapPixelToCoords(new Vector2i(0, 0));
+            _GameOverText.Position = new Vector2f(_Renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2 + cameraOrigin.X, _Renderer.Win.GetView().Size.Y / 2.75f + cameraOrigin.Y);
+            base.Update(DeltaTime);
+        }
 
         public override void Draw(RenderTarget target, RenderStates states)
         {
