@@ -45,10 +45,10 @@ namespace CerealSquad
         public int Id { get; protected set; }
 
         public bool BlockInputs = false;
-        private bool _center;
         private bool _moveTo;
         private s_position _moveToPos;
         public bool FinishedMovement;
+        private scentMap _scentMap;
 
         protected enum ETrapPuting
         {
@@ -77,7 +77,6 @@ namespace CerealSquad
         {
             _pos = position;
             _type = e_EntityType.Player;
-            _center = false;
             _moveTo = false;
             FinishedMovement = true;
 
@@ -100,7 +99,7 @@ namespace CerealSquad
                 input.JoystickConnected += Input_JoystickConnected;
                 input.JoystickDisconnected += Input_JoystickDisconnected;
             }
-            
+
             TrapInventory = e_TrapType.NONE;
             InputManager = input;
         }
@@ -261,7 +260,7 @@ namespace CerealSquad
                 _move = new List<EMovement> { EMovement.None };
             else
                 _move = MoveStack;
-        
+
             base.move(world, deltaTime);
         }
 
@@ -271,7 +270,37 @@ namespace CerealSquad
             _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
             _moveTo = true;
             _moveToPos = pos;
+            _scentMap = new scentMap(40, 40, this);
             FinishedMovement = false;
+        }
+
+        public void moveToPos(AWorld world, SFML.System.Time deltaTime)
+        {
+            _scentMap.update((WorldEntity)_owner, world, _moveToPos);
+            double speedMove = _speed * deltaTime.AsSeconds();
+            _move = new List<EMovement> { EMovement.Right, EMovement.Left, EMovement.Down, EMovement.Up };
+            int top = executeUpMove(world, speedMove) ? _scentMap.getScent(20, 19) : -1;
+            int bottom = executeDownMove(world, speedMove) ? _scentMap.getScent(20, 21) : -1;
+            int right = executeRightMove(world, speedMove) ? _scentMap.getScent(21, 20) : -1;
+            int left = executeLeftMove(world, speedMove) ? _scentMap.getScent(19, 20) : -1;
+            int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
+            MoveStack.Clear();
+
+            if (max == top)
+                MoveStack.Add(EMovement.Up);
+            if (max == bottom)
+                MoveStack.Add(EMovement.Down);
+            if (max == right)
+                MoveStack.Add(EMovement.Right);
+            if (max == left)
+                MoveStack.Add(EMovement.Left);
+            if (Pos._x == _moveToPos._x && Pos._y == _moveToPos._y)
+            {
+                _moveTo = false;
+                BlockInputs = false;
+                FinishedMovement = true;
+                _speed = 5;
+            }
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
@@ -280,12 +309,10 @@ namespace CerealSquad
             {
                 if (_specialActive)
                     AttaqueSpe();
-                if (_center)
-                    center();
-                if (_moveTo)
-                    moveToPos();
                 if (TrapTrigger)
                     triggerTrap();
+                if (_moveTo)
+                    moveToPos(world, deltaTime);
                 move(world, deltaTime);
                 TrapDeliver.Update(deltaTime, world, MoveStack, TrapPressed);
             }
@@ -296,80 +323,6 @@ namespace CerealSquad
             }
             _ressources.Update(deltaTime);
             _children.ToList().ForEach(i => i.update(deltaTime, world));
-        }
-
-        private void center()
-        {
-            if (Math.Abs(HitboxPos._trueX - _moveToPos._x - 0.5) < 0.1 && Math.Abs(HitboxPos._trueY - _moveToPos._y - 0.5) < 0.1)
-            {
-                _center = false;
-                BlockInputs = false;
-                MoveStack.Clear();
-                _ressources.PlayAnimation((uint)EStateEntity.IDLE);
-                FinishedMovement = true;
-                _speed = 5;
-            }
-            else if (Math.Abs(HitboxPos._trueX - _moveToPos._x - 0.5) > 0.1)
-            {
-                if (HitboxPos._trueX - _moveToPos._x - 0.5 < 0)
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Right);
-                }
-                else
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Left);
-                }
-            }
-            else
-            {
-                if (HitboxPos._trueY - _moveToPos._y - 0.5 < 0)
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Down);
-                }
-                else
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Up);
-                }
-            }
-        }
-
-        private void moveToPos()
-        {
-            if (Math.Abs(HitboxPos._x - _moveToPos._x) == 0 && Math.Abs(HitboxPos._y - _moveToPos._y) == 0)
-            {
-                    _moveTo = false;
-                    _center = true;
-            }
-            else if (Math.Abs(HitboxPos._x - _moveToPos._x) != 0)
-            {
-                if (HitboxPos._trueX - _moveToPos._x < 0)
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Right);
-                }
-                else
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Left);
-                }
-            }
-            else
-            {
-                if (HitboxPos._trueY - _moveToPos._y < 0)
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Down);
-                }
-                else
-                {
-                    MoveStack.Clear();
-                    MoveStack.Add(EMovement.Up);
-                }
-            }
         }
 
         public abstract void AttaqueSpe();
@@ -433,6 +386,117 @@ namespace CerealSquad
         {
             base.die();
             ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+        }
+
+        private class scentMap
+        {
+            protected int[][] _map;
+            protected uint _x;
+            protected uint _y;
+            protected IEntity _player;
+
+            public int[][] Map
+            {
+                get
+                {
+                    return _map;
+                }
+
+                set
+                {
+                    _map = value;
+                }
+            }
+
+            public scentMap(uint x, uint y, IEntity player)
+            {
+                _x = x;
+                _y = y;
+                _player = player;
+            }
+
+            protected void reset(AWorld world)
+            {
+                int baseX = _player.HitboxPos._x - 20;
+                int baseY = _player.HitboxPos._y - 20;
+                _map = new int[_x][];
+                for (int i = 0; i < _x; i++)
+                {
+                    _map[i] = new int[_y];
+                    for (int j = 0; j < _y; j++)
+                    {
+                        if (world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Normal || world.getPosition(baseX + i, baseY + j) == RoomParser.e_CellType.Door)
+                        {
+                            _map[i][j] = 0;
+                        }
+                        else
+                        {
+                            _map[i][j] = -1;
+                        }
+                    }
+                }
+            }
+
+            protected virtual void check_obstacle(WorldEntity world)
+            {
+                foreach (IEntity entity in world.getChildren())
+                {
+                    if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
+                    {
+                        _map[entity.Pos._x][entity.Pos._y] = -1;
+                    }
+                }
+            }
+
+            public void propagateHeat(int x, int y, int intensity)
+            {
+                if (x >= 0 && x < _x && y >= 0 && y < _y && _map[x][y] != -1 && _map[x][y] < intensity)
+                {
+                    _map[x][y] = intensity;
+                    if (intensity > 1)
+                    {
+                        propagateHeat(x - 1, y, intensity - 1);
+                        propagateHeat(x + 1, y, intensity - 1);
+                        propagateHeat(x, y - 1, intensity - 1);
+                        propagateHeat(x, y + 1, intensity - 1);
+                    }
+                }
+            }
+
+            public void update(WorldEntity worldEntity, AWorld world, s_position moveToPos)
+            {
+                reset(world);
+                check_obstacle(worldEntity);
+                propagateHeat(20 + moveToPos._x - _player.HitboxPos._x, 20 + moveToPos._y - _player.HitboxPos._y, 200);
+            }
+
+            public virtual int getScent(int x, int y)
+            {
+                if (x >= 0 && x < _x && y >= 0 && y < _y)
+                {
+                    int scent = 0;
+                    scent += _map[x][y];
+                    if (scent < 0)
+                        scent = -1;
+                    return (scent);
+                }
+                return (-1);
+            }
+
+            public void dump()
+            {
+                for (int y = 0; y < _y; y++)
+                {
+                    for (int x = 0; x < _x; x++)
+                    {
+                        System.Console.Out.Write(getScent(x, y));
+                        System.Console.Out.Write(" ");
+                    }
+                    Console.Out.Write('\n');
+                }
+                Console.Out.Write('\n');
+            }
+
         }
     }
 }
