@@ -42,6 +42,7 @@ namespace CerealSquad.TrapEntities
 
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             Timer.Start();
+            _CollidingType.Add(e_EntityType.ProjectileEnemy);
         }
 
         public override void update(Time deltaTime, AWorld world)
@@ -93,13 +94,17 @@ namespace CerealSquad.TrapEntities
 
         public override bool attemptDamage(IEntity Sender, e_DamageType damage)
         {
-            if ((getEntityType() == e_EntityType.EnnemyTrap 
-                || getEntityType() == e_EntityType.PlayerTrap)
-                && !Triggered)
-                Trigger(true);
-            else if (getEntityType() == e_EntityType.Player 
-                && !Triggered)
-                Trigger(false);
+
+            switch(Sender.getEntityType())
+            {
+                case e_EntityType.PlayerTrap:
+                    Trigger(true);
+                    break;
+                case e_EntityType.Player:
+                case e_EntityType.ProjectileEnemy:
+                    Trigger(false);
+                    break;
+            }
 
             return true;
         }
