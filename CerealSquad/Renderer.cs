@@ -110,10 +110,10 @@ namespace CerealSquad
             resolutionContext[EResolution.R1024x576] = new SResolution(1024, 576);
             resolutionContext[EResolution.R854x480] = new SResolution(854, 480);
             resolutionContext[EResolution.R800x450] = new SResolution(800, 450);
-#if !DEBUG
+#if DEBUG
             Resolution = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
 #endif
-            currentView = new View(new FloatRect(0, 0, 3840, 2160));
+            currentView = new View(new FloatRect(0, 0, 2560, 1440));
         }
 
         /// <summary>
