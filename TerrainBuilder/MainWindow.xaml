@@ -58,7 +58,7 @@
                         </TabControl.Template>
                     </TabControl>
                     <GridSplitter Grid.Row="0" Grid.Column="1" Margin="2,0,2,0" Width="3"  VerticalAlignment="Stretch" HorizontalAlignment="Center"></GridSplitter>
-                    <TextBox Grid.Row="0" Grid.Column="2">Yolo</TextBox>
+                    <Grid Name="CanvasGrid" Background="Gray" Grid.Row="0" Grid.Column="2"></Grid>
                 </Grid>
             </Border>
         </DockPanel>

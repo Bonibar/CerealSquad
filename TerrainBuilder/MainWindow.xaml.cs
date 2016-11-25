@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Interop;
 
 namespace TerrainBuilder
 {
@@ -23,37 +24,114 @@ namespace TerrainBuilder
         TileLoader _TileLoader;
         List<Tile> _Tiles = new List<Tile>();
 
-        public struct Tile
+        public class Tile
         {
-            public Tile(string name, string path, int tileX, int tileY)
+            public Tile(string name, string path, int tileX, int tileY, Image image)
             {
                 Name = name;
                 Path = path;
                 TileX = tileX;
                 TileY = tileY;
+                SelectionX = -1;
+                SelectionY = -1;
+
+                _Image = image;
             }
 
+            public int SelectionX;
+            public int SelectionY;
             public int TileX;
             public int TileY;
             public string Name;
             public string Path;
+
+            public Image _Image;
         }
+
+        private Image _RoomImage;
+        private Room _Room;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            _RoomImage = new Image();
+
+            _RoomImage.MouseLeftButtonDown += _RoomImage_MouseLeftButtonDown;
+
+            CanvasGrid.Children.Add(_RoomImage);
+
+            _Room = new Room(CanvasGrid, _RoomImage);
+        }
+
+        private void _RoomImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            int tabId = TilesTab.SelectedIndex;
+
+            if (tabId != -1)
+            {
+                TabItem _selectedTab = (TabItem)TilesTab.Items[tabId];
+                string tileName = _selectedTab.Header.ToString();
+
+                List<Tile> _validTiles = _Tiles.FindAll(i => i.Name == tileName);
+                if (_validTiles.Count > 1)
+                    throw new NotSupportedException("Cannot have multiple Tiles with same name");
+                else if (_validTiles.Count < 1)
+                    throw new IndexOutOfRangeException("No tile found");
+
+                Tile _curentTile = _validTiles.First();
+
+                if (_curentTile.SelectionX != -1 && _curentTile.SelectionY != -1)
+                {
+                    Image currentImage = (Image)sender;
+                    Point mousepos = e.GetPosition(currentImage);
+                    int selectedX = (int)((mousepos.X * currentImage.Source.Width) / (_curentTile.TileX * currentImage.RenderSize.Width));
+                    int selectedY = (int)((mousepos.Y * currentImage.Source.Height) / (_curentTile.TileY * currentImage.RenderSize.Height));
+
+                    _Room.AddRoomCell(selectedX, selectedY, _curentTile.Name, _curentTile.SelectionX, _curentTile.SelectionY);
+                }
+            }
         }
 
         private void _TileLoader_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Tile _newTile = new Tile(_TileLoader.Name, _TileLoader.Path, _TileLoader.TileX, _TileLoader.TileY);
-            _Tiles.Add(_newTile);
             TabItem _newItem = new TabItem();
             Image _tile = new Image();
-            _tile.Source =  new BitmapImage(new Uri(_newTile.Path, UriKind.RelativeOrAbsolute));
+            _tile.Source =  new BitmapImage(new Uri(_TileLoader.Path, UriKind.RelativeOrAbsolute));
             _newItem.Content = _tile;
-            _newItem.Header = _newTile.Name;
+            _newItem.Header = _TileLoader.Name;
             TilesTab.Items.Add(_newItem);
+            Tile _newTile = new Tile(_TileLoader.Name, _TileLoader.Path, _TileLoader.TileX, _TileLoader.TileY, _tile);
+            _Tiles.Add(_newTile);
+            _tile.MouseLeftButtonDown += _tile_MouseLeftButtonDown;
+            _Room.AddTileMap(_TileLoader.Path, _TileLoader.Name);
+        }
+
+        private void _tile_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            int tabId = TilesTab.SelectedIndex;
+
+            if (tabId != -1)
+            {
+                TabItem _selectedTab = (TabItem)TilesTab.Items[tabId];
+                string tileName = _selectedTab.Header.ToString();
+
+                List<Tile> _validTiles = _Tiles.FindAll(i => i.Name == tileName);
+                if (_validTiles.Count > 1)
+                    throw new NotSupportedException("Cannot have multiple Tiles with same name");
+                else if (_validTiles.Count < 1)
+                    throw new IndexOutOfRangeException("No tile found");
+
+                Tile _curentTile = _validTiles.First();
+
+                Image currentImage = (Image)sender;
+                Point mousepos = e.GetPosition((IInputElement)sender);
+                int selectedX = (int)((mousepos.X * currentImage.Source.Width) / (_curentTile.TileX * currentImage.RenderSize.Width));
+                int selectedY = (int)((mousepos.Y * currentImage.Source.Height) / (_curentTile.TileY * currentImage.RenderSize.Height));
+
+                _curentTile.SelectionX = selectedX;
+                _curentTile.SelectionY = selectedY;
+            }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -61,11 +139,6 @@ namespace TerrainBuilder
             _TileLoader = new TileLoader();
             _TileLoader.Closing += _TileLoader_Closing;
             _TileLoader.ShowDialog();
-        }
-
-        private void loadTile(string path)
-        {
-            
         }
     }
 }
