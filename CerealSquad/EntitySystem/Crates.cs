@@ -34,13 +34,15 @@ namespace CerealSquad.EntitySystem
             Pos = new s_position(_Pos.X, _Pos.Y);
 
             List<uint> PosFrames = new List<uint>();
-            for (uint i = 0; i < 30; i++)
+            for (uint i = 0; i < 12; i++)
             {
                 PosFrames.Add(i);
             }
 
-            ((AnimatedSprite)_ressources.sprite).addAnimation(0, "CrateFloating", PosFrames, new Vector2u(128, 128), 50);
-            _ressources.CollisionBox = new FloatRect(new Vector2f(26.0f, 18.0f), new Vector2f(26.0f, 18.0f));
+            ((AnimatedSprite)_ressources.sprite).addAnimation(0, "CrateFloating", PosFrames, new Vector2u(128, 128), 80);
+            _ressources.CollisionBox = new FloatRect(21f, -6f, 17f, 24f);
+
+            _CollidingType.Add(e_EntityType.Player);
         }
 
         public void pickCrate()

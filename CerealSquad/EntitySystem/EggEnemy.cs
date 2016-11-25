@@ -14,6 +14,8 @@ namespace CerealSquad.EntitySystem
     {
         protected scentMap _scentMap;
 
+        private int _invuln;
+
         //
         // Need because otherwise the children will have the same seed for the random
         // Other way use a random master who will decide of each seed of the random
@@ -30,6 +32,7 @@ namespace CerealSquad.EntitySystem
             Factories.TextureFactory.Instance.load("EggBreaking", "Assets/Enemies/Normal/EggyBreaking.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
+            ressourcesEntity.JukeBox.loadSound("CrackingEggs", "CrackingEggs");
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "EggWalking", new List<uint> { 0 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_DOWN, "EggWalking", new List<uint> { 0, 1, 2, 3 }, new Vector2u(128, 128), 150);
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "EggWalking", new List<uint> { 12, 13, 14, 15 }, new Vector2u(128, 128), 150);
@@ -57,6 +60,7 @@ namespace CerealSquad.EntitySystem
                 s_position pos = getCoord(HitboxPos);
                 var position = ressourcesEntity.Position;
 
+                EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
                 int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
                 ressourcesEntity.Position = position;
@@ -92,20 +96,27 @@ namespace CerealSquad.EntitySystem
                         _move.Add(EMovement.Right);
                     if (maxscent == left)
                         _move.Add(EMovement.Left);
-                    if (_move.Count > 1)
-                        _move.Remove(EMovement.None);
-                    if (_move.Count > 1)
+                    _move.Remove(EMovement.None);
+                    if (_move.Contains(lastMove))
+                    {
+                        _move = new List<EMovement> { lastMove };
+                    }
+                    else
+                    {
+                        _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                         _r = 10;
-                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    }
                 }
             }
         }
 
         public override void die()
         {
-            if (!_die)
+            if (!Die)
             {
-                _die = true;
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.JukeBox.PlaySound("CrackingEggs");
             }
         }
 
@@ -113,26 +124,27 @@ namespace CerealSquad.EntitySystem
         {
             if (Die)
             {
-                if (ressourcesEntity.isFinished())
+                if (ressourcesEntity.Animation != (uint)EStateEntity.DYING)
+                    ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                if (ressourcesEntity.Pause)
                 {
-                    _owner.addChild(new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room));
+                    HalfEggEnemy egg = new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room);
+                    egg.Active = true;
                     if (_child == 0)
                         destroy();
                     _child -= 1;
                 }
-                _ressources.PlayAnimation((uint)EStateEntity.DYING);
-                _ressources.Loop = false;
             }
             else
             {
-                if (active)
+                if (Active)
                 {
                     _scentMap.update((WorldEntity)_owner, _room);
                     think(world, deltaTime);
                 }
                 move(world, deltaTime);
             }
-            _ressources.Update(deltaTime);
+            ressourcesEntity.Update(deltaTime);
         }
     }
 }

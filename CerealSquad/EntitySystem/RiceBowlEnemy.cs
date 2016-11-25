@@ -6,6 +6,7 @@ using SFML.System;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using CerealSquad.EntitySystem.Projectiles;
 
 namespace CerealSquad.EntitySystem
 {
@@ -18,10 +19,11 @@ namespace CerealSquad.EntitySystem
         public RiceBowlEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 2;
-            _attackCoolDown = 5; // 5 sec
+            _attackCoolDown = 1; // 5 sec
             _scentMap = new scentMap(room.Size.Height, room.Size.Width);
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("RiceBowlWalking", "Assets/Enemies/Normal/RiceBowlWalking.png");
+            Factories.TextureFactory.Instance.load("RiceBowlDying", "Assets/Enemies/Normal/Death/RiceBowlDying.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "RiceBowlWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
@@ -29,7 +31,7 @@ namespace CerealSquad.EntitySystem
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "RiceBowlWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "RiceBowlWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "RiceBowlWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
-            //  ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "HalfEggyWalking", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "RiceBowlDying", Enumerable.Range(0, 9).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(21.0f, -10.0f), new Vector2f(21.0f, 20.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(21.0f, 20.0f), new Vector2f(21.0f, 20.0f));
@@ -52,7 +54,8 @@ namespace CerealSquad.EntitySystem
                 _r = 0;
                 s_position pos = getCoord(HitboxPos);
                 var position = ressourcesEntity.Position;
-
+                
+                EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
                 int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
                 ressourcesEntity.Position = position;
@@ -88,12 +91,27 @@ namespace CerealSquad.EntitySystem
                         _move.Add(EMovement.Right);
                     if (maxscent == left)
                         _move.Add(EMovement.Left);
-                    if (_move.Count > 1)
-                        _move.Remove(EMovement.None);
-                    if (_move.Count > 1)
+                    _move.Remove(EMovement.None);
+                    if (_move.Contains(lastMove))
+                    {
+                        _move = new List<EMovement> { lastMove };
+                    }
+                    else
+                    {
+                        _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                         _r = 10;
-                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    }
                 }
+            }
+        }
+
+        public override void die()
+        {
+            if (!Die)
+            {
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.Loop = false;
             }
         }
 
@@ -103,6 +121,10 @@ namespace CerealSquad.EntitySystem
             double deltaY = 0;
             bool result = false;
             bool end = false;
+            s_position pos = getCoord(Pos);
+
+            if (_attackCoolDown > 0)
+                return (false);
 
             switch (_move[0])
             {
@@ -119,27 +141,29 @@ namespace CerealSquad.EntitySystem
                     deltaX = -0.5;
                     break;
             }
-            for (int i = 0; i < 30; i += 1)
+            world.GetAllEntities().ForEach(ent =>
             {
-                world.GetAllEntities().ForEach(ent =>
+                if (ent.getEntityType() == e_EntityType.Player)
                 {
-                    if (IsInEllipse(Pos._trueX + deltaX * i, Pos._trueY + deltaY * i, ent.Pos._trueX, ent.Pos._trueY, 0.5, 0.5))
-                        result = true;
-                    if (_room.getPosition((uint)(Pos._trueX + deltaX * i), (uint)(Pos._trueY + deltaY * i)) == RoomParser.e_CellType.Wall)
-                        end = true;
-                });
-                if (result || end)
-                    break;
-            }
-            return (false);
+                    for (int i = 0; i < 15; i += 1)
+                    {
+                        if (IsInEllipse(Pos._trueX + deltaX * i, Pos._trueY + deltaY * i, ent.HitboxPos._trueX, ent.Pos._trueY, 0.2, 0.2))
+                            result = true;
+                        if (_room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Wall
+                        || _room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Void)
+                            end = true;
+                        if (result || end)
+                            break;
+                    }
+                }
+            });
+            return (result);
         }
-
-        public override void attack()
+        
+        protected void attack()
         {
-            _attackCoolDown = 5;
-            //
-            // TODO Alpha implement
-            //
+            _attackCoolDown = 1;
+            new RiceProjectile(_owner, _move[0], HitboxPos);
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
@@ -152,7 +176,7 @@ namespace CerealSquad.EntitySystem
             }
             else
             {
-                if (active)
+                if (Active)
                 {
                     _scentMap.update((WorldEntity)_owner, _room);
                     think(world, deltaTime);

@@ -80,9 +80,9 @@ namespace CerealSquad.Menus
             _HelpText.Position = new Vector2f(_Renderer.Win.GetView().Size.X - (_HelpText.GetLocalBounds().Left + _HelpText.GetLocalBounds().Width) - 10,
                 _Renderer.Win.GetView().Size.Y - (_HelpText.GetLocalBounds().Top + _HelpText.GetLocalBounds().Height) - 10);
 
-            _Soundclip = new Sounds.JukeBox();
-            _Soundclip.loadMusic(0, "Assets/Music/intro_soundclip.ogg");
-            _Soundclip.PlayMusic(0, false);
+            _Soundclip = Sounds.JukeBox.Instance;
+            _Soundclip.loadMusic("SoundClip", "Assets/Music/intro_soundclip.ogg");
+            _Soundclip.PlayMusic("SoundClip", false);
 
             _State = State.Waiting;
         }
@@ -115,7 +115,7 @@ namespace CerealSquad.Menus
             {
                 _CancelTimer.Stop();
                 _State = State.Cancelled;
-                _Soundclip.StopMusic(0);
+                _Soundclip.StopMusic("SoundClip");
                 Ended?.Invoke(this, new CutsceneEventArgs(_State));
             }
         }
@@ -125,7 +125,7 @@ namespace CerealSquad.Menus
         {
             if (_State == State.Finished)
             {
-                _Soundclip.StopMusic(0);
+                _Soundclip.StopMusic("SoundClip");
                 Ended?.Invoke(this, new CutsceneEventArgs(_State));
                 _State = State.Unknow;
             }

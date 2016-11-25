@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CerealSquad.InputManager;
 using SFML.Graphics;
 using SFML.System;
+using CerealSquad.Sounds;
 
 namespace CerealSquad.Menus
 {
@@ -48,42 +49,42 @@ namespace CerealSquad.Menus
                 float x_margin = _Renderer.Win.GetView().Size.X / CharacterSelectMenu.PLAYER_COUNT;
                 float x_padding = x_margin / 2;
                 float y_margin = 0;
-                float y_padding = y_margin / 2 + 13;
+                float y_padding = y_margin / 2 + 13 * (int)_Renderer.Win.GetView().Size.X / 1980;
 
                 List<String> char_names = new List<string> { "Mike", "Jack", "Orange Hina", "Tchong" };
 
                 uint i = 0;
                 while (i < CharacterSelectMenu.CHARACTER_COUNT)
                 {
-                    _SelectionText[i] = new Text(char_names[(int)i % char_names.Count], Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+                    _SelectionText[i] = new Text(char_names[(int)i % char_names.Count], Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 25 * (uint)_Renderer.Win.GetView().Size.X / 1980);
 
                     float text_x_offset = (_SelectionText[i].GetLocalBounds().Left + _SelectionText[i].GetLocalBounds().Width) / 2;
 
-                    _SelectionText[i].Position = new Vector2f((x_margin * _Id + x_padding) - text_x_offset, 57 + (y_margin * _Id + y_padding));
+                    _SelectionText[i].Position = new Vector2f((x_margin * _Id + x_padding) - text_x_offset, 61 * (int)_Renderer.Win.GetView().Size.X / 1980 + (y_margin * _Id + y_padding));
                     i++;
                 }
 
-                _PlayerText = new Text("Player " + (id + 1), Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+                _PlayerText = new Text("Player " + (id + 1), Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 25 * (uint)_Renderer.Win.GetView().Size.X / 1980);
                 _PlayerText.Position = new Vector2f((x_margin * _Id + x_padding) - (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2, (y_margin * _Id + y_padding));
 
-                _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
-                _JoinText.Position = new Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 57 + (y_margin * _Id + y_padding));
+                _JoinText = new Text("Join", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 25 * (uint)_Renderer.Win.GetView().Size.X / 1980);
+                _JoinText.Position = new Vector2f((x_margin * _Id + x_padding) - (_JoinText.GetLocalBounds().Left + _JoinText.GetLocalBounds().Width) / 2, 61 * (int)_Renderer.Win.GetView().Size.X / 1980 + (y_margin * _Id + y_padding));
                 _JoinText.Color = Color.Green;
 
                 Factories.TextureFactory.Instance.load("CS_Fork", "Assets/HUD/Fork.png");
-                _Fork = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Fork"), new Vector2i(64, 64), new IntRect(0, 0, 64, 64));
+                _Fork = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Fork"), new Vector2i(64 * (int)_Renderer.Win.GetView().Size.X / 1980, 64 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 64, 64));
                 _Fork.Position = new Vector2f(_PlayerText.Position.X - _Fork.Size.X, 0);
 
                 Factories.TextureFactory.Instance.load("CS_Knife", "Assets/HUD/Knife.png");
-                _Knife = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Knife"), new Vector2i(64, 64), new IntRect(0, 0, 64, 64));
+                _Knife = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Knife"), new Vector2i(64 * (int)_Renderer.Win.GetView().Size.X / 1980, 64 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 64, 64));
                 _Knife.Position = new Vector2f(_PlayerText.Position.X + _PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width, 0);
 
                 Factories.TextureFactory.Instance.load("CS_Overlay", "Assets/HUD/SelectionPlayerOverlay.png");
-                _Overlay = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Overlay"), new Vector2i(64 * 6, 19 * 6), new IntRect(0, (19 * (int)_Id), 64, 19));
+                _Overlay = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("CS_Overlay"), new Vector2i(64 * 6 * (int)_Renderer.Win.GetView().Size.X / 1980, 19 * 6 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, (19 * (int)_Id), 64, 19));
                 _Overlay.Position = new Vector2f(_PlayerText.Position.X + (_PlayerText.GetLocalBounds().Left + _PlayerText.GetLocalBounds().Width) / 2 - _Overlay.Size.X / 2, 0);
 
                 Factories.TextureFactory.Instance.load("CS_Cursor", "Assets/HUD/SelectionPlayerCursor.png");
-                _Cursor = new Graphics.AnimatedSprite(64 * 3, 64 * 3);
+                _Cursor = new Graphics.AnimatedSprite(64 * 3 * (uint)_Renderer.Win.GetView().Size.X / 1980, 64 * 3 * (uint)_Renderer.Win.GetView().Size.X / 1980);
                 var listFrame = Enumerable.Range(0 + (int)(_Id * 11), 11).Select(p => (uint)p).ToList();
                 _Cursor.addAnimation(0, "CS_Cursor", listFrame.Concat(listFrame.OrderByDescending(x => x)).ToList(), new Vector2u(64, 64), 50);
                 _Cursor.Loop = true;
@@ -209,15 +210,22 @@ namespace CerealSquad.Menus
             protected Graphics.AnimatedSprite _Sprite;
             public Vector2f _CursorPosition { get; private set; }
 
+            private Renderer _Renderer;
+
             public Character(Renderer renderer)
             {
+                if (renderer == null)
+                    throw new ArgumentNullException("Renderer cannot be null");
+
+                _Renderer = renderer;
+
                 id_on_it = -1;
                 id_locked = false;
             }
 
             protected virtual void initCursor()
             {
-                _CursorPosition = new Vector2f(_Sprite.Position.X, _Sprite.Position.Y - _Sprite.Size.Y / 2 - 64 * 3 / 2);
+                _CursorPosition = new Vector2f(_Sprite.Position.X, _Sprite.Position.Y - _Sprite.Size.Y / 2 - 64 * 3 / 2 * (uint)_Renderer.Win.GetView().Size.X / 1980);
             }
 
             public virtual void Select(int id)
@@ -394,9 +402,8 @@ namespace CerealSquad.Menus
                 }
             }
 
-            public override void Draw(RenderTarget target, RenderStates states)
-            {
-            }
+            public override void Update(Time DeltaTime) { }
+            public override void Draw(RenderTarget target, RenderStates states) { }
         }
 
         public static uint PLAYER_COUNT = 4;
@@ -407,7 +414,7 @@ namespace CerealSquad.Menus
         private Renderer _Renderer;
         private Text _StartGameText;
         private RectangleShape _StartGameShape;
-        private Sounds.JukeBox Jukebox = new Sounds.JukeBox();
+        private Sounds.JukeBox Jukebox = Sounds.JukeBox.Instance;
 
         private Graphics.AnimatedSprite _BackgroundImage;
         private Characters.Character[] _Characters;
@@ -442,13 +449,14 @@ namespace CerealSquad.Menus
             _BackgroundImage.Loop = true;
             _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
 
-            Jukebox.loadMusic(0, "Assets/Music/CharacterSelection.ogg");
+            Jukebox.loadMusic("CharacterSelection", "Assets/Music/CharacterSelection.ogg");
+            Jukebox.SetVolumeMusic("CharacterSelection", 5f);
 
-            _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80);
+            _StartGameText = new Text("Validate to start !", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80 * (uint)renderer.Win.GetView().Size.X / 1980);
             _StartGameText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameText.GetLocalBounds().Left + _StartGameText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height) / 2);
             _StartGameText.Color = Color.Red;
 
-            _StartGameShape = new RectangleShape(new Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 20));
+            _StartGameShape = new RectangleShape(new Vector2f(renderer.Win.GetView().Size.X, _StartGameText.GetLocalBounds().Top + _StartGameText.GetLocalBounds().Height + 20 * (uint)renderer.Win.GetView().Size.X / 1980));
             _StartGameShape.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_StartGameShape.GetLocalBounds().Left + _StartGameShape.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 3 - (_StartGameShape.GetLocalBounds().Top + _StartGameShape.GetLocalBounds().Height) / 2);
             _StartGameShape.FillColor = Color.White;
 
@@ -490,14 +498,14 @@ namespace CerealSquad.Menus
                 i++;
             }
 
-            Jukebox.PlayMusic(0, true);
+            Jukebox.PlayMusic("CharacterSelection", true);
 
             base.Show();
         }
 
         public override void Hide()
         {
-            Jukebox.StopMusic(0);
+            Jukebox.StopMusic("CharacterSelection");
 
             base.Hide();
         }

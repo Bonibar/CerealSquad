@@ -84,7 +84,9 @@
     <Compile Include="Downloaders\LoadingScreen.cs" />
     <Compile Include="Downloaders\TaskAwaiter.cs" />
     <Compile Include="EntitySystem\Projectiles\AProjectile.cs" />
+    <Compile Include="EntitySystem\Projectiles\CoffeeProjectile.cs" />
     <Compile Include="EntitySystem\Projectiles\RiceProjectile.cs" />
+    <Compile Include="EntitySystem\RoomDoor.cs" />
     <Compile Include="Factories\EnnemyFactory.cs" />
     <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Graphics\EllipseShapeSprite.cs" />
     <Compile Include="Menus\Buttons\NewGameButton.cs" />
     <Compile Include="Menus\CharacterSelectMenu.cs" />
+    <Compile Include="Menus\VictoryMenu.cs" />
     <Compile Include="Menus\GameOverMenu.cs" />
     <Compile Include="Menus\IntroCutscene.cs" />
     <Compile Include="Menus\MainMenu.cs" />
@@ -148,6 +151,7 @@
     <Compile Include="TrapEntities\BearTrap.cs" />
     <Compile Include="TrapEntities\Bomb.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="TrapEntities\CoffeePool.cs" />
     <Compile Include="TrapEntities\SugarWall.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -191,6 +195,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Maps\TestRoom.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Maps\TestRoom5.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Maps\TestRoom3.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Maps\TestRoom4.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Maps\TestRoom2.txt">

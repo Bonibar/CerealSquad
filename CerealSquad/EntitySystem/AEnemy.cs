@@ -18,7 +18,7 @@ namespace CerealSquad
 
         protected int _r;
 
-        public bool active { get; set; }
+        public bool Active { get; set; }
 
         public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {
@@ -27,30 +27,40 @@ namespace CerealSquad
             _room = room;
             _rand = new Random();
             _r = 0;
-            active = true;
-        }
-
-        public virtual void attack()
-        {
-            throw new NotImplementedException();
+            Active = false;
+            _damageType = e_DamageType.ENEMY_DAMAGE;
+            _CollidingType.Add(e_EntityType.Player);
         }
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);
             bool result = false;
-
+            
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    die();
                 if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
                     result = true;
-                if (i.getEntityType() == e_EntityType.Player)
-                    i.die();
+                i.attemptDamage(this, _damageType);
             });
 
             return result || baseResult;
+        }
+
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            bool result = false;
+
+            switch (damage)
+            {
+                case e_DamageType.BOMB_DAMAGE:
+                case e_DamageType.TRUE_DAMAGE:
+                    die();
+                    result = true;
+                    break;
+            }
+
+            return result;
         }
 
         public abstract void think(AWorld world, Time deltaTime);
@@ -90,7 +100,16 @@ namespace CerealSquad
             result &= executeRightMove(zone, Speed * deltaTime.AsSeconds());
             result &= executeUpMove(zone, Speed * deltaTime.AsSeconds());
             result &= executeDownMove(zone, Speed * deltaTime.AsSeconds());
+            if (!result)
+                _move = new List<EMovement> { EMovement.None };
             return (!_move.Contains(EMovement.None) && result);
+        }
+
+        public override bool inRoom(s_position pos)
+        {
+            bool result = pos._trueX < _room.Position.X + _room.Size.Width && pos._trueX >= _room.Position.X
+                && pos._trueY < _room.Position.Y + _room.Size.Width && pos._trueY >= _room.Position.Y;
+            return result;
         }
 
         protected class scentMap
@@ -189,10 +208,13 @@ namespace CerealSquad
                 {
                     if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
                     {
-                        _map[entity.Pos._x][entity.Pos._y][0] = -1;
-                        _map[entity.Pos._x][entity.Pos._y][1] = -1;
-                        _map[entity.Pos._x][entity.Pos._y][2] = -1;
-                        _map[entity.Pos._x][entity.Pos._y][3] = -1;
+                        try
+                        {
+                            _map[entity.Pos._x][entity.Pos._y][0] = -1;
+                            _map[entity.Pos._x][entity.Pos._y][1] = -1;
+                            _map[entity.Pos._x][entity.Pos._y][2] = -1;
+                            _map[entity.Pos._x][entity.Pos._y][3] = -1;
+                        } catch (Exception e) { }
                     }
                 }
             }
@@ -209,14 +231,12 @@ namespace CerealSquad
                 if (x >= 0 && x < _x && y >= 0 && y < _y)
                 {
                     int scent = 0;
-                    if (_map[x][y][0] != -1)
-                        scent += _map[x][y][0];
-                    if (_map[x][y][1] != -1)
-                        scent += _map[x][y][1];
-                    if (_map[x][y][2] != -1)
-                        scent += _map[x][y][2];
-                    if (_map[x][y][3] != -1)
-                        scent += _map[x][y][3];
+                    scent += _map[x][y][0];
+                    scent += _map[x][y][1];
+                    scent += _map[x][y][2];
+                    scent += _map[x][y][3];
+                    if (scent < 0)
+                        scent = -1;
                     return (scent);
                 }
                 return (-1);

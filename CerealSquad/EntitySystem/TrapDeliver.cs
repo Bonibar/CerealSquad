@@ -29,15 +29,14 @@ namespace CerealSquad.EntitySystem
         public EStep Step { get; private set; }
         public EMovement Target { get; private set; }
         public bool IsTargetValid { get; private set; }
-
+        public float MaxCooldownTrap { get { return TimerCoolDown.Time.AsMilliseconds(); } }
+        public float CurrentCooldownTrap { get { return TimerCoolDown.Current.AsMilliseconds(); } }
 
         private EntityResources ResourcesEntity = new EntityResources();
 
         private APlayer Player;
-        private Timer TimerCoolDown = new Timer(Time.FromSeconds(0.1f));
-        private Timer TimerToPut = new Timer(Time.FromSeconds(1f));
-
-        public Time Cooldown { get { return TimerCoolDown.Time; } set { TimerCoolDown.Time = value; } }
+        private Timer TimerCoolDown = new Timer(Time.Zero);
+        private Timer TimerToPut;
 
         public TrapDeliver(APlayer player)
         {
@@ -46,6 +45,8 @@ namespace CerealSquad.EntitySystem
             Target = EMovement.Up;
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
             Factories.TextureFactory.Instance.load("ConstructionCloud", "Assets/GameplayElement/ConstructionCloud.png");
+
+            ResourcesEntity.JukeBox.loadSound("Construction", "Construction");
 
             ResourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
@@ -60,8 +61,15 @@ namespace CerealSquad.EntitySystem
             return !Step.Equals(EStep.NOTHING);
         }
 
+        public void Cancel()
+        {
+            Step = EStep.NOTHING;
+        }
+
         public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
+            if (TimerToPut == null)
+                TimerToPut = new Timer(Time.FromSeconds(0.4f * World.WorldEntity.PlayerNumber));
             Processing(Input, World, TrapPressed);
             ResourcesEntity.Update(DeltaTime);
         }
@@ -71,6 +79,7 @@ namespace CerealSquad.EntitySystem
             // Player have nothing to put on map.
             if (Player.TrapInventory.Equals(e_TrapType.NONE))
                 return;
+
 
             ResourcesEntity.CollisionBox = Factories.TrapFactory.GetCollisionBox(Player.TrapInventory);
 
@@ -119,6 +128,7 @@ namespace CerealSquad.EntitySystem
                     ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.White);
                     ResourcesEntity.PlayAnimation((uint)EAnimation.CONSTRUCTION);
                     TimerToPut.Start();
+                    ResourcesEntity.JukeBox.PlaySound("Construction");
                 }
                 Step = EStep.END_SELECTING;
             }
@@ -128,12 +138,11 @@ namespace CerealSquad.EntitySystem
                 {
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
-                    Player.addChild(trap);
+                    TimerCoolDown = new Timer(trap.Cooldown);
+                    TimerCoolDown.Start();
+                    ResourcesEntity.JukeBox.StopSound("Construction");
                 }
                 Step = EStep.NOTHING;
-                // Restart timer to launch cooldown
-                if (IsTargetValid)
-                    TimerCoolDown.Start();
             }
         }
 

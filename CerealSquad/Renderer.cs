@@ -76,7 +76,7 @@ namespace CerealSquad
 
 
         private Dictionary<EResolution, SResolution> resolutionContext = new Dictionary<EResolution, SResolution>();
-        private View currentView;
+        public View currentView { get; private set; }
         #endregion
 
         #region Event
@@ -110,11 +110,10 @@ namespace CerealSquad
             resolutionContext[EResolution.R1024x576] = new SResolution(1024, 576);
             resolutionContext[EResolution.R854x480] = new SResolution(854, 480);
             resolutionContext[EResolution.R800x450] = new SResolution(800, 450);
-#if !DEBUG
-            resolutionType = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
-            windowed = false;
+#if DEBUG
+            Resolution = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
 #endif
-            currentView = new View(new FloatRect(0, 0, 1920, 1080));
+            currentView = new View(new FloatRect(0, 0, 2560, 1440));
         }
 
         /// <summary>
@@ -126,7 +125,7 @@ namespace CerealSquad
         private EResolution findAppropriateResolution(uint width, uint height)
         {
             foreach (KeyValuePair<EResolution, SResolution> entry in resolutionContext) {
-                if (width <= entry.Value.width && height <= entry.Value.height) {
+                if (width >= entry.Value.width && height >= entry.Value.height) {
                     return entry.Key;
                 }
             }

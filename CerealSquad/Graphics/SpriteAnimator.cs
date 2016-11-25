@@ -15,10 +15,11 @@ namespace CerealSquad.Graphics
         public Time m_frameTime { get; set; }
         public bool m_isPaused { get; set; }
         public bool m_isLooped { get; set; }
+        private int _m_currentFrame;
+        public int m_currentFrame { get { return _m_currentFrame; } set { if (value < m_animation.getSize()) _m_currentFrame = value; } }
 
         private Animation m_animation;
         private Time m_currentTime;
-        private int m_currentFrame;
 
         private Texture m_texture;
         private List<Vertex> m_vertices = new List<Vertex>();
@@ -74,8 +75,7 @@ namespace CerealSquad.Graphics
                        
                         if (!m_isLooped) {
                             m_isPaused = true;
-                        } else
-                        {
+                        } else{
                             m_currentFrame = 0; // reset to start
                         }
                     }

@@ -16,9 +16,9 @@ namespace CerealSquad.GameWorld
                 Ennemies = ennemies;
             }
 
-            public Dictionary<s_Pos<uint>, t_cellcontent> Cells;
-            public List<s_crate> Crates;
-            public List<s_ennemy> Ennemies;
+            public Dictionary<s_Pos<uint>, t_cellcontent> Cells { get; }
+            public List<s_crate> Crates { get; }
+            public List<s_ennemy> Ennemies { get; }
         }
 
         public class s_crate
@@ -52,7 +52,9 @@ namespace CerealSquad.GameWorld
         {
             Normal = 0,
             Wall = 1,
-            Void = 2
+            Void = 2,
+            Door = 3,
+            Spawn = 4
         }
 
         private static string FILE_HASHEDKEY = "58672f161bdbe31526fd8384909d4aa22b8fd91da8fce113ea083fbd6022e73e";
@@ -68,7 +70,6 @@ namespace CerealSquad.GameWorld
             uint startline = 0;
             uint endline;
 
-            lines.First(x => x.Equals("#define Tiles")); // Mandatory Define
             while (startline < lines.Length && !lines[startline].Equals("#define Tiles"))
                 startline++;
             startline++;
@@ -203,7 +204,6 @@ namespace CerealSquad.GameWorld
             uint startline = 0;
             uint endline;
 
-            lines.First(x => x.Equals("#define Room")); // Mandatory define
             while (startline < lines.Length && !lines[startline].Equals("#define Room"))
                 startline++;
             startline++;
@@ -268,6 +268,9 @@ namespace CerealSquad.GameWorld
             Dictionary<s_Pos<uint>, t_cellcontent> cells = loadRoom(lines, tiles);
             List<s_crate> traps = loadCrates(lines);
             List<s_ennemy> ennemies = loadEnnemies(lines);
+
+            if (cells.Count(i => i.Value.Type == e_CellType.Spawn) <= 0)
+                throw new FormatException("You must at least define a spawn point for each room");
 
             return new s_room(cells, traps, ennemies);
         }

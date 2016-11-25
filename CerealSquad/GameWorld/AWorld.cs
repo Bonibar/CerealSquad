@@ -10,7 +10,7 @@ namespace CerealSquad.GameWorld
 {
     class AWorld : Drawable
     {
-        public ARoom CurrentRoom { get; }
+        public ARoom CurrentRoom { get; protected set; }
         protected List<ARoom> Rooms = new List<ARoom>();
         public WorldEntity WorldEntity { get; protected set; }
 
@@ -34,9 +34,15 @@ namespace CerealSquad.GameWorld
                 Rooms.Add(room);
         }
 
-        public void ChangeRoom(s_Pos<int> playerCoord)
+        public void ChangeRoom(ARoom room)
         {
-            throw new NotImplementedException("ChangeRoom()");
+            List<APlayer> _players = WorldEntity.GetAllEntities().Where(i => i.getEntityType() == e_EntityType.Player).Select(i => (APlayer)i).ToList();
+            if (CurrentRoom != room && _players.Count(i => i.FinishedMovement == false) == 0)
+            {
+                _players.ForEach(i => i.CancelTrapDelivery());
+                room.Start(_players);
+            }
+            CurrentRoom = room;
         }
 
         public void Draw(RenderTarget target, RenderStates states)
@@ -46,24 +52,33 @@ namespace CerealSquad.GameWorld
             });
         }
 
-        public RoomParser.e_CellType getPosition(int x, int y)
+        public RoomParser.e_CellType getCellType(int x, int y)
         {
             foreach(ARoom room in Rooms)
             {
                 if (x >= room.Position.X && x < room.Position.X + room.Size.Width &&
                 y >= room.Position.Y && y < room.Position.Y + room.Size.Height)
+                {
+                    if (room != CurrentRoom)
+                        ChangeRoom(room);
                     return room.getPosition((uint)(x - room.Position.X), (uint)(y - room.Position.Y));
+                }
             }
             return (RoomParser.e_CellType.Void);
         }
 
         /// <summary>
-        /// Check 4 points from position and collision box return true if one of them is inside a wall/void
+        /// Check 4 points from position and collision box return true if one of them is inside a considered wall
         /// </summary>
         /// <param name="Res">Graphics.EntityResource</param>
         /// <returns>bool</returns>
-        public bool IsCollidingWithWall(SFML.System.Vector2f Position, SFML.Graphics.FloatRect CollisionBox)
+        public bool IsCollidingWithWall(SFML.System.Vector2f Position, FloatRect CollisionBox)
         {
+            List<RoomParser.e_CellType> wallTypes = new List<RoomParser.e_CellType> {
+                RoomParser.e_CellType.Wall,
+                RoomParser.e_CellType.Void
+            };
+
             SFML.System.Vector2f CollisionPointOne = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top);
             SFML.System.Vector2f CollisionPointTwo = new SFML.System.Vector2f(CollisionBox.Left, CollisionBox.Top + CollisionBox.Height);
             SFML.System.Vector2f CollisionPointThree = new SFML.System.Vector2f(CollisionBox.Left + CollisionBox.Width, CollisionBox.Top + CollisionBox.Height);
@@ -74,10 +89,10 @@ namespace CerealSquad.GameWorld
             CollisionPointThree /= 64.0f;
             CollisionPointFour /= 64.0f;
 
-            if (getPosition((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)) != RoomParser.e_CellType.Normal
-                || getPosition((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)) != RoomParser.e_CellType.Normal
-                || getPosition((int)(CollisionPointThree.X), (int)(CollisionPointThree.Y)) != RoomParser.e_CellType.Normal
-                || getPosition((int)(CollisionPointFour.X), (int)(CollisionPointFour.Y)) != RoomParser.e_CellType.Normal)
+            if (wallTypes.Contains(getCellType((int)(CollisionPointOne.X), (int)(CollisionPointOne.Y)))
+                || wallTypes.Contains(getCellType((int)(CollisionPointTwo.X), (int)(CollisionPointTwo.Y)))
+                || wallTypes.Contains(getCellType((int)(CollisionPointThree.X), (int)(CollisionPointThree.Y)))
+                || wallTypes.Contains(getCellType((int)(CollisionPointFour.X), (int)(CollisionPointFour.Y))))
                 return true;
             return false;
         }
@@ -92,9 +107,21 @@ namespace CerealSquad.GameWorld
             return IsCollidingWithWall(Res.Position, Res.CollisionBox);
         }
 
-        public void Update(SFML.System.Time DeltaTime)
+        public RoomParser.e_CellType getPosition(int x, int y)
         {
-            Rooms.ForEach(x => x.Update(DeltaTime));
+            RoomParser.e_CellType ret = RoomParser.e_CellType.Void;
+            Rooms.ForEach(r =>
+            {
+                if (r.Position.X <= x && r.Position.X + r.Size.Width > x
+                && r.Position.Y <= y && r.Position.Y + r.Size.Height > y)
+                    ret = r.getPosition((uint)(x - r.Position.X), (uint)(y - r.Position.Y));
+            });
+            return (ret);
+        }
+
+        public void Update(SFML.System.Time DeltaTime, List<APlayer> players)
+        {
+            Rooms.ForEach(x => x.Update(DeltaTime, players));
         }
     }
 }

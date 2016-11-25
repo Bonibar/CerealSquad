@@ -11,22 +11,22 @@ using CerealSquad.Graphics;
 
 namespace CerealSquad.EntitySystem.Projectiles
 {
-    class RiceProjectile : AProjectile
+    class CoffeeProjectile : AProjectile
     {
-        public RiceProjectile(IEntity owner, EMovement direction, s_position pos) : base(owner, direction)
+        public CoffeeProjectile(IEntity owner, EMovement direction, s_position pos) : base(owner, direction)
         {
             Speed = 10;
-            Factories.TextureFactory.Instance.load("RiceProjectile", "Assets/Enemies/Normal/Rice.png");
+            Factories.TextureFactory.Instance.load("CoffeeProjectile", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png");
             ressourcesEntity = new Graphics.EntityResources();
-            _ressources.InitializationAnimatedSprite(new Vector2u(10, 10));
+            _ressources.InitializationAnimatedSprite(new Vector2u(16, 16));
 
-            _ressources.AddAnimation(0, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
-            _ressources.AddAnimation(1, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
-            _ressources.AddAnimation(2, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
-            _ressources.AddAnimation(3, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
-            _ressources.AddAnimation(4, "RiceProjectile", new List<uint> { 0 }, new Vector2u(2, 2));
+            _ressources.AddAnimation(0, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
+            _ressources.AddAnimation(1, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
+            _ressources.AddAnimation(2, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
+            _ressources.AddAnimation(3, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
+            _ressources.AddAnimation(4, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(5f, 5f), new Vector2f(5f, 5f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(16f, 16f), new Vector2f(16f, 16f));
             _type = e_EntityType.ProjectileEnemy;
             _damageType = e_DamageType.PROJECTILE_ENEMY_DAMAGE;
 
@@ -74,15 +74,15 @@ namespace CerealSquad.EntitySystem.Projectiles
         {
             touchingEntities.ForEach(i =>
             {
-                 if (i.getEntityType() == e_EntityType.Player)
+                if (i.getEntityType() == e_EntityType.Player)
                     attemptDamage(i, i.getDamageType());
-                 else if (i.getEntityType() == e_EntityType.PlayerTrap)
+                else if (i.getEntityType() == e_EntityType.PlayerTrap)
                     attemptDamage(i, i.getDamageType());
 
                 i.attemptDamage(this, _damageType);
             });
         }
-        
+
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
             bool baseResult = base.IsCollidingEntity(World, CollidingEntities);

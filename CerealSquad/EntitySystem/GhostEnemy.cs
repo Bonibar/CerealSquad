@@ -34,6 +34,9 @@ namespace CerealSquad.EntitySystem
             _scentMap = new milkyScentMap(_room.Size.Height, _room.Size.Width);
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("MilkyGhost", "Assets/Enemies/Normal/MilkyGhost.png");
+            Factories.TextureFactory.Instance.load("MilkyGhostDying", "Assets/Enemies/Normal/Death/MilkyGhostDying.png");
+            ressourcesEntity.JukeBox.loadSound("Ghost", "Ghost");
+
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "MilkyGhost", new List<uint> { 0 }, new Vector2u(128, 128));
@@ -41,7 +44,7 @@ namespace CerealSquad.EntitySystem
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "MilkyGhost", new List<uint> { 12, 13, 14, 15 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "MilkyGhost", new List<uint> { 8, 9, 10, 11 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "MilkyGhost", new List<uint> { 4, 5, 6, 7 }, new Vector2u(128, 128), 150);
-            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "MilkyGhost", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "MilkyGhostDying", Enumerable.Range(0, 8).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(17.0f, 0.0f), new Vector2f(17.0f, 24.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(17.0f, 24.0f), new Vector2f(17.0f, 24.0f));
@@ -50,17 +53,23 @@ namespace CerealSquad.EntitySystem
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
         {
-            bool result = false;
+            bool baseResult = base.IsCollidingWithWall(World, ressourcesEntity);
 
-            CollidingEntities.ForEach(i =>
+            // Will collide with nothing. Only attemptDamage
+            CollidingEntities.ForEach(i => i.attemptDamage(this, _damageType));
+
+            return baseResult;
+        }
+
+        public override void die()
+        {
+            if (!Die)
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType != e_TrapType.WALL)
-                    die();
-                if (i.getEntityType() == e_EntityType.Player)
-                    i.die();
-            });
-
-            return result;
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.JukeBox.PlaySound("Ghost");
+                ressourcesEntity.Loop = false;
+            }
         }
 
         public override void think(AWorld world, Time deltaTime)
@@ -77,7 +86,7 @@ namespace CerealSquad.EntitySystem
                 _r = 0;
                 s_position pos = getCoord(HitboxPos);
                 var position = ressourcesEntity.Position;
-
+                EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
                 int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
                 ressourcesEntity.Position = position;
@@ -113,11 +122,16 @@ namespace CerealSquad.EntitySystem
                         _move.Add(EMovement.Right);
                     if (maxscent == left)
                         _move.Add(EMovement.Left);
-                    if (_move.Count > 1)
-                        _move.Remove(EMovement.None);
-                    if (_move.Count > 1)
+                    _move.Remove(EMovement.None);
+                    if (_move.Contains(lastMove))
+                    {
+                        _move = new List<EMovement> { lastMove };
+                    }
+                    else
+                    {
+                        _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                         _r = 10;
-                    _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
+                    }
                 }
             }
         }
@@ -126,12 +140,12 @@ namespace CerealSquad.EntitySystem
         {
             if (Die)
             {
-                if (ressourcesEntity.isFinished())
+                if (ressourcesEntity.Pause)
                     destroy();
             }
             else
             {
-                if (active)
+                if (Active)
                 {
                     _scentMap.update((WorldEntity)_owner, _room);
                     think(world, deltaTime);

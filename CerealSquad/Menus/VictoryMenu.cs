@@ -10,28 +10,28 @@ using System.Threading.Tasks;
 
 namespace CerealSquad.Menus
 {
-    class GameOverMenu : Menu
+    class VictoryMenu : Menu
     {
         private Renderer _Renderer;
-        private Text _GameOverText;
+        private Text _VictoryText;
         //private GameWorld.GameManager _GameManager;
 
-        public abstract class GameOverMenuItem : MenuItem
+        public abstract class VictoryMenuItem : MenuItem
         {
-            public GameOverMenuItem(GameOverAction action, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(type, keyboardKey, joystickKey)
+            public VictoryMenuItem(VictoryAction action, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(type, keyboardKey, joystickKey)
             {
                 Action = action;
             }
 
-            public GameOverAction Action { get; protected set; }
+            public VictoryAction Action { get; protected set; }
         }
 
-        public class ReturnMenuItem : GameOverMenuItem
+        public class ReturnMenuItem : VictoryMenuItem
         {
             private Text _Text;
             private Renderer _Renderer;
 
-            public ReturnMenuItem(Renderer renderer, GameOverAction action = GameOverAction.ReturnToMainMenu, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
+            public ReturnMenuItem(Renderer renderer, VictoryAction action = VictoryAction.ReturnToMainMenu, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
             {
                 if (renderer == null)
                     throw new ArgumentNullException("Renderer cannot be null");
@@ -65,7 +65,7 @@ namespace CerealSquad.Menus
             }
         }
 
-        public enum GameOverAction
+        public enum VictoryAction
         {
             [Description("Empty")]
             Empty = -1,
@@ -73,7 +73,7 @@ namespace CerealSquad.Menus
             ReturnToMainMenu = 0
         }
 
-        public GameOverMenu(Renderer renderer, InputManager.InputManager inputmanager) : base (inputmanager)
+        public VictoryMenu(Renderer renderer, InputManager.InputManager inputmanager) : base(inputmanager)
         {
             if (renderer == null)
                 throw new ArgumentNullException("Renderer cannot be null");
@@ -91,20 +91,20 @@ namespace CerealSquad.Menus
             _menuList.Add(new ReturnMenuItem(_Renderer));
             nextMenu();
 
-            _GameOverText = new Text("Game Over", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80 * (uint)renderer.Win.GetView().Size.X / 1980);
-            _GameOverText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2.75f);
-            _GameOverText.Color = Color.Red;
+            _VictoryText = new Text("Victory!", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular), 80 * (uint)renderer.Win.GetView().Size.X / 1980);
+            _VictoryText.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_VictoryText.GetLocalBounds().Left + _VictoryText.GetLocalBounds().Width) / 2, renderer.Win.GetView().Size.Y / 2.75f);
+            _VictoryText.Color = Color.Green;
         }
 
         private void _ExecuteAction()
         {
-            GameOverMenuItem _current = (GameOverMenuItem)_menuList.FirstOrDefault(i => i.Selected);
+            VictoryMenuItem _current = (VictoryMenuItem)_menuList.FirstOrDefault(i => i.Selected);
 
             if (_current != null)
             {
                 switch (_current.Action)
                 {
-                    case GameOverAction.ReturnToMainMenu:
+                    case VictoryAction.ReturnToMainMenu:
                         MenuManager.Instance.Clear();
                         break;
                 }
@@ -192,16 +192,17 @@ namespace CerealSquad.Menus
         }
         #endregion
 
+
         public override void Update(Time DeltaTime)
         {
             Vector2f cameraOrigin = _Renderer.Win.MapPixelToCoords(new Vector2i(0, 0));
-            _GameOverText.Position = new Vector2f(_Renderer.Win.GetView().Size.X / 2 - (_GameOverText.GetLocalBounds().Left + _GameOverText.GetLocalBounds().Width) / 2 + cameraOrigin.X, _Renderer.Win.GetView().Size.Y / 2.75f + cameraOrigin.Y);
+            _VictoryText.Position = new Vector2f(_Renderer.Win.GetView().Size.X / 2 - (_VictoryText.GetLocalBounds().Left + _VictoryText.GetLocalBounds().Width) / 2 + cameraOrigin.X, _Renderer.Win.GetView().Size.Y / 2.75f + cameraOrigin.Y);
             base.Update(DeltaTime);
         }
 
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            target.Draw(_GameOverText, states);
+            target.Draw(_VictoryText, states);
             base.Draw(target, states);
         }
     }
