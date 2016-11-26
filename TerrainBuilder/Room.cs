@@ -13,6 +13,8 @@ namespace TerrainBuilder
 {
     class Room
     {
+        private static string FILE_HASHEDKEY = "58672f161bdbe31526fd8384909d4aa22b8fd91da8fce113ea083fbd6022e73e";
+
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         public static extern bool DeleteObject(IntPtr hObject);
 
@@ -66,6 +68,55 @@ namespace TerrainBuilder
             drawRoom();
         }
 
+        public void Export(string path, List<MainWindow.Tile> _Tiles)
+        {
+            List<string> fileContent = new List<string>();
+
+            fileContent.Add(FILE_HASHEDKEY);
+            fileContent.Add("");
+            fileContent.Add("#define Tiles");
+
+            _Tiles.ForEach(i => fileContent.Add(_Tiles.IndexOf(i).ToString() + "|" + i.Path));
+
+            Dictionary<string, int> _TilesDict = new Dictionary<string, int>();
+            _Tiles.ForEach(i => _TilesDict.Add(i.Name, _Tiles.IndexOf(i)));
+
+            fileContent.Add("");
+            fileContent.Add("#define Room");
+            uint row = 0;
+            while (row < SizeY)
+            {
+                string current_row = "";
+                List<s_roomtile> _currentRow = _Room.FindAll(i => i.Y == row);
+                uint col = 0;
+                while (col < SizeX)
+                {
+                    List<s_roomtile> _validExport = _currentRow.FindAll(i => i.X == col);
+                    if (_validExport.Count < 1)
+                        break;
+                    s_roomtile _toExport = _validExport.First();
+
+                    if (current_row != "")
+                        current_row += " ";
+                    current_row += _toExport.TileX + _toExport.TileY * _Tiles.ElementAt(_TilesDict[_toExport._TileMapName]).OriginalX / _Tiles.ElementAt(_TilesDict[_toExport._TileMapName]).TileX;
+                    current_row += ":";
+                    current_row += _TilesDict[_toExport._TileMapName].ToString();
+                    current_row += ":";
+                    current_row += "0";
+
+                    col++;
+                }
+                if (current_row == "")
+                    break;
+                fileContent.Add(current_row);
+                row++;
+            }
+
+            System.IO.File.WriteAllLines(path, fileContent.ToArray());
+            
+            //throw new NotImplementedException("Room::Export()");
+        }
+
         public void AddTileMap(string path, string name)
         {
             System.Drawing.Image img = System.Drawing.Image.FromFile(path);
@@ -105,7 +156,8 @@ namespace TerrainBuilder
             _Room.ForEach((s_roomtile tile) =>
             {
                 System.Drawing.Rectangle sourceRect = new System.Drawing.Rectangle(tile.TileX * 64, tile.TileY * 64, 64, 64);
-                graphic.DrawImage(_TileMaps[tile._TileMapName], tile.X * 64, tile.Y * 64, sourceRect, System.Drawing.GraphicsUnit.Pixel);
+                System.Drawing.Rectangle destRect = new System.Drawing.Rectangle(tile.X * 64, tile.Y * 64, 64, 64);
+                graphic.DrawImage(_TileMaps[tile._TileMapName], destRect, sourceRect, System.Drawing.GraphicsUnit.Pixel);
             });
 
             var hbmp = bm.GetHbitmap();

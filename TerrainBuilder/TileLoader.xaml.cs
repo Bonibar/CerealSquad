@@ -20,8 +20,8 @@ namespace TerrainBuilder
     public partial class TileLoader : Window
     {
         public string Path = "No FIle Selected !";
-        public int TileX = -1;
-        public int TileY = -1;
+        public int TileX = 64;
+        public int TileY = 64;
         public string Name = "";
 
         Microsoft.Win32.OpenFileDialog FileDialog = new Microsoft.Win32.OpenFileDialog();

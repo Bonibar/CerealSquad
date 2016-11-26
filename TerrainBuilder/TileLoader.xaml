@@ -30,9 +30,9 @@
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <Label Content="Tile Size:" FontWeight="Bold" HorizontalAlignment="Center"></Label>
                         <Label Content="X:" HorizontalAlignment="Center"></Label>
-                        <TextBox Name="XValue" LostFocus="XValue_LostFocus"></TextBox>
+                        <TextBox Name="XValue" LostFocus="XValue_LostFocus">64</TextBox>
                         <Label Content="Y:" HorizontalAlignment="Center"></Label>
-                        <TextBox Name="YValue" LostFocus="YValue_LostFocus"></TextBox>
+                        <TextBox Name="YValue" LostFocus="YValue_LostFocus">64</TextBox>
                     </StackPanel>
                 </DockPanel>
             </Border>
