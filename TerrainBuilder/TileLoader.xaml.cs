@@ -19,7 +19,7 @@ namespace TerrainBuilder
     /// </summary>
     public partial class TileLoader : Window
     {
-        public string Path = "No FIle Selected !";
+        public string Path = "No File Selected !";
         public int TileX = 64;
         public int TileY = 64;
         public string Name = "";

@@ -7,19 +7,40 @@
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
         DataContext="this"
-        Title="CerealSquad - TerrainBuilder" Height="350" Width="525">
+        Title="CerealSquad - TerrainBuilder" Height="800" Width="1200">
     <Grid>
         
         <DockPanel
             LastChildFill="True">
-            <Menu
-            DockPanel.Dock="Top">
-                <MenuItem Header="Load new Tile File" Click="MenuItem_Click" />
-                <MenuItem Header="Save" Click="SaveRoom_Click" />
-            </Menu>
             <Border
-                DockPanel.Dock="Top">
-                <TextBox>Yolo</TextBox>
+            DockPanel.Dock="Top">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Load new Tile File" Click="MenuItem_Click" BorderBrush="Transparent" Background="Transparent" />
+                    <Button Content="Save" Click="SaveRoom_Click" BorderBrush="Transparent" Background="Transparent" />
+                    <StackPanel Orientation="Horizontal">
+                        <Label Name="labelSizeX" VerticalAlignment="Center" Content="X: 0" />
+                        <StackPanel>
+                            <Button Content="+" Click="addSizeX" BorderBrush="Transparent" Background="Transparent" />
+                            <Button Content="-" Click="removeSizeX" BorderBrush="Transparent" Background="Transparent" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Name="labelSizeY" VerticalAlignment="Center" Content="Y: 0" />
+                        <StackPanel>
+                            <Button Content="+" Click="addSizeY" BorderBrush="Transparent" Background="Transparent" />
+                            <Button Content="-" Click="removeSizeY" BorderBrush="Transparent" Background="Transparent" />
+                        </StackPanel>
+                    </StackPanel>
+                    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Label DockPanel.Dock="Top" BorderBrush="LightGray" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Mode" Background="LightGray" />
+                        <StackPanel Name="ModePanel" Orientation="Horizontal">
+                            <Button Content="Tile" Click="switchMode" BorderBrush="LightGray" Background="LightGray" />
+                            <Button Content="Type" Click="switchMode" BorderBrush="Transparent" Background="Transparent" />
+                            <Button Content="Monster" Click="switchMode" BorderBrush="Transparent" Background="Transparent" />
+                        </StackPanel>
+                    </DockPanel>
+                    <Button Content="Toggle Grid" Click="ToggleGrid_Click" BorderBrush="Transparent" Background="Transparent" />
+                </StackPanel>
             </Border>
             <Border>
                 <Grid>
@@ -27,14 +48,15 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
                         <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <TabControl
                         Grid.Row="0"
                         Grid.Column="0"
                         TabStripPlacement="Bottom"
+                        Visibility="Visible"
                         Name="TilesTab">
                         <TabControl.Template>
                             <ControlTemplate TargetType="TabControl">
@@ -58,6 +80,23 @@
                             </ControlTemplate>
                         </TabControl.Template>
                     </TabControl>
+                    <StackPanel
+                        Orientation="Vertical"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Visibility="Hidden"
+                        Name="TypeTab">
+                        <ListBox Name="TypeList">
+                        </ListBox>
+                    </StackPanel>
+                    <StackPanel
+                        Orientation="Vertical"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Visibility="Hidden"
+                        Name="MonsterTab">
+                        <Label Content="Monster" />
+                    </StackPanel>
                     <GridSplitter Grid.Row="0" Grid.Column="1" Margin="2,0,2,0" Width="3"  VerticalAlignment="Stretch" HorizontalAlignment="Center"></GridSplitter>
                     <Grid Name="CanvasGrid" Background="Gray" Grid.Row="0" Grid.Column="2"></Grid>
                 </Grid>
