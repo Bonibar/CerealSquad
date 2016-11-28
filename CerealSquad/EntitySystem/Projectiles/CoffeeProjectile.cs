@@ -18,13 +18,13 @@ namespace CerealSquad.EntitySystem.Projectiles
             Speed = 10;
             Factories.TextureFactory.Instance.load("CoffeeProjectile", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png");
             ressourcesEntity = new Graphics.EntityResources();
-            _ressources.InitializationAnimatedSprite(new Vector2u(16, 16));
+            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            _ressources.AddAnimation(0, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(1, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(2, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(3, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(4, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
+            _ressources.AddAnimation(0, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(1, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(2, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(3, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(4, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(16f, 16f), new Vector2f(16f, 16f));
             _type = e_EntityType.ProjectileEnemy;
