@@ -15,6 +15,9 @@ namespace CerealSquad
     {
         BOMB_DAMAGE,
         TRUE_DAMAGE,
+        ENEMY_DAMAGE,
+        PROJECTILE_ENEMY_DAMAGE,
+        COFFE_DAMAGE,
         NONE
     }
 
@@ -23,6 +26,7 @@ namespace CerealSquad
         BOMB,
         BEAR_TRAP,
         WALL,
+        COFFE,
         NONE
     }
 
@@ -34,7 +38,8 @@ namespace CerealSquad
         EnnemyTrap,
         World,
         Crate,
-        Projectile,
+        ProjectilePlayer,
+        ProjectileEnemy,
         Room
     }
 
@@ -43,7 +48,8 @@ namespace CerealSquad
         RiceBowl,
         Egg,
         HalfEgg,
-        Ghost
+        Ghost,
+        CoffeeMachine
     }
 
     public struct s_position
@@ -123,6 +129,9 @@ namespace CerealSquad
         }
 
         void update(SFML.System.Time deltaTime, AWorld world);
+        bool collideWithType(e_EntityType type);
+
+        bool attemptDamage(IEntity Sender, e_DamageType damage);
         bool attemptDamage(IEntity Sender, e_DamageType damage, float Range);
         bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY);
 

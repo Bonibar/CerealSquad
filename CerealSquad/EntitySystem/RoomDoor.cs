@@ -29,6 +29,10 @@ namespace CerealSquad.EntitySystem
 
             _pos = position + new s_position(room.Position.X, room.Position.Y);
             Pos = Pos;
+            _CollidingType.Add(e_EntityType.Player);
+            _CollidingType.Add(e_EntityType.Ennemy);
+            _CollidingType.Add(e_EntityType.ProjectileEnemy);
+            _CollidingType.Add(e_EntityType.ProjectilePlayer);
         }
 
         public override void update(Time deltaTime, AWorld world)

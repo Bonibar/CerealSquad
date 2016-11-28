@@ -7,6 +7,7 @@ using SFML.System;
 using CerealSquad.GameWorld;
 using SFML.Graphics;
 using CerealSquad.Graphics;
+using CerealSquad.Sounds;
 
 namespace CerealSquad.TrapEntities
 {
@@ -33,7 +34,8 @@ namespace CerealSquad.TrapEntities
 
             ressourcesEntity = new EntityResources();
             ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
-            
+            ressourcesEntity.JukeBox.loadSound("Explosion", "Explosion");
+
             ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
             ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
 
@@ -42,6 +44,7 @@ namespace CerealSquad.TrapEntities
 
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             Timer.Start();
+            _CollidingType.Add(e_EntityType.ProjectileEnemy);
         }
 
         public override void update(Time deltaTime, AWorld world)
@@ -89,16 +92,22 @@ namespace CerealSquad.TrapEntities
                     i.attemptDamage(this, getDamageType(), Range, Range / 2.0f);
             });
             state++;
+            ressourcesEntity.JukeBox.PlaySound("Explosion");
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
         {
-            if (base.NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
-                return false;
 
-            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
-                && !Triggered)
-                Trigger(true);
+            switch(Sender.getEntityType())
+            {
+                case e_EntityType.PlayerTrap:
+                    Trigger(true);
+                    break;
+                case e_EntityType.Player:
+                case e_EntityType.ProjectileEnemy:
+                    Trigger(false);
+                    break;
+            }
 
             return true;
         }

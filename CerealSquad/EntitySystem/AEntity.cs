@@ -1,4 +1,5 @@
 ﻿using CerealSquad.GameWorld;
+using CerealSquad.Global;
 using CerealSquad.Graphics;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace CerealSquad
         protected List<EMovement> _move;
         protected float _inputForce;
         protected EntityResources _ressources;
+        protected List<e_EntityType> _CollidingType = new List<e_EntityType>();
 
         protected static bool m_debug = false; // Capitain obvious: use for the debug with breakpoint
 
@@ -127,6 +129,7 @@ namespace CerealSquad
             _children.Add(child);
         }
 
+        #region CheckingRange
         protected bool NotInCircleRange(IEntity Sender, float Range)
         {
             double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
@@ -134,18 +137,6 @@ namespace CerealSquad
                 Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
 
             return !(Distance > Range);
-        }
-
-        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
-        {
-            if (NotInCircleRange(Sender, Range))
-                return false;
-
-            if ((getEntityType() == e_EntityType.EnnemyTrap || getEntityType() == e_EntityType.PlayerTrap)
-                && !((ATrap)this).Triggered)
-                ((ATrap)this).Trigger();
-
-            return true;
         }
 
         protected static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
@@ -158,7 +149,37 @@ namespace CerealSquad
 
         protected bool NotInEllipseRange(IEntity Sender, float RadiusX, float RadiusY)
         {
-            return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
+            if (ressourcesEntity == null)
+                return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
+
+            s_Pos<double> posOne = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top);
+            s_Pos<double> posTwo = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height);
+            s_Pos<double> posThree = new s_Pos<double>(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height);
+            s_Pos<double> posFour = new s_Pos<double>(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Top);
+
+            posOne = new s_Pos<double>(posOne.X / 64.0f, posOne.Y / 64.0f);
+            posTwo = new s_Pos<double>(posTwo.X / 64.0f, posTwo.Y / 64.0f);
+            posThree = new s_Pos<double>(posThree.X / 64.0f, posThree.Y / 64.0f);
+            posFour = new s_Pos<double>(posFour.X / 64.0f, posFour.Y / 64.0f);
+
+            int tested = 0;
+
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posOne.X, posOne.Y, RadiusX, RadiusY))
+                tested++;
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posTwo.X, posTwo.Y, RadiusX, RadiusY))
+                tested++;
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posThree.X, posThree.Y, RadiusX, RadiusY))
+                tested++;
+            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posFour.X, posFour.Y, RadiusX, RadiusY))
+                tested++;
+
+            return tested == 0;
+        }
+        #endregion
+
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage)
+        {
+            return false;
         }
 
         public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
@@ -166,8 +187,17 @@ namespace CerealSquad
             if (NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
                 return false;
 
-            return true;
+            return attemptDamage(Sender, damage);
         }
+
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float Range)
+        {
+            if (NotInCircleRange(Sender, Range))
+                return false;
+
+            return attemptDamage(Sender, damage);
+        }
+
 
         public ICollection<IEntity> getChildren()
         {
@@ -219,17 +249,15 @@ namespace CerealSquad
             if (IsCollidingWithWall(World, ressourcesEntity))
                 return true;
 
-            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity()).GetCollidingEntities(ressourcesEntity);
+            List<AEntity> collidingEntities = ((WorldEntity)getRootEntity())
+                .GetCollidingEntities(ressourcesEntity)
+                .Where(i => i.collideWithType(_type))
+                .ToList();
 
             if (collidingEntities.Count == 0)
                 return false;
 
             return IsCollidingEntity(World, collidingEntities);
-        }
-
-        public virtual bool IsCollidingAndDead(AWorld World)
-        {
-            return false;
         }
         
         public virtual bool inRoom(s_position pos)
@@ -343,8 +371,7 @@ namespace CerealSquad
             if (_move.Contains(EMovement.None))
                 ((AnimatedSprite)_ressources.sprite).Pause = true;
 
-            if (IsCollidingAndDead(world))
-                die();
+            CheckHitBoxCollision(world);
         }
 
         // Use this function for moving the entity whitout his action(ex: knockback)
@@ -354,6 +381,25 @@ namespace CerealSquad
             executeMove(world, deltaTime);
         }
 #endregion
+
+        protected virtual void IsTouchingHitBoxEntities(AWorld world, List<AEntity> touchingEntities)
+        {
+        }
+
+        private void CheckHitBoxCollision(AWorld world)
+        {
+            if (ressourcesEntity == null)
+                return;
+            List<AEntity> HitboxCollidingEntities = ((WorldEntity)getRootEntity())
+                .GetTouchingEntities(ressourcesEntity)
+                .Where(i => i.collideWithType(_type))
+                .ToList();
+
+            if (HitboxCollidingEntities.Count == 0)
+                return;
+
+            IsTouchingHitBoxEntities(world, HitboxCollidingEntities);
+        }
 
         public abstract void update(SFML.System.Time deltaTime, AWorld world);
 
@@ -368,6 +414,7 @@ namespace CerealSquad
         public void destroy()
         {
             _owner.removeChild(this);
+            _children.ToList().ForEach(i => _owner.addChild(i));            
         }
 
         public IEntity getRootEntity()
@@ -394,6 +441,11 @@ namespace CerealSquad
         {
             ressourcesEntity.Position = EntityPositionToResourcesEntityPosition(Pos);
             ressourcesEntity.UpdateDebug();
+        }
+
+        public bool collideWithType(e_EntityType type)
+        {
+            return _CollidingType.Contains(type);
         }
     }
 }

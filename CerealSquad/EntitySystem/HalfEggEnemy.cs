@@ -21,7 +21,10 @@ namespace CerealSquad.EntitySystem
             _invuln = 1; // Invulnerability 1sec for fleeing purpose
             _scentMap = new scentMap(room.Size.Height, room.Size.Width);
             ressourcesEntity = new EntityResources();
+            
             Factories.TextureFactory.Instance.load("HalfEggyWalking", "Assets/Enemies/Normal/HalfEggyWalking.png");
+            Factories.TextureFactory.Instance.load("HalfEggyDying", "Assets/Enemies/Normal/Death/HalfEggyDying.png");
+
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "HalfEggyWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
@@ -29,7 +32,7 @@ namespace CerealSquad.EntitySystem
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "HalfEggyWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "HalfEggyWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "HalfEggyWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
-          //  ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "HalfEggyWalking", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "HalfEggyDying", Enumerable.Range(0, 17).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(17.0f, -5.0f), new Vector2f(17.0f, 13.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(17.0f, 13.0f), new Vector2f(17.0f, 13.0f));
@@ -99,8 +102,13 @@ namespace CerealSquad.EntitySystem
         }
         public override void die()
         {
-            if (_invuln <= 0)
+            if (_invuln <= 0 && !Die)
+            {
                 base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.JukeBox.PlaySound("CrackingEggs");
+                ressourcesEntity.Loop = false;
+            }
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)

@@ -46,6 +46,8 @@ namespace CerealSquad.EntitySystem
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
             Factories.TextureFactory.Instance.load("ConstructionCloud", "Assets/GameplayElement/ConstructionCloud.png");
 
+            ResourcesEntity.JukeBox.loadSound("Construction", "Construction");
+
             ResourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ResourcesEntity.AddAnimation((uint)EAnimation.CURSOR, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
@@ -57,6 +59,11 @@ namespace CerealSquad.EntitySystem
         public bool IsDelivering()
         {
             return !Step.Equals(EStep.NOTHING);
+        }
+
+        public void Cancel()
+        {
+            Step = EStep.NOTHING;
         }
 
         public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
@@ -121,6 +128,7 @@ namespace CerealSquad.EntitySystem
                     ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.White);
                     ResourcesEntity.PlayAnimation((uint)EAnimation.CONSTRUCTION);
                     TimerToPut.Start();
+                    ResourcesEntity.JukeBox.PlaySound("Construction");
                 }
                 Step = EStep.END_SELECTING;
             }
@@ -130,9 +138,9 @@ namespace CerealSquad.EntitySystem
                 {
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
-                    Player.addChild(trap);
                     TimerCoolDown = new Timer(trap.Cooldown);
                     TimerCoolDown.Start();
+                    ResourcesEntity.JukeBox.StopSound("Construction");
                 }
                 Step = EStep.NOTHING;
             }

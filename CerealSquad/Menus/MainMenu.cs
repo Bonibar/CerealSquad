@@ -25,13 +25,20 @@ namespace CerealSquad.Menus
 
         public class NewGameItem : MainMenuItem
         {
-            Text _Text;
+            private Renderer _Renderer;
+            private Text _Text;
 
             public NewGameItem(Renderer renderer, ItemAction action = ItemAction.NewGame, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
             {
+                if (renderer == null)
+                    throw new ArgumentNullException("Renderer cannot be null");
+
+                _Renderer = renderer;
+
                 _Text = new Text("New Game", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
-                _Text.CharacterSize = 80;
-                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, 400);
+                _Text.CharacterSize = 80 * (uint)renderer.Win.GetView().Size.X / 1980;
+                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, 
+                    renderer.Win.GetView().Size.Y / 2 - (_Text.GetLocalBounds().Height + _Text.GetLocalBounds().Top) / 2 - _Text.CharacterSize);
             }
 
             public override void Select(bool select)
@@ -41,6 +48,14 @@ namespace CerealSquad.Menus
                     _Text.Color = Color.Green;
                 else
                     _Text.Color = Color.White;
+            }
+
+            public override void Update(Time DeltaTime)
+            {
+                Vector2f cameraOrigin = _Renderer.Win.MapPixelToCoords(new Vector2i(0, 0));
+
+                _Text.Position = new Vector2f(_Renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2 + cameraOrigin.X,
+                    _Renderer.Win.GetView().Size.Y / 2 - (_Text.GetLocalBounds().Height + _Text.GetLocalBounds().Top) / 2 - _Text.CharacterSize + cameraOrigin.Y);
             }
 
             public override void Draw(RenderTarget target, RenderStates states)
@@ -50,13 +65,20 @@ namespace CerealSquad.Menus
         }
         public class ExitItem : MainMenuItem
         {
-            Text _Text;
+            private Text _Text;
+            private Renderer _Renderer;
 
             public ExitItem(Renderer renderer, ItemAction action = ItemAction.Exit, ItemType type = ItemType.Normal, Key keyboardKey = Key.Unknown, uint joystickKey = 0) : base(action, type, keyboardKey, joystickKey)
             {
+                if (renderer == null)
+                    throw new ArgumentNullException("Renderer cannot be null");
+
+                _Renderer = renderer;
+
                 _Text = new Text("Exit", Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.ReenieBeanie));
-                _Text.CharacterSize = 80;
-                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2, 500);
+                _Text.CharacterSize = 80 * (uint)renderer.Win.GetView().Size.X / 1980;
+                _Text.Position = new Vector2f(renderer.Win.GetView().Size.X / 2 - (_Text.GetLocalBounds().Left + _Text.GetLocalBounds().Width) / 2,
+                    renderer.Win.GetView().Size.Y / 2 - (_Text.GetLocalBounds().Height + _Text.GetLocalBounds().Top) / 2 + _Text.CharacterSize);
             }
 
             public override void Select(bool select)
@@ -66,6 +88,12 @@ namespace CerealSquad.Menus
                     _Text.Color = Color.Green;
                 else
                     _Text.Color = Color.White;
+            }
+
+            public override void Update(Time DeltaTime)
+            {
+                Vector2f cameraOrigin = _Renderer.Win.MapPixelToCoords(new Vector2i(0, 0));
+                _Renderer.Move(-cameraOrigin.X, -cameraOrigin.Y);
             }
 
             public override void Draw(RenderTarget target, RenderStates states)
@@ -121,8 +149,8 @@ namespace CerealSquad.Menus
             _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2, _BackgroundImage.Size.Y / 2);
 
             Factories.TextureFactory.Instance.load("MainMenuRafiki", "Assets/Background/RafikiBlack.png");
-            _Rafiki = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("MainMenuRafiki"), new Vector2i(128, 128), new IntRect(0, 0, 512, 512));
-            _Rafiki.Position = new Vector2f(2 * _BackgroundImage.Size.X / 3 - 80, 2 * _BackgroundImage.Size.Y / 5);
+            _Rafiki = new Graphics.RegularSprite(Factories.TextureFactory.Instance.getTexture("MainMenuRafiki"), new Vector2i(128 * (int)_Renderer.Win.GetView().Size.X / 1980, 128 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 512, 512));
+            _Rafiki.Position = new Vector2f(2 * _BackgroundImage.Size.X / 3 - 80 * (uint)renderer.Win.GetView().Size.X / 1980, 2 * _BackgroundImage.Size.Y / 5);
         }
 
         private void _ExecuteAction()
@@ -228,6 +256,10 @@ namespace CerealSquad.Menus
 
         public override void Update(Time DeltaTime)
         {
+            Vector2f cameraOrigin = _Renderer.Win.MapPixelToCoords(new Vector2i(0, 0));
+            _BackgroundImage.Position = new Vector2f(_BackgroundImage.Size.X / 2 + cameraOrigin.X, _BackgroundImage.Size.Y / 2 + cameraOrigin.Y);
+            _Rafiki.Position = new Vector2f(2 * _BackgroundImage.Size.X / 3 - 80 * (uint)_Renderer.Win.GetView().Size.X / 1980 + cameraOrigin.X, 2 * _BackgroundImage.Size.Y / 5 + cameraOrigin.Y);
+
             _BackgroundImage.Update(DeltaTime);
             base.Update(DeltaTime);
         }

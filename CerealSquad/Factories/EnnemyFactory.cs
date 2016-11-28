@@ -26,6 +26,9 @@ namespace CerealSquad.Factories
                 case e_EnnemyType.RiceBowl:
                     result = new EntitySystem.RiceBowlEnemy(owner, new s_position(pos.X, pos.Y), room);
                     break;
+                case e_EnnemyType.CoffeeMachine:
+                    result = new EntitySystem.CoffeeMachineEnemy(owner, new s_position(pos.X, pos.Y), room);
+                    break;
                 default:
                     throw new ArgumentException("Invalid Trap entity requested");
             }

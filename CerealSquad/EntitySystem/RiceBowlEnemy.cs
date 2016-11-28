@@ -19,10 +19,11 @@ namespace CerealSquad.EntitySystem
         public RiceBowlEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 2;
-            _attackCoolDown = 5; // 5 sec
+            _attackCoolDown = 1; // 5 sec
             _scentMap = new scentMap(room.Size.Height, room.Size.Width);
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("RiceBowlWalking", "Assets/Enemies/Normal/RiceBowlWalking.png");
+            Factories.TextureFactory.Instance.load("RiceBowlDying", "Assets/Enemies/Normal/Death/RiceBowlDying.png");
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.IDLE, "RiceBowlWalking", new List<uint> { 0, 1 }, new Vector2u(128, 128));
@@ -30,7 +31,7 @@ namespace CerealSquad.EntitySystem
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_LEFT, "RiceBowlWalking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_RIGHT, "RiceBowlWalking", new List<uint> { 4, 5 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "RiceBowlWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
-            //  ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "HalfEggyWalking", Enumerable.Range(0, 14).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "RiceBowlDying", Enumerable.Range(0, 9).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(21.0f, -10.0f), new Vector2f(21.0f, 20.0f));
             _ressources.HitBox = new FloatRect(new Vector2f(21.0f, 20.0f), new Vector2f(21.0f, 20.0f));
@@ -104,6 +105,16 @@ namespace CerealSquad.EntitySystem
             }
         }
 
+        public override void die()
+        {
+            if (!Die)
+            {
+                base.die();
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                ressourcesEntity.Loop = false;
+            }
+        }
+
         private bool canAttack(WorldEntity world)
         {
             double deltaX = 0;
@@ -151,11 +162,8 @@ namespace CerealSquad.EntitySystem
         
         protected void attack()
         {
-            _attackCoolDown = 5;
+            _attackCoolDown = 1;
             new RiceProjectile(_owner, _move[0], HitboxPos);
-            //
-            // TODO Alpha implement
-            //
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)

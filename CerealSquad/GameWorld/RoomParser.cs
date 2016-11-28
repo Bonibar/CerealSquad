@@ -53,7 +53,8 @@ namespace CerealSquad.GameWorld
             Normal = 0,
             Wall = 1,
             Void = 2,
-            Door = 3
+            Door = 3,
+            Spawn = 4
         }
 
         private static string FILE_HASHEDKEY = "58672f161bdbe31526fd8384909d4aa22b8fd91da8fce113ea083fbd6022e73e";
@@ -267,6 +268,9 @@ namespace CerealSquad.GameWorld
             Dictionary<s_Pos<uint>, t_cellcontent> cells = loadRoom(lines, tiles);
             List<s_crate> traps = loadCrates(lines);
             List<s_ennemy> ennemies = loadEnnemies(lines);
+
+            if (cells.Count(i => i.Value.Type == e_CellType.Spawn) <= 0)
+                throw new FormatException("You must at least define a spawn point for each room");
 
             return new s_room(cells, traps, ennemies);
         }

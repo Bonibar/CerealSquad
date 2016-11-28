@@ -13,7 +13,6 @@ namespace CerealSquad.EntitySystem.Projectile
         public AProjectile(IEntity owner, EMovement direction) : base(owner)
         {
             _move = new List<EMovement> { direction };
-            _type = e_EntityType.Projectile;
         }
     }
 }
