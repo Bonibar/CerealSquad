@@ -43,6 +43,10 @@ namespace TerrainBuilder
         }
 
         private Mode _CurrentMode = Mode.Tile;
+        private int _CurrentLayer = 0;
+
+        private bool painting = false;
+        private bool erasing = false;
 
         public class Tile
         {
@@ -85,6 +89,8 @@ namespace TerrainBuilder
 
             _RoomImage.MouseLeftButtonDown += _RoomImage_MouseLeftButtonDown;
             _RoomImage.MouseLeftButtonUp += _RoomImage_MouseLeftButtonUp;
+            _RoomImage.MouseRightButtonDown += _RoomImage_MouseRightButtonDown;
+            _RoomImage.MouseRightButtonUp += _RoomImage_MouseRightButtonUp;
             _RoomImage.MouseMove += _RoomImage_MouseMove;
 
             this.KeyDown += MainWindow_KeyDown;
@@ -103,6 +109,16 @@ namespace TerrainBuilder
                 TypeList.Items.Add(itemType);
             }
             TypeList.SelectedIndex = TypeList.Items.Count - 1;
+        }
+
+        private void _RoomImage_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            erasing = false;
+        }
+
+        private void _RoomImage_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _ERASE(sender, e);
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -141,37 +157,15 @@ namespace TerrainBuilder
             painting = false;
         }
 
-        private bool painting = false;
         private void _RoomImage_MouseMove(object sender, MouseEventArgs e)
         {
             if (painting)
             {
-                Image currentImage = (Image)sender;
-                Point mousepos = e.GetPosition(currentImage);
-                int selectedX = (int)((mousepos.X * currentImage.Source.Width) / (64 * currentImage.RenderSize.Width));
-                int selectedY = (int)((mousepos.Y * currentImage.Source.Height) / (64 * currentImage.RenderSize.Height));
-
-                if (_CurrentMode == Mode.Tile)
-                {
-                    int tabId = TilesTab.SelectedIndex;
-
-                    if (tabId != -1 && painting)
-                    {
-                        TabItem _selectedTab = (TabItem)TilesTab.Items[tabId];
-                        string tileName = _selectedTab.Header.ToString();
-
-                        List<Tile> _validTiles = _Tiles.FindAll(i => i.Name == tileName);
-                        if (_validTiles.Count > 1)
-                            throw new NotSupportedException("Cannot have multiple Tiles with same name");
-                        else if (_validTiles.Count < 1)
-                            throw new IndexOutOfRangeException("No tile found");
-
-                        Tile _curentTile = _validTiles.First();
-
-                        if (_curentTile.SelectionX != -1 && _curentTile.SelectionY != -1)
-                            _Room.AddRoomCell(selectedX, selectedY, _curentTile.Name, _curentTile.SelectionX, _curentTile.SelectionY);
-                    }
-                }
+                _PAINT(sender, e);
+            }
+            else if (erasing)
+            {
+                _ERASE(sender, e);
             }
         }
 
@@ -179,32 +173,49 @@ namespace TerrainBuilder
         {
             if (_CurrentMode == Mode.Tile)
             {
-                int tabId = TilesTab.SelectedIndex;
+                _PAINT(sender, e);
+            }
+        }
 
-                if (tabId != -1)
+        private void _ERASE(object sender, MouseEventArgs e)
+        {
+            Image currentImage = (Image)sender;
+            Point mousepos = e.GetPosition(currentImage);
+            int selectedX = (int)((mousepos.X * currentImage.Source.Width) / (64 * currentImage.RenderSize.Width));
+            int selectedY = (int)((mousepos.Y * currentImage.Source.Height) / (64 * currentImage.RenderSize.Height));
+
+            _Room.RemoveRoomCell(selectedX, selectedY, _CurrentLayer);
+
+            erasing = true;
+        }
+
+        private void _PAINT(object sender, MouseEventArgs e)
+        {
+            int tabId = TilesTab.SelectedIndex;
+
+            if (tabId != -1)
+            {
+                TabItem _selectedTab = (TabItem)TilesTab.Items[tabId];
+                string tileName = _selectedTab.Header.ToString();
+
+                List<Tile> _validTiles = _Tiles.FindAll(i => i.Name == tileName);
+                if (_validTiles.Count > 1)
+                    throw new NotSupportedException("Cannot have multiple Tiles with same name");
+                else if (_validTiles.Count < 1)
+                    throw new IndexOutOfRangeException("No tile found");
+
+                Tile _curentTile = _validTiles.First();
+
+                if (_curentTile.SelectionX != -1 && _curentTile.SelectionY != -1)
                 {
-                    TabItem _selectedTab = (TabItem)TilesTab.Items[tabId];
-                    string tileName = _selectedTab.Header.ToString();
+                    Image currentImage = (Image)sender;
+                    Point mousepos = e.GetPosition(currentImage);
+                    int selectedX = (int)((mousepos.X * currentImage.Source.Width) / (_curentTile.TileX * currentImage.RenderSize.Width));
+                    int selectedY = (int)((mousepos.Y * currentImage.Source.Height) / (_curentTile.TileY * currentImage.RenderSize.Height));
 
-                    List<Tile> _validTiles = _Tiles.FindAll(i => i.Name == tileName);
-                    if (_validTiles.Count > 1)
-                        throw new NotSupportedException("Cannot have multiple Tiles with same name");
-                    else if (_validTiles.Count < 1)
-                        throw new IndexOutOfRangeException("No tile found");
+                    _Room.AddRoomCell(selectedX, selectedY, _curentTile.Name, _curentTile.SelectionX, _curentTile.SelectionY, _CurrentLayer);
 
-                    Tile _curentTile = _validTiles.First();
-
-                    if (_curentTile.SelectionX != -1 && _curentTile.SelectionY != -1)
-                    {
-                        Image currentImage = (Image)sender;
-                        Point mousepos = e.GetPosition(currentImage);
-                        int selectedX = (int)((mousepos.X * currentImage.Source.Width) / (_curentTile.TileX * currentImage.RenderSize.Width));
-                        int selectedY = (int)((mousepos.Y * currentImage.Source.Height) / (_curentTile.TileY * currentImage.RenderSize.Height));
-
-                        _Room.AddRoomCell(selectedX, selectedY, _curentTile.Name, _curentTile.SelectionX, _curentTile.SelectionY);
-
-                        painting = true;
-                    }
+                    painting = true;
                 }
             }
         }
@@ -272,13 +283,9 @@ namespace TerrainBuilder
         {
             _fd.CheckFileExists = false;
             _fd.ShowDialog();
-            _fd.FileOk += _fd_FileOk;
-            
-        }
+            if (_fd.FileName != "" && _fd.SafeFileName != "")
+                _Room.Export(_fd.FileName, _Tiles);
 
-        private void _fd_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            _Room.Export(_fd.FileName, _Tiles);
         }
 
         private void ToggleGrid_Click(object sender, RoutedEventArgs e)
@@ -352,6 +359,37 @@ namespace TerrainBuilder
                             TilesTab.Visibility = Visibility.Hidden;
                             TypeTab.Visibility = Visibility.Hidden;
                             MonsterTab.Visibility = Visibility.Visible;
+                            break;
+                    }
+                }
+                else
+                {
+                    ((Button)i).Background = Brushes.Transparent;
+                    ((Button)i).BorderBrush = Brushes.Transparent;
+                }
+            });
+        }
+
+        private void switchLayer(object sender, RoutedEventArgs e)
+        {
+            List<UIElement> _layers = LayerPanel.Children.Cast<UIElement>().ToList(); ;
+
+            _layers.ForEach((UIElement i) => {
+                if (i == sender)
+                {
+                    ((Button)i).Background = Brushes.LightGray;
+                    ((Button)i).BorderBrush = Brushes.LightGray;
+
+                    switch (((Button)i).Content.ToString())
+                    {
+                        case "L0":
+                            _CurrentLayer = 0;
+                            break;
+                        case "L1":
+                            _CurrentLayer = 1;
+                            break;
+                        case "L2":
+                            _CurrentLayer = 2;
                             break;
                     }
                 }

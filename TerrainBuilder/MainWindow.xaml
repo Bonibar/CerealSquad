@@ -40,6 +40,14 @@
                         </StackPanel>
                     </DockPanel>
                     <Button Content="Toggle Grid" Click="ToggleGrid_Click" BorderBrush="Transparent" Background="Transparent" />
+                    <DockPanel Name="LayerDockPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Label DockPanel.Dock="Top" BorderBrush="LightGray" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Layer" Background="LightGray" />
+                        <StackPanel Name="LayerPanel" Orientation="Horizontal">
+                            <Button Content="L0" Click="switchLayer" BorderBrush="LightGray" Background="LightGray" />
+                            <Button Content="L1" Click="switchLayer" BorderBrush="Transparent" Background="Transparent" />
+                            <Button Content="L2" Click="switchLayer" BorderBrush="Transparent" Background="Transparent" />
+                        </StackPanel>
+                    </DockPanel>
                 </StackPanel>
             </Border>
             <Border>
