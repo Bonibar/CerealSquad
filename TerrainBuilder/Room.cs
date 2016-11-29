@@ -158,6 +158,39 @@ namespace TerrainBuilder
                 row++;
             }
 
+
+            List<s_roomtile> _layer1Tiles = _Room.Where(i => i.Layer == 1).ToList();
+            if (_layer1Tiles.Count > 0)
+            {
+                fileContent.Add("");
+                fileContent.Add("#define Layer1");
+                _layer1Tiles.ForEach((s_roomtile i) =>
+                {
+                    string current_row = "";
+                    current_row += i.X;
+                    current_row += ";";
+                    current_row += i.Y;
+                    current_row += "|";
+                    current_row += i.TileX + i.TileY * _Tiles.ElementAt(_TilesDict[i._TileMapName]).OriginalX / _Tiles.ElementAt(_TilesDict[i._TileMapName]).TileX;
+                });
+            }
+
+            List<s_roomtile> _layer2Tiles = _Room.Where(i => i.Layer == 2).ToList();
+            if (_layer2Tiles.Count > 0)
+            {
+                fileContent.Add("");
+                fileContent.Add("#define Layer2");
+                _layer2Tiles.ForEach((s_roomtile i) =>
+                {
+                    string current_row = "";
+                    current_row += i.X;
+                    current_row += ";";
+                    current_row += i.Y;
+                    current_row += "|";
+                    current_row += i.TileX + i.TileY * _Tiles.ElementAt(_TilesDict[i._TileMapName]).OriginalX / _Tiles.ElementAt(_TilesDict[i._TileMapName]).TileX;
+                });
+            }
+
             System.IO.File.WriteAllLines(path, fileContent.ToArray());
         }
 
