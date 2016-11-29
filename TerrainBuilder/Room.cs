@@ -49,13 +49,15 @@ namespace TerrainBuilder
 
         public class s_roomtile
         {
-            public s_roomtile(int x, int y, string tileMapName, int tileX, int tileY)
+            public s_roomtile(int x, int y, string tileMapName, int tileX, int tileY, int layer = 0)
             {
                 X = x;
                 Y = y;
                 _TileMapName = tileMapName;
                 TileX = tileX;
                 TileY = tileY;
+
+                Layer = layer;
             }
 
             public int X;
@@ -63,6 +65,8 @@ namespace TerrainBuilder
             public string _TileMapName;
             public int TileX;
             public int TileY;
+
+            public int Layer;
         }
 
         private UIElement _Owner;
@@ -155,8 +159,6 @@ namespace TerrainBuilder
             }
 
             System.IO.File.WriteAllLines(path, fileContent.ToArray());
-            
-            //throw new NotImplementedException("Room::Export()");
         }
 
         public void AddTileMap(string path, string name)
@@ -166,10 +168,16 @@ namespace TerrainBuilder
             _TileMaps.Add(name, img);
         }
 
-        public void AddRoomCell(int X, int Y, string _TileMapName, int TileX, int TileY)
+        public void RemoveRoomCell(int X, int Y, int layer = 0)
         {
-            _Room.RemoveAll(i => i.X == X && i.Y == Y);
-            _Room.Add(new s_roomtile(X, Y, _TileMapName, TileX, TileY));
+            _Room.RemoveAll(i => i.X == X && i.Y == Y && i.Layer == layer);
+            drawRoom();
+        }
+
+        public void AddRoomCell(int X, int Y, string _TileMapName, int TileX, int TileY, int layer = 0)
+        {
+            _Room.RemoveAll(i => i.X == X && i.Y == Y && i.Layer == layer);
+            _Room.Add(new s_roomtile(X, Y, _TileMapName, TileX, TileY, layer));
             drawRoom();
         }
 
@@ -178,12 +186,20 @@ namespace TerrainBuilder
         {
             graphic.Clear(System.Drawing.Color.Black);
 
-            _Room.ForEach((s_roomtile tile) =>
+            int layer = 0;
+            while (layer < 3)
             {
-                System.Drawing.Rectangle sourceRect = new System.Drawing.Rectangle(tile.TileX * 64, tile.TileY * 64, 64, 64);
-                System.Drawing.Rectangle destRect = new System.Drawing.Rectangle(tile.X * 64, tile.Y * 64, 64, 64);
-                graphic.DrawImage(_TileMaps[tile._TileMapName], destRect, sourceRect, System.Drawing.GraphicsUnit.Pixel);
-            });
+                var _layerRooms = _Room.Where(i => i.Layer == layer).ToList();
+
+                _layerRooms.ForEach((s_roomtile tile) =>
+                {
+                    System.Drawing.Rectangle sourceRect = new System.Drawing.Rectangle(tile.TileX * 64, tile.TileY * 64, 64, 64);
+                    System.Drawing.Rectangle destRect = new System.Drawing.Rectangle(tile.X * 64, tile.Y * 64, 64, 64);
+                    graphic.DrawImage(_TileMaps[tile._TileMapName], destRect, sourceRect, System.Drawing.GraphicsUnit.Pixel);
+                });
+
+                layer++;
+            }
 
             if (DisplayGrid)
             {
