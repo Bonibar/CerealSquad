@@ -14,6 +14,8 @@ namespace CerealSquad.GameWorld
         protected List<ARoom> Rooms = new List<ARoom>();
         public WorldEntity WorldEntity { get; protected set; }
 
+        private bool _PositionsUpToDate = false;
+
         public AWorld(string path, WorldEntity worldentity)
         {
             if (path == null)
@@ -52,6 +54,30 @@ namespace CerealSquad.GameWorld
             });
         }
 
+        public void InvalidatePlayersPosition()
+        {
+            _PositionsUpToDate = false;
+        }
+
+        private void CheckPlayerPosition()
+        {
+            if (!_PositionsUpToDate)
+            {
+                foreach (ARoom room in Rooms)
+                {
+                    foreach (APlayer player in WorldEntity.getChildren().Where(i => i.Type == e_EntityType.Player))
+                    {
+                        if (player.Pos._x >= room.Position.X && player.Pos._x < room.Position.X + room.Size.Width && 
+                            player.Pos._y >= room.Position.Y && player.Pos._y < room.Position.Y + room.Size.Height)
+                        {
+                            if (room != CurrentRoom)
+                                ChangeRoom(room);
+                        }
+                    }
+                }
+            }
+        }
+
         public RoomParser.e_CellType getCellType(int x, int y)
         {
             foreach(ARoom room in Rooms)
@@ -59,8 +85,8 @@ namespace CerealSquad.GameWorld
                 if (x >= room.Position.X && x < room.Position.X + room.Size.Width &&
                 y >= room.Position.Y && y < room.Position.Y + room.Size.Height)
                 {
-                    if (room != CurrentRoom)
-                        ChangeRoom(room);
+                    //if (room != CurrentRoom)
+                    //    ChangeRoom(room);
                     return room.getPosition((uint)(x - room.Position.X), (uint)(y - room.Position.Y));
                 }
             }
@@ -121,6 +147,7 @@ namespace CerealSquad.GameWorld
 
         public void Update(SFML.System.Time DeltaTime, List<APlayer> players)
         {
+            CheckPlayerPosition();
             Rooms.ForEach(x => x.Update(DeltaTime, players));
         }
     }

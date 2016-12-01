@@ -130,7 +130,7 @@ namespace CerealSquad.EntitySystem
                     if (Active)
                     {
                         System.Diagnostics.Debug.WriteLine("Think");
-                        _scentMap.update((WorldEntity)_owner, _room);
+                        _scentMap.update((WorldEntity)_owner.getOwner(), _room);
                         think(world, deltaTime);
                     }
                     move(world, deltaTime);
@@ -245,7 +245,7 @@ namespace CerealSquad.EntitySystem
             result &= executeDownMove(world, Speed * deltaTime.AsSeconds());
             result &= executeLeftMove(world, Speed * deltaTime.AsSeconds());
             result &= executeRightMove(world, Speed * deltaTime.AsSeconds());
-            if (canAttack((WorldEntity)_owner))
+            if (canAttack((WorldEntity)_owner.getOwner()))
                 attack();
             if (_r > 0 && result)
                 _r -= 1;
@@ -274,7 +274,7 @@ namespace CerealSquad.EntitySystem
                     _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                     _r = 30;
                 }
-                else if (maxscent <= here && moveSameTile(world, (WorldEntity)_owner, deltaTime))
+                else if (maxscent <= here && moveSameTile(world, (WorldEntity)_owner.getOwner(), deltaTime))
                 {
                     if (_attackCoolDown <= 0)
                         attack();

@@ -149,7 +149,7 @@ namespace CerealSquad
             }
             else
             {
-                _scentMap.update((WorldEntity)_owner, _room);
+                _scentMap.update((WorldEntity)_owner.getOwner(), _room);
                 think(world, deltaTime);
                 move(world, deltaTime);
             }

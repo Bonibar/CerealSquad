@@ -96,6 +96,14 @@ namespace CerealSquad
             }
         }
 
+        public e_EntityType Type
+        {
+            get
+            {
+                return _type;
+            }
+        }
+
         public bool Die
         {
             get
@@ -282,6 +290,7 @@ namespace CerealSquad
                 {
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_RIGHT);
                     Pos = NewPosition;
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;
@@ -303,6 +312,7 @@ namespace CerealSquad
                 {
                     Pos = NewPosition;
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_LEFT);
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;
@@ -324,6 +334,7 @@ namespace CerealSquad
                 {
                     Pos = NewPosition;
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_DOWN);
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;
@@ -345,6 +356,7 @@ namespace CerealSquad
                 {
                     Pos = NewPosition;
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_UP);
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;

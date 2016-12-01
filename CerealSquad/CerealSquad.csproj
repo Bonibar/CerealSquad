@@ -87,6 +87,7 @@
     <Compile Include="EntitySystem\Projectiles\CoffeeProjectile.cs" />
     <Compile Include="EntitySystem\Projectiles\RiceProjectile.cs" />
     <Compile Include="EntitySystem\RoomDoor.cs" />
+    <Compile Include="EntitySystem\RoomEntity.cs" />
     <Compile Include="Factories\EnnemyFactory.cs" />
     <Compile Include="Factories\TrapFactory.cs" />
     <Compile Include="EntitySystem\AEnemy.cs" />

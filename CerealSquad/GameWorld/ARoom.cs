@@ -40,8 +40,11 @@ namespace CerealSquad.GameWorld
         private RenderTexture _RenderTexture = null;
         private RoomParser.s_room ParsedRoom = null;
         private EnvironmentResources er = new EnvironmentResources();
+
+        private RoomEntity _RoomEntity;
+
         private List<Crates> _Crates = new List<Crates>();
-        private List<AEnemy> _Ennemies = new List<AEnemy>();
+        private List<AEnemy> _Ennemies { get { return _RoomEntity.getChildren().Where(i => i.Type == e_EntityType.Ennemy).Select(i => (AEnemy)i).ToList(); } }
         private List<RoomDoor> _Doors = new List<RoomDoor>();
 
         private Random _Rand = new Random();
@@ -52,6 +55,7 @@ namespace CerealSquad.GameWorld
             RoomType = Type;
             Position = Pos;
             WorldEntity = worldentity;
+            _RoomEntity = new RoomEntity(WorldEntity);
             ParsedRoom = RoomParser.ParseRoom(MapFile);
             Size = new s_MapSize(ParsedRoom.Cells.Keys.OrderBy(x => x.X).Last().X + 1, ParsedRoom.Cells.Keys.OrderBy(x => x.Y).Last().Y + 1);
             _RenderTexture = new RenderTexture(Size.Width * TILE_SIZE, Size.Height * TILE_SIZE);
@@ -76,7 +80,7 @@ namespace CerealSquad.GameWorld
                 }
                 spawnPoint.X += Position.X;
                 spawnPoint.Y += Position.Y;
-                _Crates.Add(new Crates(WorldEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
+                _Crates.Add(new Crates(_RoomEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
             }
             if (RoomType == e_RoomType.FightRoom)
                 spawnEnnemies();
@@ -185,14 +189,14 @@ namespace CerealSquad.GameWorld
                     }
                     spawnPoint.X += Position.X;
                     spawnPoint.Y += Position.Y;
-                    _Crates.Insert(id, new Crates(WorldEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
+                    _Crates.Insert(id, new Crates(_RoomEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
                 });
             }
         }
 
         private void spawnDoors()
         {
-            ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(WorldEntity, new s_position(i.Key.X, i.Key.Y), this)));
+            ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(_RoomEntity, new s_position(i.Key.X, i.Key.Y), this)));
             _Doors.ForEach(i => i.ressourcesEntity.EnableCollision = false);
             _Doors.ForEach(i => i.ressourcesEntity.sprite.Displayed = false);
         }
@@ -209,7 +213,7 @@ namespace CerealSquad.GameWorld
                     if (_Ennemies.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
                         isColliding = false;
                 }
-                _Ennemies.Add(Factories.EnnemyFactory.CreateEnnemy(WorldEntity, spawnPoint, this, ennemy.Types[_Rand.Next(0, ennemy.Types.Count)]));
+                Factories.EnnemyFactory.CreateEnnemy(_RoomEntity, spawnPoint, this, ennemy.Types[_Rand.Next(0, ennemy.Types.Count)]);
             }
         }
 
@@ -226,9 +230,9 @@ namespace CerealSquad.GameWorld
                     State = e_RoomState.Started;
                 }
             }
-            else if (State == e_RoomState.Started && _Ennemies.Count(i => i.Die == false) == 0)
+            else if (State == e_RoomState.Started && _RoomEntity.getChildren().Count(i => i.Type == e_EntityType.Ennemy) == 0)
             {
-                _Ennemies.Clear();
+                //_Ennemies.Clear();
                 _Doors.ForEach(i => i.Die = true);
                 _Doors.Clear();
                 State = e_RoomState.Finished;
