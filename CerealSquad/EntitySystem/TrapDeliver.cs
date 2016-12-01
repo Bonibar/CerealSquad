@@ -35,8 +35,8 @@ namespace CerealSquad.EntitySystem
         private EntityResources ResourcesEntity = new EntityResources();
 
         private APlayer Player;
-        private Timer TimerCoolDown = new Timer(Time.Zero);
-        private Timer TimerToPut;
+        private EntityTimer TimerCoolDown = new EntityTimer(Time.FromMilliseconds(200));
+        private EntityTimer TimerToPut;
 
         public TrapDeliver(APlayer player)
         {
@@ -69,7 +69,7 @@ namespace CerealSquad.EntitySystem
         public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
             if (TimerToPut == null)
-                TimerToPut = new Timer(Time.FromSeconds(0.4f * World.WorldEntity.PlayerNumber));
+                TimerToPut = new EntityTimer(Time.FromSeconds(0.4f * World.WorldEntity.PlayerNumber));
             Processing(Input, World, TrapPressed);
             ResourcesEntity.Update(DeltaTime);
         }
@@ -138,7 +138,7 @@ namespace CerealSquad.EntitySystem
                 {
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
                     trap.setPosition(Target);
-                    TimerCoolDown = new Timer(trap.Cooldown);
+                    TimerCoolDown = new EntityTimer(trap.Cooldown);
                     TimerCoolDown.Start();
                     ResourcesEntity.JukeBox.StopSound("Construction");
                 }
