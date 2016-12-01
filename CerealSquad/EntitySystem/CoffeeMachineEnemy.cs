@@ -172,7 +172,7 @@ namespace CerealSquad.EntitySystem
                 {
                     for (int i = 0; i < 90; i += 1)
                     {
-                        if (IsInEllipse(Pos._trueX + deltaX * i, Pos._trueY + deltaY * i, ent.HitboxPos._trueX, ent.Pos._trueY, 0.2, 0.2))
+                        if (IsInEllipse(Pos._trueX + deltaX * i, Pos._trueY + deltaY * i, ent.HitboxPos._trueX, ent.Pos._trueY, 0.8, 0.8))
                             result = true;
                         if (_room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Wall
                         || _room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Void)
