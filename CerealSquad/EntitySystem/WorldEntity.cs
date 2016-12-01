@@ -22,7 +22,7 @@ namespace CerealSquad
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             _children.ToList().ForEach(i => i.update(deltaTime, world));
-            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Height + x.ressourcesEntity.CollisionBox.Top).ToList();
+            //_children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Height + x.ressourcesEntity.CollisionBox.Top).ToList();
 
             // order by hitbox.y position
             allEntities = GetAllEntities().OrderBy(entity => entity.ressourcesEntity.HitBox.Height + entity.ressourcesEntity.HitBox.Top).ToList();

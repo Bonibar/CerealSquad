@@ -96,6 +96,14 @@ namespace CerealSquad
             }
         }
 
+        public e_EntityType Type
+        {
+            get
+            {
+                return _type;
+            }
+        }
+
         public bool Die
         {
             get

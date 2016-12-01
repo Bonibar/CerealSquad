@@ -122,6 +122,11 @@ namespace CerealSquad
             set;
         }
 
+        e_EntityType Type
+        {
+            get;
+        }
+
         bool Die
         {
             get;
