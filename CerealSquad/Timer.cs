@@ -40,6 +40,12 @@ namespace CerealSquad
             TimerClock.Restart();
         }
 
+        public void Stop()
+        {
+            _Start = false;
+            _PausedTime = Time.Zero;
+        }
+
         public void setPause(bool _pause)
         {
             if (_pause && !_Pause)
