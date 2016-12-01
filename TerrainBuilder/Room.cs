@@ -18,17 +18,36 @@ namespace TerrainBuilder
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         public static extern bool DeleteObject(IntPtr hObject);
 
-        public int SizeX;
-        public int SizeY;
+        private int sizeX;
+        private int sizeY;
+        public int SizeX { get { return sizeX; } set { sizeX = value; recalculateSize(); } }
+        public int SizeY { get { return sizeY; } set { sizeY = value; recalculateSize(); } }
+
+        public bool DisplayGrid = false;
 
         Dictionary<string, System.Drawing.Image> _TileMaps = new Dictionary<string, System.Drawing.Image>();
 
         List<s_roomtile> _Room = new List<s_roomtile>();
+        List<s_roomtype> _RoomType = new List<s_roomtype>();
 
         System.Drawing.Bitmap bm;
         System.Drawing.Graphics graphic;
 
-        struct s_roomtile
+        public class s_roomtype
+        {
+            public s_roomtype(int x, int y, int type)
+            {
+                X = y;
+                Y = y;
+                Type = type;
+            }
+
+            public int X;
+            public int Y;
+            public int Type;
+        }
+
+        public class s_roomtile
         {
             public s_roomtile(int x, int y, string tileMapName, int tileX, int tileY)
             {
@@ -49,6 +68,16 @@ namespace TerrainBuilder
         private UIElement _Owner;
         private Image _Target;
 
+        private void recalculateSize()
+        {
+            if (graphic != null)
+                graphic.Dispose();
+            if (bm != null)
+                bm.Dispose();
+            bm = new System.Drawing.Bitmap(64 * SizeX, 64 * SizeY);
+            graphic = System.Drawing.Graphics.FromImage(bm);
+        }
+
         public Room(UIElement owner, Image target, int sizeX = 15, int sizeY = 15)
         {
             if (owner == null)
@@ -59,15 +88,28 @@ namespace TerrainBuilder
             _Owner = owner;
             _Target = target;
 
-            SizeX = sizeX;
-            SizeY = sizeY;
+            this.sizeX = sizeX;
+            this.sizeY = sizeY;
 
-            bm = new System.Drawing.Bitmap(64 * SizeX, 64 * SizeY);
-            graphic = System.Drawing.Graphics.FromImage(bm);
+            recalculateSize();
 
             drawRoom();
         }
 
+        public static Room Parse(string path)
+        {
+            string[] lines = null;
+            if (!System.IO.File.Exists(path))
+                throw new System.IO.FileNotFoundException("File " + path + "not found!");
+            lines = System.IO.File.ReadAllLines(path);
+
+            lines = lines.Where(x => !string.IsNullOrEmpty(x.Trim())).ToArray();
+            lines.ToList().ForEach(x => x.Trim());
+
+            //Room result = new Room()
+            return null;
+        }
+        
         public void Export(string path, List<MainWindow.Tile> _Tiles)
         {
             List<string> fileContent = new List<string>();
@@ -136,29 +178,33 @@ namespace TerrainBuilder
         {
             graphic.Clear(System.Drawing.Color.Black);
 
-            int i = 1;
-            while (i < SizeX)
-            {
-                graphic.DrawLine(System.Drawing.Pens.White, new System.Drawing.Point(i * 64 - 1, 0), new System.Drawing.Point(i * 64 - 1, 64 * SizeY));
-                graphic.DrawLine(System.Drawing.Pens.White, new System.Drawing.Point(i * 64, 0), new System.Drawing.Point(i * 64, 64 * SizeY));
-                graphic.DrawLine(System.Drawing.Pens.White, new System.Drawing.Point(i * 64 + 1, 0), new System.Drawing.Point(i * 64 + 1, 64 * SizeY));
-                i++;
-            }
-            i = 1;
-            while (i < SizeY)
-            {
-                graphic.DrawLine(System.Drawing.Pens.White, new System.Drawing.Point(0, i * 64 - 1), new System.Drawing.Point(64 * SizeX, i * 64 - 1));
-                graphic.DrawLine(System.Drawing.Pens.White, new System.Drawing.Point(0, i * 64), new System.Drawing.Point(64 * SizeX, i * 64));
-                graphic.DrawLine(System.Drawing.Pens.White, new System.Drawing.Point(0, i * 64 + 1), new System.Drawing.Point(64 * SizeX, i * 64 + 1));
-                i++;
-            }
-
             _Room.ForEach((s_roomtile tile) =>
             {
                 System.Drawing.Rectangle sourceRect = new System.Drawing.Rectangle(tile.TileX * 64, tile.TileY * 64, 64, 64);
                 System.Drawing.Rectangle destRect = new System.Drawing.Rectangle(tile.X * 64, tile.Y * 64, 64, 64);
                 graphic.DrawImage(_TileMaps[tile._TileMapName], destRect, sourceRect, System.Drawing.GraphicsUnit.Pixel);
             });
+
+            if (DisplayGrid)
+            {
+                int i = 1;
+                System.Drawing.Pen gridColor = new System.Drawing.Pen(System.Drawing.Color.FromArgb(35, 255, 255, 255));
+                while (i < SizeX)
+                {
+                    graphic.DrawLine(gridColor, new System.Drawing.Point(i * 64 - 1, 0), new System.Drawing.Point(i * 64 - 1, 64 * SizeY));
+                    graphic.DrawLine(gridColor, new System.Drawing.Point(i * 64, 0), new System.Drawing.Point(i * 64, 64 * SizeY));
+                    graphic.DrawLine(gridColor, new System.Drawing.Point(i * 64 + 1, 0), new System.Drawing.Point(i * 64 + 1, 64 * SizeY));
+                    i++;
+                }
+                i = 1;
+                while (i < SizeY)
+                {
+                    graphic.DrawLine(gridColor, new System.Drawing.Point(0, i * 64 - 1), new System.Drawing.Point(64 * SizeX, i * 64 - 1));
+                    graphic.DrawLine(gridColor, new System.Drawing.Point(0, i * 64), new System.Drawing.Point(64 * SizeX, i * 64));
+                    graphic.DrawLine(gridColor, new System.Drawing.Point(0, i * 64 + 1), new System.Drawing.Point(64 * SizeX, i * 64 + 1));
+                    i++;
+                }
+            }
 
             var hbmp = bm.GetHbitmap();
             var options = BitmapSizeOptions.FromEmptyOptions();
@@ -172,6 +218,19 @@ namespace TerrainBuilder
 
             _Owner.InvalidateMeasure();
             _Owner.InvalidateVisual();
+        }
+
+        public void MoveTiles(int x, int y)
+        {
+            if (x != 0 || y != 0)
+            {
+                _Room.ForEach((s_roomtile i) =>
+                {
+                    i.X += x;
+                    i.Y += y;
+                });
+                _Room.RemoveAll(i => i.X < -1 || i.X > SizeX || i.Y < -1 || i.Y > SizeY);
+            }
         }
     }
 }
