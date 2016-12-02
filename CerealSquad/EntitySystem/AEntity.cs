@@ -147,6 +147,15 @@ namespace CerealSquad.EntitySystem
             return !(Distance > Range);
         }
 
+        protected bool InCircleRange(double x_center, double y_center, IEntity ent, float Range)
+        {
+            double Distance = Math.Sqrt(Math.Pow(x_center - ent.Pos.X, 2.0f) + Math.Pow(y_center - ent.Pos.Y, 2.0f));
+            if (ressourcesEntity != null)
+                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+
+            return (Distance > Range);
+        }
+
         protected static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
         {
             double a = Math.Pow(x - x_el, 2.0f) / Math.Pow(rX, 2.0f);
