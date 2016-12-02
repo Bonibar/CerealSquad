@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using CerealSquad.Factories;
 using SFML.Graphics;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     class Orangina : APlayer
     {
@@ -36,9 +36,9 @@ namespace CerealSquad
 
         public override void AttaqueSpe()
         {
-            Console.Out.Write(Pos._trueX);
+            Console.Out.Write(Pos.X);
             Console.Out.Write(" ");
-            Console.Out.Write(Pos._trueY);
+            Console.Out.Write(Pos.Y);
             Console.Out.Write(" ");
             Console.Out.Write(_ressources.Position.X);
             Console.Out.Write(" ");

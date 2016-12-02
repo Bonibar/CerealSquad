@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
 using CerealSquad.GameWorld;
+using CerealSquad.EntitySystem;
 using CerealSquad.Sounds;
 
 namespace CerealSquad.TrapEntities

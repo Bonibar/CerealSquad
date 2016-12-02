@@ -1,4 +1,5 @@
 ﻿using CerealSquad.GameWorld;
+using CerealSquad.EntitySystem;
 using SFML.System;
 using System;
 using System.Collections.Generic;
