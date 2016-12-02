@@ -1,14 +1,15 @@
 ﻿using CerealSquad.GameWorld;
 using CerealSquad.Global;
+using CerealSquad.EntitySystem;
 using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static CerealSquad.APlayer;
+using static CerealSquad.EntitySystem.APlayer;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     abstract class AEnemy : AEntity
     {
@@ -67,8 +68,8 @@ namespace CerealSquad
 
         public s_position getCoord(s_position pos)
         {
-            double x = pos._x;
-            double y = pos._y;
+            double x = pos.X;
+            double y = pos.Y;
 
             x -= _room.Position.X;
             y -= _room.Position.Y;
@@ -107,8 +108,8 @@ namespace CerealSquad
 
         public override bool inRoom(s_position pos)
         {
-            bool result = pos._trueX < _room.Position.X + _room.Size.Width && pos._trueX >= _room.Position.X
-                && pos._trueY < _room.Position.Y + _room.Size.Width && pos._trueY >= _room.Position.Y;
+            bool result = pos.X < _room.Position.X + _room.Size.Width && pos.X >= _room.Position.X
+                && pos.Y < _room.Position.Y + _room.Size.Width && pos.Y >= _room.Position.Y;
             return result;
         }
 
@@ -139,8 +140,8 @@ namespace CerealSquad
 
             protected s_position getCoord(s_position pos, s_Pos<int> room)
             {
-                double x = pos._trueX;
-                double y = pos._trueY;
+                double x = pos.X;
+                double y = pos.Y;
 
                 x -= room.X;
                 y -= room.Y;
@@ -197,7 +198,7 @@ namespace CerealSquad
                     {
                         APlayer p = (APlayer)entity;
                         s_position pos = getCoord(p.HitboxPos, room.Position);
-                        propagateHeat(pos._x, pos._y, 100, p.getName(), p.Weight);
+                        propagateHeat((int)pos.X, (int)pos.Y, 100, p.getName(), p.Weight);
                     }
                 }
             }
@@ -210,10 +211,10 @@ namespace CerealSquad
                     {
                         try
                         {
-                            _map[entity.Pos._x][entity.Pos._y][0] = -1;
-                            _map[entity.Pos._x][entity.Pos._y][1] = -1;
-                            _map[entity.Pos._x][entity.Pos._y][2] = -1;
-                            _map[entity.Pos._x][entity.Pos._y][3] = -1;
+                            _map[(int)entity.Pos.X][(int)entity.Pos.Y][0] = -1;
+                            _map[(int)entity.Pos.X][(int)entity.Pos.Y][1] = -1;
+                            _map[(int)entity.Pos.X][(int)entity.Pos.Y][2] = -1;
+                            _map[(int)entity.Pos.X][(int)entity.Pos.Y][3] = -1;
                         } catch (Exception e) { }
                     }
                 }

@@ -10,7 +10,7 @@ using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
 using CerealSquad.Factories;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     class Jack : APlayer
     {

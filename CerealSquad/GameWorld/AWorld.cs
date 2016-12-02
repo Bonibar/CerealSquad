@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
 using CerealSquad.Global;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad.GameWorld
 {
@@ -67,8 +68,8 @@ namespace CerealSquad.GameWorld
                 {
                     foreach (APlayer player in WorldEntity.getChildren().Where(i => i.Type == e_EntityType.Player))
                     {
-                        if (player.Pos._x >= room.Position.X && player.Pos._x < room.Position.X + room.Size.Width && 
-                            player.Pos._y >= room.Position.Y && player.Pos._y < room.Position.Y + room.Size.Height)
+                        if ((int)player.Pos.X >= room.Position.X && (int)player.Pos.X < room.Position.X + room.Size.Width &&
+                            (int)player.Pos.Y >= room.Position.Y && (int)player.Pos.Y < room.Position.Y + room.Size.Height)
                         {
                             if (room != CurrentRoom)
                                 ChangeRoom(room);

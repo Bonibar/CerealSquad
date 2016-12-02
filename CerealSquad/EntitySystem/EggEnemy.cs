@@ -14,8 +14,6 @@ namespace CerealSquad.EntitySystem
     {
         protected scentMap _scentMap;
 
-        private int _invuln;
-
         //
         // Need because otherwise the children will have the same seed for the random
         // Other way use a random master who will decide of each seed of the random
@@ -62,15 +60,15 @@ namespace CerealSquad.EntitySystem
 
                 EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
-                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X - 1, (int)pos.Y) : 0;
                 ressourcesEntity.Position = position;
-                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : 0;
+                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X + 1, (int)pos.Y) : 0;
                 ressourcesEntity.Position = position;
-                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y - 1) : 0;
                 ressourcesEntity.Position = position;
-                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y + 1) : 0;
                 ressourcesEntity.Position = position;
-                int here = _scentMap.getScent(pos._x, pos._y);
+                int here = _scentMap.getScent((int)pos.X, (int)pos.Y);
                 int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
                 _move = new List<EMovement> { EMovement.None };
 
@@ -128,7 +126,7 @@ namespace CerealSquad.EntitySystem
                     ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
                 if (ressourcesEntity.Pause)
                 {
-                    HalfEggEnemy egg = new HalfEggEnemy(_owner, new s_position(Pos._trueX - _room.Position.X, Pos._trueY - _room.Position.Y), _room);
+                    HalfEggEnemy egg = new HalfEggEnemy(_owner, new s_position(Pos.X - _room.Position.X, Pos.Y - _room.Position.Y), _room);
                     egg.Active = true;
                     if (_child == 0)
                         destroy();

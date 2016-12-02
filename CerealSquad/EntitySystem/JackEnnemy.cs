@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
-using static CerealSquad.APlayer;
+using static CerealSquad.EntitySystem.APlayer;
 using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
 using CerealSquad.Factories;
 using SFML.Graphics;
 
-
-namespace CerealSquad
+/*namespace CerealSquad.EntitySystem
 {
     class JackEnnemy : AEnemy
     {
@@ -156,4 +155,4 @@ namespace CerealSquad
             _ressources.Update(deltaTime);
         }
     }
-}
+}*/

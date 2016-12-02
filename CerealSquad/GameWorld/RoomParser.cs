@@ -23,13 +23,13 @@ namespace CerealSquad.GameWorld
 
         public class s_crate
         {
-            public List<e_TrapType> Types = new List<e_TrapType>();
+            public List<EntitySystem.e_TrapType> Types = new List<EntitySystem.e_TrapType>();
             public List<s_Pos<int>> Pos = new List<s_Pos<int>>();
         }
 
         public class s_ennemy
         {
-            public List<e_EnnemyType> Types = new List<e_EnnemyType>();
+            public List<EntitySystem.e_EnnemyType> Types = new List<EntitySystem.e_EnnemyType>();
             public List<s_Pos<int>> Pos = new List<s_Pos<int>>();
         }
 
@@ -132,7 +132,7 @@ namespace CerealSquad.GameWorld
                 string[] types = columns[0].Split(';');
                 foreach (string type in types)
                 {
-                    ennemy.Types.Add((e_EnnemyType)(int.Parse(type)));
+                    ennemy.Types.Add((EntitySystem.e_EnnemyType)(int.Parse(type)));
                 }
                 string[] positions = columns[1].Split(';');
                 foreach (string position in positions)
@@ -178,7 +178,7 @@ namespace CerealSquad.GameWorld
                 string[] types = columns[0].Split(';');
                 foreach (string type in types)
                 {
-                    crate.Types.Add((e_TrapType)(int.Parse(type)));
+                    crate.Types.Add((EntitySystem.e_TrapType)(int.Parse(type)));
                 }
                 string[] positions = columns[1].Split(';');
                 foreach (string position in positions)

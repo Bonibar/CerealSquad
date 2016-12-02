@@ -75,7 +75,7 @@ namespace CerealSquad.GameWorld
                 while (isColliding)
                 {
                     spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
-                    if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                    if (_Crates.FindAll(x => (int)x.Pos.X == spawnPoint.X && (int)x.Pos.Y == spawnPoint.Y).Count == 0)
                         isColliding = false;
                 }
                 spawnPoint.X += Position.X;
@@ -105,8 +105,8 @@ namespace CerealSquad.GameWorld
         {
             s_Pos<int> result = new s_Pos<int>(-1, -1);
 
-            int xEntity = entity.Pos._x / 64;
-            int yEntity = entity.Pos._y / 64;
+            int xEntity = (int)entity.Pos.X / 64;
+            int yEntity = (int)entity.Pos.Y / 64;
 
 
             if (xEntity < Position.X)
@@ -132,7 +132,7 @@ namespace CerealSquad.GameWorld
             {
                 if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
                 {
-                    List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs(i.Pos._x / 64 - (Position.X + Size.Width) / 2) + Math.Abs(i.Pos._y / 64 - (Position.Y + Size.Height))).ToList();
+                    List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs((int)i.Pos.X / 64 - (Position.X + Size.Width) / 2) + Math.Abs((int)i.Pos.Y / 64 - (Position.Y + Size.Height))).ToList();
                     if (_valuablePlayers.Count > 0)
                     {
                         System.Diagnostics.Debug.WriteLine(_valuablePlayers.Count);
@@ -184,7 +184,7 @@ namespace CerealSquad.GameWorld
                     while (isColliding)
                     {
                         spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
-                        if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                        if (_Crates.FindAll(x => (int)x.Pos.X == spawnPoint.X && (int)x.Pos.Y == spawnPoint.Y).Count == 0)
                             isColliding = false;
                     }
                     spawnPoint.X += Position.X;
@@ -210,7 +210,7 @@ namespace CerealSquad.GameWorld
                 while (isColliding)
                 {
                     spawnPoint = ennemy.Pos[_Rand.Next(0, ennemy.Pos.Count)];
-                    if (_Ennemies.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                    if (_Ennemies.FindAll(x => (int)x.Pos.X == spawnPoint.X && (int)x.Pos.Y == spawnPoint.Y).Count == 0)
                         isColliding = false;
                 }
                 Factories.EnnemyFactory.CreateEnnemy(_RoomEntity, spawnPoint, this, ennemy.Types[_Rand.Next(0, ennemy.Types.Count)]);
