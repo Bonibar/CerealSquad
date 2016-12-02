@@ -106,7 +106,7 @@ namespace CerealSquad.EntitySystem
                     _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                     _r = 30;
                 }
-                else if (maxscent <= here && moveSameTile(world, (WorldEntity)_owner, deltaTime))
+                else if (maxscent <= here && moveSameTile(world, (WorldEntity)getRootEntity(), deltaTime))
                     #region EmptyStatement
 #pragma warning disable CS0642 // Possible mistaken empty statement
                     ;
