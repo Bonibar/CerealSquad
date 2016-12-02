@@ -10,6 +10,8 @@ namespace CerealSquad
         public static Renderer renderer;
 
         private static bool pause = false;
+        private static double step = -1;
+        private const double stepTime = 0.1;
 
         private static FrameClock clock = new FrameClock();
 
@@ -162,8 +164,18 @@ namespace CerealSquad
                 }
                 else if (gameManager.CurrentGame != null)
                 {
+                    SFML.System.Time time = clock.Restart();
                     if (!pause)
-                        gameManager.Update(clock.Restart());
+                        gameManager.Update(time);
+                    if (step > 0)
+                    {
+                        step -= time.AsSeconds();
+                        if (step < 0)
+                        {
+                            pause = true;
+                            step = -1;
+                        }
+                    }
                     if (gameManager.CurrentGame != null)
                         renderer.Draw(gameManager.CurrentGame);
                 }
@@ -197,6 +209,12 @@ namespace CerealSquad
             {
                 clock.Restart();
                 pause = !pause;
+            }
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.O) && pause)
+            {
+                clock.Restart();
+                pause = false;
+                step = stepTime;
             }
         }
     }
