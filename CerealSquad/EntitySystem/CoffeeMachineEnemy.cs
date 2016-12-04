@@ -129,7 +129,6 @@ namespace CerealSquad.EntitySystem
                 {
                     if (Active)
                     {
-                        System.Diagnostics.Debug.WriteLine("Think");
                         _scentMap.update((WorldEntity)_owner.getOwner(), _room);
                         think(world, deltaTime);
                     }
@@ -191,7 +190,7 @@ namespace CerealSquad.EntitySystem
             new CoffeeProjectile(_owner, _move[0], HitboxPos);
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             bool result = false;
             if (_invuln <= 0 && !_takingDamage)

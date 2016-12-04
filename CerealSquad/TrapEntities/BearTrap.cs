@@ -40,7 +40,7 @@ namespace CerealSquad.TrapEntities
             _CollidingType.Add(e_EntityType.Ennemy);
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             if (!Triggered) {
                 if (damage == e_DamageType.BOMB_DAMAGE || damage == e_DamageType.ENEMY_DAMAGE)

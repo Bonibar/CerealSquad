@@ -403,8 +403,9 @@ namespace CerealSquad.EntitySystem
         {
             touchingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.ProjectileEnemy)
-                    attemptDamage(i, i.getDamageType());
+                if (i.getEntityType() == e_EntityType.ProjectileEnemy
+                || i.getEntityType() == e_EntityType.EnnemyTrap)
+                    attemptDamage(i, i.getDamageType(), true);
                 i.attemptDamage(this, _damageType);
             });
         }
@@ -422,7 +423,9 @@ namespace CerealSquad.EntitySystem
                 {
                     TrapInventory = ((Crates)i).Item;
                     ((Crates)i).pickCrate();
-                } else if (i.getEntityType() == e_EntityType.ProjectileEnemy)
+                }
+                else if (i.getEntityType() == e_EntityType.ProjectileEnemy
+                  || i.getEntityType() == e_EntityType.EnnemyTrap)
                     attemptDamage(i, i.getDamageType());
                 i.attemptDamage(this, _damageType);
             });
@@ -430,19 +433,27 @@ namespace CerealSquad.EntitySystem
             return result || baseResult;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             bool result = false;
 
-            switch(damage)
+            System.Diagnostics.Debug.WriteLine("Colliding Damage : " + damage + " by hitbox : " + isHitBox);
+
+            switch (damage)
             {
                 case e_DamageType.ENEMY_DAMAGE:
-                case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
                 case e_DamageType.COFFE_DAMAGE:
+                    if (!isHitBox)
+                    {
+                        die();
+                        result = true;
+                    }
+                    break;
+
+                case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
                     die();
                     result = true;
                     break;
-                   
             }
 
             return result;

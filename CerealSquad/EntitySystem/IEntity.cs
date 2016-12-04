@@ -127,7 +127,7 @@ namespace CerealSquad.EntitySystem
         void update(SFML.System.Time deltaTime, AWorld world);
         bool collideWithType(e_EntityType type);
 
-        bool attemptDamage(IEntity Sender, e_DamageType damage);
+        bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false);
         bool attemptDamage(IEntity Sender, e_DamageType damage, float Range);
         bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY);
 

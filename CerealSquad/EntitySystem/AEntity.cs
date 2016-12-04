@@ -33,6 +33,7 @@ namespace CerealSquad.EntitySystem
         protected float _inputForce;
         protected EntityResources _ressources;
         protected List<e_EntityType> _CollidingType = new List<e_EntityType>();
+        protected List<e_EntityType> _HittingType = new List<e_EntityType>();
 
         protected static bool m_debug = false; // Capitain obvious: use for the debug with breakpoint
 
@@ -191,7 +192,7 @@ namespace CerealSquad.EntitySystem
         }
         #endregion
 
-        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             return false;
         }
