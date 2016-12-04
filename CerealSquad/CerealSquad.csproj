@@ -148,7 +148,7 @@
     <Compile Include="Graphics\ASprite.cs" />
     <Compile Include="Factories\TextureFactory.cs" />
     <Compile Include="FrameClock.cs" />
-    <Compile Include="Timer.cs" />
+    <Compile Include="EntityTimer.cs" />
     <Compile Include="TrapEntities\BearTrap.cs" />
     <Compile Include="TrapEntities\Bomb.cs" />
     <Compile Include="Global.cs" />

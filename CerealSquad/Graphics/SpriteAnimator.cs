@@ -26,7 +26,7 @@ namespace CerealSquad.Graphics
 
         public SpriteAnimator()
         {
-            m_frameTime = Time.FromSeconds(0.2f);
+            m_frameTime = Time.FromSeconds(0.1f);
             m_isLooped = true;
             m_isPaused = false;
             m_animation = null;

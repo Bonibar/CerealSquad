@@ -16,7 +16,7 @@ namespace CerealSquad.TrapEntities
         public static readonly FloatRect COLLISION_BOX = new FloatRect(25, 0, 25, 32);
         public static readonly FloatRect HIT_BOX = new FloatRect(25, 30, 25, 32);
 
-        private Timer Timer = new Timer(Time.FromSeconds(10));
+        private EntityTimer Timer = new EntityTimer(Time.FromSeconds(10));
 
         public SugarWall(IEntity owner) : base(owner, e_DamageType.NONE, 0)
         {
