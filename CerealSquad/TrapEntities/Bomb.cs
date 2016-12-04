@@ -118,6 +118,8 @@ namespace CerealSquad.TrapEntities
             Triggered = true;
             if (delay && !TimerTrigger.Started)
                 TimerTrigger.Start();
+            else if (!delay && TimerTrigger.Started)
+                TimerTrigger.Stop();
         }
     }
 }
