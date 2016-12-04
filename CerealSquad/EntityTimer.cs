@@ -41,6 +41,12 @@ namespace CerealSquad
             _Start = true;
         }
 
+        public void Stop()
+        {
+            _PausedTime = Time.Zero;
+            _Start = false;
+        }
+
         public void setPause(bool _pause)
         {
             if (_pause && !_Pause)
