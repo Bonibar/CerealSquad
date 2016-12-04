@@ -59,7 +59,7 @@ namespace CerealSquad.EntitySystem.Projectiles
             return baseResult;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             if (damage == e_DamageType.NONE)
             {
@@ -75,9 +75,9 @@ namespace CerealSquad.EntitySystem.Projectiles
             touchingEntities.ForEach(i =>
             {
                 if (i.getEntityType() == e_EntityType.Player)
-                    attemptDamage(i, i.getDamageType());
+                    attemptDamage(i, i.getDamageType(), true);
                 else if (i.getEntityType() == e_EntityType.PlayerTrap)
-                    attemptDamage(i, i.getDamageType());
+                    attemptDamage(i, i.getDamageType(), true);
 
                 i.attemptDamage(this, _damageType);
             });

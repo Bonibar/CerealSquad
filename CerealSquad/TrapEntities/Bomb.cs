@@ -96,7 +96,7 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.JukeBox.PlaySound("Explosion");
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
 
             switch(Sender.getEntityType())

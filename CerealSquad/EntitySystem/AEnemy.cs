@@ -48,7 +48,7 @@ namespace CerealSquad.EntitySystem
             return result || baseResult;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             bool result = false;
 

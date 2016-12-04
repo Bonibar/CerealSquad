@@ -191,7 +191,7 @@ namespace CerealSquad.EntitySystem
         }
         #endregion
 
-        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             return false;
         }

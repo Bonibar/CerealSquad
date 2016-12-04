@@ -40,13 +40,6 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.Loop = false;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
-        {
-            Sender.attemptDamage(this, _damageType);
-
-            return true;
-        }
-
         public bool IsReadyToDie()
         {
             return Die && ressourcesEntity.Pause;
