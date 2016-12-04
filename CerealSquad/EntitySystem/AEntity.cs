@@ -169,25 +169,22 @@ namespace CerealSquad.EntitySystem
             if (ressourcesEntity == null)
                 return !IsInEllipse(Sender.Pos.X, Sender.Pos.Y, Pos.X, Pos.Y, RadiusX, RadiusY);
 
-            s_Pos<double> posOne = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top);
-            s_Pos<double> posTwo = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height);
-            s_Pos<double> posThree = new s_Pos<double>(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height);
-            s_Pos<double> posFour = new s_Pos<double>(ressourcesEntity.CollisionBox.Left + ressourcesEntity.CollisionBox.Width, ressourcesEntity.CollisionBox.Top);
-
-            posOne = new s_Pos<double>(posOne.X / 64.0f, posOne.Y / 64.0f);
-            posTwo = new s_Pos<double>(posTwo.X / 64.0f, posTwo.Y / 64.0f);
-            posThree = new s_Pos<double>(posThree.X / 64.0f, posThree.Y / 64.0f);
-            posFour = new s_Pos<double>(posFour.X / 64.0f, posFour.Y / 64.0f);
+            s_Pos<double> posOne = new s_Pos<double>(ressourcesEntity.HitBox.Left, ressourcesEntity.HitBox.Top);
+            s_Pos<double> posTwo = new s_Pos<double>(ressourcesEntity.HitBox.Left, ressourcesEntity.HitBox.Top + ressourcesEntity.HitBox.Height);
+            s_Pos<double> posThree = new s_Pos<double>(ressourcesEntity.HitBox.Left + ressourcesEntity.HitBox.Width, ressourcesEntity.HitBox.Top + ressourcesEntity.HitBox.Height);
+            s_Pos<double> posFour = new s_Pos<double>(ressourcesEntity.HitBox.Left + ressourcesEntity.HitBox.Width, ressourcesEntity.HitBox.Top);
 
             int tested = 0;
+            double x = Sender.ressourcesEntity.Position.X;
+            double y = Sender.ressourcesEntity.Position.Y;
 
-            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posOne.X, posOne.Y, RadiusX, RadiusY))
+            if (IsInEllipse(x, y, posOne.X, posOne.Y, RadiusX, RadiusY))
                 tested++;
-            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posTwo.X, posTwo.Y, RadiusX, RadiusY))
+            if (IsInEllipse(x, y, posTwo.X, posTwo.Y, RadiusX, RadiusY))
                 tested++;
-            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posThree.X, posThree.Y, RadiusX, RadiusY))
+            if (IsInEllipse(x, y, posThree.X, posThree.Y, RadiusX, RadiusY))
                 tested++;
-            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posFour.X, posFour.Y, RadiusX, RadiusY))
+            if (IsInEllipse(x, y, posFour.X, posFour.Y, RadiusX, RadiusY))
                 tested++;
 
             return tested == 0;
@@ -201,7 +198,7 @@ namespace CerealSquad.EntitySystem
 
         public virtual bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY)
         {
-            if (NotInEllipseRange(Sender, RadiusRangeX, RadiusRangeY))
+            if (NotInEllipseRange(Sender, RadiusRangeX * 64.0f, RadiusRangeY * 64.0f))
                 return false;
 
             return attemptDamage(Sender, damage);
