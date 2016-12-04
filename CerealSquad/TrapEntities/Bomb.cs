@@ -8,6 +8,7 @@ using CerealSquad.GameWorld;
 using SFML.Graphics;
 using CerealSquad.Graphics;
 using CerealSquad.Sounds;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad.TrapEntities
 {

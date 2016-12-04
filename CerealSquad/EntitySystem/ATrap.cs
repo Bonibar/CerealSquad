@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     abstract class ATrap : AEntity
     {

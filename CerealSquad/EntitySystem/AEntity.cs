@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
 
     abstract class AEntity : IEntity
@@ -96,6 +96,14 @@ namespace CerealSquad
             }
         }
 
+        public e_EntityType Type
+        {
+            get
+            {
+                return _type;
+            }
+        }
+
         public bool Die
         {
             get
@@ -132,11 +140,20 @@ namespace CerealSquad
         #region CheckingRange
         protected bool NotInCircleRange(IEntity Sender, float Range)
         {
-            double Distance = Math.Sqrt(Math.Pow(Sender.Pos._trueX - Pos._trueX, 2.0f) + Math.Pow(Sender.Pos._trueY - Pos._trueY, 2.0f));
+            double Distance = Math.Sqrt(Math.Pow(Sender.Pos.X - Pos.X, 2.0f) + Math.Pow(Sender.Pos.Y - Pos.Y, 2.0f));
             if (ressourcesEntity != null)
                 Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
 
             return !(Distance > Range);
+        }
+
+        protected bool InCircleRange(double x_center, double y_center, IEntity ent, float Range)
+        {
+            double Distance = Math.Sqrt(Math.Pow(x_center - ent.Pos.X, 2.0f) + Math.Pow(y_center - ent.Pos.Y, 2.0f));
+            if (ressourcesEntity != null)
+                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+
+            return (Distance > Range);
         }
 
         protected static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
@@ -150,7 +167,7 @@ namespace CerealSquad
         protected bool NotInEllipseRange(IEntity Sender, float RadiusX, float RadiusY)
         {
             if (ressourcesEntity == null)
-                return !IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, Pos._trueX, Pos._trueY, RadiusX, RadiusY);
+                return !IsInEllipse(Sender.Pos.X, Sender.Pos.Y, Pos.X, Pos.Y, RadiusX, RadiusY);
 
             s_Pos<double> posOne = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top);
             s_Pos<double> posTwo = new s_Pos<double>(ressourcesEntity.CollisionBox.Left, ressourcesEntity.CollisionBox.Top + ressourcesEntity.CollisionBox.Height);
@@ -164,13 +181,13 @@ namespace CerealSquad
 
             int tested = 0;
 
-            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posOne.X, posOne.Y, RadiusX, RadiusY))
+            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posOne.X, posOne.Y, RadiusX, RadiusY))
                 tested++;
-            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posTwo.X, posTwo.Y, RadiusX, RadiusY))
+            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posTwo.X, posTwo.Y, RadiusX, RadiusY))
                 tested++;
-            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posThree.X, posThree.Y, RadiusX, RadiusY))
+            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posThree.X, posThree.Y, RadiusX, RadiusY))
                 tested++;
-            if (IsInEllipse(Sender.Pos._trueX, Sender.Pos._trueY, posFour.X, posFour.Y, RadiusX, RadiusY))
+            if (IsInEllipse(Sender.Pos.X, Sender.Pos.Y, posFour.X, posFour.Y, RadiusX, RadiusY))
                 tested++;
 
             return tested == 0;
@@ -282,6 +299,7 @@ namespace CerealSquad
                 {
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_RIGHT);
                     Pos = NewPosition;
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;
@@ -303,6 +321,7 @@ namespace CerealSquad
                 {
                     Pos = NewPosition;
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_LEFT);
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;
@@ -324,6 +343,7 @@ namespace CerealSquad
                 {
                     Pos = NewPosition;
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_DOWN);
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;
@@ -345,6 +365,7 @@ namespace CerealSquad
                 {
                     Pos = NewPosition;
                     _ressources.PlayAnimation((uint)EStateEntity.WALKING_UP);
+                    world.InvalidatePlayersPosition();
                 }
             }
             return true;
@@ -429,7 +450,7 @@ namespace CerealSquad
 
         private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
         {
-            return new SFML.System.Vector2f(((float)Pos._trueX * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos._trueY * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
+            return new SFML.System.Vector2f(((float)Pos.X * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos.Y * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
         }
 
         private s_position RessourceEntityPositionToEntityPosition(SFML.System.Vector2f pos)

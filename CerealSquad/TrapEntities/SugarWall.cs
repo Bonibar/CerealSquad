@@ -7,6 +7,7 @@ using SFML.System;
 using SFML.Graphics;
 using CerealSquad.GameWorld;
 using CerealSquad.Graphics;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad.TrapEntities
 {

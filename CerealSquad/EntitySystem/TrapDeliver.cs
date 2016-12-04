@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static CerealSquad.AEntity;
+using static CerealSquad.EntitySystem.AEntity;
 using CerealSquad.Graphics;
 using SFML.System;
 using SFML.Graphics;

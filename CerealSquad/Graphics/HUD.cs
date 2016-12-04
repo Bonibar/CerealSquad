@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CerealSquad.Global;
+using CerealSquad.EntitySystem;
 using SFML.Graphics;
 
 namespace CerealSquad.Graphics
@@ -14,7 +15,7 @@ namespace CerealSquad.Graphics
         private ASprite _Character;
         private RenderTexture _PortraitTarget;
         private ASprite _Portrait;
-        private e_TrapType _OldTrap;
+        private EntitySystem.e_TrapType _OldTrap;
         private ASprite _Trap;
 
         private Renderer _Renderer;
@@ -42,7 +43,7 @@ namespace CerealSquad.Graphics
             _PortraitTarget = new RenderTexture(110, 110);
             _Portrait = new RegularSprite(_PortraitTarget.Texture, new SFML.System.Vector2i(110 * (int)renderer.Win.GetView().Size.X / 1980, 110 * (int)renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 110, 110));
 
-            _OldTrap = e_TrapType.NONE;
+            _OldTrap = EntitySystem.e_TrapType.NONE;
 
             UpdatePosition();
             PreloadTexture();
@@ -59,17 +60,17 @@ namespace CerealSquad.Graphics
         {
             switch (_Player.TrapInventory)
             {
-                case e_TrapType.BOMB:
+                case EntitySystem.e_TrapType.BOMB:
                     if (_OldTrap != _Player.TrapInventory)
                         _Trap = new RegularSprite(Factories.TextureFactory.Instance.getTexture("HUD_ICON_Bomb"), new SFML.System.Vector2i(50 * (int)_Renderer.Win.GetView().Size.X / 1980, 50 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 128, 128));
                     _Trap.Position = new SFML.System.Vector2f(_Character.Position.X + 163 * (int)_Renderer.Win.GetView().Size.X / 1980, _Character.Position.Y + 38 * (int)_Renderer.Win.GetView().Size.X / 1980);
                     break;
-                case e_TrapType.BEAR_TRAP:
+                case EntitySystem.e_TrapType.BEAR_TRAP:
                     if (_OldTrap != _Player.TrapInventory)
                         _Trap = new RegularSprite(Factories.TextureFactory.Instance.getTexture("HUD_ICON_BearTrap"), new SFML.System.Vector2i(50 * (int)_Renderer.Win.GetView().Size.X / 1980, 50 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 128, 128));
                     _Trap.Position = new SFML.System.Vector2f(_Character.Position.X + 163 * (int)_Renderer.Win.GetView().Size.X / 1980, _Character.Position.Y + 38 * (int)_Renderer.Win.GetView().Size.X / 1980);
                     break;
-                case e_TrapType.WALL:
+                case EntitySystem.e_TrapType.WALL:
                     if (_OldTrap != _Player.TrapInventory)
                         _Trap = new RegularSprite(Factories.TextureFactory.Instance.getTexture("HUD_ICON_Wall"), new SFML.System.Vector2i(50 * (int)_Renderer.Win.GetView().Size.X / 1980, 50 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(64 * 6, 0, 64, 64));
                     _Trap.Position = new SFML.System.Vector2f(_Character.Position.X + 163 * (int)_Renderer.Win.GetView().Size.X / 1980, _Character.Position.Y + 38 * (int)_Renderer.Win.GetView().Size.X / 1980);

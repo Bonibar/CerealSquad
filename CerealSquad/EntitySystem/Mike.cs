@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     class Mike : APlayer
     {
