@@ -10,7 +10,7 @@ using CerealSquad.Factories;
 using CerealSquad.InputManager.Keyboard;
 using SFML.Graphics;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     class Tchong : APlayer
     {

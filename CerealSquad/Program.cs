@@ -9,6 +9,12 @@ namespace CerealSquad
     {
         public static Renderer renderer;
 
+        private static bool pause = false;
+        private static double step = -1;
+        private const double stepTime = 0.1;
+
+        private static FrameClock clock = new FrameClock();
+
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
@@ -141,8 +147,7 @@ namespace CerealSquad
             GameWorld.GameManager gameManager = new GameWorld.GameManager(renderer, manager);
 
             Downloaders.LoadingScreen _loadingScreen = new Downloaders.LoadingScreen(renderer);
-
-            FrameClock clock = new FrameClock();
+            
             while (renderer.isOpen())
             {
                 renderer.DispatchEvents();
@@ -159,7 +164,18 @@ namespace CerealSquad
                 }
                 else if (gameManager.CurrentGame != null)
                 {
-                    gameManager.Update(clock.Restart());
+                    SFML.System.Time time = clock.Restart();
+                    if (!pause)
+                        gameManager.Update(time);
+                    if (step > 0)
+                    {
+                        step -= time.AsSeconds();
+                        if (step < 0)
+                        {
+                            pause = true;
+                            step = -1;
+                        }
+                    }
                     if (gameManager.CurrentGame != null)
                         renderer.Draw(gameManager.CurrentGame);
                 }
@@ -189,6 +205,17 @@ namespace CerealSquad
         {
             if (e.KeyCode.Equals(InputManager.Keyboard.Key.F))
                 renderer.FullScreen = !renderer.FullScreen;
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.P))
+            {
+                clock.Restart();
+                pause = !pause;
+            }
+            if (e.KeyCode.Equals(InputManager.Keyboard.Key.O) && pause)
+            {
+                clock.Restart();
+                pause = false;
+                step = stepTime;
+            }
         }
     }
 }

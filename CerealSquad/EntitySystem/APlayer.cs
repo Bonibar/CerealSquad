@@ -10,7 +10,7 @@ using CerealSquad.EntitySystem;
 using CerealSquad.EntitySystem.Projectiles;
 using CerealSquad.Graphics;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     abstract class APlayer : AEntity
     {
@@ -284,7 +284,7 @@ namespace CerealSquad
             if (!_moveTo)
             {
                 BlockInputs = true;
-                _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
+                _speed = Math.Abs(pos.X - _pos.X) + Math.Abs(pos.Y - _pos.Y) / 4;
                 _moveTo = true;
                 _moveToPos = pos;
                 _scentMap = new scentMap(40, 40, this);
@@ -296,7 +296,7 @@ namespace CerealSquad
         {
             if (_center == true)
             {
-                if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) < 0.1 && Math.Abs(HitboxPos._trueY - _moveToPos._trueY) < 0.1)
+                if (Math.Abs(HitboxPos.X - _moveToPos.X) < 0.1 && Math.Abs(HitboxPos.Y - _moveToPos.Y) < 0.1)
                 {
                     MoveStack.Clear();
                     _moveTo = false;
@@ -309,16 +309,16 @@ namespace CerealSquad
                 else
                 {
                     MoveStack.Clear();
-                    if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) >= 0.1)
+                    if (Math.Abs(HitboxPos.X - _moveToPos.X) >= 0.1)
                     {
-                        if (HitboxPos._trueX - _moveToPos._trueX > 0)
+                        if (HitboxPos.X - _moveToPos.X > 0)
                             MoveStack.Add(EMovement.Left);
                         else
                             MoveStack.Add(EMovement.Right);
                     }
                     else
                     {
-                        if (HitboxPos._trueY - _moveToPos._trueY > 0)
+                        if (HitboxPos.Y - _moveToPos.Y > 0)
                             MoveStack.Add(EMovement.Up);
                         else
                             MoveStack.Add(EMovement.Down);
@@ -477,8 +477,8 @@ namespace CerealSquad
 
             protected void reset(AWorld world)
             {
-                int baseX = _player.HitboxPos._x - 20;
-                int baseY = _player.HitboxPos._y - 20;
+                int baseX = (int)_player.HitboxPos.X - 20;
+                int baseY = (int)_player.HitboxPos.Y - 20;
                 _map = new int[_x][];
                 for (int i = 0; i < _x; i++)
                 {
@@ -503,7 +503,7 @@ namespace CerealSquad
                 {
                     if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
                     {
-                        _map[entity.Pos._x][entity.Pos._y] = -1;
+                        _map[(int)entity.Pos.X][(int)entity.Pos.Y] = -1;
                     }
                 }
             }
@@ -527,7 +527,7 @@ namespace CerealSquad
             {
                 reset(world);
                 check_obstacle(worldEntity);
-                propagateHeat(20 - _player.HitboxPos._x + moveToPos._x, 20 - _player.HitboxPos._y + moveToPos._y, 200);
+                propagateHeat(20 - (int)_player.HitboxPos.X + (int)moveToPos.X, 20 - (int)_player.HitboxPos.Y + (int)moveToPos.Y, 200);
             }
 
             public virtual int getScent(int x, int y)

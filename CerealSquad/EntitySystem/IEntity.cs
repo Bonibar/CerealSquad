@@ -6,10 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//
-// TODO Do a correct namespace
-//
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     public enum e_DamageType
     {
@@ -54,27 +51,21 @@ namespace CerealSquad
 
     public struct s_position
     {
-        public int _x;
-        public int _y;
-        public double _trueX;
-        public double _trueY;
+        public double X;
+        public double Y;
         public int _layer;
 
         public s_position(double x = -1, double y = -1, int layer = -1)
         {
-            _x = (int)(x);
-            _trueX = x;
-            _y = (int)(y);
-            _trueY = y;
+            X = x;
+            Y = y;
             _layer = layer;
         }
 
         public static s_position operator +(s_position pos, s_position other)
         {
-            pos._trueX += other._trueX;
-            pos._trueY += other._trueY;
-            pos._x = (int)(pos._trueX);
-            pos._y = (int)(pos._trueY);
+            pos.X += other.X;
+            pos.Y += other.Y;
             pos._layer += other._layer;
 
             return (pos);
@@ -120,6 +111,11 @@ namespace CerealSquad
         {
             get;
             set;
+        }
+
+        e_EntityType Type
+        {
+            get;
         }
 
         bool Die

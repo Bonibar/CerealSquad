@@ -88,15 +88,15 @@ namespace CerealSquad.EntitySystem
                 var position = ressourcesEntity.Position;
                 EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
-                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X - 1, (int)pos.Y) : 0;
                 ressourcesEntity.Position = position;
-                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : 0;
+                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X + 1, (int)pos.Y) : 0;
                 ressourcesEntity.Position = position;
-                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y - 1) : 0;
                 ressourcesEntity.Position = position;
-                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y + 1) : 0;
                 ressourcesEntity.Position = position;
-                int here = _scentMap.getScent(pos._x, pos._y);
+                int here = _scentMap.getScent((int)pos.X, (int)pos.Y);
                 int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
                 _move = new List<EMovement> { EMovement.None };
 
@@ -106,7 +106,7 @@ namespace CerealSquad.EntitySystem
                     _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                     _r = 30;
                 }
-                else if (maxscent <= here && moveSameTile(world, (WorldEntity)_owner, deltaTime))
+                else if (maxscent <= here && moveSameTile(world, (WorldEntity)getRootEntity(), deltaTime))
                     #region EmptyStatement
 #pragma warning disable CS0642 // Possible mistaken empty statement
                     ;
@@ -147,7 +147,7 @@ namespace CerealSquad.EntitySystem
             {
                 if (Active)
                 {
-                    _scentMap.update((WorldEntity)_owner, _room);
+                    _scentMap.update((WorldEntity)_owner.getOwner(), _room);
                     think(world, deltaTime);
                 }
                 move(world, deltaTime);
