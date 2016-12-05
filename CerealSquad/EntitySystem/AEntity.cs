@@ -33,6 +33,7 @@ namespace CerealSquad.EntitySystem
         protected float _inputForce;
         protected EntityResources _ressources;
         protected List<e_EntityType> _CollidingType = new List<e_EntityType>();
+        static protected bool shootDebug = false;
 
         protected static bool m_debug = false; // Capitain obvious: use for the debug with breakpoint
 
@@ -149,11 +150,11 @@ namespace CerealSquad.EntitySystem
 
         protected bool InCircleRange(double x_center, double y_center, IEntity ent, float Range)
         {
-            double Distance = Math.Sqrt(Math.Pow(x_center - ent.Pos.X, 2.0f) + Math.Pow(y_center - ent.Pos.Y, 2.0f));
-            if (ressourcesEntity != null)
-                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+            double Distance = Math.Sqrt(Math.Pow(x_center - ent.HitboxPos.X, 2.0f) + Math.Pow(y_center - ent.HitboxPos.Y, 2.0f));
+         //   if (ressourcesEntity != null)
+         //       Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
 
-            return (Distance > Range);
+            return (Distance <= Range);
         }
 
         protected static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)

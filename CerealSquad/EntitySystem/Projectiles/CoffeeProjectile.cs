@@ -97,6 +97,7 @@ namespace CerealSquad.EntitySystem.Projectiles
                     case e_EntityType.EnnemyTrap:
                     case e_EntityType.Player:
                     case e_EntityType.PlayerTrap:
+                    case e_EntityType.Room:
                         result = true;
                         break;
                 }
