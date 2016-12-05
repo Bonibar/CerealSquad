@@ -117,6 +117,7 @@ namespace CerealSquad.EntitySystem
 
         private bool canAttack(WorldEntity world)
         {
+            ressourcesEntity.secondarySprite.Clear();
             double deltaX = 0;
             double deltaY = 0;
             bool result = false;
@@ -147,8 +148,30 @@ namespace CerealSquad.EntitySystem
                 {
                     for (int i = 0; i < 15; i += 1)
                     {
-                        if (IsInEllipse(Pos.X + deltaX * i, Pos.Y + deltaY * i, ent.HitboxPos.X, ent.Pos.Y, 0.2, 0.2))
+                        if (InCircleRange(HitboxPos.X + deltaX * i, HitboxPos.Y + deltaY * i, ent, 0.2f))
+                        {
                             result = true;
+                            Console.Write("PosX ");
+                            Console.WriteLine(HitboxPos.X);
+                            Console.Write("PosY ");
+                            Console.WriteLine(HitboxPos.Y);
+                            Console.Write("i ");
+                            Console.WriteLine(i);
+                            Console.Write("deltaX ");
+                            Console.WriteLine(deltaX);
+                            Console.Write("deltaY ");
+                            Console.WriteLine(deltaY);
+                            Console.Write("hitboxX ");
+                            Console.WriteLine(ent.HitboxPos.X);
+                            Console.Write("hitboxY ");
+                            Console.WriteLine(ent.HitboxPos.Y);
+                        }
+                        EllipseShapeSprite sprite = new EllipseShapeSprite(new Vector2f(0.2f * 64f, 0.2f * 64f), new Color(255, (byte)(10 * i), 0, 255), new Color(255, 0, 0, 0));
+                        var posSprite = sprite.EllipseShape.Position;
+                        posSprite.X = (float)(deltaX * i * 64);
+                        posSprite.Y = (float)(deltaY * i * 64);
+                        sprite.EllipseShape.Position = posSprite;
+                        ressourcesEntity.secondarySprite.Add(sprite);
                         if (_room.getPosition((uint)(pos.X + deltaX * i), (uint)(pos.Y + deltaY * i)) == RoomParser.e_CellType.Wall
                         || _room.getPosition((uint)(pos.X + deltaX * i), (uint)(pos.Y + deltaY * i)) == RoomParser.e_CellType.Void)
                             end = true;
@@ -157,6 +180,8 @@ namespace CerealSquad.EntitySystem
                     }
                 }
             });
+            Console.WriteLine(ressourcesEntity.secondarySprite.Count);
+            ressourcesEntity.secondarySprite.ForEach(i => i.Displayed = true);
             return (result);
         }
         
