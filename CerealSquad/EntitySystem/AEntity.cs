@@ -446,17 +446,17 @@ namespace CerealSquad.EntitySystem
             return parent;
         }
 
-        private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
+        protected SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
         {
             return new SFML.System.Vector2f(((float)Pos.X * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos.Y * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
         }
 
-        private s_position RessourceEntityPositionToEntityPosition(SFML.System.Vector2f pos)
+        protected s_position RessourceEntityPositionToEntityPosition(SFML.System.Vector2f pos)
         {
             return (new s_position(pos.X  / 64.0f, pos.Y / 64.0f));
         }
 
-        private void setResourceEntityPosition()
+        protected void setResourceEntityPosition()
         {
             ressourcesEntity.Position = EntityPositionToResourcesEntityPosition(Pos);
             ressourcesEntity.UpdateDebug();

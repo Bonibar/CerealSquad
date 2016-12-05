@@ -29,9 +29,9 @@ namespace CerealSquad.EntitySystem
             Range = range;
         }
 
-        public void setPosition(EMovement direction)
+        public void setPosition(Vector2f position)
         {
-            var pos = _owner.ressourcesEntity.Position;
+          /*  var pos = _owner.ressourcesEntity.Position;
             var size = _owner.ressourcesEntity.Size;
 
             var TruePosition = new SFML.System.Vector2f();
@@ -43,13 +43,13 @@ namespace CerealSquad.EntitySystem
                 TruePosition = new SFML.System.Vector2f(pos.X + size.X, pos.Y);
             else if (direction == EMovement.Left)
                 TruePosition = new SFML.System.Vector2f(pos.X - size.X, pos.Y);
-
+            */
             // Subtracte half size because origin not good
-            TruePosition = new SFML.System.Vector2f(TruePosition.X - ressourcesEntity.Size.X / 2.0f, TruePosition.Y - ressourcesEntity.Size.Y / 2.0f);
+            position = new SFML.System.Vector2f(position.X - ressourcesEntity.Size.X / 2.0f, position.Y - ressourcesEntity.Size.Y / 2.0f);
             // Divide by 64.0f to get the real size grid
-            TruePosition /= 64.0f;
+            position /= 64.0f;
 
-            Pos = new s_position(TruePosition.X, TruePosition.Y);
+            Pos = new s_position(position.X, position.Y);
         }
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
