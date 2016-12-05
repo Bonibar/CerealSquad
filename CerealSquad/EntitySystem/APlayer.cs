@@ -51,6 +51,21 @@ namespace CerealSquad.EntitySystem
         private bool _center;
         private scentMap _scentMap;
 
+        public PlayerState State { get; protected set; }
+        protected double _invuln = 0;
+        private static double DEFAULT_INVULN_TIME = 3f; // SECONDS
+        protected double _invulnAnim = 0;
+        private static double DEFAULT_INVULN_ANIMATION = 300f; // MILLISECONDS
+        private List<Color> _Anims = new List<Color> { new Color(155, 155, 155, 100), new Color(155, 155, 155, 200) };
+        private int _currentAnimIndex = 0;
+
+        public enum PlayerState
+        {
+            Playing,
+            Respawn,
+            Destroy
+        }
+
         protected enum ETrapPuting
         {
             NO_PUTTING = 0,
@@ -107,6 +122,8 @@ namespace CerealSquad.EntitySystem
             _CollidingType.Add(e_EntityType.Ennemy);
             _CollidingType.Add(e_EntityType.ProjectileEnemy);
             _CollidingType.Add(e_EntityType.EnnemyTrap);
+
+            State = PlayerState.Playing;
         }
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
@@ -355,6 +372,22 @@ namespace CerealSquad.EntitySystem
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
+            if (_invuln > 0 && _Anims.Count > 0)
+            {
+                _invulnAnim += deltaTime.AsMilliseconds();
+                if (_invulnAnim > DEFAULT_INVULN_ANIMATION)
+                {
+                    _invulnAnim -= DEFAULT_INVULN_ANIMATION;
+                    ((AnimatedSprite)_ressources.sprite).SetColor(_Anims[_currentAnimIndex]);
+                    _currentAnimIndex = (_currentAnimIndex + 1) % _Anims.Count;
+                }
+                _invuln -= deltaTime.AsSeconds();
+            }
+            if (_invuln <= 0 && _ressources.sprite.Displayed && State == PlayerState.Playing)
+            {
+                ((AnimatedSprite)_ressources.sprite).SetColor(Color.White);
+                _currentAnimIndex = 0;
+            }
             if (!_die)
             {
                 if (_specialActive)
@@ -366,13 +399,32 @@ namespace CerealSquad.EntitySystem
                 move(world, deltaTime);
                 TrapDeliver.Update(deltaTime, world, MoveStack, TrapPressed);
             }
-            else
+            else if (_ressources.isFinished())
             {
-                if (_ressources.isFinished())
-                    destroy();
+                if (State == PlayerState.Playing)
+                {
+                    State = PlayerState.Respawn;
+                    _ressources.EnableCollision = false;
+                    _ressources.sprite.Displayed = false;
+                }
             }
             _ressources.Update(deltaTime);
             _children.ToList().ForEach(i => i.update(deltaTime, world));
+        }
+
+        public void Respawn()
+        {
+            State = PlayerState.Playing;
+            _ressources.EnableCollision = true;
+            _ressources.sprite.Displayed = true;
+            _die = false;
+            _invuln = DEFAULT_INVULN_TIME;
+        }
+
+        public void GameOver()
+        {
+            State = PlayerState.Destroy;
+            destroy();
         }
 
         public abstract void AttaqueSpe();
@@ -438,6 +490,9 @@ namespace CerealSquad.EntitySystem
             bool result = false;
 
             System.Diagnostics.Debug.WriteLine("Colliding Damage : " + damage + " by hitbox : " + isHitBox);
+
+            if (_invuln > 0)
+                return false;
 
             switch (damage)
             {

@@ -13,6 +13,8 @@ namespace CerealSquad.GameWorld
     /// </summary>
     class Game : Drawable
     {
+        public static int STARTING_HP = 10;
+
         public enum GameState
         {
             Running,
@@ -20,6 +22,7 @@ namespace CerealSquad.GameWorld
         }
 
         public GameState State { get; private set; }
+        public int HP { get; protected set; }
 
         private AWorld currentWorld = null;
         public AWorld CurrentWorld {
@@ -49,6 +52,7 @@ namespace CerealSquad.GameWorld
             _InputManager = manager;
 
             State = GameState.Running;
+            HP = STARTING_HP;
 
 #if !DEBUG
             Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
@@ -145,8 +149,24 @@ namespace CerealSquad.GameWorld
             currentWorld = World;
         }
 
+        private void checkPlayers()
+        {
+            foreach (APlayer player in Players)
+            {
+                if (player.State == APlayer.PlayerState.Respawn)
+                {
+                    HP--;
+                    if (HP > 0)
+                        player.Respawn();
+                    else
+                        player.GameOver();
+                }
+            }
+        }
+
         public void Update(SFML.System.Time DeltaTime)
         {
+            System.Diagnostics.Debug.WriteLine("HP: " + HP);
             if (currentWorld != null)
             {
                 if (currentWorld.CurrentRoom != null && currentWorld.CurrentRoom.RoomType == ARoom.e_RoomType.VictoryRoom)
@@ -154,6 +174,7 @@ namespace CerealSquad.GameWorld
                     State = GameState.Exit;
                     Menus.MenuManager.Instance.AddMenu(new Menus.VictoryMenu(renderer, _InputManager));
                 }
+                checkPlayers();
                 currentWorld.Update(DeltaTime, Players);
                 worldEntity.update(DeltaTime, currentWorld);
                 if (currentWorld.CurrentRoom != null)
@@ -170,7 +191,7 @@ namespace CerealSquad.GameWorld
                 }
             }
             _HUDs.ForEach(i => i.Update(DeltaTime));
-            int NbPlayersDead = Players.Count(x => x.Die);
+            int NbPlayersDead = Players.Count(x => x.State == APlayer.PlayerState.Destroy);
             if (NbPlayersDead > 0 && NbPlayersDead == Players.Count)
             {
                 List<Graphics.AnimatedSprite> _deathAnimations = Players.Where(i => i.ressourcesEntity.sprite.Type == Graphics.ETypeSprite.ANIMATED).
