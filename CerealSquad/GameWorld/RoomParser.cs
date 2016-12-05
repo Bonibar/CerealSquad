@@ -9,14 +9,18 @@ namespace CerealSquad.GameWorld
     {
         public class s_room
         {
-            public s_room(Dictionary<s_Pos<uint>, t_cellcontent> cells, List<s_crate> crates, List<s_ennemy> ennemies)
+            public s_room(Dictionary<s_Pos<uint>, t_cellcontent> cells, List<s_crate> crates, List<s_ennemy> ennemies, Dictionary<s_Pos<uint>, t_cellcontent> layer1, Dictionary<s_Pos<uint>, t_cellcontent> layer2)
             {
                 Cells = cells;
+                Layer1 = layer1;
+                Layer2 = layer2;
                 Crates = crates;
                 Ennemies = ennemies;
             }
 
             public Dictionary<s_Pos<uint>, t_cellcontent> Cells { get; }
+            public Dictionary<s_Pos<uint>, t_cellcontent> Layer1 { get; }
+            public Dictionary<s_Pos<uint>, t_cellcontent> Layer2 { get; }
             public List<s_crate> Crates { get; }
             public List<s_ennemy> Ennemies { get; }
         }
@@ -54,7 +58,8 @@ namespace CerealSquad.GameWorld
             Wall = 1,
             Void = 2,
             Door = 3,
-            Spawn = 4
+            Spawn = 4,
+            Detail = 5
         }
 
         private static string FILE_HASHEDKEY = "58672f161bdbe31526fd8384909d4aa22b8fd91da8fce113ea083fbd6022e73e";
@@ -198,6 +203,48 @@ namespace CerealSquad.GameWorld
             return crates;
         }
 
+        private static Dictionary<s_Pos<uint>, t_cellcontent> loadLayer(string layername, string[] lines, Dictionary<int, string> tiles)
+        {
+            Dictionary<s_Pos<uint>, t_cellcontent> cells = new Dictionary<s_Pos<uint>, t_cellcontent>();
+            uint startline = 0;
+            uint endline;
+
+            while (startline < lines.Length && !lines[startline].Equals("#define Layer"+layername))
+                startline++;
+            startline++;
+
+            endline = startline;
+            while (endline < lines.Length && !lines[endline].Contains("#define"))
+                endline++;
+
+            if (endline == startline || startline >= lines.Length)
+                return cells;
+
+            while (startline < endline)
+            {
+                string[] detail = lines[startline].Split(':');
+                if (detail.Length != 3)
+                    throw new FormatException("Wrong detail declaration format");
+                string[] pos = detail[0].Split(';');
+                if (pos.Length != 2)
+                    throw new FormatException("Wrong position declaration format in detail");
+                try
+                {
+                    uint posx = uint.Parse(pos[0]);
+                    uint posy = uint.Parse(pos[1]);
+                    cells.Add(new s_Pos<uint>(posx, posy), new t_cellcontent(int.Parse(detail[1]), tiles[int.Parse(detail[2])], e_CellType.Detail));
+                }
+                catch (Exception e)
+                {
+                    throw new FormatException("Wrong format in detail declaration", e);
+                }
+
+                startline++;
+            }
+
+            return cells;
+        }
+
         private static Dictionary<s_Pos<uint>, t_cellcontent> loadRoom(string[] lines, Dictionary<int, string> tiles)
         {
             Dictionary<s_Pos<uint>, t_cellcontent> cells = new Dictionary<s_Pos<uint>, t_cellcontent>();
@@ -268,11 +315,13 @@ namespace CerealSquad.GameWorld
             Dictionary<s_Pos<uint>, t_cellcontent> cells = loadRoom(lines, tiles);
             List<s_crate> traps = loadCrates(lines);
             List<s_ennemy> ennemies = loadEnnemies(lines);
+            Dictionary<s_Pos<uint>, t_cellcontent> layer1 = loadLayer("1", lines, tiles);
+            Dictionary<s_Pos<uint>, t_cellcontent> layer2 = loadLayer("2", lines, tiles);
 
             if (cells.Count(i => i.Value.Type == e_CellType.Spawn) <= 0)
                 throw new FormatException("You must at least define a spawn point for each room");
 
-            return new s_room(cells, traps, ennemies);
+            return new s_room(cells, traps, ennemies, layer1, layer2);
         }
     }
 }
