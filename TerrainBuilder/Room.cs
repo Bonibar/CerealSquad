@@ -170,8 +170,11 @@ namespace TerrainBuilder
                     current_row += i.X;
                     current_row += ";";
                     current_row += i.Y;
-                    current_row += "|";
+                    current_row += ":";
                     current_row += i.TileX + i.TileY * _Tiles.ElementAt(_TilesDict[i._TileMapName]).OriginalX / _Tiles.ElementAt(_TilesDict[i._TileMapName]).TileX;
+                    current_row += ":";
+                    current_row += _TilesDict[i._TileMapName].ToString();
+                    fileContent.Add(current_row);
                 });
             }
 
@@ -186,8 +189,11 @@ namespace TerrainBuilder
                     current_row += i.X;
                     current_row += ";";
                     current_row += i.Y;
-                    current_row += "|";
+                    current_row += ":";
                     current_row += i.TileX + i.TileY * _Tiles.ElementAt(_TilesDict[i._TileMapName]).OriginalX / _Tiles.ElementAt(_TilesDict[i._TileMapName]).TileX;
+                    current_row += ":";
+                    current_row += _TilesDict[i._TileMapName].ToString();
+                    fileContent.Add(current_row);
                 });
             }
 
