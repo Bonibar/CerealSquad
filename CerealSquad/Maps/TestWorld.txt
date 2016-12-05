@@ -6,3 +6,4 @@
 18:0|Maps/TestRoom2.txt|0
 32:0|Maps/TestRoom2.txt|0
 46:0|Maps/TestRoom4.txt|3
+8:17|Maps/TestLayerRoom.txt|1
