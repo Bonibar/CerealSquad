@@ -40,6 +40,8 @@ namespace CerealSquad.GameWorld
         private RenderTexture _RenderTexture = null;
         private RoomParser.s_room ParsedRoom = null;
         private EnvironmentResources er = new EnvironmentResources();
+        private EnvironmentResources _Layer1 = new EnvironmentResources();
+        private EnvironmentResources _Layer2 = new EnvironmentResources();
 
         private RoomEntity _RoomEntity;
 
@@ -98,6 +100,26 @@ namespace CerealSquad.GameWorld
                     PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
                 }
                 er.AddSprite(cell.Key.X, cell.Key.Y, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
+            }
+
+            foreach (var cell in ParsedRoom.Layer1)
+            {
+                if (!Factories.TextureFactory.Instance.exists(cell.Value.TexturePath))
+                {
+                    Factories.TextureFactory.Instance.load(cell.Value.TexturePath, cell.Value.TexturePath);
+                    PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
+                }
+                _Layer1.AddSprite(cell.Key.X, cell.Key.Y, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
+            }
+
+            foreach (var cell in ParsedRoom.Layer2)
+            {
+                if (!Factories.TextureFactory.Instance.exists(cell.Value.TexturePath))
+                {
+                    Factories.TextureFactory.Instance.load(cell.Value.TexturePath, cell.Value.TexturePath);
+                    PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
+                }
+                _Layer2.AddSprite(cell.Key.X, cell.Key.Y, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
             }
         }
 
@@ -243,6 +265,8 @@ namespace CerealSquad.GameWorld
         {
             _RenderTexture.Clear();
             _RenderTexture.Draw(er, states);
+            _RenderTexture.Draw(_Layer1, states);
+            _RenderTexture.Draw(_Layer2, states);
             _RenderTexture.Display();
 
             target.Draw(_RenderSprite, states);
