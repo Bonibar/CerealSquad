@@ -33,6 +33,7 @@ namespace CerealSquad.EntitySystem
         protected float _inputForce;
         protected EntityResources _ressources;
         protected List<e_EntityType> _CollidingType = new List<e_EntityType>();
+        static protected bool shootDebug = false;
 
         protected static bool m_debug = false; // Capitain obvious: use for the debug with breakpoint
 
