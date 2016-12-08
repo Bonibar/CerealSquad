@@ -37,7 +37,8 @@ namespace CerealSquad.EntitySystem
         Crate,
         ProjectilePlayer,
         ProjectileEnemy,
-        Room
+        Room,
+        DeliverCloud
     }
 
     public enum e_EnnemyType
