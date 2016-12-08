@@ -372,6 +372,7 @@ namespace CerealSquad.EntitySystem
             {
                 if (_ressources.isFinished())
                     destroy();
+                TrapDeliver.ressourcesEntity.JukeBox.StopSound("Construction");
             }
             _ressources.Update(deltaTime);
             _children.ToList().ForEach(i => i.update(deltaTime, world));
