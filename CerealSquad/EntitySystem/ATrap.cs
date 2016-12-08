@@ -14,6 +14,7 @@ namespace CerealSquad.EntitySystem
         public float Range { get; protected set; }
         public bool Triggered { get; protected set; }
         public Time Cooldown { get; protected set; }
+        public EMovement Orientation { get; set; }
 
         public virtual void Trigger(bool delay = false)
         {
@@ -31,19 +32,6 @@ namespace CerealSquad.EntitySystem
 
         public void setPosition(Vector2f position)
         {
-          /*  var pos = _owner.ressourcesEntity.Position;
-            var size = _owner.ressourcesEntity.Size;
-
-            var TruePosition = new SFML.System.Vector2f();
-            if (direction == EMovement.Up)
-                TruePosition = new SFML.System.Vector2f(pos.X, pos.Y - size.Y);
-            else if (direction == EMovement.Down)
-                TruePosition = new SFML.System.Vector2f(pos.X, pos.Y + size.Y);
-            else if (direction == EMovement.Right)
-                TruePosition = new SFML.System.Vector2f(pos.X + size.X, pos.Y);
-            else if (direction == EMovement.Left)
-                TruePosition = new SFML.System.Vector2f(pos.X - size.X, pos.Y);
-            */
             // Subtracte half size because origin not good
             position = new SFML.System.Vector2f(position.X - ressourcesEntity.Size.X / 2.0f, position.Y - ressourcesEntity.Size.Y / 2.0f);
             // Divide by 64.0f to get the real size grid

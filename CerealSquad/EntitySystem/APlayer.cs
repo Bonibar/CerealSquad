@@ -449,8 +449,6 @@ namespace CerealSquad.EntitySystem
         {
             bool result = false;
 
-            System.Diagnostics.Debug.WriteLine("Colliding Damage : " + damage + " by hitbox : " + isHitBox);
-
             switch (damage)
             {
                 case e_DamageType.ENEMY_DAMAGE:

@@ -89,8 +89,6 @@ namespace CerealSquad.EntitySystem
                 ((AnimatedSprite)ressourcesEntity.sprite).Displayed = false;
                 ressourcesEntity.EnableCollision = false;
             }
-            
-            System.Diagnostics.Debug.WriteLine("POSITION" + ressourcesEntity.Position);
         }
 
         public void Update(GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
@@ -132,8 +130,8 @@ namespace CerealSquad.EntitySystem
                     pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y);
 
                 ressourcesEntity.Position = pos;
-                Vector2f size = Player.ressourcesEntity.sprite.Size;
-                Pos = new s_position((pos.X - size.X / 2.0f) / 64.0f, (pos.Y - size.Y / 2.0f) / 64.0f);
+                //Vector2f size = Player.ressourcesEntity.sprite.Size;
+                //Pos = new s_position((pos.X - size.X / 2.0f) / 64.0f, (pos.Y - size.Y / 2.0f) / 64.0f);
                 // CHECK 4 points
                 if (!Target.Equals(EMovement.None) && TimerCoolDown.IsTimerOver())
                 {
@@ -167,6 +165,7 @@ namespace CerealSquad.EntitySystem
                 {
                     ATrap trap = Factories.TrapFactory.CreateTrap(Player, InventoryTampon);
                     trap.setPosition(ressourcesEntity.Position);
+                    trap.Orientation = Target;
                     TimerCoolDown = new EntityTimer(trap.Cooldown);
                     TimerCoolDown.Start();
                     ressourcesEntity.JukeBox.StopSound("Construction");

@@ -12,15 +12,6 @@ namespace CerealSquad.EntitySystem
 
     abstract class AEntity : IEntity
     {
-        public enum EMovement
-        {
-            Up,
-            Down,
-            Right,
-            Left,
-            None
-        }
-
         protected IEntity _owner;
         protected ICollection<IEntity> _children;
         protected e_EntityType _type;
@@ -136,6 +127,12 @@ namespace CerealSquad.EntitySystem
         public void addChild(IEntity child)
         {
             _children.Add(child);
+            child.setOwner(this);
+        }
+
+        public void setOwner(IEntity owner)
+        {
+            _owner = owner;
         }
 
         #region CheckingRange
@@ -465,6 +462,11 @@ namespace CerealSquad.EntitySystem
         public bool collideWithType(e_EntityType type)
         {
             return _CollidingType.Contains(type);
+        }
+
+        public EMovement getOrientation()
+        {
+            return (_move.Count > 0) ? _move.ElementAt(_move.Count - 1) : EMovement.None;
         }
     }
 }
