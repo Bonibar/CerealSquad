@@ -26,6 +26,8 @@ namespace CerealSquad.GameWorld
         private int _HP;
         public int HP { get { return _HP; } protected set { _HP = value; updateHPAnimation(); } }
         private Graphics.AnimatedSprite _LifeBar;
+        private Graphics.AnimatedSprite _LifeCounter;
+        private Text _LifeCounterText;
 
         private AWorld currentWorld = null;
         public AWorld CurrentWorld {
@@ -46,6 +48,8 @@ namespace CerealSquad.GameWorld
 
         private void updateHPAnimation()
         {
+            _LifeCounterText = new Text(HP.ToString(), Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+
             int cap = STARTING_HP / 4;
 
             if (HP <= 0)
@@ -92,8 +96,13 @@ namespace CerealSquad.GameWorld
             _LifeBar.addAnimation(4, "HUD_LifeBar", Enumerable.Range(25, 22).Select(i => (uint)i).ToList(), new SFML.System.Vector2u(64, 64), 100);
             _LifeBar.Loop = false;
 
-            _LifeBar.Position = new SFML.System.Vector2f(_renderer.Win.GetView().Size.X / 2, 32);
+            Factories.TextureFactory.Instance.load("HUD_LifeCounter", "Assets/HUD/LifeCounter.png");
+            _LifeCounter = new Graphics.AnimatedSprite((uint)(64 * (int)renderer.Win.GetView().Size.X / 1980), (uint)(64 * (int)renderer.Win.GetView().Size.X / 1980));
+            _LifeCounter.addAnimation(0, "HUD_LifeCounter", new List<uint> { 0 }, new SFML.System.Vector2u(32, 32));
+            _LifeCounter.Loop = true;
 
+            _LifeCounterText = new Text(HP.ToString(), Factories.FontFactory.FontFactory.Instance.getFont(Factories.FontFactory.FontFactory.Font.XirodRegular));
+            _LifeCounterText.CharacterSize = 30 * (uint)renderer.Win.GetView().Size.X / 1980;
 
 #if !DEBUG
             Menus.IntroCutscene intro = new Menus.IntroCutscene(_renderer, manager);
@@ -207,9 +216,8 @@ namespace CerealSquad.GameWorld
 
         public void Update(SFML.System.Time DeltaTime)
         {
-            System.Diagnostics.Debug.WriteLine("HP: " + HP);
             SFML.System.Vector2f cameraOrigin = renderer.Win.MapPixelToCoords(new SFML.System.Vector2i(0, 0));
-            _LifeBar.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 + cameraOrigin.X, _LifeBar.Size.Y + cameraOrigin.Y);
+            _LifeBar.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 + cameraOrigin.X, _LifeBar.Size.Y / 2 + cameraOrigin.Y);
             if (currentWorld != null)
             {
                 if (currentWorld.CurrentRoom != null && currentWorld.CurrentRoom.RoomType == ARoom.e_RoomType.VictoryRoom)
@@ -245,7 +253,12 @@ namespace CerealSquad.GameWorld
                     Menus.MenuManager.Instance.AddMenu(new Menus.GameOverMenu(renderer, _InputManager));
                 }
             }
+            cameraOrigin = renderer.Win.MapPixelToCoords(new SFML.System.Vector2i(0, 0));
+            _LifeBar.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 + cameraOrigin.X, 0 + cameraOrigin.Y + _LifeBar.Size.Y / 2);
             _LifeBar.Update(DeltaTime);
+            _LifeCounter.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 + cameraOrigin.X - _LifeBar.Size.X / 2, 0 + cameraOrigin.Y + _LifeCounter.Size.Y / 2);
+            _LifeCounter.Update(DeltaTime);
+            _LifeCounterText.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 + cameraOrigin.X - _LifeBar.Size.X / 2 - _LifeCounter.Size.X / 4, 0 + cameraOrigin.Y + 2 * _LifeCounter.Size.Y / 5 - (_LifeCounterText.GetLocalBounds().Height + _LifeCounterText.GetLocalBounds().Top) / 2);
         }
 
         public void Draw(RenderTarget target, RenderStates states)
@@ -263,6 +276,8 @@ namespace CerealSquad.GameWorld
 
             // Draw HP Bar
             target.Draw(_LifeBar, states);
+            target.Draw(_LifeCounter, states);
+            target.Draw(_LifeCounterText, states);
         }
     }
 }
