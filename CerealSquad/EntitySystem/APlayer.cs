@@ -99,7 +99,7 @@ namespace CerealSquad.EntitySystem
 
             _specialActive = false;
             _weight = 1;
-            TrapDeliver = new TrapDeliver(this);
+            TrapDeliver = new TrapDeliver(getRootEntity(), this);
 
             TypeInput = type;
             Id = id;
@@ -120,6 +120,7 @@ namespace CerealSquad.EntitySystem
             TrapInventory = e_TrapType.NONE;
             InputManager = input;
             _CollidingType.Add(e_EntityType.Ennemy);
+            _CollidingType.Add(e_EntityType.DeliverCloud);
             _CollidingType.Add(e_EntityType.ProjectileEnemy);
             _CollidingType.Add(e_EntityType.EnnemyTrap);
 
@@ -288,7 +289,7 @@ namespace CerealSquad.EntitySystem
 
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
-            if ((TrapPressed || TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
+            if ((TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
                 _move = new List<EMovement> { EMovement.None };
             else
                 _move = MoveStack;
@@ -397,16 +398,14 @@ namespace CerealSquad.EntitySystem
                 if (_moveTo)
                     moveToPos(world, deltaTime);
                 move(world, deltaTime);
-                TrapDeliver.Update(deltaTime, world, MoveStack, TrapPressed);
+                if (FinishedMovement)
+                    TrapDeliver.Update(world, MoveStack, TrapPressed);
             }
             else if (_ressources.isFinished())
             {
-                if (State == PlayerState.Playing)
-                {
-                    State = PlayerState.Respawn;
-                    _ressources.EnableCollision = false;
-                    _ressources.sprite.Displayed = false;
-                }
+                if (_ressources.isFinished())
+                    destroy();
+                TrapDeliver.ressourcesEntity.JukeBox.StopSound("Construction");
             }
             _ressources.Update(deltaTime);
             _children.ToList().ForEach(i => i.update(deltaTime, world));
@@ -469,16 +468,25 @@ namespace CerealSquad.EntitySystem
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
-                    result = true;
-                else if (i.getEntityType() == e_EntityType.Crate)
+
+                switch (i.getEntityType())
                 {
-                    TrapInventory = ((Crates)i).Item;
-                    ((Crates)i).pickCrate();
+                    case e_EntityType.PlayerTrap:
+                        if (((ATrap)i).TrapType == e_TrapType.WALL)
+                            result = true;
+                        break;
+                    case e_EntityType.DeliverCloud:
+                        result = true;
+                        break;
+                    case e_EntityType.Crate:
+                        TrapInventory = ((Crates)i).Item;
+                        ((Crates)i).pickCrate();
+                        break;
+                    case e_EntityType.ProjectileEnemy:
+                    case e_EntityType.EnnemyTrap:
+                        attemptDamage(i, i.getDamageType());
+                        break;
                 }
-                else if (i.getEntityType() == e_EntityType.ProjectileEnemy
-                  || i.getEntityType() == e_EntityType.EnnemyTrap)
-                    attemptDamage(i, i.getDamageType());
                 i.attemptDamage(this, _damageType);
             });
 
@@ -488,11 +496,6 @@ namespace CerealSquad.EntitySystem
         public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             bool result = false;
-
-            System.Diagnostics.Debug.WriteLine("Colliding Damage : " + damage + " by hitbox : " + isHitBox);
-
-            if (_invuln > 0)
-                return false;
 
             switch (damage)
             {

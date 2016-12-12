@@ -37,7 +37,8 @@ namespace CerealSquad.EntitySystem
         Crate,
         ProjectilePlayer,
         ProjectileEnemy,
-        Room
+        Room,
+        DeliverCloud
     }
 
     public enum e_EnnemyType
@@ -47,6 +48,15 @@ namespace CerealSquad.EntitySystem
         HalfEgg,
         Ghost,
         CoffeeMachine
+    }
+
+    public enum EMovement
+    {
+        Up,
+        Down,
+        Right,
+        Left,
+        None
     }
 
     public struct s_position
@@ -132,11 +142,13 @@ namespace CerealSquad.EntitySystem
         bool attemptDamage(IEntity Sender, e_DamageType damage, float RadiusRangeX, float RadiusRangeY);
 
         IEntity getOwner();
+        void setOwner(IEntity owner);
         ICollection<IEntity> getChildren();
         void addChild(IEntity child);
         bool removeChild(IEntity child);
         e_DamageType getDamageType();
         e_EntityType getEntityType();
         IEntity getRootEntity();
+        EMovement getOrientation();
     }
 }

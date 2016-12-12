@@ -12,15 +12,6 @@ namespace CerealSquad.EntitySystem
 
     abstract class AEntity : IEntity
     {
-        public enum EMovement
-        {
-            Up,
-            Down,
-            Right,
-            Left,
-            None
-        }
-
         protected IEntity _owner;
         protected ICollection<IEntity> _children;
         protected e_EntityType _type;
@@ -33,6 +24,7 @@ namespace CerealSquad.EntitySystem
         protected float _inputForce;
         protected EntityResources _ressources;
         protected List<e_EntityType> _CollidingType = new List<e_EntityType>();
+        static protected bool shootDebug = false;
 
         protected static bool m_debug = false; // Capitain obvious: use for the debug with breakpoint
 
@@ -135,6 +127,12 @@ namespace CerealSquad.EntitySystem
         public void addChild(IEntity child)
         {
             _children.Add(child);
+            child.setOwner(this);
+        }
+
+        public void setOwner(IEntity owner)
+        {
+            _owner = owner;
         }
 
         #region CheckingRange
@@ -149,11 +147,11 @@ namespace CerealSquad.EntitySystem
 
         protected bool InCircleRange(double x_center, double y_center, IEntity ent, float Range)
         {
-            double Distance = Math.Sqrt(Math.Pow(x_center - ent.Pos.X, 2.0f) + Math.Pow(y_center - ent.Pos.Y, 2.0f));
-            if (ressourcesEntity != null)
-                Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
+            double Distance = Math.Sqrt(Math.Pow(x_center - ent.HitboxPos.X, 2.0f) + Math.Pow(y_center - ent.HitboxPos.Y, 2.0f));
+         //   if (ressourcesEntity != null)
+         //       Distance -= ressourcesEntity.HitBox.Width / 64.0f / 2.0f;
 
-            return (Distance > Range);
+            return (Distance <= Range);
         }
 
         protected static bool IsInEllipse(double x_el, double y_el, double x, double y, double rX, double rY)
@@ -445,17 +443,17 @@ namespace CerealSquad.EntitySystem
             return parent;
         }
 
-        private SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
+        protected SFML.System.Vector2f EntityPositionToResourcesEntityPosition(s_position Pos)
         {
             return new SFML.System.Vector2f(((float)Pos.X * 64.0f) + (ressourcesEntity.Size.X / 2.0f), ((float)Pos.Y * 64.0f) + (ressourcesEntity.Size.Y / 2.0f));
         }
 
-        private s_position RessourceEntityPositionToEntityPosition(SFML.System.Vector2f pos)
+        protected s_position RessourceEntityPositionToEntityPosition(SFML.System.Vector2f pos)
         {
             return (new s_position(pos.X  / 64.0f, pos.Y / 64.0f));
         }
 
-        private void setResourceEntityPosition()
+        protected void setResourceEntityPosition()
         {
             ressourcesEntity.Position = EntityPositionToResourcesEntityPosition(Pos);
             ressourcesEntity.UpdateDebug();
@@ -464,6 +462,11 @@ namespace CerealSquad.EntitySystem
         public bool collideWithType(e_EntityType type)
         {
             return _CollidingType.Contains(type);
+        }
+
+        public EMovement getOrientation()
+        {
+            return (_move.Count > 0) ? _move.ElementAt(_move.Count - 1) : EMovement.None;
         }
     }
 }
