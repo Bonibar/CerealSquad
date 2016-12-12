@@ -36,7 +36,7 @@ namespace CerealSquad.Downloaders
         public async Task RequireFile(string name, string localPath, Uri distantPath, bool Override = true)
         {
             if (_Files.ContainsKey(name))
-                throw new ArgumentException("File already exist");
+                throw new ArgumentException("File already exist (" + name + ")");
             if (Override || !System.IO.File.Exists(localPath))
             {
                 System.Net.FtpWebRequest ftpRequest = (System.Net.FtpWebRequest)System.Net.FtpWebRequest.Create(distantPath);

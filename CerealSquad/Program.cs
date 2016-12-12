@@ -101,11 +101,6 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("CoffeeMachineToMid", "Assets/Enemies/Boss/CoffeeMachineToMid.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/CoffeeMachineToMid.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CoffeeMachineToEmpty", "Assets/Enemies/Boss/CoffeeMachineToEmpty.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/CoffeeMachineToEmpty.png"), false));           
             awaiter.Add(ftpDownloader.RequireFile("CoffeeMachineThrowing", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/CoffeeThrowed.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("Rice", "Assets/Enemies/Normal/Rice.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Normal/Rice.png"), false));
-
-            awaiter.Add(ftpDownloader.RequireFile("HalfEggDying", "Assets/Enemies/Normal/Death/HalfEggyDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Normal/Death/HalfEggyDying.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("MilkyGhostDying", "Assets/Enemies/Normal/Death/MilkyGhostDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Normal/Death/MilkyGhostDying.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("RiceBowlDying", "Assets/Enemies/Normal/Death/RiceBowlDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Normal/Death/RiceBowlDying.png"), false));
 
             awaiter.Add(ftpDownloader.RequireFile("Death_Hina", "Assets/Character/Death/HinaDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/HinaDying.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Death_Jack", "Assets/Character/Death/JackDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/JackDying.png"), false));

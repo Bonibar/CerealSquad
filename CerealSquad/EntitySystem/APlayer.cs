@@ -403,8 +403,12 @@ namespace CerealSquad.EntitySystem
             }
             else if (_ressources.isFinished())
             {
-                if (_ressources.isFinished())
-                    destroy();
+                if (State == PlayerState.Playing)
+                {
+                    State = PlayerState.Respawn;
+                    _ressources.EnableCollision = false;
+                    _ressources.sprite.Displayed = false;
+                }
                 TrapDeliver.ressourcesEntity.JukeBox.StopSound("Construction");
             }
             _ressources.Update(deltaTime);
@@ -496,6 +500,11 @@ namespace CerealSquad.EntitySystem
         public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             bool result = false;
+
+            System.Diagnostics.Debug.WriteLine("Colliding Damage : " + damage + " by hitbox : " + isHitBox);
+
+            if (_invuln > 0)
+                return false;
 
             switch (damage)
             {
