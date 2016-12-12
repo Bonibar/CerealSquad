@@ -49,7 +49,8 @@ namespace CerealSquad
 
             // File downloaded after start
             Downloaders.TaskAwaiter awaiter = new Downloaders.TaskAwaiter();
-            
+
+
             awaiter.Add(ftpDownloader.RequireFile("MainMenuBackground", "Assets/Background/MainMenuBackground.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/MainMenuBackground.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("MainMenuRafiki", "Assets/Background/RafikiBlack.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/RafikiBlack.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("CutScene", "Assets/Background/cutscene_1024.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/cutscene_1024.png"), false));
@@ -101,12 +102,6 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("CoffeeMachineToEmpty", "Assets/Enemies/Boss/CoffeeMachineToEmpty.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/CoffeeMachineToEmpty.png"), false));           
             awaiter.Add(ftpDownloader.RequireFile("CoffeeMachineThrowing", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/CoffeeThrowed.png"), false));
 
-            awaiter.Add(ftpDownloader.RequireFile("BaggyHiding", "Assets/Enemies/Boss/BaggyHiding.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggyHiding.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("BaggyPhase1toPhase2", "Assets/Enemies/Boss/BaggyPhase1toPhase2.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggyPhase1toPhase2.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("BaggyPhase1Walking", "Assets/Enemies/Boss/BaggyPhase1Walking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggyPhase1Walking.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("BaggyPhase2Walking", "Assets/Enemies/Boss/BaggyPhase2Walking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggyPhase2Walking.png"), false));
-            awaiter.Add(ftpDownloader.RequireFile("BaggySummoning", "Assets/Enemies/Boss/BaggySummoning.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggySummoning.png"), false));
-
             awaiter.Add(ftpDownloader.RequireFile("Death_Hina", "Assets/Character/Death/HinaDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/HinaDying.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Death_Jack", "Assets/Character/Death/JackDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/JackDying.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Death_Mike", "Assets/Character/Death/MikeDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/MikeDying.png"), false));
@@ -141,6 +136,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerOverlay", "Assets/HUD/SelectionPlayerOverlay.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/SelectionPlayerOverlay.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("S_CS_PlayerCursor", "Assets/HUD/SelectionPlayerCursor.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/SelectionPlayerCursor.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("HUD_PlayerCharacter", "Assets/HUD/PlayerCharacterHUD.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/PlayerCharacterHUD.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("HUD_LifeBar", "Assets/HUD/LifeBar.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/HUD/LifeBar.png"), false));
 
             //Sounds
             awaiter.Add(ftpDownloader.RequireFile("Sound_StoryBegin", "Assets/Sound/And_so_the_story_begins.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/And_so_the_story_begins.ogg"), false));
@@ -153,9 +149,6 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("Sound_CrackingEggs", "Assets/Sound/CrackingEggs.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/CrackingEggs.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("Sound_ghost", "Assets/Sound/ghost.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/ghost.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("Sound_SugarWallSound", "Assets/Sound/SugarWallLowSound.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/SugarWallLowSound.ogg"), false));
-
-            
-
 
             // Initialisation
             renderer = new Renderer();
