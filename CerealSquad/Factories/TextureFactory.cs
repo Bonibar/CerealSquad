@@ -82,6 +82,7 @@ namespace CerealSquad.Factories
             Texture texture = null;
 
             if (!exists(name))
+
                 throw new Exception("Unable to find texture " + name);
 
             lock (locker)
