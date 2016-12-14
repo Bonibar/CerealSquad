@@ -38,7 +38,7 @@ namespace CerealSquad.TrapEntities
 
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             ressourcesEntity.HitBox = HIT_BOX;
-            ressourcesEntity.PlayAnimation(0);
+            PlayAnimation(0);
 
             Timer.Start();
 
@@ -55,7 +55,7 @@ namespace CerealSquad.TrapEntities
         {
             if (Timer.IsTimerOver() && !Die) {
                 Die = true;
-                ressourcesEntity.PlayAnimation(1);
+                PlayAnimation(1);
                 ressourcesEntity.Loop = false;
                 ressourcesEntity.JukeBox.PlaySound("SugarWall");
             }

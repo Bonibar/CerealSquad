@@ -104,10 +104,10 @@ namespace CerealSquad.EntitySystem
         {
             if (_invuln <= 0 && !Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                PlayAnimation((uint)EStateEntity.DYING);
                 ressourcesEntity.JukeBox.PlaySound("CrackingEggs");
                 ressourcesEntity.Loop = false;
+                base.die();
             }
         }
 

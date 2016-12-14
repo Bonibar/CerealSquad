@@ -112,9 +112,9 @@ namespace CerealSquad.EntitySystem
         {
             if (!Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                PlayAnimation((uint)EStateEntity.DYING);
                 ressourcesEntity.JukeBox.PlaySound("CrackingEggs");
+                base.die();
             }
         }
 
@@ -123,7 +123,7 @@ namespace CerealSquad.EntitySystem
             if (Die)
             {
                 if (ressourcesEntity.Animation != (uint)EStateEntity.DYING)
-                    ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                    PlayAnimation((uint)EStateEntity.DYING);
                 if (ressourcesEntity.Pause)
                 {
                     HalfEggEnemy egg = new HalfEggEnemy(_owner, new s_position(Pos.X - _room.Position.X, Pos.Y - _room.Position.Y), _room);

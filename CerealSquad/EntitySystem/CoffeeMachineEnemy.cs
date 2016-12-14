@@ -91,10 +91,10 @@ namespace CerealSquad.EntitySystem
         {
             if (!Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)SCoffeeState.DYING);
+                PlayAnimation((uint)SCoffeeState.DYING);
                 ressourcesEntity.Loop = false;
                 _children.ToList().ForEach(i => ((AEntity)i).die());
+                base.die();
             }
         }
 
@@ -109,7 +109,7 @@ namespace CerealSquad.EntitySystem
             if (Die)
             {
                 if (ressourcesEntity.Animation != (uint)SCoffeeState.DYING)
-                    ressourcesEntity.PlayAnimation((uint)SCoffeeState.DYING);
+                    PlayAnimation((uint)SCoffeeState.DYING);
                 else if (ressourcesEntity.Pause)
                     if (_children.Count == 0)
                         destroy();
@@ -119,14 +119,14 @@ namespace CerealSquad.EntitySystem
                 if (_takingDamage && ressourcesEntity.Animation != (uint)SCoffeeState.FULL_TO_MID && ressourcesEntity.Animation != (uint)SCoffeeState.MID_TO_EMPTY)
                 {
                     if (_hp == 2)
-                        ressourcesEntity.PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
+                        PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
                     else if (_hp == 1)
-                        ressourcesEntity.PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
+                        PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
                 }
                 else if (_takingDamage && ressourcesEntity.Pause)
                 {
                     ressourcesEntity.Loop = true;
-                    ressourcesEntity.PlayAnimation((uint)SCoffeeState.IDLE);
+                    PlayAnimation((uint)SCoffeeState.IDLE);
                     _takingDamage = false;
                 }
                 else if (!_takingDamage)
@@ -255,9 +255,9 @@ namespace CerealSquad.EntitySystem
             ressourcesEntity.Loop = false;
             System.Diagnostics.Debug.WriteLine("HP : " + _hp);
             if (_hp == 2)
-                ressourcesEntity.PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
+                PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
             else if (_hp == 1)
-                ressourcesEntity.PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
+                PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
             _takingDamage = true;
         }
 

@@ -57,7 +57,7 @@ namespace CerealSquad.TrapEntities
             {
                 Triggered = true;
                 ressourcesEntity.JukeBox.PlaySound("BearTrap");
-                ressourcesEntity.PlayAnimation((uint)SStateBearTrap.TRIGGERED);
+                PlayAnimation((uint)SStateBearTrap.TRIGGERED);
                 ressourcesEntity.Loop = false;
                 Die = true;
             }

@@ -65,10 +65,10 @@ namespace CerealSquad.EntitySystem
         {
             if (!Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                PlayAnimation((uint)EStateEntity.DYING);
                 ressourcesEntity.JukeBox.PlaySound("Ghost");
                 ressourcesEntity.Loop = false;
+                base.die();
             }
         }
 

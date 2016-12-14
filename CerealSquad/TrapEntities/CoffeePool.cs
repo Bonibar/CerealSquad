@@ -36,7 +36,7 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             Pos = pos;
             _CollidingType.Add(e_EntityType.Player);
-            ressourcesEntity.PlayAnimation((uint)SStateCoffeeTrap.SPREADING);
+            PlayAnimation((uint)SStateCoffeeTrap.SPREADING);
             ressourcesEntity.Loop = false;
         }
 
@@ -50,7 +50,7 @@ namespace CerealSquad.TrapEntities
             if (!Die)
             {
                 base.die();
-                ressourcesEntity.PlayAnimation((uint)SStateCoffeeTrap.DYING);
+                PlayAnimation((uint)SStateCoffeeTrap.DYING);
                 ressourcesEntity.Loop = false;
             }
         }
@@ -59,7 +59,7 @@ namespace CerealSquad.TrapEntities
         {
             if (ressourcesEntity.Animation == (uint)SStateCoffeeTrap.SPREADING && ressourcesEntity.Pause)
             {
-                ressourcesEntity.PlayAnimation((uint)SStateCoffeeTrap.STAYING);
+                PlayAnimation((uint)SStateCoffeeTrap.STAYING);
                 ressourcesEntity.Loop = true;
             }
             else if (IsReadyToDie())
