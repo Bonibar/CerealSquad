@@ -33,6 +33,7 @@ namespace CerealSquad.EntitySystem
             Factories.TextureFactory.Instance.load("BaggyPhase1Walking", "Assets/Enemies/Boss/BaggyPhase1Walking.png");
             Factories.TextureFactory.Instance.load("BaggyPhase2Walking", "Assets/Enemies/Boss/BaggyPhase2Walking.png");
             Factories.TextureFactory.Instance.load("BaggySummoning", "Assets/Enemies/Boss/BaggySummoning.png");
+            Factories.TextureFactory.Instance.load("BaggyDying", "Assets/Enemies/Boss/BaggyDying.png");
 
 
             _ressources.InitializationAnimatedSprite(new Vector2u(128, 128));
@@ -63,7 +64,9 @@ namespace CerealSquad.EntitySystem
                 ressourcesEntity.AddAnimation((uint)SBaggyState.WALKING_LEFT, "BaggyPhase2Walking", new List<uint> { 6, 7 }, new Vector2u(128, 128));
                 ressourcesEntity.AddAnimation((uint)SBaggyState.SUMMONING, "BaggySummoning", Enumerable.Range(11, 21).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
             }
-            ressourcesEntity.AddAnimation((uint)SBaggyState.SUMMONING, "BaggyPhase1toPhase2", Enumerable.Range(0, 5).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SBaggyState.PHASE_ONE_TO_TWO, "BaggyPhase1toPhase2", Enumerable.Range(0, 5).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SBaggyState.DYING, "BaggyDying", Enumerable.Range(0, 32).Select(i => (uint)i).ToList(), new Vector2u(128, 128));
+
         }
 
         public override bool IsCollidingEntity(AWorld World, List<AEntity> CollidingEntities)
