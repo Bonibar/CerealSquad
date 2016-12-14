@@ -61,6 +61,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("TchongWalking", "Assets/Character/ChongWalking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/ChongWalking.png"), false));
 
             // Tiles
+            awaiter.Add(ftpDownloader.RequireFile("Tiles_Black", "Assets/Tiles/black.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/black.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("testAsset", "Assets/Tiles/TestTile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/TestTile.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("testAsset2", "Assets/Tiles/TestTile2.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/TestTile2.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Tiles_CastleWall", "Assets/Tiles/CastleWall.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Tiles/CastleWall.png"), false));

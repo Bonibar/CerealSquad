@@ -183,9 +183,16 @@ namespace CerealSquad.GameWorld
         public RoomParser.e_CellType getPosition(uint x, uint y)
         {
             RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
-            if (x < Size.Width && y <= Size.Height)
+            if (x < Size.Width && y <= Size.Height && ParsedRoom.Cells.Keys.Contains(new s_Pos<uint>(x, y)))
             {
-                cel = ParsedRoom.Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
+                try
+                {
+                    cel = ParsedRoom.Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
+                }
+                catch (Exception e)
+                {
+                    cel = RoomParser.e_CellType.Wall;
+                }
             }
             return (cel);
         }

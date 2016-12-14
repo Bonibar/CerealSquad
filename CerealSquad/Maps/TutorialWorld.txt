@@ -1,0 +1,9 @@
+﻿6bdec4937a3e3762c6ad9c59038aac089742cacbf332b94bcdc779d39ddf8e53
+
+#define Rooms
+0:0|Maps/Tutorial/Room1.txt|2
+14:5|Maps/Tutorial/HorizontalLink.txt|1
+29:0|Maps/Tutorial/Room2.txt|1
+43:5|Maps/Tutorial/ZLink.txt|1
+56:3|Maps/Tutorial/Room3.txt|0
+75:0|Maps/Tutorial/Room2.txt|3

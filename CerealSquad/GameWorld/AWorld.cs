@@ -22,7 +22,7 @@ namespace CerealSquad.GameWorld
             if (path == null)
                 throw new ArgumentNullException("Path cannot be null");
 
-            Dictionary<s_Pos<int>, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld("Maps/TestWorld.txt");
+            Dictionary<s_Pos<int>, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld(path);
             WorldEntity = worldentity;
 
             foreach (var room in rooms)
