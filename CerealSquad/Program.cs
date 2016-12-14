@@ -2,6 +2,7 @@
 using SFML;
 using SFML.Window;
 using SFML.Graphics;
+using CerealSquad.Sounds;
 
 namespace CerealSquad
 {
@@ -49,6 +50,9 @@ namespace CerealSquad
 
             // File downloaded after start
             Downloaders.TaskAwaiter awaiter = new Downloaders.TaskAwaiter();
+
+            awaiter.Add(ftpDownloader.RequireFile("Music_Dangerous", "Assets/Sound/Dangerous.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Music/Dangerous.ogg"), false));
+            awaiter.Add(ftpDownloader.RequireFile("Music_PlansinMotion", "Assets/Sound/PlansinMotion.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Music/PlansinMotion.ogg"), false));
 
 
             awaiter.Add(ftpDownloader.RequireFile("MainMenuBackground", "Assets/Background/MainMenuBackground.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Background/MainMenuBackground.png"), false));
@@ -160,6 +164,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("Sound_ghost", "Assets/Sound/ghost.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/ghost.ogg"), false));
             awaiter.Add(ftpDownloader.RequireFile("Sound_SugarWallSound", "Assets/Sound/SugarWallLowSound.ogg", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Sound/SugarWallLowSound.ogg"), false));
 
+
             // Initialisation
             renderer = new Renderer();
             renderer.Initialization();
@@ -208,7 +213,10 @@ namespace CerealSquad
                 else if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed || awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Empty)
                 {
                     if (awaiter.Status == Downloaders.TaskAwaiter.TaskStatus.Completed)
+                    {
                         Factories.SoundBufferFactory.Instance.initSoundBuffer();
+                        
+                    }
                     Debug.Time.Instance.StartTimer("DISPLAYING MAIN MENU", Debug.Type.Critical, true);
                     Menus.MenuManager.Instance.AddMenu(new Menus.MainMenu(renderer, manager, gameManager));
                     Debug.Time.Instance.StopTimer("DISPLAYING MAIN MENU");
