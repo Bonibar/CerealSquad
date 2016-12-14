@@ -37,7 +37,8 @@ namespace CerealSquad.Graphics
 
         public EntityResources()
         {
-            //Debug = true;
+
+            Debug = true;
             EnableCollision = true;
         }
 

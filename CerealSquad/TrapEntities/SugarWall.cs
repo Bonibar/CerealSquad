@@ -54,10 +54,10 @@ namespace CerealSquad.TrapEntities
         public override void update(Time deltaTime, AWorld World)
         {
             if (Timer.IsTimerOver() && !Die) {
-                Die = true;
                 PlayAnimation(1);
                 ressourcesEntity.Loop = false;
                 ressourcesEntity.JukeBox.PlaySound("SugarWall");
+                Die = true;
             }
 
             if (TimerPropagation.IsTimerOver() && !Die && MainWall)

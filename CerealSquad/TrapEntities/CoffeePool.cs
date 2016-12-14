@@ -49,9 +49,9 @@ namespace CerealSquad.TrapEntities
         {
             if (!Die)
             {
-                base.die();
                 PlayAnimation((uint)SStateCoffeeTrap.DYING);
                 ressourcesEntity.Loop = false;
+                base.die();
             }
         }
 

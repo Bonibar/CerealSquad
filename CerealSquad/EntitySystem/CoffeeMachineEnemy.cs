@@ -110,7 +110,7 @@ namespace CerealSquad.EntitySystem
             {
                 if (ressourcesEntity.Animation != (uint)SCoffeeState.DYING)
                     PlayAnimation((uint)SCoffeeState.DYING);
-                else if (ressourcesEntity.Pause)
+                else if (ressourcesEntity.isFinished())
                     if (_children.Count == 0)
                         destroy();
             }

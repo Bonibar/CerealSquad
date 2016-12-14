@@ -109,6 +109,7 @@ namespace CerealSquad
             awaiter.Add(ftpDownloader.RequireFile("BaggyPhase2Walking", "Assets/Enemies/Boss/BaggyPhase2Walking.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggyPhase2Walking.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("BaggySummoning", "Assets/Enemies/Boss/BaggySummoning.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggySummoning.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("BaggyDying", "Assets/Enemies/Boss/BaggyDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggyDying.png"), false));
+            awaiter.Add(ftpDownloader.RequireFile("BaggyProjectile", "Assets/Enemies/Boss/BaggyProjectile.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Enemies/Boss/BaggyProjectile.png"), false));
 
             awaiter.Add(ftpDownloader.RequireFile("Death_Hina", "Assets/Character/Death/HinaDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/HinaDying.png"), false));
             awaiter.Add(ftpDownloader.RequireFile("Death_Jack", "Assets/Character/Death/JackDying.png", new Uri(Downloaders.FTPDownloader.FTP_PATH + "Assets/Character/Death/JackDying.png"), false));

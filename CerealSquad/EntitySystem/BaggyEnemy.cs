@@ -289,7 +289,7 @@ namespace CerealSquad.EntitySystem
             EMovement move = _move[0];
             if (_move[0] == EMovement.None)
                 move = EMovement.Down;
-            new CoffeeProjectile(_owner, move, pos);
+            new BaggyProjectile(_owner, move, pos);
         }
 
         protected bool canSummon()
