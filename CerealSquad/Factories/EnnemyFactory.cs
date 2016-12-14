@@ -33,6 +33,9 @@ namespace CerealSquad.Factories
                 case e_EnnemyType.TutorialGhost:
                     result = new EntitySystem.TutorialGhostEnnemy(owner, new s_position(pos.Y, pos.Y), room);
                     break;
+                case e_EnnemyType.Baggy:
+                    result = new EntitySystem.BaggyEnemy(owner, new s_position(pos.Y, pos.Y), room);
+                    break;
                 default:
                     throw new ArgumentException("Invalid Ennemy entity requested");
             }
