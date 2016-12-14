@@ -30,8 +30,8 @@ namespace CerealSquad.EntitySystem
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.WALKING_UP, "JackWalking", new List<uint> { 2, 3 }, new Vector2u(128, 128));
             ((AnimatedSprite)_ressources.sprite).addAnimation((uint)EStateEntity.DYING, "JackDying", Enumerable.Range(0, 20).Select(i => (uint)i).ToList(), new Vector2u(128, 128), 50);
 
-            _ressources.CollisionBox = new FloatRect(new Vector2f(28.0f, -15.0f), new Vector2f(28.0f, 24.0f));
-            _ressources.HitBox = new FloatRect(new Vector2f(28.0f, 26.0f), new Vector2f(28.0f, 24.0f));
+            _ressources.CollisionBox = new FloatRect(new Vector2f(24.0f, -15.0f), new Vector2f(24.0f, 24.0f));
+            _ressources.HitBox = new FloatRect(new Vector2f(24.0f, 26.0f), new Vector2f(24.0f, 24.0f));
             Pos = position;
         }
 
