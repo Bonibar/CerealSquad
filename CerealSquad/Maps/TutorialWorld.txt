@@ -6,4 +6,7 @@
 29:0|Maps/Tutorial/Room2.txt|1
 43:5|Maps/Tutorial/ZLink.txt|1
 56:3|Maps/Tutorial/Room3.txt|0
-75:0|Maps/Tutorial/Room2.txt|3
+76:5|Maps/Tutorial/JLink.txt|1
+73:21|Maps/Tutorial/Room4.txt|0
+
+200:0|Maps/Tutorial/Room2.txt|3
