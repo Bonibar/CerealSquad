@@ -56,9 +56,7 @@ namespace CerealSquad.EntitySystem
 
             _ressources.InitializationAnimatedSprite(new Vector2u(128, 128));
             ChangingAnimationPhase(1);
-
-            _ressources.CollisionBox = new FloatRect(new Vector2f(17.0f, 0.0f), new Vector2f(17.0f, 24.0f));
-            _ressources.HitBox = new FloatRect(new Vector2f(17.0f, 24.0f), new Vector2f(17.0f, 24.0f));
+            
             Pos = Pos; // very important
         }
 
