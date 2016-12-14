@@ -292,7 +292,7 @@ namespace CerealSquad.EntitySystem
                 }
                 if (PerformMovement)
                 {
-                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_RIGHT);
+                    PlayAnimation((uint)EStateEntity.WALKING_RIGHT);
                     Pos = NewPosition;
                     world.InvalidatePlayersPosition();
                 }
@@ -315,7 +315,7 @@ namespace CerealSquad.EntitySystem
                 if (PerformMovement)
                 {
                     Pos = NewPosition;
-                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_LEFT);
+                    PlayAnimation((uint)EStateEntity.WALKING_LEFT);
                     world.InvalidatePlayersPosition();
                 }
             }
@@ -337,7 +337,7 @@ namespace CerealSquad.EntitySystem
                 if (PerformMovement)
                 {
                     Pos = NewPosition;
-                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_DOWN);
+                    PlayAnimation((uint)EStateEntity.WALKING_DOWN);
                     world.InvalidatePlayersPosition();
                 }
             }
@@ -359,7 +359,7 @@ namespace CerealSquad.EntitySystem
                 if (PerformMovement)
                 {
                     Pos = NewPosition;
-                    _ressources.PlayAnimation((uint)EStateEntity.WALKING_UP);
+                    PlayAnimation((uint)EStateEntity.WALKING_UP);
                     world.InvalidatePlayersPosition();
                 }
             }
@@ -467,6 +467,12 @@ namespace CerealSquad.EntitySystem
         public EMovement getOrientation()
         {
             return (_move.Count > 0) ? _move.ElementAt(_move.Count - 1) : EMovement.None;
+        }
+
+        public void PlayAnimation(uint anim)
+        {
+            if (!Die)
+                ressourcesEntity.PlayAnimation(anim);
         }
     }
 }

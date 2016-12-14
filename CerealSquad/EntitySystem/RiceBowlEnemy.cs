@@ -109,9 +109,9 @@ namespace CerealSquad.EntitySystem
         {
             if (!Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                PlayAnimation((uint)EStateEntity.DYING);
                 ressourcesEntity.Loop = false;
+                base.die();
             }
         }
 

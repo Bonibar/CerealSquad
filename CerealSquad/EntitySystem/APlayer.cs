@@ -322,7 +322,7 @@ namespace CerealSquad.EntitySystem
                     BlockInputs = false;
                     FinishedMovement = true;
                     _speed = 5;
-                    _ressources.PlayAnimation(0);
+                    PlayAnimation(0);
                 }
                 else
                 {
@@ -401,13 +401,17 @@ namespace CerealSquad.EntitySystem
                 if (FinishedMovement)
                     TrapDeliver.Update(world, MoveStack, TrapPressed);
             }
-            else if (_ressources.isFinished())
+            else
             {
                 if (State == PlayerState.Playing)
                 {
                     State = PlayerState.Respawn;
                     _ressources.EnableCollision = false;
                     _ressources.sprite.Displayed = false;
+                }
+                else if (State == PlayerState.Destroy && ressourcesEntity.isFinished())
+                {
+                    destroy();
                 }
                 TrapDeliver.ressourcesEntity.JukeBox.StopSound("Construction");
             }
@@ -427,7 +431,8 @@ namespace CerealSquad.EntitySystem
         public void GameOver()
         {
             State = PlayerState.Destroy;
-            destroy();
+            _ressources.sprite.Displayed = true;
+            ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
         }
 
         public abstract void AttaqueSpe();
@@ -635,5 +640,14 @@ namespace CerealSquad.EntitySystem
                 Console.Out.Write('\n');
             }
         }
+
+       /* public override void die()
+        {
+            if (!Die)
+            {
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                base.die();
+            }
+        }*/
     }
 }

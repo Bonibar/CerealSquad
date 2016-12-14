@@ -84,7 +84,7 @@ namespace CerealSquad.Graphics
                     if (entry.Key.name.Equals(name))
                     {
                         Palette palette = entry.Key;
-                        t = new KeyValuePair<IntRect, Texture>(new IntRect(((int)number % (int)palette.perLine) * (int)palette.width, (int)number / (int)palette.perLine * (int)palette.height, (int)palette.width, (int)palette.height), entry.Value);
+                        t = new KeyValuePair<IntRect, Texture>(new IntRect(((int)number % (int)palette.perLine) * (int)palette.width, (int)number / (int)palette.perLine * (int)palette.height, (int)palette.width - 1, (int)palette.height - 1), entry.Value);
                         break;
                     }
                 }
