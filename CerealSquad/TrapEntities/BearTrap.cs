@@ -31,10 +31,10 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity = new Graphics.EntityResources();
             ressourcesEntity.JukeBox.loadSound("BearTrap", "BearTrap");
 
-            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
+            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(75, 75));
 
-            ressourcesEntity.AddAnimation((uint)SStateBearTrap.READY, "BearTrap", new List<uint> { 0 }, new Vector2u(128, 128));
-            ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1, 1 }, new Vector2u(128, 128));
+            ressourcesEntity.AddAnimation((uint)SStateBearTrap.READY, "BearTrap", new List<uint> { 0 }, new Vector2u(64, 64));
+            ressourcesEntity.AddAnimation((uint)SStateBearTrap.TRIGGERED, "BearTrap", new List<uint> { 1, 1 }, new Vector2u(64, 64));
             ressourcesEntity.CollisionBox = COLLISION_BOX;
 
             _CollidingType.Add(e_EntityType.Ennemy);

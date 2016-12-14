@@ -67,7 +67,7 @@ namespace CerealSquad.Graphics
                     break;
                 case EntitySystem.e_TrapType.BEAR_TRAP:
                     if (_OldTrap != _Player.TrapInventory)
-                        _Trap = new RegularSprite(Factories.TextureFactory.Instance.getTexture("HUD_ICON_BearTrap"), new SFML.System.Vector2i(50 * (int)_Renderer.Win.GetView().Size.X / 1980, 50 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 128, 128));
+                        _Trap = new RegularSprite(Factories.TextureFactory.Instance.getTexture("HUD_ICON_BearTrap"), new SFML.System.Vector2i(50 * (int)_Renderer.Win.GetView().Size.X / 1980, 50 * (int)_Renderer.Win.GetView().Size.X / 1980), new IntRect(0, 0, 64, 64));
                     _Trap.Position = new SFML.System.Vector2f(_Character.Position.X + 163 * (int)_Renderer.Win.GetView().Size.X / 1980, _Character.Position.Y + 38 * (int)_Renderer.Win.GetView().Size.X / 1980);
                     break;
                 case EntitySystem.e_TrapType.WALL:
