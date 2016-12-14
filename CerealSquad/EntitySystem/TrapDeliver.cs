@@ -109,7 +109,7 @@ namespace CerealSquad.EntitySystem
 
             if (TrapPressed && Step == EStep.NOTHING)
             {
-                ressourcesEntity.PlayAnimation((uint)EAnimation.CURSOR);
+                PlayAnimation((uint)EAnimation.CURSOR);
                 Step = EStep.START_SELECTING;
             }
 
@@ -152,7 +152,7 @@ namespace CerealSquad.EntitySystem
                 if (IsTargetValid)
                 {
                     ((AnimatedSprite)ressourcesEntity.sprite).SetColor(Color.White);
-                    ressourcesEntity.PlayAnimation((uint)EAnimation.CONSTRUCTION);
+                    PlayAnimation((uint)EAnimation.CONSTRUCTION);
                     TimerToPut.Start();
                     ressourcesEntity.JukeBox.PlaySound("Construction");
                     InventoryTampon = Player.TrapInventory;

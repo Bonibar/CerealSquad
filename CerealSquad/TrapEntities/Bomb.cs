@@ -79,7 +79,7 @@ namespace CerealSquad.TrapEntities
         private void StartExplosion()
         {
             TimerDelete.Start();
-            ressourcesEntity.PlayAnimation((uint)Graphics.EStateEntity.DYING);
+            PlayAnimation((uint)Graphics.EStateEntity.DYING);
             ((AnimatedSprite)ressourcesEntity.sprite).SetColor(new Color(255, 255, 255, 200));
 
 
