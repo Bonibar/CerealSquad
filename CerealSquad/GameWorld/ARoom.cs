@@ -13,6 +13,7 @@ namespace CerealSquad.GameWorld
     class ARoom : Drawable
     {
         public static readonly uint TILE_SIZE = 64;
+        public static uint ID = 1;
 
         public struct s_MapSize
         {
@@ -51,6 +52,7 @@ namespace CerealSquad.GameWorld
 
         private Random _Rand = new Random();
         private Dictionary<int, int> _RespawnCrates = new Dictionary<int, int>();
+        private uint id = ID;
 
         public ARoom(s_Pos<int> Pos, string MapFile, WorldEntity worldentity, e_RoomType Type = 0)
         {
@@ -88,6 +90,7 @@ namespace CerealSquad.GameWorld
                 spawnEnnemies();
             if (RoomType == e_RoomType.FightRoom)
                 spawnDoors();
+            ID++;
         }
 
         private void parseRoom()
@@ -172,7 +175,7 @@ namespace CerealSquad.GameWorld
             {
                 if (RoomType == e_RoomType.StartRoom)
                     Sounds.JukeBox.Instance.PlaySound("StoryBegins", false);
-                else if (RoomType == e_RoomType.TransitionRoom)
+                else if (RoomType == e_RoomType.TransitionRoom && id == 3)
                     Sounds.JukeBox.Instance.PlaySound("CerealsHelp", false);
                 State = e_RoomState.Starting;
             }
