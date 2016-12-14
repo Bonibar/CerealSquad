@@ -8,5 +8,9 @@
 56:3|Maps/Tutorial/Room3.txt|0
 76:5|Maps/Tutorial/JLink.txt|1
 73:21|Maps/Tutorial/Room4.txt|0
+73:36|Maps/Tutorial/NLink.txt|1
+89:32|Maps/Tutorial/Room5.txt|0
+109:32|Maps/Tutorial/Room6.txt|0
+129:36|Maps/Tutorial/VictoryRoom.txt|3
 
 200:0|Maps/Tutorial/Room2.txt|3
