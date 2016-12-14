@@ -356,7 +356,9 @@ namespace CerealSquad.EntitySystem
                 int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
                 MoveStack.Clear();
 
-                if (top == bottom && left == right && top == left)
+                if ((top == bottom || (top == -1 || bottom == -1)) &&
+                    (left == right || (left == -1 || right == -1)) && 
+                    (top == left || (top == -1 || left == -1)))
                 {
                     _center = true;
                 }
