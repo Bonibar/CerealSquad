@@ -19,7 +19,7 @@ namespace CerealSquad.EntitySystem
 
         protected int _r;
 
-        public bool Active { get; set; }
+        public virtual bool Active { get; set; }
 
         public AEnemy(IEntity owner, s_position position, ARoom room) : base(owner)
         {

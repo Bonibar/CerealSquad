@@ -47,7 +47,8 @@ namespace CerealSquad.EntitySystem
         Egg,
         HalfEgg,
         Ghost,
-        CoffeeMachine
+        CoffeeMachine,
+        TutorialGhost
     }
 
     public enum EMovement
