@@ -127,12 +127,15 @@ namespace CerealSquad.GameWorld
         {
             s_Pos<int> result = new s_Pos<int>(-1, -1);
 
-            int xEntity = (int)entity.Pos.X / 64;
-            int yEntity = (int)entity.Pos.Y / 64;
+            int xEntity = (int)entity.Pos.X;
+            int yEntity = (int)entity.Pos.Y;
 
 
             if (xEntity < Position.X)
+            {
+                System.Diagnostics.Debug.WriteLine("Reset to 0");
                 result.X = 0;
+            }
             else if (xEntity >= Position.X + Size.Width)
                 result.X = Position.X + (int)Size.Width - 1;
             else
@@ -162,9 +165,13 @@ namespace CerealSquad.GameWorld
                         if (playerLocalPos.X != -1 && playerLocalPos.Y != -1)
                         {
                             s_Pos<uint> cellPos = ParsedRoom.Cells
-                                .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
+                                .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => Math.Abs((i.Key.X + Position.X) - _valuablePlayers.First().Pos.X) + Math.Abs((i.Key.Y + Position.Y) - _valuablePlayers.First().Pos.Y)).First().Key;
 
+                            System.Diagnostics.Debug.WriteLine("###");
                             s_position pos = new s_position((cellPos.X + Position.X) + 0.5, (cellPos.Y + Position.Y) + 0.5);
+                            System.Diagnostics.Debug.WriteLine("Player Pos : " + _valuablePlayers.First().Pos.X + " " + _valuablePlayers.First().Pos.Y);
+                            System.Diagnostics.Debug.WriteLine("TO go : " + pos.X + " " + pos.Y);
+                            
                             _players.ForEach(i => i.moveTo(pos));
                         }
                     }

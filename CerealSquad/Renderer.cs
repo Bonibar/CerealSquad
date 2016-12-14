@@ -113,7 +113,7 @@ namespace CerealSquad
 #if DEBUG
             Resolution = findAppropriateResolution(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
 #endif
-            currentView = new View(new FloatRect(0, 0, 2560, 1440));
+            currentView = new View(new FloatRect(0, 0, 1920, 1080));
         }
 
         /// <summary>
