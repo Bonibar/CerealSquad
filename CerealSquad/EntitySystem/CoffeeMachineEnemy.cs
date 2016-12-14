@@ -37,7 +37,7 @@ namespace CerealSquad.EntitySystem
         public CoffeeMachineEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 2;
-            _invuln = 0;
+            _invuln = 1;
             _hp = 3;
             _takingDamage = false;
             _scentMap = new scentMap(room.Size.Height, room.Size.Width);
@@ -133,7 +133,7 @@ namespace CerealSquad.EntitySystem
                 {
                     if (Active)
                     {
-                        _scentMap.update((WorldEntity)_owner.getOwner(), _room);
+                        _scentMap.update((WorldEntity)getRootEntity(), _room);
                         think(world, deltaTime);
                     }
                     move(world, deltaTime);
@@ -268,7 +268,7 @@ namespace CerealSquad.EntitySystem
             result &= executeDownMove(world, Speed * deltaTime.AsSeconds());
             result &= executeLeftMove(world, Speed * deltaTime.AsSeconds());
             result &= executeRightMove(world, Speed * deltaTime.AsSeconds());
-            if (canAttack((WorldEntity)_owner.getOwner()))
+            if (canAttack((WorldEntity)getRootEntity()))
                 attack();
             if (_r > 0 && result)
                 _r -= 1;
