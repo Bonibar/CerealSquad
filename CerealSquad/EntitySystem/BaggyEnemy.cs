@@ -116,7 +116,8 @@ namespace CerealSquad.EntitySystem
 
         public override void update(Time deltaTime, AWorld world)
         {
-            if (_invuln > 0 && _children.Count == 0)
+            
+            if (_invuln > 0 && _children.Where(x => x.Die == false).Count() == 0)
                 _invuln -= deltaTime.AsSeconds();
             if (_attackCoolDown > 0)
                 _attackCoolDown -= deltaTime.AsSeconds();
