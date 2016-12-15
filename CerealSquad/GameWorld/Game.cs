@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
 using CerealSquad.EntitySystem;
+using CerealSquad.Sounds;
 
 namespace CerealSquad.GameWorld
 {
@@ -111,6 +112,8 @@ namespace CerealSquad.GameWorld
 #else
             characterSelection();
 #endif
+            JukeBox.Instance.loadMusic("Music_PlansinMotion", "Assets/Sound/PlansinMotion.ogg");
+            JukeBox.Instance.SetVolumeMusic("Music_PlansinMotion", 7f);
         }
 
         private void Intro_Ended(object source, Menus.IntroCutscene.CutsceneEventArgs e)
@@ -165,6 +168,7 @@ namespace CerealSquad.GameWorld
 
             _InputManager.KeyboardKeyPressed += Im_KeyboardKeyPressed;
             WorldEntity.PlayerNumber = Players.Count;
+            JukeBox.Instance.PlayMusic("Music_PlansinMotion", true);
         }
 
         private void Im_KeyboardKeyPressed(object source, InputManager.Keyboard.KeyEventArgs e)
@@ -259,6 +263,8 @@ namespace CerealSquad.GameWorld
             _LifeCounter.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 + cameraOrigin.X - _LifeBar.Size.X / 2, 0 + cameraOrigin.Y + _LifeCounter.Size.Y / 2);
             _LifeCounter.Update(DeltaTime);
             _LifeCounterText.Position = new SFML.System.Vector2f(renderer.Win.GetView().Size.X / 2 + cameraOrigin.X - _LifeBar.Size.X / 2 - _LifeCounter.Size.X / 4, 0 + cameraOrigin.Y + 2 * _LifeCounter.Size.Y / 5 - (_LifeCounterText.GetLocalBounds().Height + _LifeCounterText.GetLocalBounds().Top) / 2);
+            if (State == GameState.Exit)
+                JukeBox.Instance.StopMusic("Music_PlansinMotion");
         }
 
         public void Draw(RenderTarget target, RenderStates states)
