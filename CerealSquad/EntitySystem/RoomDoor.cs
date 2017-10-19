@@ -16,7 +16,6 @@ namespace CerealSquad.EntitySystem
 
             Factories.TextureFactory.Instance.load("RoomDoor", "Assets/GameplayElement/Fire.png");
 
-            _ressources.Debug = true;
             _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
             _ressources.AddAnimation(0, "RoomDoor", new List<uint> { 0, 1 }, new Vector2u(128, 128), 200);
 

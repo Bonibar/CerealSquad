@@ -16,6 +16,7 @@ namespace CerealSquad.EntitySystem
         private double _attackCoolDown;
         private int _hp;
         private double _invuln;
+        private double _autoshoot;
         private bool _takingDamage;
 
         protected scentMap _scentMap;
@@ -36,11 +37,12 @@ namespace CerealSquad.EntitySystem
         public CoffeeMachineEnemy(IEntity owner, s_position position, ARoom room) : base(owner, position, room)
         {
             _speed = 2;
-            _invuln = 0;
+            _invuln = 1;
             _hp = 3;
             _takingDamage = false;
             _scentMap = new scentMap(room.Size.Height, room.Size.Width);
-            _attackCoolDown = 1; // 1 sec
+            _attackCoolDown = 0.5; // 0.5 sec
+            _autoshoot = 1.5;
             ressourcesEntity = new EntityResources();
             Factories.TextureFactory.Instance.load("CoffeeMachineEmptyWalking", "Assets/Enemies/Boss/CoffeeMachineEmptyWalking.png");
             Factories.TextureFactory.Instance.load("CoffeeMachineMidWalking", "Assets/Enemies/Boss/CoffeeMachineMidWalking.png");
@@ -89,10 +91,10 @@ namespace CerealSquad.EntitySystem
         {
             if (!Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)SCoffeeState.DYING);
+                PlayAnimation((uint)SCoffeeState.DYING);
                 ressourcesEntity.Loop = false;
                 _children.ToList().ForEach(i => ((AEntity)i).die());
+                base.die();
             }
         }
 
@@ -102,11 +104,13 @@ namespace CerealSquad.EntitySystem
                 _invuln -= deltaTime.AsSeconds();
             if (_attackCoolDown > 0)
                 _attackCoolDown -= deltaTime.AsSeconds();
+            if (_autoshoot > 0)
+                _autoshoot -= deltaTime.AsSeconds();
             if (Die)
             {
                 if (ressourcesEntity.Animation != (uint)SCoffeeState.DYING)
-                    ressourcesEntity.PlayAnimation((uint)SCoffeeState.DYING);
-                else if (ressourcesEntity.Pause)
+                    PlayAnimation((uint)SCoffeeState.DYING);
+                else if (ressourcesEntity.isFinished())
                     if (_children.Count == 0)
                         destroy();
             }
@@ -115,22 +119,21 @@ namespace CerealSquad.EntitySystem
                 if (_takingDamage && ressourcesEntity.Animation != (uint)SCoffeeState.FULL_TO_MID && ressourcesEntity.Animation != (uint)SCoffeeState.MID_TO_EMPTY)
                 {
                     if (_hp == 2)
-                        ressourcesEntity.PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
+                        PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
                     else if (_hp == 1)
-                        ressourcesEntity.PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
+                        PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
                 }
                 else if (_takingDamage && ressourcesEntity.Pause)
                 {
                     ressourcesEntity.Loop = true;
-                    ressourcesEntity.PlayAnimation((uint)SCoffeeState.IDLE);
+                    PlayAnimation((uint)SCoffeeState.IDLE);
                     _takingDamage = false;
                 }
                 else if (!_takingDamage)
                 {
                     if (Active)
                     {
-                        System.Diagnostics.Debug.WriteLine("Think");
-                        _scentMap.update((WorldEntity)_owner, _room);
+                        _scentMap.update((WorldEntity)getRootEntity(), _room);
                         think(world, deltaTime);
                     }
                     move(world, deltaTime);
@@ -142,11 +145,15 @@ namespace CerealSquad.EntitySystem
 
         private bool canAttack(WorldEntity world)
         {
+            ressourcesEntity.secondarySprite.Clear();
             double deltaX = 0;
             double deltaY = 0;
             bool result = false;
             bool end = false;
-            s_position pos = getCoord(Pos);
+            s_position pos = getCoord(HitboxPos);
+
+            if (_autoshoot <= 0)
+                return (true);
 
             if (_attackCoolDown > 0)
                 return (false);
@@ -170,12 +177,21 @@ namespace CerealSquad.EntitySystem
             {
                 if (ent.getEntityType() == e_EntityType.Player)
                 {
-                    for (int i = 0; i < 90; i += 1)
+                    for (int i = 0; i < 30; i += 1)
                     {
-                        if (IsInEllipse(Pos._trueX + deltaX * i, Pos._trueY + deltaY * i, ent.HitboxPos._trueX, ent.Pos._trueY, 0.2, 0.2))
+                        if (InCircleRange(HitboxPos.X + deltaX * i, HitboxPos.Y + deltaY * i, ent, 0.5f))
                             result = true;
-                        if (_room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Wall
-                        || _room.getPosition((uint)(pos._trueX + deltaX * i), (uint)(pos._trueY + deltaY * i)) == RoomParser.e_CellType.Void)
+                        if (shootDebug)
+                        {
+                            EllipseShapeSprite sprite = new EllipseShapeSprite(new Vector2f(0.5f * 64f, 0.5f * 64f), new Color(255, (byte)(10 * i), 0, 255), new Color(255, 0, 0, 0));
+                            var posSprite = sprite.EllipseShape.Position;
+                            posSprite.X = (float)(deltaX * i * 64);
+                            posSprite.Y = (float)(deltaY * i * 64);
+                            sprite.EllipseShape.Position = posSprite;
+                            ressourcesEntity.secondarySprite.Add(sprite);
+                        }
+                        if (_room.getPosition((uint)(pos.X + deltaX * i), (uint)(pos.Y + deltaY * i)) == RoomParser.e_CellType.Wall
+                        || _room.getPosition((uint)(pos.X + deltaX * i), (uint)(pos.Y + deltaY * i)) == RoomParser.e_CellType.Void)
                             end = true;
                         if (result || end)
                             break;
@@ -188,10 +204,17 @@ namespace CerealSquad.EntitySystem
         protected void attack()
         {
             _attackCoolDown = 0.5f;
-            new CoffeeProjectile(_owner, _move[0], HitboxPos);
+            _autoshoot = 1.5f;
+            s_position pos = Pos;
+            pos.X += ressourcesEntity.Size.X / 128 / 2;
+            pos.Y += ressourcesEntity.Size.Y / 128 / 2;
+            EMovement move = _move[0];
+            if (_move[0] == EMovement.None)
+                move = EMovement.Down;
+            new CoffeeProjectile(_owner, move, pos);
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             bool result = false;
             if (_invuln <= 0 && !_takingDamage)
@@ -228,13 +251,13 @@ namespace CerealSquad.EntitySystem
         private void receiveDamage()
         {
             _invuln = 3;
-            new CoffeePool(this, new s_position(Pos._trueX, Pos._trueY));
+            new CoffeePool(this, new s_position(Pos.X, Pos.Y));
             ressourcesEntity.Loop = false;
             System.Diagnostics.Debug.WriteLine("HP : " + _hp);
             if (_hp == 2)
-                ressourcesEntity.PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
+                PlayAnimation((uint)SCoffeeState.FULL_TO_MID);
             else if (_hp == 1)
-                ressourcesEntity.PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
+                PlayAnimation((uint)SCoffeeState.MID_TO_EMPTY);
             _takingDamage = true;
         }
 
@@ -245,7 +268,7 @@ namespace CerealSquad.EntitySystem
             result &= executeDownMove(world, Speed * deltaTime.AsSeconds());
             result &= executeLeftMove(world, Speed * deltaTime.AsSeconds());
             result &= executeRightMove(world, Speed * deltaTime.AsSeconds());
-            if (canAttack((WorldEntity)_owner))
+            if (canAttack((WorldEntity)getRootEntity()))
                 attack();
             if (_r > 0 && result)
                 _r -= 1;
@@ -256,15 +279,15 @@ namespace CerealSquad.EntitySystem
                 var position = ressourcesEntity.Position;
                 EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
-                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : 0;
+                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X - 1, (int)pos.Y) : 0;
                 ressourcesEntity.Position = position;
-                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : 0;
+                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X + 1, (int)pos.Y) : 0;
                 ressourcesEntity.Position = position;
-                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : 0;
+                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y - 1) : 0;
                 ressourcesEntity.Position = position;
-                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : 0;
+                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y + 1) : 0;
                 ressourcesEntity.Position = position;
-                int here = _scentMap.getScent(pos._x, pos._y);
+                int here = _scentMap.getScent((int)pos.X, (int)pos.Y);
                 int maxscent = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
                 _move = new List<EMovement> { EMovement.None };
 
@@ -274,7 +297,7 @@ namespace CerealSquad.EntitySystem
                     _move = new List<EMovement> { _move[_rand.Next() % _move.Count] };
                     _r = 30;
                 }
-                else if (maxscent <= here && moveSameTile(world, (WorldEntity)_owner, deltaTime))
+                else if (maxscent <= here && moveSameTile(world, (WorldEntity)getRootEntity(), deltaTime))
                 {
                     if (_attackCoolDown <= 0)
                         attack();

@@ -1,4 +1,5 @@
 ﻿using CerealSquad.Global;
+using CerealSquad.EntitySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,8 +30,14 @@ namespace CerealSquad.Factories
                 case e_EnnemyType.CoffeeMachine:
                     result = new EntitySystem.CoffeeMachineEnemy(owner, new s_position(pos.X, pos.Y), room);
                     break;
+                case e_EnnemyType.TutorialGhost:
+                    result = new EntitySystem.TutorialGhostEnnemy(owner, new s_position(pos.Y, pos.Y), room);
+                    break;
+                case e_EnnemyType.Baggy:
+                    result = new EntitySystem.BaggyEnemy(owner, new s_position(pos.Y, pos.Y), room);
+                    break;
                 default:
-                    throw new ArgumentException("Invalid Trap entity requested");
+                    throw new ArgumentException("Invalid Ennemy entity requested");
             }
 
             return result;

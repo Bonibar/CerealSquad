@@ -1,0 +1,44 @@
+﻿<Window x:Class="TerrainBuilder.TileLoader"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TerrainBuilder"
+        mc:Ignorable="d"
+        Name="Win"
+        Title="TileLoader" Height="300" Width="450">
+    
+    <Grid>
+        <DockPanel
+            LastChildFill="True">
+            <Border DockPanel.Dock="Top" Height="auto" Padding="0, 1" Background="Gray">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Background="White" Grid.Row="0" Grid.Column="0" Name="FilePath"></Label>
+                    <Button Grid.Column="1" Click="Button_loadtile_Click">Load</Button>
+                </Grid>
+            </Border>
+            <Border DockPanel.Dock="Right" Width="60">
+                <DockPanel LastChildFill="True">
+                    <Button DockPanel.Dock="Bottom" Content="OK" Click="Button_OK_Click"></Button>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <Label Content="Tile Size:" FontWeight="Bold" HorizontalAlignment="Center"></Label>
+                        <Label Content="X:" HorizontalAlignment="Center"></Label>
+                        <TextBox Name="XValue" LostFocus="XValue_LostFocus">64</TextBox>
+                        <Label Content="Y:" HorizontalAlignment="Center"></Label>
+                        <TextBox Name="YValue" LostFocus="YValue_LostFocus">64</TextBox>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border>
+                <Image Name="TilePreview"></Image>
+            </Border>
+        </DockPanel>
+    </Grid>
+</Window>

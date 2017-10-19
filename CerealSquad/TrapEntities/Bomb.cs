@@ -8,6 +8,7 @@ using CerealSquad.GameWorld;
 using SFML.Graphics;
 using CerealSquad.Graphics;
 using CerealSquad.Sounds;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad.TrapEntities
 {
@@ -17,9 +18,9 @@ namespace CerealSquad.TrapEntities
 
         public Time TimeRemaining { get { return Timer.Time; } set { Timer.Time = value; } }
 
-        private Timer Timer = new Timer(Time.FromSeconds(10));
-        private Timer TimerDelete = new Timer(Time.FromSeconds(0.2f));
-        private Timer TimerTrigger = new Timer(Time.FromSeconds(0.2f));
+        private EntityTimer Timer = new EntityTimer(Time.FromSeconds(10));
+        private EntityTimer TimerDelete = new EntityTimer(Time.FromSeconds(0.4f));
+        private EntityTimer TimerTrigger = new EntityTimer(Time.FromSeconds(0.2f));
 
         //public EntityResources SecondaryResourcesEntity { get; set; }
 
@@ -37,7 +38,7 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.JukeBox.loadSound("Explosion", "Explosion");
 
             ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.IDLE, "Bomb", new List<uint> { 0, 1 }, new Vector2u(128, 128));
-            ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 112);
+            ressourcesEntity.AddAnimation((uint)Graphics.EStateEntity.DYING, "BombExpl", new List<uint> { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, new Vector2u(128, 128), 50);
 
             ressourcesEntity.secondarySprite.Add(new EllipseShapeSprite(new Vector2f(Range * 64.0f, Range / 2.0f * 64.0f), new Color(219, 176, 10, 100), new Color(219, 130, 10, 255)));
             ressourcesEntity.secondarySprite.ForEach(i => i.Displayed = false);
@@ -65,7 +66,7 @@ namespace CerealSquad.TrapEntities
                         StartExplosion();
                     else
                     {
-                        float speed = 500f * deltaTime.AsSeconds();
+                        float speed = 800f * deltaTime.AsSeconds();
                         if (ressourcesEntity.Size.X + speed < 64.0f * Range)
                             ressourcesEntity.Size = new Vector2f(ressourcesEntity.Size.X + speed, ressourcesEntity.Size.Y + speed);
                     }
@@ -78,7 +79,7 @@ namespace CerealSquad.TrapEntities
         private void StartExplosion()
         {
             TimerDelete.Start();
-            ressourcesEntity.PlayAnimation((uint)Graphics.EStateEntity.DYING);
+            PlayAnimation((uint)Graphics.EStateEntity.DYING);
             ((AnimatedSprite)ressourcesEntity.sprite).SetColor(new Color(255, 255, 255, 200));
 
 
@@ -95,7 +96,7 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.JukeBox.PlaySound("Explosion");
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
 
             switch(Sender.getEntityType())
@@ -117,6 +118,8 @@ namespace CerealSquad.TrapEntities
             Triggered = true;
             if (delay && !TimerTrigger.Started)
                 TimerTrigger.Start();
+            else if (!delay && TimerTrigger.Started)
+                TimerTrigger.Stop();
         }
     }
 }

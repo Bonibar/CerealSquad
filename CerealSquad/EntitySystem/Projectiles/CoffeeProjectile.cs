@@ -18,13 +18,13 @@ namespace CerealSquad.EntitySystem.Projectiles
             Speed = 10;
             Factories.TextureFactory.Instance.load("CoffeeProjectile", "Assets/Enemies/Boss/CoffeeMachineThrowingCoffee.png");
             ressourcesEntity = new Graphics.EntityResources();
-            _ressources.InitializationAnimatedSprite(new Vector2u(16, 16));
+            _ressources.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            _ressources.AddAnimation(0, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(1, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(2, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(3, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
-            _ressources.AddAnimation(4, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(16, 16));
+            _ressources.AddAnimation(0, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(1, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(2, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(3, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
+            _ressources.AddAnimation(4, "CoffeeProjectile", new List<uint> { 0 }, new Vector2u(32, 32));
 
             _ressources.CollisionBox = new FloatRect(new Vector2f(16f, 16f), new Vector2f(16f, 16f));
             _type = e_EntityType.ProjectileEnemy;
@@ -59,7 +59,7 @@ namespace CerealSquad.EntitySystem.Projectiles
             return baseResult;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             if (damage == e_DamageType.NONE)
             {
@@ -75,9 +75,9 @@ namespace CerealSquad.EntitySystem.Projectiles
             touchingEntities.ForEach(i =>
             {
                 if (i.getEntityType() == e_EntityType.Player)
-                    attemptDamage(i, i.getDamageType());
+                    attemptDamage(i, i.getDamageType(), true);
                 else if (i.getEntityType() == e_EntityType.PlayerTrap)
-                    attemptDamage(i, i.getDamageType());
+                    attemptDamage(i, i.getDamageType(), true);
 
                 i.attemptDamage(this, _damageType);
             });
@@ -97,6 +97,7 @@ namespace CerealSquad.EntitySystem.Projectiles
                     case e_EntityType.EnnemyTrap:
                     case e_EntityType.Player:
                     case e_EntityType.PlayerTrap:
+                    case e_EntityType.Room:
                         result = true;
                         break;
                 }

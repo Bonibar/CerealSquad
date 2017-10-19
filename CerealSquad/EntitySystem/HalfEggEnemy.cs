@@ -55,19 +55,19 @@ namespace CerealSquad.EntitySystem
                 var position = ressourcesEntity.Position;
                 EMovement lastMove = _move[0];
                 _move = new List<EMovement> { EMovement.Up, EMovement.Down, EMovement.Right, EMovement.Left };
-                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x - 1, pos._y) : -1;
+                int left = executeLeftMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X - 1, (int)pos.Y) : -1;
                 left = left == -1 ? 1000 : left;
                 ressourcesEntity.Position = position;
-                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x + 1, pos._y) : -1;
+                int right = executeRightMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X + 1, (int)pos.Y) : -1;
                 right = right == -1 ? 1000 : right;
                 ressourcesEntity.Position = position;
-                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y - 1) : -1;
+                int top = executeUpMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y - 1) : -1;
                 top = top == -1 ? 1000 : top;
                 ressourcesEntity.Position = position;
-                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent(pos._x, pos._y + 1) : -1;
+                int bottom = executeDownMove(world, Speed * deltaTime.AsSeconds()) ? _scentMap.getScent((int)pos.X, (int)pos.Y + 1) : -1;
                 bottom = bottom == -1 ? 1000 : bottom;
                 ressourcesEntity.Position = position;
-                int here = _scentMap.getScent(pos._x, pos._y);
+                int here = _scentMap.getScent((int)pos.X, (int)pos.Y);
                 here = here == -1 ? 1000 : here;
                 int minscent = Math.Min(top, Math.Min(bottom, Math.Min(right, left)));
                 _move = new List<EMovement> { EMovement.None };
@@ -104,10 +104,10 @@ namespace CerealSquad.EntitySystem
         {
             if (_invuln <= 0 && !Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                PlayAnimation((uint)EStateEntity.DYING);
                 ressourcesEntity.JukeBox.PlaySound("CrackingEggs");
                 ressourcesEntity.Loop = false;
+                base.die();
             }
         }
 
@@ -123,7 +123,7 @@ namespace CerealSquad.EntitySystem
             {
                 if (Active)
                 {
-                    _scentMap.update((WorldEntity)_owner, _room);
+                    _scentMap.update((WorldEntity)_owner.getOwner(), _room);
                     think(world, deltaTime);
                 }
                 move(world, deltaTime);

@@ -164,8 +164,15 @@ namespace CerealSquad.Sounds
 
             if (getNumberSoundPlaying() < LimitSound)
             {
-                sounds[id].Loop = loop;
-                sounds[id].Play();
+                if (sounds[id].Status != SoundStatus.Playing)
+                {
+                    sounds[id].Loop = loop;
+                    sounds[id].Play();
+                } else
+                {
+                    if (sounds[id].PlayingOffset > SFML.System.Time.FromMilliseconds(400))
+                    sounds[id].PlayingOffset = SFML.System.Time.Zero;
+                }
             }
         }
 

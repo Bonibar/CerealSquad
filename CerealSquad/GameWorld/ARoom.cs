@@ -13,6 +13,7 @@ namespace CerealSquad.GameWorld
     class ARoom : Drawable
     {
         public static readonly uint TILE_SIZE = 64;
+        public static uint ID = 1;
 
         public struct s_MapSize
         {
@@ -40,18 +41,25 @@ namespace CerealSquad.GameWorld
         private RenderTexture _RenderTexture = null;
         private RoomParser.s_room ParsedRoom = null;
         private EnvironmentResources er = new EnvironmentResources();
+        private EnvironmentResources _Layer1 = new EnvironmentResources();
+        private EnvironmentResources _Layer2 = new EnvironmentResources();
+
+        private RoomEntity _RoomEntity;
+
         private List<Crates> _Crates = new List<Crates>();
-        private List<AEnemy> _Ennemies = new List<AEnemy>();
+        private List<AEnemy> _Ennemies { get { return _RoomEntity.getChildren().Where(i => i.Type == e_EntityType.Ennemy).Select(i => (AEnemy)i).ToList(); } }
         private List<RoomDoor> _Doors = new List<RoomDoor>();
 
         private Random _Rand = new Random();
         private Dictionary<int, int> _RespawnCrates = new Dictionary<int, int>();
+        private uint id = ID;
 
         public ARoom(s_Pos<int> Pos, string MapFile, WorldEntity worldentity, e_RoomType Type = 0)
         {
             RoomType = Type;
             Position = Pos;
             WorldEntity = worldentity;
+            _RoomEntity = new RoomEntity(WorldEntity);
             ParsedRoom = RoomParser.ParseRoom(MapFile);
             Size = new s_MapSize(ParsedRoom.Cells.Keys.OrderBy(x => x.X).Last().X + 1, ParsedRoom.Cells.Keys.OrderBy(x => x.Y).Last().Y + 1);
             _RenderTexture = new RenderTexture(Size.Width * TILE_SIZE, Size.Height * TILE_SIZE);
@@ -71,17 +79,18 @@ namespace CerealSquad.GameWorld
                 while (isColliding)
                 {
                     spawnPoint = crate.Pos[_Rand.Next(0, crate.Pos.Count)];
-                    if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                    if (_Crates.FindAll(x => (int)x.Pos.X == spawnPoint.X && (int)x.Pos.Y == spawnPoint.Y).Count == 0)
                         isColliding = false;
                 }
                 spawnPoint.X += Position.X;
                 spawnPoint.Y += Position.Y;
-                _Crates.Add(new Crates(WorldEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
+                _Crates.Add(new Crates(_RoomEntity, spawnPoint, crate.Types[_Rand.Next(0, crate.Types.Count)]));
             }
             if (RoomType == e_RoomType.FightRoom)
                 spawnEnnemies();
             if (RoomType == e_RoomType.FightRoom)
                 spawnDoors();
+            ID++;
         }
 
         private void parseRoom()
@@ -95,14 +104,34 @@ namespace CerealSquad.GameWorld
                 }
                 er.AddSprite(cell.Key.X, cell.Key.Y, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
             }
+
+            foreach (var cell in ParsedRoom.Layer1)
+            {
+                if (!Factories.TextureFactory.Instance.exists(cell.Value.TexturePath))
+                {
+                    Factories.TextureFactory.Instance.load(cell.Value.TexturePath, cell.Value.TexturePath);
+                    PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
+                }
+                _Layer1.AddSprite(cell.Key.X, cell.Key.Y, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
+            }
+
+            foreach (var cell in ParsedRoom.Layer2)
+            {
+                if (!Factories.TextureFactory.Instance.exists(cell.Value.TexturePath))
+                {
+                    Factories.TextureFactory.Instance.load(cell.Value.TexturePath, cell.Value.TexturePath);
+                    PaletteManager.Instance.AddPaletteInformations(cell.Value.TexturePath);
+                }
+                _Layer2.AddSprite(cell.Key.X, cell.Key.Y, cell.Value.TexturePath, uint.Parse(cell.Value.Texture.ToString()));
+            }
         }
 
         private s_Pos<int> getLocalPos(IEntity entity)
         {
             s_Pos<int> result = new s_Pos<int>(-1, -1);
 
-            int xEntity = entity.Pos._x / 64;
-            int yEntity = entity.Pos._y / 64;
+            int xEntity = (int)entity.Pos.X;
+            int yEntity = (int)entity.Pos.Y;
 
 
             if (xEntity < Position.X)
@@ -128,16 +157,14 @@ namespace CerealSquad.GameWorld
             {
                 if (ParsedRoom.Cells.Count(i => i.Value.Type == RoomParser.e_CellType.Spawn) > 0)
                 {
-                    List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs(i.Pos._x / 64 - (Position.X + Size.Width) / 2) + Math.Abs(i.Pos._y / 64 - (Position.Y + Size.Height))).ToList();
+                    List<APlayer> _valuablePlayers = _players.OrderBy(i => Math.Abs((int)i.Pos.X / 64 - (Position.X + Size.Width) / 2) + Math.Abs((int)i.Pos.Y / 64 - (Position.Y + Size.Height))).ToList();
                     if (_valuablePlayers.Count > 0)
                     {
-                        System.Diagnostics.Debug.WriteLine(_valuablePlayers.Count);
                         s_Pos<int> playerLocalPos = getLocalPos(_valuablePlayers.First());
                         if (playerLocalPos.X != -1 && playerLocalPos.Y != -1)
                         {
                             s_Pos<uint> cellPos = ParsedRoom.Cells
-                                .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => i.Key.X - playerLocalPos.X + i.Key.Y - playerLocalPos.Y).First().Key;
-
+                                .Where(i => i.Value.Type == RoomParser.e_CellType.Spawn).OrderBy(i => Math.Abs((i.Key.X + Position.X) - _valuablePlayers.First().Pos.X) + Math.Abs((i.Key.Y + Position.Y) - _valuablePlayers.First().Pos.Y)).First().Key;
                             s_position pos = new s_position((cellPos.X + Position.X) + 0.5, (cellPos.Y + Position.Y) + 0.5);
                             _players.ForEach(i => i.moveTo(pos));
                         }
@@ -148,7 +175,7 @@ namespace CerealSquad.GameWorld
             {
                 if (RoomType == e_RoomType.StartRoom)
                     Sounds.JukeBox.Instance.PlaySound("StoryBegins", false);
-                else if (RoomType == e_RoomType.TransitionRoom)
+                else if (RoomType == e_RoomType.TransitionRoom && id == 3)
                     Sounds.JukeBox.Instance.PlaySound("CerealsHelp", false);
                 State = e_RoomState.Starting;
             }
@@ -157,9 +184,16 @@ namespace CerealSquad.GameWorld
         public RoomParser.e_CellType getPosition(uint x, uint y)
         {
             RoomParser.e_CellType cel = RoomParser.e_CellType.Void;
-            if (x < Size.Width && y <= Size.Height)
+            if (x < Size.Width && y <= Size.Height && ParsedRoom.Cells.Keys.Contains(new s_Pos<uint>(x, y)))
             {
-                cel = ParsedRoom.Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
+                try
+                {
+                    cel = ParsedRoom.Cells.First(z => z.Key.Y.Equals(y) && z.Key.X.Equals(x)).Value.Type;
+                }
+                catch (Exception e)
+                {
+                    cel = RoomParser.e_CellType.Wall;
+                }
             }
             return (cel);
         }
@@ -180,19 +214,19 @@ namespace CerealSquad.GameWorld
                     while (isColliding)
                     {
                         spawnPoint = toRespawn.Pos[_Rand.Next(0, toRespawn.Pos.Count)];
-                        if (_Crates.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                        if (_Crates.FindAll(x => (int)x.Pos.X == spawnPoint.X && (int)x.Pos.Y == spawnPoint.Y).Count == 0)
                             isColliding = false;
                     }
                     spawnPoint.X += Position.X;
                     spawnPoint.Y += Position.Y;
-                    _Crates.Insert(id, new Crates(WorldEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
+                    _Crates.Insert(id, new Crates(_RoomEntity, spawnPoint, toRespawn.Types[_Rand.Next(0, toRespawn.Types.Count)]));
                 });
             }
         }
 
         private void spawnDoors()
         {
-            ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(WorldEntity, new s_position(i.Key.X, i.Key.Y), this)));
+            ParsedRoom.Cells.Where(i => i.Value.Type == RoomParser.e_CellType.Door).ToList().ForEach(i => _Doors.Add(new RoomDoor(_RoomEntity, new s_position(i.Key.X, i.Key.Y), this)));
             _Doors.ForEach(i => i.ressourcesEntity.EnableCollision = false);
             _Doors.ForEach(i => i.ressourcesEntity.sprite.Displayed = false);
         }
@@ -206,10 +240,10 @@ namespace CerealSquad.GameWorld
                 while (isColliding)
                 {
                     spawnPoint = ennemy.Pos[_Rand.Next(0, ennemy.Pos.Count)];
-                    if (_Ennemies.FindAll(x => (int)x.Pos._trueX == spawnPoint.X && (int)x.Pos._trueY == spawnPoint.Y).Count == 0)
+                    if (_Ennemies.FindAll(x => (int)x.Pos.X == spawnPoint.X && (int)x.Pos.Y == spawnPoint.Y).Count == 0)
                         isColliding = false;
                 }
-                _Ennemies.Add(Factories.EnnemyFactory.CreateEnnemy(WorldEntity, spawnPoint, this, ennemy.Types[_Rand.Next(0, ennemy.Types.Count)]));
+                Factories.EnnemyFactory.CreateEnnemy(_RoomEntity, spawnPoint, this, ennemy.Types[_Rand.Next(0, ennemy.Types.Count)]);
             }
         }
 
@@ -226,9 +260,9 @@ namespace CerealSquad.GameWorld
                     State = e_RoomState.Started;
                 }
             }
-            else if (State == e_RoomState.Started && _Ennemies.Count(i => i.Die == false) == 0)
+            else if (State == e_RoomState.Started && _RoomEntity.getChildren().Count(i => i.Type == e_EntityType.Ennemy) == 0)
             {
-                _Ennemies.Clear();
+                //_Ennemies.Clear();
                 _Doors.ForEach(i => i.Die = true);
                 _Doors.Clear();
                 State = e_RoomState.Finished;
@@ -239,6 +273,8 @@ namespace CerealSquad.GameWorld
         {
             _RenderTexture.Clear();
             _RenderTexture.Draw(er, states);
+            _RenderTexture.Draw(_Layer1, states);
+            _RenderTexture.Draw(_Layer2, states);
             _RenderTexture.Display();
 
             target.Draw(_RenderSprite, states);

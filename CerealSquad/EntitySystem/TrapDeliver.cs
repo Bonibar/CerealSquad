@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static CerealSquad.AEntity;
+using static CerealSquad.EntitySystem.AEntity;
 using CerealSquad.Graphics;
 using SFML.System;
 using SFML.Graphics;
+using CerealSquad.GameWorld;
 
 namespace CerealSquad.EntitySystem
 {
-    class TrapDeliver : Drawable
+    class TrapDeliver : AEntity
     {
         public enum EStep
         {
@@ -32,33 +33,42 @@ namespace CerealSquad.EntitySystem
         public float MaxCooldownTrap { get { return TimerCoolDown.Time.AsMilliseconds(); } }
         public float CurrentCooldownTrap { get { return TimerCoolDown.Current.AsMilliseconds(); } }
 
-        private EntityResources ResourcesEntity = new EntityResources();
+        //private EntityResources ressourcesEntity = new EntityResources();
 
         private APlayer Player;
-        private Timer TimerCoolDown = new Timer(Time.Zero);
-        private Timer TimerToPut;
+        private EntityTimer TimerCoolDown = new EntityTimer(Time.FromMilliseconds(200));
+        private EntityTimer TimerToPut;
 
-        public TrapDeliver(APlayer player)
+        private e_TrapType InventoryTampon = e_TrapType.NONE;
+
+        public TrapDeliver(IEntity owner, APlayer player) : base(owner)
         {
             Player = player;
             Step = EStep.NOTHING;
             Target = EMovement.Up;
+            _type = e_EntityType.DeliverCloud;
             Factories.TextureFactory.Instance.load("Cursor", "Assets/Effects/Cursor.png");
             Factories.TextureFactory.Instance.load("ConstructionCloud", "Assets/GameplayElement/ConstructionCloud.png");
+            ressourcesEntity = new EntityResources();
 
-            ResourcesEntity.JukeBox.loadSound("Construction", "Construction");
+            ressourcesEntity.JukeBox.loadSound("Construction", "Construction");
 
-            ResourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
+            ressourcesEntity.InitializationAnimatedSprite(new Vector2u(64, 64));
 
-            ResourcesEntity.AddAnimation((uint)EAnimation.CURSOR, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
-            ResourcesEntity.AddAnimation((uint)EAnimation.CONSTRUCTION, "ConstructionCloud", new List<uint> { 0, 1, 2, 3 }, new Vector2u(128, 128), 100);
+            ressourcesEntity.AddAnimation((uint)EAnimation.CURSOR, "Cursor", new List<uint> { 0, 1, 2, 3 }, new Vector2u(64, 64));
+            ressourcesEntity.AddAnimation((uint)EAnimation.CONSTRUCTION, "ConstructionCloud", new List<uint> { 0, 1, 2, 3 }, new Vector2u(128, 128), 100);
+            ((AnimatedSprite)ressourcesEntity.sprite).Displayed = false;
 
             IsTargetValid = true;
+            _CollidingType.Add(e_EntityType.Player);
+            _CollidingType.Add(e_EntityType.Ennemy);
+
+            _ressources.CollisionBox = new FloatRect(21f, 0, 17f, 24f);
         }
 
         public bool IsDelivering()
         {
-            return !Step.Equals(EStep.NOTHING);
+            return Step.Equals(EStep.END_SELECTING);
         }
 
         public void Cancel()
@@ -66,12 +76,26 @@ namespace CerealSquad.EntitySystem
             Step = EStep.NOTHING;
         }
 
-        public void Update(Time DeltaTime, GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
+        public override void update(Time deltaTime, AWorld world)
+        {
+            if (Step > EStep.NOTHING)
+            {
+                ((AnimatedSprite)ressourcesEntity.sprite).Displayed = true;
+                ressourcesEntity.EnableCollision = true;
+                ressourcesEntity.Update(deltaTime);
+            }
+            else
+            {
+                ((AnimatedSprite)ressourcesEntity.sprite).Displayed = false;
+                ressourcesEntity.EnableCollision = false;
+            }
+        }
+
+        public void Update(GameWorld.AWorld World, List<EMovement> Input, bool TrapPressed)
         {
             if (TimerToPut == null)
-                TimerToPut = new Timer(Time.FromSeconds(0.4f * World.WorldEntity.PlayerNumber));
+                TimerToPut = new EntityTimer(Time.FromSeconds(0.4f * World.WorldEntity.PlayerNumber));
             Processing(Input, World, TrapPressed);
-            ResourcesEntity.Update(DeltaTime);
         }
 
         private void Processing(List<EMovement> Input, GameWorld.AWorld World, bool TrapPressed)
@@ -81,11 +105,11 @@ namespace CerealSquad.EntitySystem
                 return;
 
 
-            ResourcesEntity.CollisionBox = Factories.TrapFactory.GetCollisionBox(Player.TrapInventory);
+            ressourcesEntity.CollisionBox = Factories.TrapFactory.GetCollisionBox(Player.TrapInventory);
 
             if (TrapPressed && Step == EStep.NOTHING)
             {
-                ResourcesEntity.PlayAnimation((uint)EAnimation.CURSOR);
+                PlayAnimation((uint)EAnimation.CURSOR);
                 Step = EStep.START_SELECTING;
             }
 
@@ -105,12 +129,14 @@ namespace CerealSquad.EntitySystem
                 else
                     pos = new Vector2f(Player.ressourcesEntity.Position.X, Player.ressourcesEntity.Position.Y);
 
-                ResourcesEntity.Position = pos;
+                ressourcesEntity.Position = pos;
+                //Vector2f size = Player.ressourcesEntity.sprite.Size;
+                //Pos = new s_position((pos.X - size.X / 2.0f) / 64.0f, (pos.Y - size.Y / 2.0f) / 64.0f);
                 // CHECK 4 points
                 if (!Target.Equals(EMovement.None) && TimerCoolDown.IsTimerOver())
                 {
-                    if (World.IsCollidingWithWall(ResourcesEntity)
-                        || World.WorldEntity.GetCollidingEntities(ResourcesEntity).Count > 0)
+                    if (World.IsCollidingWithWall(ressourcesEntity)
+                        || World.WorldEntity.GetCollidingEntities(ressourcesEntity).Count > 0)
                         IsTargetValid = false;
                     else
                         IsTargetValid = true;
@@ -118,17 +144,18 @@ namespace CerealSquad.EntitySystem
                 else
                     IsTargetValid = false;
 
-                ((AnimatedSprite)ResourcesEntity.sprite).SetColor((IsTargetValid) ? Color.Green : Color.Red);
+                ((AnimatedSprite)ressourcesEntity.sprite).SetColor((IsTargetValid) ? Color.Green : Color.Red);
             }
 
             if (!TrapPressed && Step == EStep.START_SELECTING)
             {
                 if (IsTargetValid)
                 {
-                    ((AnimatedSprite)ResourcesEntity.sprite).SetColor(Color.White);
-                    ResourcesEntity.PlayAnimation((uint)EAnimation.CONSTRUCTION);
+                    ((AnimatedSprite)ressourcesEntity.sprite).SetColor(Color.White);
+                    PlayAnimation((uint)EAnimation.CONSTRUCTION);
                     TimerToPut.Start();
-                    ResourcesEntity.JukeBox.PlaySound("Construction");
+                    ressourcesEntity.JukeBox.PlaySound("Construction");
+                    InventoryTampon = Player.TrapInventory;
                 }
                 Step = EStep.END_SELECTING;
             }
@@ -136,21 +163,14 @@ namespace CerealSquad.EntitySystem
             {
                 if (IsTargetValid)
                 {
-                    ATrap trap = Factories.TrapFactory.CreateTrap(Player, Player.TrapInventory);
-                    trap.setPosition(Target);
-                    TimerCoolDown = new Timer(trap.Cooldown);
+                    ATrap trap = Factories.TrapFactory.CreateTrap(Player, InventoryTampon);
+                    trap.setPosition(ressourcesEntity.Position);
+                    trap.Orientation = Target;
+                    TimerCoolDown = new EntityTimer(trap.Cooldown);
                     TimerCoolDown.Start();
-                    ResourcesEntity.JukeBox.StopSound("Construction");
+                    ressourcesEntity.JukeBox.StopSound("Construction");
                 }
                 Step = EStep.NOTHING;
-            }
-        }
-
-        public void Draw(RenderTarget target, RenderStates states)
-        {
-            if (Step > EStep.NOTHING)
-            {
-                ResourcesEntity.Draw(target, states);
             }
         }
     }

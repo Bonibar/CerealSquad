@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
 using CerealSquad.Global;
+using CerealSquad.EntitySystem;
 
 namespace CerealSquad.GameWorld
 {
@@ -14,12 +15,14 @@ namespace CerealSquad.GameWorld
         protected List<ARoom> Rooms = new List<ARoom>();
         public WorldEntity WorldEntity { get; protected set; }
 
+        private bool _PositionsUpToDate = false;
+
         public AWorld(string path, WorldEntity worldentity)
         {
             if (path == null)
                 throw new ArgumentNullException("Path cannot be null");
 
-            Dictionary<s_Pos<int>, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld("Maps/TestWorld.txt");
+            Dictionary<s_Pos<int>, WorldParser.t_roomcontent> rooms = WorldParser.ParseWorld(path);
             WorldEntity = worldentity;
 
             foreach (var room in rooms)
@@ -52,6 +55,30 @@ namespace CerealSquad.GameWorld
             });
         }
 
+        public void InvalidatePlayersPosition()
+        {
+            _PositionsUpToDate = false;
+        }
+
+        private void CheckPlayerPosition()
+        {
+            if (!_PositionsUpToDate)
+            {
+                foreach (ARoom room in Rooms)
+                {
+                    foreach (APlayer player in WorldEntity.getChildren().Where(i => i.Type == e_EntityType.Player))
+                    {
+                        if ((int)player.Pos.X >= room.Position.X && (int)player.Pos.X < room.Position.X + room.Size.Width &&
+                            (int)player.Pos.Y >= room.Position.Y && (int)player.Pos.Y < room.Position.Y + room.Size.Height)
+                        {
+                            if (room != CurrentRoom)
+                                ChangeRoom(room);
+                        }
+                    }
+                }
+            }
+        }
+
         public RoomParser.e_CellType getCellType(int x, int y)
         {
             foreach(ARoom room in Rooms)
@@ -59,8 +86,8 @@ namespace CerealSquad.GameWorld
                 if (x >= room.Position.X && x < room.Position.X + room.Size.Width &&
                 y >= room.Position.Y && y < room.Position.Y + room.Size.Height)
                 {
-                    if (room != CurrentRoom)
-                        ChangeRoom(room);
+                    //if (room != CurrentRoom)
+                    //    ChangeRoom(room);
                     return room.getPosition((uint)(x - room.Position.X), (uint)(y - room.Position.Y));
                 }
             }
@@ -121,6 +148,7 @@ namespace CerealSquad.GameWorld
 
         public void Update(SFML.System.Time DeltaTime, List<APlayer> players)
         {
+            CheckPlayerPosition();
             Rooms.ForEach(x => x.Update(DeltaTime, players));
         }
     }

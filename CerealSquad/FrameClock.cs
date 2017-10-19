@@ -9,16 +9,29 @@ namespace CerealSquad
 {
     class FrameClock
     {
-        Clock frameClock = new Clock();
+        private Time save = Time.Zero;
+        private System.Diagnostics.Stopwatch frameClock = new System.Diagnostics.Stopwatch();
+
+        public FrameClock()
+        {
+            frameClock.Start();
+        }
 
         public Time Restart()
         {
-           return frameClock.Restart();
+            Time result = Time.FromMilliseconds((int)frameClock.ElapsedMilliseconds);
+
+            frameClock.Restart();
+            save = Time.Zero;
+
+            return result;
         }
 
         public Time GetElapsedTime()
         {
-            return frameClock.ElapsedTime;
+            save += Time.FromMilliseconds((int)frameClock.ElapsedMilliseconds);
+
+            return save;
         }
     }
 }

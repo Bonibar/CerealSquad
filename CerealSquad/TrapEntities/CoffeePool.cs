@@ -1,4 +1,5 @@
 ﻿using CerealSquad.GameWorld;
+using CerealSquad.EntitySystem;
 using SFML.System;
 using System;
 using System.Collections.Generic;
@@ -35,15 +36,8 @@ namespace CerealSquad.TrapEntities
             ressourcesEntity.CollisionBox = COLLISION_BOX;
             Pos = pos;
             _CollidingType.Add(e_EntityType.Player);
-            ressourcesEntity.PlayAnimation((uint)SStateCoffeeTrap.SPREADING);
+            PlayAnimation((uint)SStateCoffeeTrap.SPREADING);
             ressourcesEntity.Loop = false;
-        }
-
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
-        {
-            Sender.attemptDamage(this, _damageType);
-
-            return true;
         }
 
         public bool IsReadyToDie()
@@ -55,9 +49,9 @@ namespace CerealSquad.TrapEntities
         {
             if (!Die)
             {
-                base.die();
-                ressourcesEntity.PlayAnimation((uint)SStateCoffeeTrap.DYING);
+                PlayAnimation((uint)SStateCoffeeTrap.DYING);
                 ressourcesEntity.Loop = false;
+                base.die();
             }
         }
 
@@ -65,7 +59,7 @@ namespace CerealSquad.TrapEntities
         {
             if (ressourcesEntity.Animation == (uint)SStateCoffeeTrap.SPREADING && ressourcesEntity.Pause)
             {
-                ressourcesEntity.PlayAnimation((uint)SStateCoffeeTrap.STAYING);
+                PlayAnimation((uint)SStateCoffeeTrap.STAYING);
                 ressourcesEntity.Loop = true;
             }
             else if (IsReadyToDie())

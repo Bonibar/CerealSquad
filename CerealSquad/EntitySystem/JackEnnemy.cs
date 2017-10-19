@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
-using static CerealSquad.APlayer;
+using static CerealSquad.EntitySystem.APlayer;
 using CerealSquad.Graphics;
 using CerealSquad.GameWorld;
 using CerealSquad.Factories;
 using SFML.Graphics;
 
-
-namespace CerealSquad
+/*namespace CerealSquad.EntitySystem
 {
     class JackEnnemy : AEnemy
     {
@@ -149,11 +148,11 @@ namespace CerealSquad
             }
             else
             {
-                _scentMap.update((WorldEntity)_owner, _room);
+                _scentMap.update((WorldEntity)_owner.getOwner(), _room);
                 think(world, deltaTime);
                 move(world, deltaTime);
             }
             _ressources.Update(deltaTime);
         }
     }
-}
+}*/

@@ -10,7 +10,7 @@ namespace CerealSquad.Graphics
 {
     class EllipseShapeSprite : ASprite
     {
-        EllipseShape EllipseShape;
+        public EllipseShape EllipseShape;
 
         public EllipseShapeSprite(Vector2f Size, Color color, Color outlineColor)
         {

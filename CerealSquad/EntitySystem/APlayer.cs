@@ -10,7 +10,7 @@ using CerealSquad.EntitySystem;
 using CerealSquad.EntitySystem.Projectiles;
 using CerealSquad.Graphics;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     abstract class APlayer : AEntity
     {
@@ -51,6 +51,21 @@ namespace CerealSquad
         private bool _center;
         private scentMap _scentMap;
 
+        public PlayerState State { get; protected set; }
+        protected double _invuln = 0;
+        private static double DEFAULT_INVULN_TIME = 3f; // SECONDS
+        protected double _invulnAnim = 0;
+        private static double DEFAULT_INVULN_ANIMATION = 300f; // MILLISECONDS
+        private List<Color> _Anims = new List<Color> { new Color(155, 155, 155, 100), new Color(155, 155, 155, 200) };
+        private int _currentAnimIndex = 0;
+
+        public enum PlayerState
+        {
+            Playing,
+            Respawn,
+            Destroy
+        }
+
         protected enum ETrapPuting
         {
             NO_PUTTING = 0,
@@ -84,7 +99,7 @@ namespace CerealSquad
 
             _specialActive = false;
             _weight = 1;
-            TrapDeliver = new TrapDeliver(this);
+            TrapDeliver = new TrapDeliver(getRootEntity(), this);
 
             TypeInput = type;
             Id = id;
@@ -105,8 +120,11 @@ namespace CerealSquad
             TrapInventory = e_TrapType.NONE;
             InputManager = input;
             _CollidingType.Add(e_EntityType.Ennemy);
+            _CollidingType.Add(e_EntityType.DeliverCloud);
             _CollidingType.Add(e_EntityType.ProjectileEnemy);
             _CollidingType.Add(e_EntityType.EnnemyTrap);
+
+            State = PlayerState.Playing;
         }
 
         private void Input_KeyboardKeyReleased(object source, KeyEventArgs e)
@@ -271,7 +289,7 @@ namespace CerealSquad
 
         public override void move(AWorld world, SFML.System.Time deltaTime)
         {
-            if ((TrapPressed || TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
+            if ((TrapDeliver.IsDelivering()) && TrapInventory != e_TrapType.NONE)
                 _move = new List<EMovement> { EMovement.None };
             else
                 _move = MoveStack;
@@ -284,7 +302,7 @@ namespace CerealSquad
             if (!_moveTo)
             {
                 BlockInputs = true;
-                _speed = Math.Abs(pos._x - _pos._x) + Math.Abs(pos._y - _pos._y) / 4;
+                _speed = Math.Abs(pos.X - _pos.X) + Math.Abs(pos.Y - _pos.Y) / 4;
                 _moveTo = true;
                 _moveToPos = pos;
                 _scentMap = new scentMap(40, 40, this);
@@ -296,7 +314,7 @@ namespace CerealSquad
         {
             if (_center == true)
             {
-                if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) < 0.1 && Math.Abs(HitboxPos._trueY - _moveToPos._trueY) < 0.1)
+                if (Math.Abs(HitboxPos.X - _moveToPos.X) < 0.1 && Math.Abs(HitboxPos.Y - _moveToPos.Y) < 0.1)
                 {
                     MoveStack.Clear();
                     _moveTo = false;
@@ -304,21 +322,21 @@ namespace CerealSquad
                     BlockInputs = false;
                     FinishedMovement = true;
                     _speed = 5;
-                    _ressources.PlayAnimation(0);
+                    PlayAnimation(0);
                 }
                 else
                 {
                     MoveStack.Clear();
-                    if (Math.Abs(HitboxPos._trueX - _moveToPos._trueX) >= 0.1)
+                    if (Math.Abs(HitboxPos.X - _moveToPos.X) >= 0.1)
                     {
-                        if (HitboxPos._trueX - _moveToPos._trueX > 0)
+                        if (HitboxPos.X - _moveToPos.X > 0)
                             MoveStack.Add(EMovement.Left);
                         else
                             MoveStack.Add(EMovement.Right);
                     }
                     else
                     {
-                        if (HitboxPos._trueY - _moveToPos._trueY > 0)
+                        if (HitboxPos.Y - _moveToPos.Y > 0)
                             MoveStack.Add(EMovement.Up);
                         else
                             MoveStack.Add(EMovement.Down);
@@ -338,7 +356,9 @@ namespace CerealSquad
                 int max = Math.Max(top, Math.Max(bottom, Math.Max(right, left)));
                 MoveStack.Clear();
 
-                if (top == bottom && left == right && top == left)
+                if ((top == bottom || (top == -1 || bottom == -1)) &&
+                    (left == right || (left == -1 || right == -1)) && 
+                    (top == left || (top == -1 || left == -1)))
                 {
                     _center = true;
                 }
@@ -355,6 +375,22 @@ namespace CerealSquad
 
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
+            if (_invuln > 0 && _Anims.Count > 0)
+            {
+                _invulnAnim += deltaTime.AsMilliseconds();
+                if (_invulnAnim > DEFAULT_INVULN_ANIMATION)
+                {
+                    _invulnAnim -= DEFAULT_INVULN_ANIMATION;
+                    ((AnimatedSprite)_ressources.sprite).SetColor(_Anims[_currentAnimIndex]);
+                    _currentAnimIndex = (_currentAnimIndex + 1) % _Anims.Count;
+                }
+                _invuln -= deltaTime.AsSeconds();
+            }
+            if (_invuln <= 0 && _ressources.sprite.Displayed && State == PlayerState.Playing)
+            {
+                ((AnimatedSprite)_ressources.sprite).SetColor(Color.White);
+                _currentAnimIndex = 0;
+            }
             if (!_die)
             {
                 if (_specialActive)
@@ -364,15 +400,41 @@ namespace CerealSquad
                 if (_moveTo)
                     moveToPos(world, deltaTime);
                 move(world, deltaTime);
-                TrapDeliver.Update(deltaTime, world, MoveStack, TrapPressed);
+                if (FinishedMovement)
+                    TrapDeliver.Update(world, MoveStack, TrapPressed);
             }
             else
             {
-                if (_ressources.isFinished())
+                if (State == PlayerState.Playing)
+                {
+                    State = PlayerState.Respawn;
+                    _ressources.EnableCollision = false;
+                    _ressources.sprite.Displayed = false;
+                }
+                else if (State == PlayerState.Destroy && ressourcesEntity.isFinished())
+                {
                     destroy();
+                }
+                TrapDeliver.ressourcesEntity.JukeBox.StopSound("Construction");
             }
             _ressources.Update(deltaTime);
             _children.ToList().ForEach(i => i.update(deltaTime, world));
+        }
+
+        public void Respawn()
+        {
+            State = PlayerState.Playing;
+            _ressources.EnableCollision = true;
+            _ressources.sprite.Displayed = true;
+            _die = false;
+            _invuln = DEFAULT_INVULN_TIME;
+        }
+
+        public void GameOver()
+        {
+            State = PlayerState.Destroy;
+            _ressources.sprite.Displayed = true;
+            ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
         }
 
         public abstract void AttaqueSpe();
@@ -403,8 +465,9 @@ namespace CerealSquad
         {
             touchingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.ProjectileEnemy)
-                    attemptDamage(i, i.getDamageType());
+                if (i.getEntityType() == e_EntityType.ProjectileEnemy
+                || i.getEntityType() == e_EntityType.EnnemyTrap)
+                    attemptDamage(i, i.getDamageType(), true);
                 i.attemptDamage(this, _damageType);
             });
         }
@@ -416,33 +479,55 @@ namespace CerealSquad
 
             CollidingEntities.ForEach(i =>
             {
-                if (i.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)i).TrapType == e_TrapType.WALL)
-                    result = true;
-                else if (i.getEntityType() == e_EntityType.Crate)
+
+                switch (i.getEntityType())
                 {
-                    TrapInventory = ((Crates)i).Item;
-                    ((Crates)i).pickCrate();
-                } else if (i.getEntityType() == e_EntityType.ProjectileEnemy)
-                    attemptDamage(i, i.getDamageType());
+                    case e_EntityType.PlayerTrap:
+                        if (((ATrap)i).TrapType == e_TrapType.WALL)
+                            result = true;
+                        break;
+                    case e_EntityType.DeliverCloud:
+                        result = true;
+                        break;
+                    case e_EntityType.Crate:
+                        TrapInventory = ((Crates)i).Item;
+                        ((Crates)i).pickCrate();
+                        break;
+                    case e_EntityType.ProjectileEnemy:
+                    case e_EntityType.EnnemyTrap:
+                        attemptDamage(i, i.getDamageType());
+                        break;
+                }
                 i.attemptDamage(this, _damageType);
             });
 
             return result || baseResult;
         }
 
-        public override bool attemptDamage(IEntity Sender, e_DamageType damage)
+        public override bool attemptDamage(IEntity Sender, e_DamageType damage, bool isHitBox = false)
         {
             bool result = false;
 
-            switch(damage)
+            System.Diagnostics.Debug.WriteLine("Colliding Damage : " + damage + " by hitbox : " + isHitBox);
+
+            if (_invuln > 0)
+                return false;
+
+            switch (damage)
             {
                 case e_DamageType.ENEMY_DAMAGE:
-                case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
                 case e_DamageType.COFFE_DAMAGE:
+                    if (!isHitBox)
+                    {
+                        die();
+                        result = true;
+                    }
+                    break;
+
+                case e_DamageType.PROJECTILE_ENEMY_DAMAGE:
                     die();
                     result = true;
                     break;
-                   
             }
 
             return result;
@@ -477,8 +562,8 @@ namespace CerealSquad
 
             protected void reset(AWorld world)
             {
-                int baseX = _player.HitboxPos._x - 20;
-                int baseY = _player.HitboxPos._y - 20;
+                int baseX = (int)_player.HitboxPos.X - 20;
+                int baseY = (int)_player.HitboxPos.Y - 20;
                 _map = new int[_x][];
                 for (int i = 0; i < _x; i++)
                 {
@@ -503,7 +588,7 @@ namespace CerealSquad
                 {
                     if (entity.getEntityType() == e_EntityType.PlayerTrap && ((ATrap)entity).TrapType == e_TrapType.WALL)
                     {
-                        _map[entity.Pos._x][entity.Pos._y] = -1;
+                        _map[(int)entity.Pos.X][(int)entity.Pos.Y] = -1;
                     }
                 }
             }
@@ -527,7 +612,7 @@ namespace CerealSquad
             {
                 reset(world);
                 check_obstacle(worldEntity);
-                propagateHeat(20 - _player.HitboxPos._x + moveToPos._x, 20 - _player.HitboxPos._y + moveToPos._y, 200);
+                propagateHeat(20 - (int)_player.HitboxPos.X + (int)moveToPos.X, 20 - (int)_player.HitboxPos.Y + (int)moveToPos.Y, 200);
             }
 
             public virtual int getScent(int x, int y)
@@ -557,5 +642,14 @@ namespace CerealSquad
                 Console.Out.Write('\n');
             }
         }
+
+       /* public override void die()
+        {
+            if (!Die)
+            {
+                ressourcesEntity.PlayAnimation((uint)EStateEntity.DYING);
+                base.die();
+            }
+        }*/
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CerealSquad.GameWorld;
 using CerealSquad.Graphics;
+using CerealSquad.EntitySystem;
 using SFML.Graphics;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CerealSquad
+namespace CerealSquad.EntitySystem
 {
     class WorldEntity : AEntity, Drawable
     {
@@ -22,7 +23,7 @@ namespace CerealSquad
         public override void update(SFML.System.Time deltaTime, AWorld world)
         {
             _children.ToList().ForEach(i => i.update(deltaTime, world));
-            _children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Height + x.ressourcesEntity.CollisionBox.Top).ToList();
+            //_children = _children.ToList().OrderBy(x => x.ressourcesEntity.CollisionBox.Height + x.ressourcesEntity.CollisionBox.Top).ToList();
 
             // order by hitbox.y position
             allEntities = GetAllEntities().OrderBy(entity => entity.ressourcesEntity.HitBox.Height + entity.ressourcesEntity.HitBox.Top).ToList();
@@ -110,8 +111,8 @@ namespace CerealSquad
         public void Draw(RenderTarget target, RenderStates states)
         {
             allEntities?.ForEach(entity => {
-                if (entity.getEntityType() == e_EntityType.Player)
-                    target.Draw(((APlayer)entity).TrapDeliver, states);
+                /*if (entity.getEntityType() == e_EntityType.Player)
+                    target.Draw(((APlayer)entity).TrapDeliver, states);*/
                 target.Draw(entity.ressourcesEntity, states);
             });
 
